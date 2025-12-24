@@ -51,11 +51,6 @@ next-env.d.ts
 # Database
 *.db
 
-# storybook
-storybook-static
-*storybook.log
-build-archive.log
-
 # playwright
 /test-results/
 /playwright-report/

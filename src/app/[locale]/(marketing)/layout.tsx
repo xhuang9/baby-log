@@ -53,14 +53,6 @@ export default async function Layout(props: {
                 {t('portfolio_link')}
               </Link>
             </li>
-            <li>
-              <a
-                className="border-none text-gray-700 hover:text-gray-900"
-                href="https://github.com/ixartz/Next-js-Boilerplate"
-              >
-                GitHub
-              </a>
-            </li>
           </>
         )}
         rightNav={(

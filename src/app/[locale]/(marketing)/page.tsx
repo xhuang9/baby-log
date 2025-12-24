@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { Sponsors } from '@/components/Sponsors';
 
 type IIndexProps = {
   params: Promise<{ locale: string }>;
@@ -87,7 +86,6 @@ export default async function Index(props: IIndexProps) {
         <li>📏 Linting and formatting (ESLint, Prettier)</li>
         <li>🦊 Git hooks and commit linting (Husky, Commitlint)</li>
         <li>🦺 Testing suite (Vitest, React Testing Library, Playwright)</li>
-        <li>🎉 Storybook for UI development</li>
         <li>
           🐰 AI-powered code reviews with
           {' '}
@@ -127,8 +125,6 @@ export default async function Index(props: IIndexProps) {
         Their services integrate seamlessly with the boilerplate, and we
         recommend trying them out.
       </p>
-      <h2 className="mt-5 text-2xl font-bold">{t('sponsors_title')}</h2>
-      <Sponsors />
     </>
   );
 };

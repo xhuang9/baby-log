@@ -1,0 +1,31 @@
+# Architecture Overview
+
+## Purpose
+Describes the route organization, route groups, layout hierarchy, and structural patterns specific to this boilerplate that differ from standard Next.js projects.
+
+## Scope
+This boilerplate uses Next.js App Router with a highly structured approach:
+- All routes are locale-prefixed via `[locale]` dynamic segment
+- Route groups organize pages by purpose (marketing vs auth) and layout (centered vs full-width)
+- Centralized library configurations in `src/libs/`
+- Strict path aliasing and TypeScript configuration
+
+The architecture emphasizes separation of concerns and developer experience through conventions.
+
+## Chunks
+
+- `.readme/chunks/architecture.route-structure.md`
+  - Content: Detailed route organization including route groups `(marketing)`, `(auth)`, and `(center)`
+  - Read when: Creating new pages, understanding nested layouts, or working with route-based organization
+
+- `.readme/chunks/architecture.libs-pattern.md`
+  - Content: The `src/libs/` centralization pattern for all third-party library configurations
+  - Read when: Configuring new libraries, understanding environment variables, or working with DB/I18n/Logger setup
+
+- `.readme/chunks/architecture.path-aliases.md`
+  - Content: Path alias configuration and import conventions
+  - Read when: Adding new imports, configuring paths, or understanding the `@/` prefix pattern
+
+- `.readme/chunks/architecture.typescript-config.md`
+  - Content: Strict TypeScript configuration with advanced safety checks
+  - Read when: Understanding type errors, configuring strictness, or adding new compiler options
