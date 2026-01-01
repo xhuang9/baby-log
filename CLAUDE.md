@@ -79,7 +79,7 @@ All third-party library configurations are centralized in `src/libs/`:
 - **Provider**: Clerk
 - **Config**: `src/utils/AppConfig.ts` for locale-specific Clerk localizations
 - **Protected Routes**: Wrapped in Clerk's auth middleware (automatic)
-- **Locales**: Supports `en` (default) and `fr` with Clerk UI translations
+- **Locales**: Supports `en` (default) with Clerk UI translations
 
 ### Internationalization (i18n)
 - **Library**: next-intl with locale prefixing ("as-needed" mode)

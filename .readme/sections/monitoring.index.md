@@ -1,3 +1,13 @@
+---
+last_verified_at: 2025-12-31T15:30:00Z
+source_paths:
+  - sentry.client.config.ts
+  - sentry.server.config.ts
+  - src/libs/Logger.ts
+  - src/libs/Arcjet.ts
+  - checkly.config.ts
+---
+
 # Monitoring & Observability Overview
 
 ## Purpose

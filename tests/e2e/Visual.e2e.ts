@@ -41,15 +41,5 @@ test.describe('Visual testing', () => {
 
       await takeSnapshot(page, testInfo);
     });
-
-    test('should take screenshot of the French homepage', async ({ page }, testInfo) => {
-      await page.goto('/fr');
-
-      await expect(
-        page.getByRole('heading', { name: 'Code de démarrage pour Next.js avec Tailwind CSS' }),
-      ).toBeVisible();
-
-      await takeSnapshot(page, testInfo);
-    });
   });
 });

@@ -1,3 +1,9 @@
+---
+last_verified_at: 2025-12-31T15:30:00Z
+source_paths:
+  - .readme/sections/
+---
+
 # Next.js Boilerplate Documentation Map
 
 This boilerplate is a production-ready Next.js 16+ starter with App Router, TypeScript, Tailwind CSS 4, DrizzleORM, Clerk authentication, and comprehensive testing. It emphasizes developer experience with strict type safety, automated code quality, and integrated monitoring.
@@ -43,7 +49,7 @@ Read when: Configuring builds, setting up CI/CD, or understanding the custom Nex
 ## Quick Reference
 
 **Default Locale:** `en` (English)
-**Supported Locales:** `en`, `fr`
+**Supported Locales:** `en`
 **Route Pattern:** All routes under `src/app/[locale]/`
 **Path Alias:** `@/` → `src/`
 **Database:** PostgreSQL via DrizzleORM (Neon in dev)

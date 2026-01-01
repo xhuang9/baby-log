@@ -1,3 +1,9 @@
+---
+last_verified_at: 2025-12-31T15:30:00Z
+source_paths:
+  - src/libs/
+---
+
 # Configuration Overview
 
 ## Purpose

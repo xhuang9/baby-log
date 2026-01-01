@@ -21,10 +21,10 @@ export async function generateMetadata(props: IIndexProps): Promise<Metadata> {
 export default async function Index(props: IIndexProps) {
   const { locale } = await props.params;
   setRequestLocale(locale);
-  const t = await getTranslations({
-    locale,
-    namespace: 'Index',
-  });
+  // const t = await getTranslations({
+  //   locale,
+  //   namespace: 'Index',
+  // });
 
   return (
     <>
@@ -72,16 +72,7 @@ export default async function Index(props: IIndexProps) {
         <li>
           💽 Dev database with PGlite and production with Neon (PostgreSQL)
         </li>
-        <li>
-          🌐 Multi-language support (i18n) with next-intl and
-          {' '}
-          <a
-            className="font-bold text-blue-700 hover:border-b-2 hover:border-blue-700"
-            href="https://l.crowdin.com/next-js"
-          >
-            Crowdin
-          </a>
-        </li>
+        <li>🌐 Locale-ready routing with next-intl (English by default)</li>
         <li>🔴 Form handling (React Hook Form) and validation (Zod)</li>
         <li>📏 Linting and formatting (ESLint, Prettier)</li>
         <li>🦊 Git hooks and commit linting (Husky, Commitlint)</li>

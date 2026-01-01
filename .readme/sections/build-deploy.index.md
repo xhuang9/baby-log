@@ -1,3 +1,12 @@
+---
+last_verified_at: 2025-12-31T15:30:00Z
+source_paths:
+  - next.config.ts
+  - sentry.client.config.ts
+  - sentry.server.config.ts
+  - package.json
+---
+
 # Build & Deployment Overview
 
 ## Purpose

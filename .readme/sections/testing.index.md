@@ -1,3 +1,11 @@
+---
+last_verified_at: 2025-12-31T15:30:00Z
+source_paths:
+  - vitest.config.mts
+  - playwright.config.ts
+  - tests/
+---
+
 # Testing Overview
 
 ## Purpose

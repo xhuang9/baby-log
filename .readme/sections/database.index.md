@@ -1,3 +1,12 @@
+---
+last_verified_at: 2025-12-31T15:30:00Z
+source_paths:
+  - src/models/Schema.ts
+  - src/libs/DB.ts
+  - drizzle.config.ts
+  - migrations/
+---
+
 # Database Overview
 
 ## Purpose

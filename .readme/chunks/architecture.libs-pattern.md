@@ -1,3 +1,15 @@
+---
+last_verified_at: 2025-12-31T15:30:00Z
+source_paths:
+  - src/libs/DB.ts
+  - src/libs/Env.ts
+  - src/libs/I18n.ts
+  - src/libs/I18nNavigation.ts
+  - src/libs/I18nRouting.ts
+  - src/libs/Logger.ts
+  - src/libs/Arcjet.ts
+---
+
 # Centralized Library Configuration Pattern
 
 ## Purpose

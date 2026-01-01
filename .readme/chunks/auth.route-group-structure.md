@@ -1,3 +1,10 @@
+---
+last_verified_at: 2025-12-31T15:30:00Z
+source_paths:
+  - src/app/[locale]/(auth)/layout.tsx
+  - src/app/[locale]/(auth)/(center)/layout.tsx
+---
+
 # Auth Route Group Structure
 
 ## Purpose

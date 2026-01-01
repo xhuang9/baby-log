@@ -1,3 +1,12 @@
+---
+last_verified_at: 2025-12-31T15:30:00Z
+source_paths:
+  - tsconfig.json
+  - eslint.config.mjs
+  - commitlint.config.ts
+  - lefthook.yml
+---
+
 # Code Quality Overview
 
 ## Purpose

@@ -1,3 +1,11 @@
+---
+last_verified_at: 2025-12-31T15:30:00Z
+source_paths:
+  - playwright.config.ts
+  - tests/
+  - package.json
+---
+
 # Playwright E2E Testing
 
 ## Purpose
@@ -117,7 +125,7 @@ const id = Number((await headers()).get('x-e2e-random-id')) || 0;
 ```typescript
 await page.goto('/');
 await page.goto('/about');
-await page.goto('/fr/about'); // Locale-specific
+await page.goto('/about'); // Default locale (English)
 ```
 
 ### User Interactions
@@ -143,11 +151,11 @@ test('requires authentication', async ({ page }) => {
 });
 ```
 
-### Locale Testing
+### Locale Testing (Optional)
 ```typescript
-test('displays French content', async ({ page }) => {
-  await page.goto('/fr/about');
-  await expect(page.getByText('À propos')).toBeVisible();
+test('displays localized content', async ({ page }) => {
+  await page.goto('/es/about');
+  await expect(page.getByText('Acerca de')).toBeVisible();
 });
 ```
 

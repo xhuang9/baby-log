@@ -1,3 +1,10 @@
+---
+last_verified_at: 2025-12-31T15:30:00Z
+source_paths:
+  - package.json
+  - playwright.config.ts
+---
+
 # PGlite Local Database
 
 ## Purpose

@@ -1,3 +1,11 @@
+---
+last_verified_at: 2025-12-31T15:30:00Z
+source_paths:
+  - src/app/[locale]/(auth)/layout.tsx
+  - src/app/[locale]/layout.tsx
+  - src/utils/AppConfig.ts
+---
+
 # Clerk Authentication Layout Pattern
 
 ## Purpose
@@ -102,11 +110,11 @@ export default async function DashboardPage() {
 - After sign-in: `/dashboard`
 - After sign-out: `/`
 
-### French (Non-Default)
-- Sign-in: `/fr/sign-in`
-- Sign-up: `/fr/sign-up`
-- After sign-in: `/fr/dashboard`
-- After sign-out: `/fr`
+### Non-Default Locale (When Enabled)
+- Sign-in: `/{locale}/sign-in`
+- Sign-up: `/{locale}/sign-up`
+- After sign-in: `/{locale}/dashboard`
+- After sign-out: `/{locale}`
 
 ## Important Patterns
 

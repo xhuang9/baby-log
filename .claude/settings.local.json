@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(test:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(find .readme -name \"*.md\" -exec sh -c 'grep -L \"\"last_verified_at\"\" \"\"$1\"\" && echo \"\"$1: Missing metadata\"\"' _ {} ;)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "shadcn"
+  ],
+  "enableAllProjectMcpServers": true
+}

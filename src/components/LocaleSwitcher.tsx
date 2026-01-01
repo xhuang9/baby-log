@@ -11,6 +11,10 @@ export const LocaleSwitcher = () => {
   const pathname = usePathname();
   const locale = useLocale();
 
+  if (routing.locales.length < 2) {
+    return null;
+  }
+
   const handleChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
     router.push(`/${event.target.value}${pathname}`);
     router.refresh(); // Ensure the page takes the new locale into account related to the issue #395
