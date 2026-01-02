@@ -1,30 +1,22 @@
 import type { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 
 type IIndexProps = {
   params: Promise<{ locale: string }>;
 };
 
 export async function generateMetadata(props: IIndexProps): Promise<Metadata> {
-  const { locale } = await props.params;
-  const t = await getTranslations({
-    locale,
-    namespace: 'Index',
-  });
+  await props.params;
 
   return {
-    title: t('meta_title'),
-    description: t('meta_description'),
+    title: 'Next.js Boilerplate Presentation',
+    description: 'Next js Boilerplate is the perfect starter code for your project. Build your React application with the Next.js framework.',
   };
 }
 
 export default async function Index(props: IIndexProps) {
   const { locale } = await props.params;
   setRequestLocale(locale);
-  // const t = await getTranslations({
-  //   locale,
-  //   namespace: 'Index',
-  // });
 
   return (
     <>

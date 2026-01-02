@@ -1,5 +1,6 @@
 import { ClerkProvider } from '@clerk/nextjs';
 import { setRequestLocale } from 'next-intl/server';
+import { clerkAppearance } from '@/libs/ClerkTheme';
 import { routing } from '@/libs/I18nRouting';
 import { ClerkLocalizations } from '@/utils/AppConfig';
 
@@ -26,7 +27,11 @@ export default async function AuthLayout(props: {
   return (
     <ClerkProvider
       appearance={{
-        cssLayerName: 'clerk', // Ensure Clerk is compatible with Tailwind CSS v4
+        ...clerkAppearance,
+        // Ensure Clerk is compatible with Tailwind CSS v4
+        layout: {
+          ...clerkAppearance.layout,
+        },
       }}
       localization={clerkLocale}
       signInUrl={signInUrl}

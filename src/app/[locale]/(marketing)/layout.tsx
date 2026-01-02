@@ -1,4 +1,4 @@
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { DemoBanner } from '@/components/DemoBanner';
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
@@ -10,10 +10,6 @@ export default async function Layout(props: {
 }) {
   const { locale } = await props.params;
   setRequestLocale(locale);
-  const t = await getTranslations({
-    locale,
-    namespace: 'RootLayout',
-  });
 
   return (
     <>
@@ -26,7 +22,7 @@ export default async function Layout(props: {
                 href="/"
                 className="border-none text-gray-700 hover:text-gray-900"
               >
-                {t('home_link')}
+                Home
               </Link>
             </li>
             <li>
@@ -34,7 +30,7 @@ export default async function Layout(props: {
                 href="/about/"
                 className="border-none text-gray-700 hover:text-gray-900"
               >
-                {t('about_link')}
+                About
               </Link>
             </li>
             <li>
@@ -42,7 +38,7 @@ export default async function Layout(props: {
                 href="/counter/"
                 className="border-none text-gray-700 hover:text-gray-900"
               >
-                {t('counter_link')}
+                Counter
               </Link>
             </li>
             <li>
@@ -50,7 +46,7 @@ export default async function Layout(props: {
                 href="/portfolio/"
                 className="border-none text-gray-700 hover:text-gray-900"
               >
-                {t('portfolio_link')}
+                Portfolio
               </Link>
             </li>
           </>
@@ -62,7 +58,7 @@ export default async function Layout(props: {
                 href="/sign-in/"
                 className="border-none text-gray-700 hover:text-gray-900"
               >
-                {t('sign_in_link')}
+                Sign in
               </Link>
             </li>
 
@@ -71,7 +67,7 @@ export default async function Layout(props: {
                 href="/sign-up/"
                 className="border-none text-gray-700 hover:text-gray-900"
               >
-                {t('sign_up_link')}
+                Sign up
               </Link>
             </li>
 

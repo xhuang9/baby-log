@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ IMPORTANT: Package Manager
+
+**This project uses `pnpm`, NOT `npm`.**
+
+- NEVER run `npm install` commands
+- Use `pnpm add <package>` to install dependencies
+- Use `pnpm run <script>` for running scripts (though `npm run` still works)
+- All documentation commands below use `npm run` which will work, but for installing packages always use `pnpm`
+
 ## Project Overview
 
 Next.js 16+ boilerplate with App Router, TypeScript, Tailwind CSS 4, DrizzleORM, Clerk authentication, and comprehensive testing setup. Emphasizes developer experience with strict TypeScript configuration, code quality tools, and production-ready integrations.

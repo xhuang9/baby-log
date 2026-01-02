@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { UserProfile } from '@clerk/nextjs';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { getI18nPath } from '@/utils/Helpers';
 
 type IUserProfilePageProps = {
@@ -8,14 +8,10 @@ type IUserProfilePageProps = {
 };
 
 export async function generateMetadata(props: IUserProfilePageProps): Promise<Metadata> {
-  const { locale } = await props.params;
-  const t = await getTranslations({
-    locale,
-    namespace: 'UserProfile',
-  });
+  await props.params;
 
   return {
-    title: t('meta_title'),
+    title: 'User Profile',
   };
 }
 
@@ -24,9 +20,9 @@ export default async function UserProfilePage(props: IUserProfilePageProps) {
   setRequestLocale(locale);
 
   return (
-    <div className="my-6 -ml-16">
+    <div className="my-4">
       <UserProfile
-        path={getI18nPath('/dashboard/user-profile', locale)}
+        path={getI18nPath('/settings/user-profile', locale)}
       />
     </div>
   );

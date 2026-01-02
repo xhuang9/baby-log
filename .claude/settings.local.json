@@ -4,11 +4,20 @@
       "Bash(test:*)",
       "Bash(ls:*)",
       "Bash(grep:*)",
-      "Bash(find .readme -name \"*.md\" -exec sh -c 'grep -L \"\"last_verified_at\"\" \"\"$1\"\" && echo \"\"$1: Missing metadata\"\"' _ {} ;)"
+      "Bash(find .readme -name \"*.md\" -exec sh -c 'grep -L \"\"last_verified_at\"\" \"\"$1\"\" && echo \"\"$1: Missing metadata\"\"' _ {} ;)",
+      "mcp__shadcn__get_project_registries",
+      "mcp__shadcn__search_items_in_registries",
+      "mcp__shadcn__view_items_in_registries",
+      "mcp__shadcn__get_item_examples_from_registries",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(yes:*)",
+      "Bash(npm run check:types:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run dev:*)"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "shadcn"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }
