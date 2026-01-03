@@ -1,8 +1,11 @@
 ---
-last_verified_at: 2025-12-31T15:30:00Z
+last_verified_at: 2026-01-04T10:30:00Z
 source_paths:
   - src/app/[locale]/
   - src/libs/
+  - src/components/providers/
+  - src/components/navigation/
+  - src/templates/
   - tsconfig.json
 ---
 
@@ -37,3 +40,7 @@ The architecture emphasizes separation of concerns and developer experience thro
 - `.readme/chunks/architecture.typescript-config.md`
   - Content: Strict TypeScript configuration with advanced safety checks
   - Read when: Understanding type errors, configuring strictness, or adding new compiler options
+
+- `.readme/chunks/architecture.breadcrumb-system.md`
+  - Content: React Context-based breadcrumb and page title system with server/client component bridge pattern
+  - Read when: Adding breadcrumbs or page titles to pages, understanding the BreadcrumbSetter/PageTitleSetter pattern, or working with AppHeader integration

@@ -1,6 +1,9 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { UserButton } from '@clerk/nextjs';
+import Link from 'next/link';
+import { useBreadcrumb } from '../providers/BreadcrumbProvider';
+import { ThemeToggle } from '../theme-toggle';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,53 +11,83 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { appNavItems } from '@/config/app-nav';
-import { AppConfig } from '@/utils/AppConfig';
-import { getI18nPath } from '@/utils/Helpers';
+} from '../ui/breadcrumb';
+import { SidebarTrigger } from '../ui/sidebar';
 
-type AppHeaderProps = {
-  locale: string;
+const userProfileProps = {
+  appearance: {
+    elements: {
+      cardBox: 'bg-card',
+      card: 'bg-card',
+      footer: 'bg-card',
+    },
+  },
 };
 
-export const AppHeader = ({ locale }: AppHeaderProps) => {
-  const pathname = usePathname();
-
-  // Find the current page based on pathname
-  const currentPage = appNavItems.find((item) => {
-    const itemPath = getI18nPath(item.href, locale);
-    return pathname === itemPath;
-  });
-
-  const pageTitle = currentPage ? currentPage.label : AppConfig.name;
+export const AppHeader = () => {
+  const { breadcrumbs, pageTitle } = useBreadcrumb();
+  const hasBreadcrumbs = breadcrumbs.length > 0;
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 border-b">
+    <header className="flex h-12 shrink-0 items-center gap-2 border-b border-l">
       <div className="flex w-full items-center px-4">
-        {/* Mobile: Centered Title */}
-        <div className="flex w-full items-center justify-center md:hidden">
-          <h1 className="text-sm font-semibold">{pageTitle}</h1>
+        {/* Mobile Layout: Back Button | Title | User Button */}
+        <div className="flex w-full items-center justify-end sm:justify-between md:hidden">
+          <SidebarTrigger className="hidden sm:block" />
+
+          {/* Right: Theme Toggle + User Button */}
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <UserButton
+              userProfileProps={userProfileProps}
+            />
+          </div>
         </div>
 
-        {/* Desktop: Breadcrumb */}
-        <div className="hidden items-center gap-2 md:flex">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href={getI18nPath('/dashboard', locale)}>
-                  {AppConfig.name}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              {currentPage && (
-                <>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>{currentPage.label}</BreadcrumbPage>
-                  </BreadcrumbItem>
-                </>
-              )}
-            </BreadcrumbList>
-          </Breadcrumb>
+        {/* Desktop Layout: Breadcrumb | User Button */}
+        <div className="hidden w-full items-center justify-between md:flex">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger />
+
+            {hasBreadcrumbs ? (
+              <Breadcrumb>
+                <BreadcrumbList>
+                  {breadcrumbs.map((item, index) => {
+                    const isLast = index === breadcrumbs.length - 1;
+
+                    return (
+                      <div key={index} className="contents">
+                        <BreadcrumbItem>
+                          {isLast ? (
+                            <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                          ) : item.href ? (
+                            <BreadcrumbLink render={props => (
+                              <Link href={item.href!} {...props}>
+                                {item.label}
+                              </Link>
+                            )} />
+                          ) : (
+                            <span>{item.label}</span>
+                          )}
+                        </BreadcrumbItem>
+                        {!isLast && <BreadcrumbSeparator />}
+                      </div>
+                    );
+                  })}
+                </BreadcrumbList>
+              </Breadcrumb>
+            ) : pageTitle ? (
+              <span className="text-sm font-medium">{pageTitle}</span>
+            ) : null}
+          </div>
+
+          {/* Right: Theme Toggle + User Button */}
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <UserButton
+              userProfileProps={userProfileProps}
+            />
+          </div>
         </div>
       </div>
     </header>

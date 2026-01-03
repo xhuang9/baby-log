@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { UserProfile } from '@clerk/nextjs';
 import { setRequestLocale } from 'next-intl/server';
+import { BreadcrumbSetter } from '@/components/navigation/BreadcrumbSetter';
 import { getI18nPath } from '@/utils/Helpers';
 
 type IUserProfilePageProps = {
@@ -20,10 +21,16 @@ export default async function UserProfilePage(props: IUserProfilePageProps) {
   setRequestLocale(locale);
 
   return (
-    <div className="my-4">
+    <>
+      <BreadcrumbSetter
+        items={[
+          { label: 'Settings', href: getI18nPath('/settings', locale) },
+          { label: 'User Profile' },
+        ]}
+      />
       <UserProfile
         path={getI18nPath('/settings/user-profile', locale)}
       />
-    </div>
+    </>
   );
 };

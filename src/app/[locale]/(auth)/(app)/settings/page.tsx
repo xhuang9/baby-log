@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { PageTitleSetter } from '@/components/navigation/PageTitleSetter';
 import { SettingsContent } from './SettingsContent';
 
 export async function generateMetadata(props: {
@@ -16,5 +17,10 @@ export default async function SettingsPage(props: {
 }) {
   await props.params;
 
-  return <SettingsContent />;
+  return (
+    <>
+      <PageTitleSetter title="Settings" />
+      <SettingsContent />
+    </>
+  );
 }

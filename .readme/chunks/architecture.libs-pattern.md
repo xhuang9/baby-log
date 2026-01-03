@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2025-12-31T15:30:00Z
+last_verified_at: 2026-01-04T00:00:00Z
 source_paths:
   - src/libs/DB.ts
   - src/libs/Env.ts
@@ -8,6 +8,7 @@ source_paths:
   - src/libs/I18nRouting.ts
   - src/libs/Logger.ts
   - src/libs/Arcjet.ts
+  - src/libs/ClerkTheme.ts
 ---
 
 # Centralized Library Configuration Pattern
@@ -76,6 +77,16 @@ import { Link } from '@/libs/I18nNavigation';
 ```typescript
 import arcjet from '@/libs/Arcjet';
 const aj = arcjet.withRule(/* ... */);
+```
+
+### `src/libs/ClerkTheme.ts`
+- Clerk component theming using Shadcn design tokens
+- Uses CSS variables for automatic light/dark mode switching
+- Export: `clerkAppearance` - pre-configured Appearance object
+
+```typescript
+import { clerkAppearance } from '@/libs/ClerkTheme';
+// Use in ClerkProvider appearance prop
 ```
 
 ## Important Patterns

@@ -206,6 +206,10 @@ All third-party library configurations are centralized in `src/libs/`:
   **Purpose:** Advanced TypeScript strictness options beyond `strict: true`
   **Read when:** Dealing with type errors, especially `| undefined` from array access
 
+- `.readme/chunks/architecture.breadcrumb-system.md`
+  **Purpose:** React Context-based breadcrumb and page title system with server/client component bridge pattern
+  **Read when:** Adding breadcrumbs or page titles to pages, understanding the BreadcrumbSetter/PageTitleSetter components, or working with AppHeader navigation
+
 ### Database Documentation
 - `.readme/sections/database.index.md`
   **Purpose:** DrizzleORM setup, schema management, and migrations

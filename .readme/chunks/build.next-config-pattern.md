@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2025-12-31T15:30:00Z
+last_verified_at: 2026-01-04T00:00:00Z
 source_paths:
   - next.config.ts
 ---
@@ -56,10 +56,12 @@ if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
     project: process.env.SENTRY_PROJECT,
     silent: !process.env.CI,
     widenClientFileUpload: true,
-    reactComponentAnnotation: { enabled: true },
     tunnelRoute: '/monitoring',
-    disableLogger: true,
     telemetry: false,
+    webpack: {
+      reactComponentAnnotation: { enabled: true },
+      treeshake: { removeDebugLogging: true },
+    },
   });
 }
 
@@ -117,6 +119,10 @@ SENTRY_PROJECT=my-project
 SENTRY_AUTH_TOKEN=...
 npm run build
 ```
+
+**Webpack Options:**
+- `reactComponentAnnotation: { enabled: true }` - Annotates React components for better stack traces
+- `treeshake: { removeDebugLogging: true }` - Removes Sentry debug logging from production bundle
 
 ## Base Config Options
 

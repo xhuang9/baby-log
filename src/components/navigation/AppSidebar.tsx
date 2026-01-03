@@ -29,16 +29,16 @@ export const AppSidebar = ({ locale, ...props }: AppSidebarProps & React.Compone
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
+              className="p-0"
               render={props => (
                 <Link href={getI18nPath('/dashboard', locale)} {...props}>
                   <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-teal-600 text-white">
                     <span className="text-sm font-semibold">
-                      {AppConfig.name.slice(0, 2).toUpperCase()}
+                      {AppConfig.name.slice(0, 1).toUpperCase()}
                     </span>
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">{AppConfig.name}</span>
-                    <span className="truncate text-xs">Daily log</span>
                   </div>
                 </Link>
               )}
