@@ -14,7 +14,8 @@
       "Bash(npm run check:types:*)",
       "Bash(npm run lint:*)",
       "Bash(npm run dev:*)",
-      "Skill(doc-update)"
+      "Skill(doc-update)",
+      "Bash(pnpm add:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -1,8 +1,17 @@
+import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import { setRequestLocale } from 'next-intl/server';
 import { clerkAppearance } from '@/libs/ClerkTheme';
 import { routing } from '@/libs/I18nRouting';
-import { ClerkLocalizations } from '@/utils/AppConfig';
+import { AppConfig, ClerkLocalizations } from '@/utils/AppConfig';
+
+export const metadata: Metadata = {
+  title: `${AppConfig.name} | Account`,
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function AuthLayout(props: {
   children: React.ReactNode;

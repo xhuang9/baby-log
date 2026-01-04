@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2025-12-31T15:30:00Z
+last_verified_at: 2026-01-04T08:52:00Z
 source_paths:
   - .readme/sections/
 ---

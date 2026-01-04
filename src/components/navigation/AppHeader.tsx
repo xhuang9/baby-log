@@ -2,7 +2,7 @@
 
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
-import { useBreadcrumb } from '../providers/BreadcrumbProvider';
+import { useBreadcrumbStore } from '@/stores/useBreadcrumbStore';
 import { ThemeToggle } from '../theme-toggle';
 import {
   Breadcrumb,
@@ -25,11 +25,12 @@ const userProfileProps = {
 };
 
 export const AppHeader = () => {
-  const { breadcrumbs, pageTitle } = useBreadcrumb();
+  const breadcrumbs = useBreadcrumbStore(state => state.breadcrumbs);
+  const pageTitle = useBreadcrumbStore(state => state.pageTitle);
   const hasBreadcrumbs = breadcrumbs.length > 0;
 
   return (
-    <header className="flex h-12 shrink-0 items-center gap-2 border-b border-l">
+    <header className="flex h-12 shrink-0 items-center gap-2 border-b bg-background">
       <div className="flex w-full items-center px-4">
         {/* Mobile Layout: Back Button | Title | User Button */}
         <div className="flex w-full items-center justify-end sm:justify-between md:hidden">
@@ -49,36 +50,45 @@ export const AppHeader = () => {
           <div className="flex items-center gap-2">
             <SidebarTrigger />
 
-            {hasBreadcrumbs ? (
-              <Breadcrumb>
-                <BreadcrumbList>
-                  {breadcrumbs.map((item, index) => {
-                    const isLast = index === breadcrumbs.length - 1;
+            {hasBreadcrumbs
+              ? (
+                  <Breadcrumb>
+                    <BreadcrumbList>
+                      {breadcrumbs.map((item, index) => {
+                        const isLast = index === breadcrumbs.length - 1;
 
-                    return (
-                      <div key={index} className="contents">
-                        <BreadcrumbItem>
-                          {isLast ? (
-                            <BreadcrumbPage>{item.label}</BreadcrumbPage>
-                          ) : item.href ? (
-                            <BreadcrumbLink render={props => (
-                              <Link href={item.href!} {...props}>
-                                {item.label}
-                              </Link>
-                            )} />
-                          ) : (
-                            <span>{item.label}</span>
-                          )}
-                        </BreadcrumbItem>
-                        {!isLast && <BreadcrumbSeparator />}
-                      </div>
-                    );
-                  })}
-                </BreadcrumbList>
-              </Breadcrumb>
-            ) : pageTitle ? (
-              <span className="text-sm font-medium">{pageTitle}</span>
-            ) : null}
+                        return (
+                          <div key={`${item.label}-${index}`} className="contents">
+                            <BreadcrumbItem>
+                              {isLast
+                                ? (
+                                    <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                                  )
+                                : item.href
+                                  ? (
+                                      <BreadcrumbLink render={props => (
+                                        <Link href={item.href!} {...props}>
+                                          {item.label}
+                                        </Link>
+                                      )}
+                                      />
+                                    )
+                                  : (
+                                      <span>{item.label}</span>
+                                    )}
+                            </BreadcrumbItem>
+                            {!isLast && <BreadcrumbSeparator />}
+                          </div>
+                        );
+                      })}
+                    </BreadcrumbList>
+                  </Breadcrumb>
+                )
+              : pageTitle
+                ? (
+                    <span className="text-sm font-medium">{pageTitle}</span>
+                  )
+                : null}
           </div>
 
           {/* Right: Theme Toggle + User Button */}
