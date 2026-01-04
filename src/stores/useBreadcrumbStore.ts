@@ -13,11 +13,11 @@ type BreadcrumbStore = {
   setPageTitle: (title: string | null) => void;
 };
 
-export const useBreadcrumbStore = create<BreadcrumbStore>((set) => ({
+export const useBreadcrumbStore = create<BreadcrumbStore>(set => ({
   breadcrumbs: [],
   pageTitle: null,
-  setBreadcrumbs: (breadcrumbs) => set({ breadcrumbs }),
-  setPageTitle: (pageTitle) => set({ pageTitle }),
+  setBreadcrumbs: breadcrumbs => set({ breadcrumbs }),
+  setPageTitle: pageTitle => set({ pageTitle }),
 }));
 
 /**

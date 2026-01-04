@@ -12,7 +12,7 @@
     // ...other props
   >
     {props.children}
-  </ClerkProvider>
+  </ClerkProvider>;
   ```
 - Global CSS (Tailwind): `src/styles/global.css`
   ```css
@@ -32,7 +32,7 @@
         card: 'shadow-lg',
       },
     }}
-  />
+  />;
   ```
 
 ## Resources

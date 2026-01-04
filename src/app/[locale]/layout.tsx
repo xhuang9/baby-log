@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -8,6 +8,12 @@ import { routing } from '@/libs/I18nRouting';
 import '@/styles/global.css';
 
 export const metadata: Metadata = {
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Baby Log',
+  },
   icons: [
     {
       rel: 'apple-touch-icon',
@@ -29,6 +35,17 @@ export const metadata: Metadata = {
       rel: 'icon',
       url: '/favicon.ico',
     },
+  ],
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
   ],
 };
 

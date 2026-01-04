@@ -33,6 +33,7 @@ import { expect, test } from '@playwright/test';
 test.describe('Homepage', () => {
   test('should display welcome message', async ({ page }) => {
     await page.goto('/');
+
     await expect(page.getByText('Welcome')).toBeVisible();
   });
 });
@@ -65,8 +66,8 @@ export default defineConfig({
 
   webServer: {
     command: process.env.CI
-      ? 'npx run-p db-server:memory start'      // CI: production build
-      : 'npx run-p db-server:memory dev:next',  // Dev: dev server
+      ? 'npx run-p db-server:memory start' // CI: production build
+      : 'npx run-p db-server:memory dev:next', // Dev: dev server
     url: 'http://localhost:3000',
     timeout: 2 * 60 * 1000,
     reuseExistingServer: !process.env.CI,
@@ -77,9 +78,11 @@ export default defineConfig({
 
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    ...(process.env.CI ? [
-      { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    ] : []),
+    ...(process.env.CI
+      ? [
+          { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+        ]
+      : []),
   ],
 });
 ```
@@ -146,6 +149,7 @@ await expect(page).toHaveTitle(/Dashboard/);
 ```typescript
 test('requires authentication', async ({ page }) => {
   await page.goto('/dashboard');
+
   // Should redirect to sign-in
   await expect(page).toHaveURL(/sign-in/);
 });
@@ -155,6 +159,7 @@ test('requires authentication', async ({ page }) => {
 ```typescript
 test('displays localized content', async ({ page }) => {
   await page.goto('/es/about');
+
   await expect(page.getByText('Acerca de')).toBeVisible();
 });
 ```

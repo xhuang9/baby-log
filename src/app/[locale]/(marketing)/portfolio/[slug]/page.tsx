@@ -37,7 +37,8 @@ export default async function PortfolioDetail(props: IPortfolioDetailProps) {
       <p>Created a set of promotional materials and branding elements for a corporate event. Crafted a visually unified theme, encompassing a logo, posters, banners, and digital assets. Integrated the client's brand identity while infusing it with a contemporary and innovative approach.</p>
 
       <div className="mt-5 text-center text-sm">
-        Code review powered by{' '}
+        Code review powered by
+        {' '}
         <a
           className="text-blue-700 hover:border-b-2 hover:border-blue-700"
           href="https://www.coderabbit.ai?utm_source=next_js_starter&utm_medium=github&utm_campaign=next_js_starter_oss_2025"

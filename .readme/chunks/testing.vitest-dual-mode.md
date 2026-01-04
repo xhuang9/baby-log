@@ -185,12 +185,12 @@ describe('GET /api/users', () => {
 ### Available Testing Library
 ```typescript
 import {
-  render,
-  screen,
   fireEvent,
+  render,
+  renderHook,
+  screen,
   waitFor,
   within,
-  renderHook,
 } from '@testing-library/react';
 
 import { userEvent } from '@testing-library/user-event';

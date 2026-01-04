@@ -24,7 +24,8 @@ export default async function About(props: IAboutProps) {
       <p>Welcome to our About page! We are a team of passionate individuals dedicated to creating amazing software.</p>
 
       <div className="mt-2 text-center text-sm">
-        Translation powered by{' '}
+        Translation powered by
+        {' '}
         <a
           className="text-blue-700 hover:border-b-2 hover:border-blue-700"
           href="https://l.crowdin.com/next-js"

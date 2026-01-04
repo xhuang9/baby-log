@@ -50,7 +50,7 @@ With `cssLayerName: 'clerk'`:
 
 ### Global Styles: `src/styles/global.css`
 ```css
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Clerk layer automatically injected */
 @layer clerk {

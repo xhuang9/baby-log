@@ -17,7 +17,6 @@ export default async function ActivitiesPage(props: { params: Promise<{ locale: 
     <>
       <PageTitleSetter title="Activities" />
       <div className="space-y-4">
-        <h1 className="text-2xl font-semibold">Activities</h1>
         <p className="text-sm text-muted-foreground">Review recent sessions, highlights, and daily logs.</p>
       </div>
     </>

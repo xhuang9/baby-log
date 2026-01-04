@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2025-12-31T15:30:00Z
+last_verified_at: 2026-01-05T10:30:00Z
 source_paths:
   - src/app/[locale]/(auth)/layout.tsx
   - src/app/[locale]/layout.tsx
@@ -47,13 +47,13 @@ export default async function AuthLayout(props: {
 
   let signInUrl = '/sign-in';
   let signUpUrl = '/sign-up';
-  let dashboardUrl = '/dashboard';
+  let postAuthUrl = '/post-auth';
   let afterSignOutUrl = '/';
 
   if (locale !== routing.defaultLocale) {
     signInUrl = `/${locale}${signInUrl}`;
     signUpUrl = `/${locale}${signUpUrl}`;
-    dashboardUrl = `/${locale}${dashboardUrl}`;
+    postAuthUrl = `/${locale}${postAuthUrl}`;
     afterSignOutUrl = `/${locale}${afterSignOutUrl}`;
   }
 
@@ -65,8 +65,8 @@ export default async function AuthLayout(props: {
       localization={clerkLocale}
       signInUrl={signInUrl}
       signUpUrl={signUpUrl}
-      signInFallbackRedirectUrl={dashboardUrl}
-      signUpFallbackRedirectUrl={dashboardUrl}
+      signInFallbackRedirectUrl={postAuthUrl}
+      signUpFallbackRedirectUrl={postAuthUrl}
       afterSignOutUrl={afterSignOutUrl}
     >
       {props.children}
@@ -107,13 +107,13 @@ export default async function DashboardPage() {
 ### English (Default Locale)
 - Sign-in: `/sign-in`
 - Sign-up: `/sign-up`
-- After sign-in: `/dashboard`
+- After sign-in: `/post-auth` (then redirects to `/dashboard`)
 - After sign-out: `/`
 
 ### Non-Default Locale (When Enabled)
 - Sign-in: `/{locale}/sign-in`
 - Sign-up: `/{locale}/sign-up`
-- After sign-in: `/{locale}/dashboard`
+- After sign-in: `/{locale}/post-auth` (then redirects to `/{locale}/dashboard`)
 - After sign-out: `/{locale}`
 
 ## Important Patterns
@@ -168,6 +168,7 @@ import { SignOutButton } from '@clerk/nextjs';
 - Locale change requires full page reload for URL recalculation
 
 ## Related Systems
+- `.readme/chunks/auth.post-auth-flow.md` - Post-authentication database sync and state initialization
 - `.readme/chunks/architecture.route-structure.md` - Route group organization
 - `.readme/chunks/auth.route-group-structure.md` - Nested route groups
 - `.readme/chunks/i18n.clerk-localization.md` - Clerk locale integration

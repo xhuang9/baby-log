@@ -15,6 +15,13 @@
       "when": 1767140852097,
       "tag": "0001_silent_frog_thor",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1767531211930,
+      "tag": "0002_parallel_princess_powerful",
+      "breakpoints": true
     }
   ]
 }

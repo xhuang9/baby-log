@@ -23,7 +23,7 @@ Schema-first development with DrizzleORM where schema changes automatically gene
 
 Define tables using Drizzle schema builders:
 ```typescript
-import { pgTable, serial, integer, timestamp } from 'drizzle-orm/pg-core';
+import { integer, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
 
 export const counterSchema = pgTable('counter', {
   id: serial('id').primaryKey(),
@@ -96,25 +96,25 @@ CREATE TABLE IF NOT EXISTS "users" (
 ### Schema Column Options
 ```typescript
 // Auto-increment ID
-id: serial('id').primaryKey()
+id: serial('id').primaryKey();
 
 // Required text
-email: text('email').notNull()
+email: text('email').notNull();
 
 // Optional with default
-status: text('status').default('active')
+status: text('status').default('active');
 
 // Auto-updated timestamp
 updatedAt: timestamp('updated_at')
-  .$onUpdate(() => new Date())
+  .$onUpdate(() => new Date());
 
 // JSON columns
-metadata: jsonb('metadata').$type<{ key: string }>()
+metadata: jsonb('metadata').$type<{ key: string }>();
 ```
 
 ### Working with Schema Types
 ```typescript
-import type { InferSelectModel, InferInsertModel } from 'drizzle-orm';
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { counterSchema } from '@/models/Schema';
 
 // Type for SELECT queries

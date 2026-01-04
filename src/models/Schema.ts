@@ -32,6 +32,8 @@ export const counterSchema = pgTable('counter', {
 export const userSchema = pgTable('user', {
   id: serial('id').primaryKey(),
   clerkId: text('clerk_id').unique(), // e.g. user_2ZJHkQ9mA3xYp8RZqWcT1
+  email: text('email'),
+  firstName: text('first_name'),
   locked: boolean('locked').default(false),
   useMetric: boolean('use_metric').notNull().default(true), // true = metric (cm, kg), false = imperial (inches, lbs)
   colorTheme: text('color_theme').notNull().default('system'), // 'light', 'dark', 'system'

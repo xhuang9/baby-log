@@ -20,11 +20,13 @@
 - Use `.at(i)` instead of `[i]` when you want a clearly-optional result.
   ```ts
   const map: Record<string, string> = {};
-  const v = map['missing'] ?? 'default';
+  const v = map.missing ?? 'default';
 
   const arr = ['x'];
   const first = arr.at(0); // string | undefined
-  if (first) first.toUpperCase();
+  if (first) {
+    first.toUpperCase();
+  }
   ```
 
 ## Resources

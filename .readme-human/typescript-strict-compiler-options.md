@@ -32,7 +32,9 @@
   try {
     throw new Error('boom');
   } catch (error) {
-    if (error instanceof Error) console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
   ```
 - Mark intentionally unused params with `_` to satisfy `noUnusedParameters`.

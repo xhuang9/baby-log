@@ -74,7 +74,9 @@
 - Locale path helper (default locale has no prefix): `src/utils/Helpers.ts`
   ```ts
   export const getI18nPath = (url: string, locale: string) => {
-    if (locale === routing.defaultLocale) return url;
+    if (locale === routing.defaultLocale) {
+      return url;
+    }
     return `/${locale}${url}`;
   };
   ```
@@ -87,11 +89,11 @@
   ```tsx
   <SignOutButton>
     <button type="button">Sign out</button>
-  </SignOutButton>
+  </SignOutButton>;
   ```
 - Clerk hosted profile page: `src/app/[locale]/(auth)/dashboard/user-profile/[[...user-profile]]/page.tsx`
   ```tsx
-  <UserProfile path={getI18nPath('/dashboard/user-profile', locale)} />
+  <UserProfile path={getI18nPath('/dashboard/user-profile', locale)} />;
   ```
 - Clerk localization mapping: `src/utils/AppConfig.ts`
   ```ts
@@ -113,7 +115,9 @@
 
   export async function GET() {
     const { userId } = await auth();
-    if (!userId) return new Response('Unauthorized', { status: 401 });
+    if (!userId) {
+      return new Response('Unauthorized', { status: 401 });
+    }
     return new Response('OK');
   }
   ```

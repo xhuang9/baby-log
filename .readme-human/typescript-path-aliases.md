@@ -31,8 +31,8 @@
 - Use `@/public/` for files under `public/`:
   - `import logo from '@/public/assets/images/logo.svg'`
   ```ts
-  import { logger } from '@/libs/Logger';
   import type { InferSelectModel } from 'drizzle-orm';
+  import { logger } from '@/libs/Logger';
   import { counterSchema } from '@/models/Schema';
 
   type Counter = InferSelectModel<typeof counterSchema>;

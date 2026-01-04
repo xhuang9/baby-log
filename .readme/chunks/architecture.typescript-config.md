@@ -70,12 +70,16 @@ function example(used: string, _unused: number) {
 
 ```typescript
 class Base {
-  greet() { return 'Hello'; }
+  greet() {
+    return 'Hello';
+  }
 }
 
 class Child extends Base {
   // Error: Must use 'override' keyword
-  override greet() { return 'Hi'; }
+  override greet() {
+    return 'Hi';
+  }
 }
 ```
 
@@ -104,10 +108,10 @@ if (array[index]) { /* use array[index] */ }
 Object property access also needs checking:
 ```typescript
 const user: Record<string, string> = {};
-const name = user['name']; // Type: string | undefined
+const name = user.name; // Type: string | undefined
 
 // Must check:
-const name = user['name'] ?? 'Unknown';
+const name = user.name ?? 'Unknown';
 ```
 
 ## Gotchas / Constraints

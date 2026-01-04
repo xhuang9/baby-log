@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-04T08:52:00Z
+last_verified_at: 2026-01-05T10:30:00Z
 source_paths:
   - .readme/sections/
 ---
@@ -23,8 +23,8 @@ Read when: Working with database schema, migrations, DrizzleORM queries, or data
 Read when: Adding translations, working with locale-aware routes, or integrating i18n with authentication.
 
 ### `.readme/sections/authentication.index.md`
-**Clerk authentication with locale-aware configuration**
-Read when: Working with authentication flows, protected routes, or Clerk localization setup.
+**Clerk authentication with locale-aware configuration and custom post-auth user sync**
+Read when: Working with authentication flows, protected routes, accessing user data in components, or understanding the database sync workflow.
 
 ### `.readme/sections/configuration.index.md`
 **Centralized library configs and environment variables**
@@ -45,6 +45,10 @@ Read when: Understanding linting rules, commit conventions, type safety patterns
 ### `.readme/sections/build-deploy.index.md`
 **Build configuration, Sentry integration, and deployment patterns**
 Read when: Configuring builds, setting up CI/CD, or understanding the custom Next.js configuration.
+
+### `.readme/sections/performance.index.md`
+**PWA configuration, service worker caching, loading states, and performance optimization**
+Read when: Working with Progressive Web App features, configuring offline support, adding loading states, or optimizing navigation performance.
 
 ## Quick Reference
 

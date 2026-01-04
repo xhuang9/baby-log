@@ -14,7 +14,9 @@
     return routing.locales.map(locale => ({ locale }));
   }
 
-  if (!hasLocale(routing.locales, locale)) notFound();
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
   setRequestLocale(locale);
   ```
 - Marketing layout: `src/app/[locale]/(marketing)/layout.tsx`

@@ -128,7 +128,7 @@ npm run build
 
 ### React Compiler
 ```typescript
-reactCompiler: true
+reactCompiler: true;
 ```
 
 Enables React 19's automatic memoization compiler.
@@ -168,7 +168,7 @@ Includes migration files in serverless output.
 
 ### Powered By Header
 ```typescript
-poweredByHeader: false
+poweredByHeader: false;
 ```
 
 Removes `X-Powered-By: Next.js` header.

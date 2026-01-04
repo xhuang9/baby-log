@@ -207,8 +207,12 @@ All third-party library configurations are centralized in `src/libs/`:
   **Read when:** Dealing with type errors, especially `| undefined` from array access
 
 - `.readme/chunks/architecture.breadcrumb-system.md`
-  **Purpose:** React Context-based breadcrumb and page title system with server/client component bridge pattern
-  **Read when:** Adding breadcrumbs or page titles to pages, understanding the BreadcrumbSetter/PageTitleSetter components, or working with AppHeader navigation
+  **Purpose:** Zustand-based breadcrumb and page title system with hook-based state management
+  **Read when:** Adding breadcrumbs or page titles to pages, understanding the useSetBreadcrumb/useSetPageTitle hooks, or working with AppHeader navigation
+
+- `.readme/chunks/architecture.mobile-back-button.md`
+  **Purpose:** Intelligent mobile back button navigation using breadcrumb hierarchy
+  **Read when:** Working with mobile navigation, understanding the back button logic, or debugging mobile header behavior
 
 ### Database Documentation
 - `.readme/sections/database.index.md`
@@ -250,12 +254,16 @@ All third-party library configurations are centralized in `src/libs/`:
 
 ### Authentication Documentation
 - `.readme/sections/authentication.index.md`
-  **Purpose:** Clerk authentication with locale-aware configuration
+  **Purpose:** Clerk authentication with locale-aware configuration and custom post-auth user sync
   **Read when:** Working with authentication, protected routes, or sign-in flows
 
 - `.readme/chunks/auth.clerk-layout-pattern.md`
   **Purpose:** ClerkProvider scoping to `(auth)` route group
   **Read when:** Understanding auth layout composition or adding protected pages
+
+- `.readme/chunks/auth.post-auth-flow.md`
+  **Purpose:** Custom post-authentication workflow that syncs Clerk user to local database and initializes client-side state (sessionStorage + Zustand)
+  **Read when:** Understanding the login flow, accessing user data in components, or debugging post-auth redirects
 
 - `.readme/chunks/auth.route-group-structure.md`
   **Purpose:** Nested `(auth)` and `(center)` route groups
@@ -295,6 +303,27 @@ All third-party library configurations are centralized in `src/libs/`:
 - `.readme/chunks/build.next-config-pattern.md`
   **Purpose:** Conditional plugin composition in next.config.ts
   **Read when:** Adding Next.js plugins or understanding build configuration
+
+### Performance & PWA Documentation
+- `.readme/sections/performance.index.md`
+  **Purpose:** PWA configuration, service worker caching, and loading states
+  **Read when:** Working with Progressive Web App features, offline support, or performance optimization
+
+- `.readme/chunks/performance.pwa-config.md`
+  **Purpose:** next-pwa service worker with multi-tier caching strategies
+  **Read when:** Configuring PWA behavior, adjusting cache duration, or understanding offline support
+
+- `.readme/chunks/performance.loading-states.md`
+  **Purpose:** Suspense-based loading.tsx pattern across route groups
+  **Read when:** Adding loading states to routes, understanding Suspense boundaries, or working with route-level loading UI
+
+- `.readme/chunks/performance.skeleton-components.md`
+  **Purpose:** Reusable skeleton components for loading states
+  **Read when:** Creating loading UI, building new skeleton patterns, or maintaining consistent loading experiences
+
+- `.readme/chunks/performance.pwa-manifest.md`
+  **Purpose:** PWA manifest configuration and installation behavior
+  **Read when:** Configuring app installation, setting start URL, or customizing PWA metadata
 
 ### Code Quality Documentation
 - `.readme/chunks/code-quality.typescript-strict.md`

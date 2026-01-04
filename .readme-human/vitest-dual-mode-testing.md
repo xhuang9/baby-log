@@ -12,7 +12,7 @@
   projects: [
     { test: { name: 'unit', include: ['src/**/*.test.{js,ts}'], environment: 'node' } },
     { test: { name: 'ui', include: ['**/*.test.tsx', 'src/hooks/**/*.test.ts'], browser: { enabled: true } } },
-  ]
+  ];
   ```
 - Test scripts: `package.json` (`test`)
   ```json
@@ -30,6 +30,7 @@
   ```ts
   // src/utils/sum.test.ts (unit / node)
   import { expect, test } from 'vitest';
+
   test('sum', () => expect(1 + 1).toBe(2));
   ```
   ```tsx
@@ -40,6 +41,7 @@
 
   test('renders', async () => {
     render(<Button>Click</Button>);
+
     await expect.element(screen.getByText('Click')).toBeInTheDocument();
   });
   ```

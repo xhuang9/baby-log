@@ -24,7 +24,8 @@ export default function Counter() {
       </div>
 
       <div className="mt-5 text-center text-sm">
-        Security, bot detection and rate limiting powered by{' '}
+        Security, bot detection and rate limiting powered by
+        {' '}
         <a
           className="text-blue-700 hover:border-b-2 hover:border-blue-700"
           href="https://launch.arcjet.com/Q6eLbRE"

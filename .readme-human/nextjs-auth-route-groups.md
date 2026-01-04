@@ -14,7 +14,7 @@
   }) {
     const { locale } = await params;
     setRequestLocale(locale);
-    return <ClerkProvider /* ... */>{children}</ClerkProvider>;
+    return <ClerkProvider>{children}</ClerkProvider>;
   }
   ```
 - Centered auth layout: `src/app/[locale]/(auth)/(center)/layout.tsx`

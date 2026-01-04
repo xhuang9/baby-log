@@ -38,6 +38,7 @@
   - `import { logger } from '@/libs/Logger'`
   ```ts
   import { logger } from '@/libs/Logger';
+
   logger.info('hello');
   ```
 - When adding a new integration:
@@ -47,6 +48,7 @@
   ```ts
   // src/libs/MyService.ts
   import { Env } from '@/libs/Env';
+
   export const myService = createClient({ apiKey: Env.MY_SERVICE_KEY });
   ```
 

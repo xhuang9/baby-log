@@ -22,8 +22,8 @@
   ```
 - ClerkProvider localization selection: `src/app/[locale]/(auth)/layout.tsx`
   ```tsx
-  const clerkLocale =
-    ClerkLocalizations.supportedLocales[locale] ?? ClerkLocalizations.defaultLocale;
+  const clerkLocale
+    = ClerkLocalizations.supportedLocales[locale] ?? ClerkLocalizations.defaultLocale;
 
   return <ClerkProvider localization={clerkLocale}>{props.children}</ClerkProvider>;
   ```

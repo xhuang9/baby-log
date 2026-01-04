@@ -17,7 +17,6 @@ export default async function AnalyticsPage(props: { params: Promise<{ locale: s
     <>
       <PageTitleSetter title="Analytics" />
       <div className="space-y-4">
-        <h1 className="text-2xl font-semibold">Analytics</h1>
         <p className="text-sm text-muted-foreground">Track trends and performance over time.</p>
       </div>
     </>

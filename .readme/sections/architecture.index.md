@@ -1,9 +1,9 @@
 ---
-last_verified_at: 2026-01-04T10:30:00Z
+last_verified_at: 2026-01-04T12:00:00Z
 source_paths:
   - src/app/[locale]/
   - src/libs/
-  - src/components/providers/
+  - src/stores/
   - src/components/navigation/
   - src/templates/
   - tsconfig.json
@@ -42,5 +42,9 @@ The architecture emphasizes separation of concerns and developer experience thro
   - Read when: Understanding type errors, configuring strictness, or adding new compiler options
 
 - `.readme/chunks/architecture.breadcrumb-system.md`
-  - Content: React Context-based breadcrumb and page title system with server/client component bridge pattern
-  - Read when: Adding breadcrumbs or page titles to pages, understanding the BreadcrumbSetter/PageTitleSetter pattern, or working with AppHeader integration
+  - Content: Zustand-based breadcrumb and page title system with hook-based state management
+  - Read when: Adding breadcrumbs or page titles to pages, understanding the useSetBreadcrumb/useSetPageTitle hooks, or working with AppHeader integration
+
+- `.readme/chunks/architecture.mobile-back-button.md`
+  - Content: Intelligent mobile back button navigation using breadcrumb hierarchy
+  - Read when: Working with mobile navigation, understanding the back button logic, or debugging mobile header behavior

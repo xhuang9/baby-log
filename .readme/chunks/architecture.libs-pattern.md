@@ -42,6 +42,7 @@ import { Env } from '@/libs/Env';
 
 ```typescript
 import { db } from '@/libs/DB';
+
 await db.select().from(counterSchema);
 ```
 
@@ -52,6 +53,7 @@ await db.select().from(counterSchema);
 
 ```typescript
 import { logger } from '@/libs/Logger';
+
 logger.info('Message');
 ```
 
@@ -76,6 +78,7 @@ import { Link } from '@/libs/I18nNavigation';
 
 ```typescript
 import arcjet from '@/libs/Arcjet';
+
 const aj = arcjet.withRule(/* ... */);
 ```
 
@@ -102,6 +105,7 @@ import { clerkAppearance } from '@/libs/ClerkTheme';
 Always import from `Env.ts`:
 ```typescript
 import { Env } from '@/libs/Env';
+
 const key = Env.CLERK_SECRET_KEY; // Typed and validated
 ```
 

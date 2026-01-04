@@ -36,7 +36,9 @@
   ```
 - Root locale layout: `src/app/[locale]/layout.tsx`
   ```tsx
-  if (!hasLocale(routing.locales, locale)) notFound();
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
   setRequestLocale(locale);
   return <NextIntlClientProvider>{props.children}</NextIntlClientProvider>;
   ```

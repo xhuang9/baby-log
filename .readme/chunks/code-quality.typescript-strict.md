@@ -39,10 +39,10 @@ Standard TypeScript assumes array access always succeeds. This option prevents r
 ```typescript
 // Object access
 const config: Record<string, string> = {};
-const value = config['key']; // string | undefined
+const value = config.key; // string | undefined
 
 // Safe access
-const value = config['key'] ?? 'default';
+const value = config.key ?? 'default';
 
 // Array methods
 const items = [1, 2, 3];
@@ -248,7 +248,7 @@ Can enable options one at a time:
 {
   "compilerOptions": {
     "strict": true,
-    "noUncheckedIndexedAccess": true, // Start here
+    "noUncheckedIndexedAccess": true // Start here
     // Add others incrementally
   }
 }
