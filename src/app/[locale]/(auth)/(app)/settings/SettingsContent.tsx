@@ -9,12 +9,6 @@ export function SettingsContent() {
 
   return (
     <div className="mr-auto max-w-2xl space-y-6">
-      <div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Manage your preferences, notifications, and account.
-        </p>
-      </div>
-
       <div className="space-y-1">
         {/* Account Section */}
         <Link

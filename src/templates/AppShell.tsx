@@ -24,7 +24,7 @@ export const AppShell = ({ children, locale, variant = 'default' }: AppShellProp
                 children
               )
             : (
-                <div className="bg-background-muted flex-1 rounded-xl border p-4 md:p-8">
+                <div className="flex-1 rounded-xl border p-4 md:p-8 bg-sidebar">
                   {children}
                 </div>
               )}
