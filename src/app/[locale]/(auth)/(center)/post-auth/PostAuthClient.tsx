@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import type { StoredUser } from '@/stores/useUserStore';
 import { useRouter } from 'next/navigation';
-import { useUserStore, type StoredUser } from '@/stores/useUserStore';
+import { useEffect } from 'react';
+import { useUserStore } from '@/stores/useUserStore';
 
 export function PostAuthClient(props: {
   user: StoredUser;
