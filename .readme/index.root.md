@@ -23,8 +23,12 @@ Read when: Working with database schema, migrations, DrizzleORM queries, or data
 Read when: Adding translations, working with locale-aware routes, or integrating i18n with authentication.
 
 ### `.readme/sections/authentication.index.md`
-**Clerk authentication with locale-aware configuration and custom post-auth user sync**
-Read when: Working with authentication flows, protected routes, accessing user data in components, or understanding the database sync workflow.
+**Clerk authentication with locale-aware configuration and custom account resolution**
+Read when: Working with Clerk authentication setup, protected routes, or understanding auth-to-account flow integration.
+
+### `.readme/sections/account-management.index.md`
+**Account resolution, baby multi-tenancy, and sharing system**
+Read when: Working with post-auth flows, baby selection, multi-baby management, invite acceptance, or understanding sessionStorage state sync patterns.
 
 ### `.readme/sections/configuration.index.md`
 **Centralized library configs and environment variables**

@@ -2,9 +2,14 @@
 
 import { Check, UserPlus, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {
+  approveAccessRequest,
+  rejectAccessRequest,
+} from '@/actions/accessRequestActions';
 import { acceptInvite } from '@/actions/babyActions';
 import { useBabyStore } from '@/stores/useBabyStore';
+import { AccessRequestApprovalDialog } from './AccessRequestApprovalDialog';
 
 type Invite = {
   id: number;
@@ -15,16 +20,36 @@ type Invite = {
   expiresAt: Date;
 };
 
+type AccessRequest = {
+  id: number;
+  requesterName: string | null;
+  requesterEmail: string | null;
+  message: string | null;
+  requestedAccessLevel: 'owner' | 'editor' | 'viewer';
+  createdAt: Date;
+};
+
 export function SharedBabyInvites(props: {
   invites: Invite[];
+  accessRequests: AccessRequest[];
   redirectPath: string;
 }) {
-  const { invites, redirectPath } = props;
+  const { invites, accessRequests, redirectPath } = props;
   const router = useRouter();
   const setActiveBaby = useBabyStore(state => state.setActiveBaby);
   const [acceptingId, setAcceptingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [acceptedIds, setAcceptedIds] = useState<Set<number>>(() => new Set());
+  const [selectedRequest, setSelectedRequest] = useState<AccessRequest | null>(null);
+  const [processedRequestIds, setProcessedRequestIds] = useState<Set<number>>(() => new Set());
+
+  // Auto-open dialog for first access request if any exist
+  useEffect(() => {
+    if (accessRequests.length > 0 && !selectedRequest) {
+      setSelectedRequest(accessRequests[0]!);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAccept = async (inviteId: number) => {
     setAcceptingId(inviteId);
@@ -55,9 +80,67 @@ export function SharedBabyInvites(props: {
     }
   };
 
+  const handleApproveRequest = async (babyId: number, accessLevel: 'owner' | 'editor' | 'viewer') => {
+    if (!selectedRequest)
+      return;
+
+    setError(null);
+
+    try {
+      const result = await approveAccessRequest({
+        requestId: selectedRequest.id,
+        babyId,
+        accessLevel,
+      });
+
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+
+      // Mark as processed
+      setProcessedRequestIds(prev => new Set(prev).add(selectedRequest.id));
+      setSelectedRequest(null);
+
+      // Reload page to refresh lists
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to approve request');
+    }
+  };
+
+  const handleRejectRequest = async () => {
+    if (!selectedRequest)
+      return;
+
+    setError(null);
+
+    try {
+      const result = await rejectAccessRequest({
+        requestId: selectedRequest.id,
+      });
+
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+
+      // Mark as processed
+      setProcessedRequestIds(prev => new Set(prev).add(selectedRequest.id));
+      setSelectedRequest(null);
+
+      // Reload page to refresh lists
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to reject request');
+    }
+  };
+
   const handleSkip = () => {
     router.replace(redirectPath);
   };
+
+  const pendingRequests = accessRequests.filter(r => !processedRequestIds.has(r.id));
 
   return (
     <div className="space-y-6">
@@ -67,8 +150,62 @@ export function SharedBabyInvites(props: {
         </div>
       )}
 
-      <div className="space-y-4">
-        {invites.map(invite => (
+      {/* Access Requests Section */}
+      {pendingRequests.length > 0 && (
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">Access Requests</h2>
+          {pendingRequests.map(request => (
+            <div
+              key={request.id}
+              className="rounded-lg border bg-card p-4 shadow-sm"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <UserPlus className="h-5 w-5 text-amber-600" />
+                    <h3 className="font-semibold">
+                      {request.requesterName || request.requesterEmail || 'Unknown'}
+                    </h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Requesting
+                    {' '}
+                    {request.requestedAccessLevel}
+                    {' '}
+                    access
+                  </p>
+                  {request.message && (
+                    <p className="text-sm italic text-muted-foreground">
+                      "
+                      {request.message}
+                      "
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    Sent on
+                    {' '}
+                    {new Date(request.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedRequest(request)}
+                  className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                >
+                  Review
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Invites Section */}
+      {invites.length > 0 && (
+        <div className="space-y-4">
+          {pendingRequests.length > 0 && <h2 className="text-lg font-semibold">Baby Invites</h2>}
+          {invites.map(invite => (
           <div
             key={invite.id}
             className="rounded-lg border bg-card p-4 shadow-sm"
@@ -117,8 +254,9 @@ export function SharedBabyInvites(props: {
               </div>
             </div>
           </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <div className="flex justify-center border-t pt-4">
         <button
@@ -131,6 +269,16 @@ export function SharedBabyInvites(props: {
           Skip for now
         </button>
       </div>
+
+      {/* Access Request Approval Dialog */}
+      {selectedRequest && (
+        <AccessRequestApprovalDialog
+          request={selectedRequest}
+          onApprove={handleApproveRequest}
+          onReject={handleRejectRequest}
+          onClose={() => setSelectedRequest(null)}
+        />
+      )}
     </div>
   );
 }

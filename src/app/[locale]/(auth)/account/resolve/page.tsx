@@ -26,6 +26,9 @@ export default async function AccountResolvePage(props: {
     case 'locked':
       redirectPath = getI18nPath('/account/locked', locale);
       break;
+    case 'requestAccess':
+      redirectPath = getI18nPath('/account/request-access', locale);
+      break;
     case 'shared':
       redirectPath = getI18nPath('/account/shared', locale);
       stateData = nextStep.invites;

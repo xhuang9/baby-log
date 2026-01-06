@@ -254,16 +254,16 @@ All third-party library configurations are centralized in `src/libs/`:
 
 ### Authentication Documentation
 - `.readme/sections/authentication.index.md`
-  **Purpose:** Clerk authentication with locale-aware configuration and custom post-auth user sync
-  **Read when:** Working with authentication, protected routes, or sign-in flows
+  **Purpose:** Clerk authentication with locale-aware configuration and custom account resolution
+  **Read when:** Working with Clerk setup, protected routes, or understanding auth-to-account flow
 
 - `.readme/chunks/auth.clerk-layout-pattern.md`
   **Purpose:** ClerkProvider scoping to `(auth)` route group
   **Read when:** Understanding auth layout composition or adding protected pages
 
 - `.readme/chunks/auth.post-auth-flow.md`
-  **Purpose:** Custom post-authentication workflow that syncs Clerk user to local database and initializes client-side state (sessionStorage + Zustand)
-  **Read when:** Understanding the login flow, accessing user data in components, or debugging post-auth redirects
+  **Purpose:** Legacy post-authentication workflow (SUPERSEDED by account resolution)
+  **Read when:** Understanding historical implementation or migration context
 
 - `.readme/chunks/auth.route-group-structure.md`
   **Purpose:** Nested `(auth)` and `(center)` route groups
@@ -272,6 +272,27 @@ All third-party library configurations are centralized in `src/libs/`:
 - `.readme/chunks/auth.tailwind-compatibility.md`
   **Purpose:** Clerk + Tailwind CSS v4 CSS layer compatibility
   **Read when:** Styling Clerk components or resolving CSS conflicts
+
+### Account Management Documentation
+- `.readme/sections/account-management.index.md`
+  **Purpose:** Account resolution flow, baby multi-tenancy, and sharing system
+  **Read when:** Working with post-auth flows, baby selection, multi-baby management, or invite acceptance
+
+- `.readme/chunks/account.resolution-flow.md`
+  **Purpose:** Custom account resolution decision tree that determines post-auth routing
+  **Read when:** Understanding post-auth flow, adding account states, or debugging redirect loops
+
+- `.readme/chunks/account.baby-multi-tenancy.md`
+  **Purpose:** Multi-baby tracking with access control, default baby selection, and shared access patterns
+  **Read when:** Working with baby queries, implementing baby-scoped features, or understanding access levels
+
+- `.readme/chunks/account.state-sync-pattern.md`
+  **Purpose:** Zustand + sessionStorage synchronization for PWA-safe state management
+  **Read when:** Adding client state, debugging hydration issues, or understanding sessionStorage usage
+
+- `.readme/chunks/account.baby-sharing.md`
+  **Purpose:** Token-based baby invite system and access request workflows
+  **Read when:** Implementing sharing features, working with baby_invites table, or debugging invite flows
 
 ### Configuration Documentation
 - `.readme/sections/configuration.index.md`

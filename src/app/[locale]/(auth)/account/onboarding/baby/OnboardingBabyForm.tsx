@@ -194,6 +194,18 @@ export function OnboardingBabyForm(props: { redirectPath: string }) {
       >
         {isSubmitting ? 'Creating...' : 'Continue to Dashboard'}
       </button>
+
+      <div className="text-center">
+        <p className="text-sm text-muted-foreground">
+          Or{' '}
+          <a
+            href="/account/request-access"
+            className="font-medium text-primary hover:underline"
+          >
+            request access to an existing baby
+          </a>
+        </p>
+      </div>
     </form>
   );
 }

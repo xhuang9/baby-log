@@ -57,10 +57,18 @@ export const inviteStatusEnum = pgEnum('invite_status_enum', [
   'expired',
 ]);
 
+export const accessRequestStatusEnum = pgEnum('access_request_status_enum', [
+  'pending',
+  'approved',
+  'rejected',
+  'canceled',
+]);
+
 // Tables
 // Note: Circular references between userSchema and babiesSchema are intentional
 // This is a valid Drizzle ORM pattern - TypeScript strict checks may show errors
 // but the code will work correctly at runtime
+// @ts-expect-error - TS7022: Circular reference is intentional and required for database relationships
 export const userSchema = pgTable('user', {
   id: serial('id').primaryKey(),
   clerkId: text('clerk_id').unique(), // e.g. user_2ZJHkQ9mA3xYp8RZqWcT1
@@ -76,6 +84,7 @@ export const userSchema = pgTable('user', {
   ...timestamps,
 });
 
+// @ts-expect-error - TS7022: Circular reference is intentional and required for database relationships
 export const babiesSchema = pgTable('babies', {
   id: serial('id').primaryKey(),
   // @ts-expect-error - Circular reference is intentional in Drizzle
@@ -145,4 +154,23 @@ export const babyInvitesSchema = pgTable('baby_invites', {
   index('baby_invites_token_idx').on(t.token),
   index('baby_invites_invited_email_idx').on(t.invitedEmail),
   index('baby_invites_invited_user_id_idx').on(t.invitedUserId),
+]);
+
+export const babyAccessRequestsSchema = pgTable('baby_access_requests', {
+  id: serial('id').primaryKey(),
+  requesterUserId: integer('requester_user_id').references(() => userSchema.id).notNull(),
+  targetEmail: text('target_email').notNull(), // lowercase normalized
+  targetUserId: integer('target_user_id').references(() => userSchema.id),
+  requestedAccessLevel: accessLevelEnum('requested_access_level').notNull().default('viewer'),
+  message: text('message'),
+  status: accessRequestStatusEnum('status').notNull().default('pending'),
+  resolvedBabyId: integer('resolved_baby_id').references(() => babiesSchema.id),
+  resolvedByUserId: integer('resolved_by_user_id').references(() => userSchema.id),
+  resolvedAt: timestamp('resolved_at', { withTimezone: true }),
+  ...timestamps,
+}, t => [
+  index('baby_access_requests_target_email_idx').on(t.targetEmail),
+  index('baby_access_requests_target_user_id_idx').on(t.targetUserId),
+  index('baby_access_requests_requester_user_id_idx').on(t.requesterUserId),
+  index('baby_access_requests_status_idx').on(t.status),
 ]);

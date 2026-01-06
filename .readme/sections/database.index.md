@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2025-12-31T15:30:00Z
+last_verified_at: 2026-01-06T00:30:00Z
 source_paths:
   - src/models/Schema.ts
   - src/libs/DB.ts
@@ -18,8 +18,12 @@ The database layer uses DrizzleORM with PostgreSQL and implements several non-st
 - Global connection singleton pattern to prevent hot-reload issues in development
 - Dual database mode: temporary Neon instances for dev, persistent for production
 - Custom PGlite server options for local/in-memory development
+- Multi-baby tracking with junction tables for access control (baby_access, baby_invites)
+- Soft deletes via nullable timestamp columns (archivedAt)
 
 All database operations are type-safe with automatic type generation from the schema.
+
+**Note:** For baby-specific multi-tenancy patterns, see `.readme/sections/account-management.index.md`.
 
 ## Chunks
 

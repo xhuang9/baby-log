@@ -29,6 +29,13 @@
       "when": 1767613251263,
       "tag": "0003_thin_patch",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1767678162138,
+      "tag": "0004_brave_lionheart",
+      "breakpoints": true
     }
   ]
 }

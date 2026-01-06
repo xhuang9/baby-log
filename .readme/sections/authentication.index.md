@@ -1,26 +1,28 @@
 ---
-last_verified_at: 2026-01-05T10:30:00Z
+last_verified_at: 2026-01-06T00:30:00Z
 source_paths:
   - src/app/[locale]/(auth)/layout.tsx
   - src/app/[locale]/(auth)/(center)/layout.tsx
-  - src/app/[locale]/(auth)/(center)/post-auth/page.tsx
+  - src/app/[locale]/(auth)/account/resolve/
   - src/utils/AppConfig.ts
 ---
 
 # Authentication Overview
 
 ## Purpose
-Covers Clerk authentication setup with locale-aware configuration, protected route patterns, and custom post-auth user sync workflow.
+Covers Clerk authentication setup with locale-aware configuration, protected route patterns, and custom account resolution workflow.
 
 ## Scope
-Authentication is handled by Clerk with custom configuration:
+Authentication is handled by Clerk with extensive custom configuration:
 - Locale-specific sign-in/sign-up URLs calculated at layout level
 - ClerkProvider wraps only authenticated routes via `(auth)` route group
 - Centered layout for auth pages via nested `(center)` route group
 - Tailwind CSS v4 compatibility via custom CSS layer configuration
-- Post-auth redirect flow that syncs user data to local database and client state
+- Custom account resolution flow (replaces standard post-auth redirect)
 
-The auth setup is deeply integrated with the i18n system for URL generation and includes a two-phase redirect pattern for database synchronization.
+The auth setup is deeply integrated with the i18n system for URL generation and includes a sophisticated decision-tree flow for account initialization and baby selection.
+
+**IMPORTANT:** The post-auth flow has been replaced with `/account/resolve` - see Account Management section for details.
 
 ## Chunks
 
@@ -29,8 +31,8 @@ The auth setup is deeply integrated with the i18n system for URL generation and 
   - Read when: Working with protected routes, configuring Clerk, or debugging auth redirects
 
 - `.readme/chunks/auth.post-auth-flow.md`
-  - Content: Custom post-authentication workflow that syncs Clerk user to local database and initializes client-side state
-  - Read when: Understanding the login flow, accessing user data in components, or debugging post-auth redirects
+  - Content: Legacy post-authentication workflow (SUPERSEDED by account resolution flow)
+  - Read when: Understanding historical implementation or migrating from old pattern
 
 - `.readme/chunks/auth.route-group-structure.md`
   - Content: The `(auth)` and `(center)` route group pattern for authentication pages
@@ -39,3 +41,7 @@ The auth setup is deeply integrated with the i18n system for URL generation and 
 - `.readme/chunks/auth.tailwind-compatibility.md`
   - Content: Custom CSS layer configuration for Clerk + Tailwind CSS v4 compatibility
   - Read when: Styling Clerk components, resolving CSS conflicts, or upgrading Clerk
+
+## Related Sections
+
+See `.readme/sections/account-management.index.md` for the current post-auth flow implementation, including account resolution, baby selection, and invite acceptance workflows.

@@ -3,11 +3,12 @@
 import type { ActiveBaby } from '@/stores/useBabyStore';
 import type { StoredUser } from '@/stores/useUserStore';
 import { auth, clerkClient } from '@clerk/nextjs/server';
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, or, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { db } from '@/libs/DB';
 import {
   babiesSchema,
+  babyAccessRequestsSchema,
   babyAccessSchema,
   babyInvitesSchema,
   userSchema,
@@ -18,6 +19,7 @@ type ResolveAccountResult = {
   user: StoredUser;
   nextStep:
     | { type: 'locked' }
+    | { type: 'requestAccess' }
     | { type: 'shared'; invites: Array<{ id: number; babyName: string; inviterEmail: string }> }
     | { type: 'onboarding' }
     | { type: 'select'; babies: Array<ActiveBaby> }
@@ -57,11 +59,12 @@ export async function resolveAccountContext(): Promise<ResolveAccountResult> {
       })
       .returning();
 
-    if (!userResult || userResult.length === 0) {
+    const userArray = Array.isArray(userResult) ? userResult : [];
+    if (userArray.length === 0) {
       return { success: false, error: 'Failed to create or update user' };
     }
 
-    const localUser = userResult[0]!;
+    const localUser = userArray[0]!;
 
     const user: StoredUser = {
       id: clerkUser.id,
@@ -118,24 +121,59 @@ export async function resolveAccountContext(): Promise<ResolveAccountResult> {
         ),
       );
 
-    // If no babies and has pending invites, go to shared page
-    if (babyAccess.length === 0 && pendingInvites.length > 0) {
-      return {
-        success: true,
-        user,
-        nextStep: {
-          type: 'shared',
-          invites: pendingInvites.map(inv => ({
-            id: inv.id,
-            babyName: inv.babyName,
-            inviterEmail: inv.inviterEmail ?? 'Unknown',
-          })),
-        },
-      };
-    }
-
-    // If no babies at all, go to onboarding
+    // If no babies, check for access requests and invites
     if (babyAccess.length === 0) {
+      // Check for outgoing pending access requests
+      const outgoingRequests = await db
+        .select()
+        .from(babyAccessRequestsSchema)
+        .where(
+          and(
+            eq(babyAccessRequestsSchema.requesterUserId, localUser.id),
+            eq(babyAccessRequestsSchema.status, 'pending'),
+          ),
+        )
+        .limit(1);
+
+      if (outgoingRequests.length > 0) {
+        return {
+          success: true,
+          user,
+          nextStep: { type: 'requestAccess' },
+        };
+      }
+
+      // Check for incoming pending access requests
+      const incomingRequests = await db
+        .select()
+        .from(babyAccessRequestsSchema)
+        .where(
+          and(
+            or(
+              eq(babyAccessRequestsSchema.targetUserId, localUser.id),
+              eq(babyAccessRequestsSchema.targetEmail, email?.toLowerCase() ?? ''),
+            ),
+            eq(babyAccessRequestsSchema.status, 'pending'),
+          ),
+        )
+        .limit(1);
+
+      if (incomingRequests.length > 0 || pendingInvites.length > 0) {
+        return {
+          success: true,
+          user,
+          nextStep: {
+            type: 'shared',
+            invites: pendingInvites.map(inv => ({
+              id: inv.id,
+              babyName: inv.babyName,
+              inviterEmail: inv.inviterEmail ?? 'Unknown',
+            })),
+          },
+        };
+      }
+
+      // No requests or invites, go to onboarding
       return {
         success: true,
         user,
@@ -259,11 +297,12 @@ export async function createBaby(data: {
       })
       .returning();
 
-    if (!babyResult || babyResult.length === 0) {
+    const babyArray = Array.isArray(babyResult) ? babyResult : [];
+    if (babyArray.length === 0) {
       return { success: false, error: 'Failed to create baby' };
     }
 
-    const baby = babyResult[0]!;
+    const baby = babyArray[0]!;
 
     // Create owner access
     await db.insert(babyAccessSchema).values({

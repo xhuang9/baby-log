@@ -1,5 +1,6 @@
 ---
 last_verified_at: 2026-01-05T10:30:00Z
+expired_reason: "Replaced by /account/resolve flow - see account.resolution-flow.md"
 source_paths:
   - src/app/[locale]/(auth)/(center)/post-auth/page.tsx
   - src/app/[locale]/(auth)/(center)/post-auth/PostAuthClient.tsx
@@ -9,6 +10,8 @@ source_paths:
 ---
 
 # Post-Authentication Flow
+
+**⚠️ EXPIRED**: This documentation describes the legacy post-auth implementation that has been replaced by the account resolution flow. See `.readme/chunks/account.resolution-flow.md` for current implementation.
 
 ## Purpose
 Custom post-authentication workflow that syncs Clerk user data to local database and initializes client-side state before redirecting to dashboard.

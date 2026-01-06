@@ -1,10 +1,10 @@
 import type { Appearance } from '@clerk/types';
-import { dark } from '@clerk/themes';
+import { shadcn } from '@clerk/themes';
 
 // Shadcn theme for Clerk components
 // Uses CSS variables that automatically respond to light/dark mode changes
 export const clerkAppearance: Appearance = {
-  baseTheme: dark,
+  baseTheme: shadcn,
   variables: {
     // Use CSS variables from global.css - these automatically update when theme changes
     colorPrimary: 'var(--primary)',
