@@ -14,8 +14,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '../ui/breadcrumb';
-import { SidebarTrigger } from '../ui/sidebar';
 import { Button } from '../ui/button';
+import { SidebarTrigger } from '../ui/sidebar';
 
 const userProfileProps = {
   appearance: {

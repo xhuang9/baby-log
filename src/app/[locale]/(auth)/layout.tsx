@@ -23,15 +23,13 @@ export default async function AuthLayout(props: {
   const clerkLocale = ClerkLocalizations.supportedLocales[locale] ?? ClerkLocalizations.defaultLocale;
   let signInUrl = '/sign-in';
   let signUpUrl = '/sign-up';
-  let dashboardUrl = '/dashboard';
-  let postAuthUrl = '/post-auth';
+  let accountResolveUrl = '/account/resolve';
   let afterSignOutUrl = '/';
 
   if (locale !== routing.defaultLocale) {
     signInUrl = `/${locale}${signInUrl}`;
     signUpUrl = `/${locale}${signUpUrl}`;
-    dashboardUrl = `/${locale}${dashboardUrl}`;
-    postAuthUrl = `/${locale}${postAuthUrl}`;
+    accountResolveUrl = `/${locale}${accountResolveUrl}`;
     afterSignOutUrl = `/${locale}${afterSignOutUrl}`;
   }
 
@@ -47,8 +45,8 @@ export default async function AuthLayout(props: {
       localization={clerkLocale}
       signInUrl={signInUrl}
       signUpUrl={signUpUrl}
-      signInFallbackRedirectUrl={postAuthUrl}
-      signUpFallbackRedirectUrl={postAuthUrl}
+      signInFallbackRedirectUrl={accountResolveUrl}
+      signUpFallbackRedirectUrl={accountResolveUrl}
       afterSignOutUrl={afterSignOutUrl}
     >
       {props.children}

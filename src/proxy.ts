@@ -17,8 +17,8 @@ const isProtectedRoute = createRouteMatcher([
   '/:locale/activities(.*)',
   '/analytics(.*)',
   '/:locale/analytics(.*)',
-  '/post-auth(.*)',
-  '/:locale/post-auth(.*)',
+  '/account(.*)',
+  '/:locale/account(.*)',
 ]);
 
 const isAuthPage = createRouteMatcher([

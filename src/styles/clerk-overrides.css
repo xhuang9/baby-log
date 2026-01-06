@@ -9,4 +9,16 @@
   .cl-userButtonAvatarBox span {
     display: none !important;
   }
+
+  .cl-avatarImageActionsUpload {
+    color: var(--text-muted-foreground) !important;
+  }
+
+  .cl-userButtonPopoverActionButton {
+    color: var(--text-muted-foreground) !important;
+  }
+
+  .cl-userButtonPopoverActionButton__manageAccount cl-button__manageAccount {
+    color: var(--text-muted-foreground) !important;
+  }
 }
