@@ -28,6 +28,8 @@ export default antfu(
     // Ignored paths
     ignores: [
       'migrations/**/*',
+      '.readme-human/**/*',
+      '.readme/**/*',
     ],
   },
   // --- Accessibility Rules ---

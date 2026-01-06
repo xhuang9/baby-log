@@ -111,10 +111,10 @@ export function PostAuthClient({ user, redirectTo }) {
 ### User Payload Schema
 ```typescript
 type StoredUser = {
-  id: string;              // Clerk user ID
+  id: string; // Clerk user ID
   firstName: string | null;
   email: string | null;
-  imageUrl: string;        // Clerk profile image URL
+  imageUrl: string; // Clerk profile image URL
 };
 ```
 

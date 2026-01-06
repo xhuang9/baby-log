@@ -38,7 +38,7 @@ Configures Progressive Web App installation behavior, appearance, and metadata f
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-</head>
+</head>;
 ```
 
 ## Configuration Options

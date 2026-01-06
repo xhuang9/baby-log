@@ -21,21 +21,21 @@ Provides reusable skeleton UI components for consistent loading states across th
 #### 1. PageHeaderSkeleton
 **Use Case**: Page titles and descriptions
 ```tsx
-<PageHeaderSkeleton />
+<PageHeaderSkeleton />;
 ```
 **Output**: Title line (200px) + description lines (full width)
 
 #### 2. CardSkeleton
 **Use Case**: Card-based content blocks
 ```tsx
-<CardSkeleton />
+<CardSkeleton />;
 ```
 **Output**: Card container with header + content lines
 
 #### 3. ListSkeleton
 **Use Case**: List items with avatars/icons
 ```tsx
-<ListSkeleton count={5} />
+<ListSkeleton count={5} />;
 ```
 **Props**:
 - `count?: number` - Number of list items (default: 3)
@@ -45,7 +45,7 @@ Provides reusable skeleton UI components for consistent loading states across th
 #### 4. TableSkeleton
 **Use Case**: Tabular data
 ```tsx
-<TableSkeleton rows={5} columns={4} />
+<TableSkeleton rows={5} columns={4} />;
 ```
 **Props**:
 - `rows?: number` - Number of table rows (default: 3)
@@ -56,7 +56,7 @@ Provides reusable skeleton UI components for consistent loading states across th
 #### 5. ChartSkeleton
 **Use Case**: Chart/graph placeholders
 ```tsx
-<ChartSkeleton />
+<ChartSkeleton />;
 ```
 **Output**: Rectangular chart container with pulse animation
 
@@ -67,7 +67,7 @@ Provides reusable skeleton UI components for consistent loading states across th
 // Dashboard loading state
 export default function DashboardLoading() {
   return (
-    <div className="animate-in fade-in duration-200">
+    <div className="animate-in duration-200 fade-in">
       <PageHeaderSkeleton />
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

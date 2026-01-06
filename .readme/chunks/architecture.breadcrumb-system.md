@@ -52,8 +52,8 @@ type BreadcrumbStore = {
 **Usage:**
 ```typescript
 type BreadcrumbItem = {
-  label: string;    // Display text
-  href?: string;    // Optional link (last item typically omitted for current page)
+  label: string; // Display text
+  href?: string; // Optional link (last item typically omitted for current page)
 };
 
 useSetBreadcrumb([
