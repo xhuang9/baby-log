@@ -71,7 +71,7 @@ export default async function SelectBabyPage(props: {
         <SelectBabyForm
           babies={babies}
           currentDefaultId={localUser.defaultBabyId}
-          redirectPath={getI18nPath('/dashboard', locale)}
+          redirectPath={getI18nPath('/overview', locale)}
         />
       </div>
     </div>

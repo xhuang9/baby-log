@@ -52,7 +52,7 @@ export function SelectBabyForm(props: {
       // Set baby in store
       setActiveBaby(result.baby);
 
-      // Redirect to dashboard
+      // Redirect to overview
       router.replace(redirectPath);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to select baby');
@@ -157,7 +157,7 @@ export function SelectBabyForm(props: {
         disabled={isSubmitting || !selectedId}
         className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
       >
-        {isSubmitting ? 'Switching...' : 'Continue to Dashboard'}
+        {isSubmitting ? 'Switching...' : 'Continue to Overview'}
       </button>
     </form>
   );

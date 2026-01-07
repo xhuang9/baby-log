@@ -1,7 +1,12 @@
 import type { LucideIcon } from 'lucide-react';
-import { Activity, BarChart3, Home, Settings } from 'lucide-react';
+import {
+  LayoutGrid,
+  LineChart,
+  List,
+  Sliders,
+} from 'lucide-react';
 
-export type AppNavKey = 'dashboard' | 'activities' | 'analytics' | 'settings';
+export type AppNavKey = 'overview' | 'logs' | 'insights' | 'settings';
 
 export type AppNavItem = {
   key: AppNavKey;
@@ -12,27 +17,27 @@ export type AppNavItem = {
 
 export const appNavItems: AppNavItem[] = [
   {
-    key: 'dashboard',
-    label: 'Dashboard',
-    href: '/dashboard',
-    icon: Home,
+    key: 'overview',
+    label: 'Overview',
+    href: '/overview',
+    icon: LayoutGrid,
   },
   {
-    key: 'activities',
-    label: 'Activities',
-    href: '/activities',
-    icon: Activity,
+    key: 'logs',
+    label: 'Logs',
+    href: '/logs',
+    icon: List,
   },
   {
-    key: 'analytics',
-    label: 'Analytics',
-    href: '/analytics',
-    icon: BarChart3,
+    key: 'insights',
+    label: 'Insights',
+    href: '/insights',
+    icon: LineChart,
   },
   {
     key: 'settings',
     label: 'Settings',
     href: '/settings',
-    icon: Settings,
+    icon: Sliders,
   },
 ];

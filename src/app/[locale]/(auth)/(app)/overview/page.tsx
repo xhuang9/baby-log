@@ -13,13 +13,13 @@ export async function generateMetadata(props: {
   await props.params;
 
   return {
-    title: 'Dashboard',
+    title: 'Overview',
   };
 }
 
 export const dynamic = 'force-dynamic';
 
-export default async function Dashboard(props: {
+export default async function OverviewPage(props: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await props.params;
@@ -70,7 +70,7 @@ export default async function Dashboard(props: {
 
   return (
     <>
-      <PageTitleSetter title="Dashboard" />
+      <PageTitleSetter title="Overview" />
       <div className="space-y-6">
         <div className="rounded-lg border bg-card p-6">
           <h2 className="mb-2 text-xl font-bold">{babyAccess.name}</h2>
@@ -94,9 +94,9 @@ export default async function Dashboard(props: {
         </div>
 
         <div className="rounded-lg border bg-card p-6">
-          <h3 className="mb-4 text-lg font-semibold">Recent Activity</h3>
+          <h3 className="mb-4 text-lg font-semibold">Latest Logs</h3>
           <p className="text-sm text-muted-foreground">
-            Feed logs and activity tracking will appear here
+            Recent entries and quick add shortcuts will appear here
           </p>
         </div>
       </div>

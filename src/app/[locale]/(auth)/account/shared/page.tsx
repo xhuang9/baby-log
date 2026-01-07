@@ -102,7 +102,7 @@ export default async function SharedBabyPage(props: {
         <SharedBabyInvites
           invites={invites}
           accessRequests={accessRequests}
-          redirectPath={getI18nPath('/dashboard', locale)}
+          redirectPath={getI18nPath('/overview', locale)}
         />
       </div>
     </div>

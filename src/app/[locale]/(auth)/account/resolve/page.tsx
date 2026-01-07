@@ -40,18 +40,18 @@ export default async function AccountResolvePage(props: {
       redirectPath = getI18nPath('/account/select-baby', locale);
       stateData = nextStep.babies;
       break;
-    case 'dashboard':
-      redirectPath = getI18nPath('/dashboard', locale);
+    case 'overview':
+      redirectPath = getI18nPath('/overview', locale);
       stateData = nextStep.baby;
       break;
     default:
-      redirectPath = getI18nPath('/dashboard', locale);
+      redirectPath = getI18nPath('/overview', locale);
   }
 
   return (
     <ResolveAccountClient
       user={user}
-      baby={nextStep.type === 'dashboard' ? nextStep.baby : null}
+      baby={nextStep.type === 'overview' ? nextStep.baby : null}
       redirectPath={redirectPath}
       stateData={stateData}
     />

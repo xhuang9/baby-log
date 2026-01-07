@@ -23,7 +23,7 @@ type ResolveAccountResult = {
     | { type: 'shared'; invites: Array<{ id: number; babyName: string; inviterEmail: string }> }
     | { type: 'onboarding' }
     | { type: 'select'; babies: Array<ActiveBaby> }
-    | { type: 'dashboard'; baby: ActiveBaby };
+    | { type: 'overview'; baby: ActiveBaby };
 } | {
   success: false;
   error: string;
@@ -205,7 +205,7 @@ export async function resolveAccountContext(): Promise<ResolveAccountResult> {
       };
     }
 
-    // If exactly one baby or default is set, go to dashboard
+    // If exactly one baby or default is set, go to overview
     if (babyAccess.length === 1 || defaultBaby) {
       const activeBaby: ActiveBaby = {
         babyId: defaultBaby.babyId,
@@ -228,7 +228,7 @@ export async function resolveAccountContext(): Promise<ResolveAccountResult> {
       return {
         success: true,
         user,
-        nextStep: { type: 'dashboard', baby: activeBaby },
+        nextStep: { type: 'overview', baby: activeBaby },
       };
     }
 
@@ -319,7 +319,7 @@ export async function createBaby(data: {
       .set({ defaultBabyId: baby.id })
       .where(eq(userSchema.id, localUser.id));
 
-    revalidatePath('/dashboard');
+    revalidatePath('/overview');
 
     return {
       success: true,
@@ -436,7 +436,7 @@ export async function acceptInvite(inviteId: number): Promise<AcceptInviteResult
         .where(eq(userSchema.id, localUser.id));
     }
 
-    revalidatePath('/dashboard');
+    revalidatePath('/overview');
 
     return {
       success: true,
@@ -449,6 +449,108 @@ export async function acceptInvite(inviteId: number): Promise<AcceptInviteResult
     };
   } catch (error) {
     console.error('Error accepting invite:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+type UpdateBabyResult
+  = | { success: true }
+    | { success: false; error: string };
+
+export async function updateBaby(
+  babyId: number,
+  data: {
+    name?: string;
+    birthDate?: Date | null;
+    gender?: 'male' | 'female' | 'other' | 'unknown' | null;
+    birthWeightG?: number | null;
+    caregiverLabel?: string | null;
+  },
+): Promise<UpdateBabyResult> {
+  const { userId } = await auth();
+  if (!userId) {
+    return { success: false, error: 'Not authenticated' };
+  }
+
+  try {
+    const [localUser] = await db
+      .select()
+      .from(userSchema)
+      .where(eq(userSchema.clerkId, userId))
+      .limit(1);
+
+    if (!localUser) {
+      return { success: false, error: 'User not found' };
+    }
+
+    // Verify user has owner or editor access to this baby
+    const [access] = await db
+      .select({
+        accessLevel: babyAccessSchema.accessLevel,
+      })
+      .from(babyAccessSchema)
+      .innerJoin(babiesSchema, eq(babyAccessSchema.babyId, babiesSchema.id))
+      .where(
+        and(
+          eq(babyAccessSchema.userId, localUser.id),
+          eq(babyAccessSchema.babyId, babyId),
+          sql`${babiesSchema.archivedAt} IS NULL`,
+        ),
+      )
+      .limit(1);
+
+    if (!access) {
+      return { success: false, error: 'You do not have access to this baby' };
+    }
+
+    if (access.accessLevel === 'viewer') {
+      return { success: false, error: 'You do not have permission to edit this baby' };
+    }
+
+    // Update baby details
+    const updateData: Record<string, unknown> = {};
+    if (data.name !== undefined) {
+      updateData.name = data.name;
+    }
+    if (data.birthDate !== undefined) {
+      updateData.birthDate = data.birthDate;
+    }
+    if (data.gender !== undefined) {
+      updateData.gender = data.gender;
+    }
+    if (data.birthWeightG !== undefined) {
+      updateData.birthWeightG = data.birthWeightG;
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      await db
+        .update(babiesSchema)
+        .set(updateData)
+        .where(eq(babiesSchema.id, babyId));
+    }
+
+    // Update caregiver label if provided
+    if (data.caregiverLabel !== undefined) {
+      await db
+        .update(babyAccessSchema)
+        .set({ caregiverLabel: data.caregiverLabel })
+        .where(
+          and(
+            eq(babyAccessSchema.babyId, babyId),
+            eq(babyAccessSchema.userId, localUser.id),
+          ),
+        );
+    }
+
+    revalidatePath('/settings');
+    revalidatePath('/overview');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating baby:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -517,7 +619,7 @@ export async function setDefaultBaby(babyId: number): Promise<SetDefaultBabyResu
         ),
       );
 
-    revalidatePath('/dashboard');
+    revalidatePath('/overview');
     revalidatePath('/account/select-baby');
 
     return {

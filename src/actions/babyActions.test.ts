@@ -254,7 +254,7 @@ describe('babyActions', () => {
       }
     });
 
-    it('should redirect to dashboard with default baby if one baby exists', async () => {
+    it('should redirect to overview with default baby if one baby exists', async () => {
       const { auth, clerkClient } = await import('@clerk/nextjs/server');
       const { db } = await import('@/libs/DB');
 
@@ -335,7 +335,7 @@ describe('babyActions', () => {
 
       expect(result.success).toBe(true);
 
-      if (result.success && result.nextStep.type === 'dashboard') {
+      if (result.success && result.nextStep.type === 'overview') {
         expect(result.nextStep.baby).toEqual({
           babyId: 1,
           name: 'Baby One',

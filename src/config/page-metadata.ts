@@ -7,20 +7,20 @@ export type PageMetadata = {
 };
 
 export const pageMetadata: Record<AppNavKey, PageMetadata> = {
-  dashboard: {
-    key: 'dashboard',
+  overview: {
+    key: 'overview',
     titleKey: 'title',
-    namespace: 'Dashboard',
+    namespace: 'Overview',
   },
-  activities: {
-    key: 'activities',
+  logs: {
+    key: 'logs',
     titleKey: 'title',
-    namespace: 'Activities',
+    namespace: 'Logs',
   },
-  analytics: {
-    key: 'analytics',
+  insights: {
+    key: 'insights',
     titleKey: 'title',
-    namespace: 'Analytics',
+    namespace: 'Insights',
   },
   settings: {
     key: 'settings',

@@ -70,7 +70,7 @@ export function SharedBabyInvites(props: {
       // Set baby in store
       setActiveBaby(result.baby);
 
-      // Redirect to dashboard after a brief delay
+      // Redirect to overview after a brief delay
       setTimeout(() => {
         router.replace(redirectPath);
       }, 1500);

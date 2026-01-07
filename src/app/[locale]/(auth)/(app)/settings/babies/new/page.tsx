@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { PageTitleSetter } from '@/components/navigation/PageTitleSetter';
+import { BreadcrumbSetter } from '@/components/navigation/BreadcrumbSetter';
 import { getI18nPath } from '@/utils/Helpers';
 import { NewBabyForm } from './NewBabyForm';
 
@@ -20,7 +20,12 @@ export default async function NewBabyPage(props: {
 
   return (
     <>
-      <PageTitleSetter title="Add Baby" />
+      <BreadcrumbSetter
+        items={[
+          { label: 'Settings', href: getI18nPath('/settings', locale) },
+          { label: 'Add Baby' },
+        ]}
+      />
       <div className="mr-auto max-w-2xl space-y-6">
         <div className="space-y-2">
           <h1 className="text-2xl font-bold">Add a Baby</h1>
@@ -30,7 +35,7 @@ export default async function NewBabyPage(props: {
         </div>
 
         <NewBabyForm
-          redirectPath={getI18nPath('/settings/babies', locale)}
+          redirectPath={getI18nPath('/settings', locale)}
         />
       </div>
     </>

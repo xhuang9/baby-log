@@ -7,17 +7,17 @@ export async function generateMetadata(props: {
   await props.params;
 
   return {
-    title: 'Activities',
+    title: 'Insights',
   };
 }
 
-export default async function ActivitiesPage(props: { params: Promise<{ locale: string }> }) {
+export default async function InsightsPage(props: { params: Promise<{ locale: string }> }) {
   await props.params;
   return (
     <>
-      <PageTitleSetter title="Activities" />
+      <PageTitleSetter title="Insights" />
       <div className="space-y-4">
-        <p className="text-sm text-muted-foreground">Review recent sessions, highlights, and daily logs.</p>
+        <p className="text-sm text-muted-foreground">Spot patterns and compare logs at a glance.</p>
       </div>
     </>
   );

@@ -294,6 +294,19 @@ All third-party library configurations are centralized in `src/libs/`:
   **Purpose:** Token-based baby invite system and access request workflows
   **Read when:** Implementing sharing features, working with baby_invites table, or debugging invite flows
 
+### Baby Management Documentation
+- `.readme/sections/baby-management.index.md`
+  **Purpose:** Baby management UI, editing, and multi-baby switching patterns
+  **Read when:** Building or modifying the baby list interface, implementing baby edit forms, or understanding the flattened UI pattern
+
+- `.readme/chunks/baby-management.flattened-ui-pattern.md`
+  **Purpose:** Single-page baby management interface with inline switch actions
+  **Read when:** Working on `/settings/babies` page, understanding the switch baby workflow, or adding UI features to baby management
+
+- `.readme/chunks/baby-management.edit-functionality.md`
+  **Purpose:** Baby profile editing with dual-table updates and access control
+  **Read when:** Implementing or modifying the edit baby form, working with `/settings/babies/[babyId]` route, or understanding caregiver label scoping
+
 ### Configuration Documentation
 - `.readme/sections/configuration.index.md`
   **Purpose:** Centralized configs and environment variable management

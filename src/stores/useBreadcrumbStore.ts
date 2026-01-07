@@ -50,7 +50,7 @@ export function useSetBreadcrumb(items: BreadcrumbItem[]) {
  *
  * @example
  * ```tsx
- * useSetPageTitle('Dashboard');
+ * useSetPageTitle('Overview');
  * ```
  */
 export function useSetPageTitle(title: string) {

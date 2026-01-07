@@ -3,19 +3,42 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { createBaby } from '@/actions/babyActions';
-import { useBabyStore } from '@/stores/useBabyStore';
+import { updateBaby } from '@/actions/babyActions';
 
-export function OnboardingBabyForm(props: { redirectPath: string }) {
-  const { redirectPath } = props;
+export function EditBabyForm(props: {
+  babyId: number;
+  initialData: {
+    name: string;
+    birthDate: Date | null;
+    gender: 'male' | 'female' | 'other' | 'unknown' | null;
+    birthWeightG: number | null;
+    caregiverLabel: string | null;
+  };
+  redirectPath: string;
+}) {
+  const { babyId, initialData, redirectPath } = props;
   const router = useRouter();
-  const setActiveBaby = useBabyStore(state => state.setActiveBaby);
 
-  const [name, setName] = useState('My Baby');
-  const [birthDate, setBirthDate] = useState('');
-  const [gender, setGender] = useState<'male' | 'female' | 'other' | 'unknown'>('unknown');
-  const [birthWeightG, setBirthWeightG] = useState('');
-  const [caregiverLabel, setCaregiverLabel] = useState('Parent');
+  // Format date for input field (YYYY-MM-DD)
+  const formatDateForInput = (date: Date | null) => {
+    if (!date) {
+      return '';
+    }
+    const d = new Date(date);
+    return d.toISOString().split('T')[0] ?? '';
+  };
+
+  const [name, setName] = useState(initialData.name);
+  const [birthDate, setBirthDate] = useState(formatDateForInput(initialData.birthDate));
+  const [gender, setGender] = useState<'male' | 'female' | 'other' | 'unknown'>(
+    initialData.gender ?? 'unknown',
+  );
+  const [birthWeightG, setBirthWeightG] = useState(
+    initialData.birthWeightG?.toString() ?? '',
+  );
+  const [caregiverLabel, setCaregiverLabel] = useState(
+    initialData.caregiverLabel ?? 'Parent',
+  );
   const [showDetails, setShowDetails] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,9 +49,15 @@ export function OnboardingBabyForm(props: { redirectPath: string }) {
     setIsSubmitting(true);
     setError(null);
 
+    if (!name.trim()) {
+      setError('Baby name is required');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      const result = await createBaby({
-        name: name.trim() || 'My Baby',
+      const result = await updateBaby(babyId, {
+        name: name.trim(),
         birthDate: birthDate ? new Date(birthDate) : null,
         gender: gender === 'unknown' ? null : gender,
         birthWeightG: birthWeightG ? Number.parseInt(birthWeightG, 10) : null,
@@ -41,13 +70,11 @@ export function OnboardingBabyForm(props: { redirectPath: string }) {
         return;
       }
 
-      // Set baby in store
-      setActiveBaby(result.baby);
-
-      // Redirect to overview
-      router.replace(redirectPath);
+      // Redirect back to settings
+      router.push(redirectPath);
+      router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create baby');
+      setError(err instanceof Error ? err.message : 'Failed to update baby');
       setIsSubmitting(false);
     }
   };
@@ -71,11 +98,9 @@ export function OnboardingBabyForm(props: { redirectPath: string }) {
             value={name}
             onChange={e => setName(e.target.value)}
             className="mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+            placeholder="Enter baby's name"
             required
           />
-          <p className="mt-1 text-xs text-muted-foreground">
-            You can always change this later
-          </p>
         </div>
 
         {/* Baby Details Section */}
@@ -87,12 +112,8 @@ export function OnboardingBabyForm(props: { redirectPath: string }) {
           >
             <span>Baby Details (Optional)</span>
             {showDetails
-              ? (
-                  <ChevronUp className="h-4 w-4" />
-                )
-              : (
-                  <ChevronDown className="h-4 w-4" />
-                )}
+              ? <ChevronUp className="h-4 w-4" />
+              : <ChevronDown className="h-4 w-4" />}
           </button>
 
           {showDetails && (
@@ -156,12 +177,8 @@ export function OnboardingBabyForm(props: { redirectPath: string }) {
           >
             <span>Your Preferences (Optional)</span>
             {showPreferences
-              ? (
-                  <ChevronUp className="h-4 w-4" />
-                )
-              : (
-                  <ChevronDown className="h-4 w-4" />
-                )}
+              ? <ChevronUp className="h-4 w-4" />
+              : <ChevronDown className="h-4 w-4" />}
           </button>
 
           {showPreferences && (
@@ -192,20 +209,8 @@ export function OnboardingBabyForm(props: { redirectPath: string }) {
         disabled={isSubmitting}
         className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
       >
-        {isSubmitting ? 'Creating...' : 'Continue to Overview'}
+        {isSubmitting ? 'Saving...' : 'Save Changes'}
       </button>
-
-      <div className="text-center">
-        <p className="text-sm text-muted-foreground">
-          Or{' '}
-          <a
-            href="/account/request-access"
-            className="font-medium text-primary hover:underline"
-          >
-            request access to an existing baby
-          </a>
-        </p>
-      </div>
     </form>
   );
 }

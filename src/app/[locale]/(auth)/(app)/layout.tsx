@@ -9,7 +9,7 @@ export default async function AppLayout(props: {
   setRequestLocale(locale);
 
   return (
-    <AppShell locale={locale}>
+    <AppShell locale={locale} variant="unwrapped">
       {props.children}
     </AppShell>
   );

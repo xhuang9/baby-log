@@ -7,17 +7,17 @@ export async function generateMetadata(props: {
   await props.params;
 
   return {
-    title: 'Analytics',
+    title: 'Logs',
   };
 }
 
-export default async function AnalyticsPage(props: { params: Promise<{ locale: string }> }) {
+export default async function LogsPage(props: { params: Promise<{ locale: string }> }) {
   await props.params;
   return (
     <>
-      <PageTitleSetter title="Analytics" />
+      <PageTitleSetter title="Logs" />
       <div className="space-y-4">
-        <p className="text-sm text-muted-foreground">Track trends and performance over time.</p>
+        <p className="text-sm text-muted-foreground">Browse every entry and filter by time or log type.</p>
       </div>
     </>
   );

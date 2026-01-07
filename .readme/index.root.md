@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-05T10:30:00Z
+last_verified_at: 2026-01-08T00:00:00Z
 source_paths:
   - .readme/sections/
 ---
@@ -29,6 +29,10 @@ Read when: Working with Clerk authentication setup, protected routes, or underst
 ### `.readme/sections/account-management.index.md`
 **Account resolution, baby multi-tenancy, and sharing system**
 Read when: Working with post-auth flows, baby selection, multi-baby management, invite acceptance, or understanding sessionStorage state sync patterns.
+
+### `.readme/sections/baby-management.index.md`
+**Baby management UI, editing, and multi-baby switching**
+Read when: Building or modifying the baby list interface, implementing baby edit forms, understanding the flattened UI pattern, or working with inline switch actions.
 
 ### `.readme/sections/configuration.index.md`
 **Centralized library configs and environment variables**

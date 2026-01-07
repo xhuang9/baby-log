@@ -16,7 +16,7 @@ export default async function OnboardingBabyPage(props: {
           </p>
         </div>
 
-        <OnboardingBabyForm redirectPath={getI18nPath('/dashboard', locale)} />
+        <OnboardingBabyForm redirectPath={getI18nPath('/overview', locale)} />
       </div>
     </div>
   );

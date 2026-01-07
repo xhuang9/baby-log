@@ -9,14 +9,14 @@ import { routing } from './libs/I18nRouting';
 const handleI18nRouting = createMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher([
-  '/dashboard(.*)',
-  '/:locale/dashboard(.*)',
+  '/overview(.*)',
+  '/:locale/overview(.*)',
   '/settings(.*)',
   '/:locale/settings(.*)',
-  '/activities(.*)',
-  '/:locale/activities(.*)',
-  '/analytics(.*)',
-  '/:locale/analytics(.*)',
+  '/logs(.*)',
+  '/:locale/logs(.*)',
+  '/insights(.*)',
+  '/:locale/insights(.*)',
   '/account(.*)',
   '/:locale/account(.*)',
 ]);
@@ -62,7 +62,10 @@ export default async function proxy(
   ) {
     return clerkMiddleware(async (auth, req) => {
       if (isProtectedRoute(req)) {
-        const locale = req.nextUrl.pathname.match(/(\/.*)\/dashboard/)?.at(1) ?? '';
+        const localeSegment = req.nextUrl.pathname.split('/')[1];
+        const locale = localeSegment && routing.locales.includes(localeSegment)
+          ? `/${localeSegment}`
+          : '';
 
         const signInUrl = new URL(`${locale}/sign-in`, req.url);
 

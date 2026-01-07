@@ -31,7 +31,7 @@ export const AppSidebar = ({ locale, ...props }: AppSidebarProps & React.Compone
               size="lg"
               className="p-0"
               render={props => (
-                <Link href={getI18nPath('/dashboard', locale)} {...props}>
+                <Link href={getI18nPath('/overview', locale)} {...props}>
                   <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-teal-600 text-white">
                     <span className="text-sm font-semibold">
                       {AppConfig.name.slice(0, 1).toUpperCase()}
@@ -73,7 +73,7 @@ export const AppSidebar = ({ locale, ...props }: AppSidebarProps & React.Compone
         <div className="rounded-lg border bg-muted/50 p-3 text-xs group-data-[collapsible=icon]:hidden">
           <p className="font-semibold">Tips</p>
           <p className="mt-1 text-muted-foreground">
-            Track daily sessions and review analytics weekly.
+            Track daily sessions and review insights weekly.
           </p>
         </div>
       </SidebarFooter>
