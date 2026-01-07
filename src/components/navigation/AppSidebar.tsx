@@ -23,7 +23,7 @@ export const AppSidebar = ({ locale, ...props }: AppSidebarProps & React.Compone
   const pathname = usePathname();
 
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -70,7 +70,7 @@ export const AppSidebar = ({ locale, ...props }: AppSidebarProps & React.Compone
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        <div className="rounded-lg border bg-muted/50 p-3 text-xs">
+        <div className="rounded-lg border bg-muted/50 p-3 text-xs group-data-[collapsible=icon]:hidden">
           <p className="font-semibold">Tips</p>
           <p className="mt-1 text-muted-foreground">
             Track daily sessions and review analytics weekly.
