@@ -4,6 +4,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/lib/i18n-routing';
 import { PostHogProvider } from '@/providers/PostHogProvider';
+import { QueryProvider } from '@/providers/QueryProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import '@/styles/global.css';
 
@@ -76,7 +77,9 @@ export default async function RootLayout(props: {
         >
           <NextIntlClientProvider>
             <PostHogProvider>
-              {props.children}
+              <QueryProvider>
+                {props.children}
+              </QueryProvider>
             </PostHogProvider>
           </NextIntlClientProvider>
         </ThemeProvider>

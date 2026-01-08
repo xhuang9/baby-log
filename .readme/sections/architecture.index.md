@@ -1,8 +1,10 @@
 ---
-last_verified_at: 2026-01-08T22:30:00Z
+last_verified_at: 2026-01-09T00:00:00Z
 source_paths:
   - src/app/[locale]/
   - src/lib/
+  - src/providers/
+  - src/services/
   - src/stores/
   - src/components/navigation/
   - src/templates/
@@ -19,6 +21,9 @@ This boilerplate uses Next.js App Router with a highly structured approach:
 - All routes are locale-prefixed via `[locale]` dynamic segment
 - Route groups organize pages by purpose (marketing vs auth) and layout (centered vs full-width)
 - Centralized library configurations in `src/lib/`
+- Providers extracted to `src/providers/` for infrastructure separation
+- Services layer in `src/services/` for shared business logic
+- Page-specific components colocated in `_components/` folders
 - Strict path aliasing and TypeScript configuration
 
 The architecture emphasizes separation of concerns and developer experience through conventions.
@@ -32,6 +37,10 @@ The architecture emphasizes separation of concerns and developer experience thro
 - `.readme/chunks/architecture.libs-pattern.md`
   - Content: The `src/lib/` centralization pattern for all third-party library configurations
   - Read when: Configuring new libraries, understanding environment variables, or working with DB/I18n/Logger setup
+
+- `.readme/chunks/architecture.folder-reorganization.md`
+  - Content: Folder structure reorganization with providers/ extraction, lib/ rename, _components/ colocation, and services/ layer
+  - Read when: Understanding project structure, adding providers, creating page-specific components, or preparing for iOS API
 
 - `.readme/chunks/architecture.path-aliases.md`
   - Content: Path alias configuration and import conventions

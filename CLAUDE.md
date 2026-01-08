@@ -202,6 +202,10 @@ All third-party library configurations are centralized in `src/libs/`:
   **Purpose:** Centralized library configuration pattern in `src/lib/`
   **Read when:** Configuring third-party libraries, understanding where configs live
 
+- `.readme/chunks/architecture.folder-reorganization.md`
+  **Purpose:** Folder structure reorganization with providers/ extraction, lib/ rename, _components/ colocation, and services/ layer
+  **Read when:** Understanding project structure, adding providers, creating page-specific components, or preparing for iOS API
+
 - `.readme/chunks/architecture.path-aliases.md`
   **Purpose:** `@/` path alias and import conventions
   **Read when:** Adding imports or understanding project import patterns
@@ -319,6 +323,35 @@ All third-party library configurations are centralized in `src/libs/`:
 - `.readme/chunks/feed-logging.server-actions.md`
   **Purpose:** Type-safe server actions with access control and automatic estimation logic
   **Read when:** Implementing feed logging, understanding permission checks, or working with automatic estimation
+
+### Local-First Architecture Documentation
+- `.readme/sections/local-first.index.md`
+  **Purpose:** Local-first architecture with Dexie, TanStack Query, and offline-first patterns
+  **Read when:** Working with IndexedDB, implementing offline features, understanding sync operations, setting up outbox pattern, or preparing for PWA/iOS development
+
+- `.readme/chunks/local-first.dexie-schema.md`
+  **Purpose:** Dexie IndexedDB schema with tables, indexes, and client-generated UUIDs
+  **Read when:** Working with IndexedDB, adding tables, understanding the local data model, or implementing offline mutations
+
+- `.readme/chunks/local-first.tanstack-query-setup.md`
+  **Purpose:** TanStack Query configured as ephemeral scheduler (NOT a persistence layer)
+  **Read when:** Configuring sync behavior, understanding query client setup, or working with network scheduling
+
+- `.readme/chunks/local-first.query-keys.md`
+  **Purpose:** Type-safe query key factory for cache management
+  **Read when:** Adding new queries, invalidating cache, or understanding query key hierarchy
+
+- `.readme/chunks/local-first.outbox-pattern.md`
+  **Purpose:** Outbox table for offline mutation replay with idempotent server writes
+  **Read when:** Implementing offline mutations, understanding sync replay, or adding mutation tracking
+
+- `.readme/chunks/local-first.conflict-resolution.md`
+  **Purpose:** Last-Write-Wins (LWW) conflict resolution strategy
+  **Read when:** Understanding sync conflicts, implementing merge logic, or debugging data inconsistencies
+
+- `.readme/chunks/local-first.services-layer.md`
+  **Purpose:** Shared business logic in services/ for reuse across actions and future API routes
+  **Read when:** Adding business logic, preparing for iOS API, or understanding access control patterns
 
 - `.readme/chunks/feed-logging.schema-design.md`
   **Purpose:** Feed log database schema with user attribution and estimation metadata

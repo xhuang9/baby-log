@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-08T14:30:00Z
+last_verified_at: 2026-01-09T00:00:00Z
 source_paths:
   - .readme/sections/
 ---
@@ -8,11 +8,13 @@ source_paths:
 
 This boilerplate is a production-ready Next.js 16+ starter with App Router, TypeScript, Tailwind CSS 4, DrizzleORM, Clerk authentication, and comprehensive testing. It emphasizes developer experience with strict type safety, automated code quality, and integrated monitoring.
 
+This project implements a local-first architecture with Dexie (IndexedDB) as the immediate read model and TanStack Query as an ephemeral network scheduler, enabling offline-first PWA functionality.
+
 ## Documentation Sections
 
 ### `.readme/sections/architecture.index.md`
 **Core architectural patterns and project structure**
-Read when: Understanding route organization, route groups, layout hierarchy, or how the app is structured differently from standard Next.js projects.
+Read when: Understanding route organization, route groups, layout hierarchy, folder structure reorganization, or how the app is structured differently from standard Next.js projects.
 
 ### `.readme/sections/database.index.md`
 **DrizzleORM setup, migrations, and connection management**
@@ -37,6 +39,10 @@ Read when: Building or modifying the baby list interface, implementing baby edit
 ### `.readme/sections/feed-logging.index.md`
 **Feed logging system with dual methods, automatic estimation, and caregiver attribution**
 Read when: Implementing or modifying feed tracking, working with breast/bottle feeds, understanding amount estimation, or adding new activity types.
+
+### `.readme/sections/local-first.index.md`
+**Local-first architecture with Dexie, TanStack Query, and offline-first patterns**
+Read when: Working with IndexedDB, implementing offline features, understanding sync operations, setting up outbox pattern, or preparing for PWA/iOS development.
 
 ### `.readme/sections/configuration.index.md`
 **Centralized library configs and environment variables**

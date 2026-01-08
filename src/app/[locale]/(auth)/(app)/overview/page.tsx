@@ -3,10 +3,10 @@ import { auth } from '@clerk/nextjs/server';
 import { desc, eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { PageTitleSetter } from '@/components/navigation/PageTitleSetter';
-import { FeedTile } from '@/components/overview/FeedTile';
 import { db } from '@/lib/db';
 import { babiesSchema, babyAccessSchema, feedLogSchema, userSchema } from '@/models/Schema';
 import { getI18nPath } from '@/utils/Helpers';
+import { FeedTile } from './_components/FeedTile';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
