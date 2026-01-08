@@ -127,9 +127,11 @@ export const babyMeasurementsSchema = pgTable('baby_measurements', {
 export const feedLogSchema = pgTable('feed_log', {
   id: serial('id').primaryKey(),
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
+  loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
   method: text('method').notNull(), // e.g. breast, bottle
   startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
   endedAt: timestamp('ended_at', { withTimezone: true }), // can be null if ongoing
+  durationMinutes: integer('duration_minutes'), // for breast feeding duration
   amountMl: integer('amount_ml'), // in milliliters
   isEstimated: boolean('is_estimated').notNull().default(false),
   estimatedSource: text('estimated_source'), // e.g. user_rate|default_model|manual_guess

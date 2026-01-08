@@ -75,10 +75,12 @@ test.describe('Multi-Baby Selection Page', () => {
 
       // Select first baby
       await radios.nth(0).check();
+
       await expect(radios.nth(0)).toBeChecked();
 
       // Select second baby
       await radios.nth(1).check();
+
       await expect(radios.nth(1)).toBeChecked();
       await expect(radios.nth(0)).not.toBeChecked();
     });
@@ -93,6 +95,7 @@ test.describe('Multi-Baby Selection Page', () => {
 
       // Enable after selection
       await page.locator('input[type="radio"]').first().check();
+
       await expect(continueButton).toBeEnabled();
     });
 
@@ -184,6 +187,7 @@ test.describe('Multi-Baby Selection Page', () => {
 
       // Radio buttons should be disabled during submission
       const radios = page.locator('input[type="radio"]');
+
       await expect(radios.first()).toBeDisabled();
     });
   });
@@ -413,6 +417,7 @@ test.describe('Multi-Baby Selection Page', () => {
       await page.keyboard.press('Space'); // Select it
 
       const firstRadio = page.locator('input[type="radio"]').first();
+
       await expect(firstRadio).toBeChecked();
 
       await page.keyboard.press('Tab'); // Focus continue button
@@ -442,6 +447,7 @@ test.describe('Multi-Baby Selection Page', () => {
       // When selecting a baby, screen readers should be informed
       // This is tested through ARIA attributes and role assignments
       const firstRadio = page.locator('input[type="radio"]').first();
+
       await expect(firstRadio).toHaveAttribute('role', 'radio');
     });
   });

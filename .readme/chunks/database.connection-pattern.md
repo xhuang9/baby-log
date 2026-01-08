@@ -1,7 +1,7 @@
 ---
-last_verified_at: 2025-12-31T15:30:00Z
+last_verified_at: 2026-01-08T22:30:00Z
 source_paths:
-  - src/libs/DB.ts
+  - src/lib/db.ts
   - src/utils/DBConnection.ts
 ---
 
@@ -16,13 +16,13 @@ Implements a global singleton connection to prevent multiple database connection
 - Connection created lazily on first import
 - Production creates new connection per deployment (no global caching)
 
-## Implementation: `src/libs/DB.ts`
+## Implementation: `src/lib/db.ts`
 
 ```typescript
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type * as schema from '@/models/Schema';
 import { createDbConnection } from '@/utils/DBConnection';
-import { Env } from './Env';
+import { Env } from './env';
 
 const globalForDb = globalThis as unknown as {
   drizzle: NodePgDatabase<typeof schema>;
@@ -43,7 +43,7 @@ export { db };
 ```typescript
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { Env } from '@/libs/Env';
+import { Env } from '@/lib/env';
 import * as schema from '@/models/Schema';
 
 export const createDbConnection = () => {
@@ -77,7 +77,7 @@ Without this pattern:
 
 ### Using the Database
 ```typescript
-import { db } from '@/libs/DB';
+import { db } from '@/lib/db';
 import { counterSchema } from '@/models/Schema';
 
 // Simple queries

@@ -3,7 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { PageTitleSetter } from '@/components/navigation/PageTitleSetter';
-import { db } from '@/libs/DB';
+import { db } from '@/lib/db';
 import {
   babiesSchema,
   babyAccessSchema,

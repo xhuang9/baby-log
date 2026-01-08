@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
 import type { AccessRequest } from '@/actions/accessRequestActions';
+import { useEffect, useState } from 'react';
 import {
   cancelAccessRequest,
   createAccessRequest,
@@ -17,20 +17,33 @@ export function RequestAccessForm() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [pendingRequests, setPendingRequests] = useState<AccessRequest[]>([]);
   const [isLoadingRequests, setIsLoadingRequests] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const loadRequests = useCallback(async () => {
-    setIsLoadingRequests(true);
-    const result = await listOutgoingRequests();
-    if (result.success) {
-      setPendingRequests(result.requests.filter(r => r.status === 'pending'));
-    }
-    setIsLoadingRequests(false);
-  }, []);
+  const refreshRequests = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
 
-  // Load pending requests
+  // Load pending requests on mount and when refreshTrigger changes
   useEffect(() => {
-    loadRequests();
-  }, [loadRequests]);
+    let cancelled = false;
+
+    const fetchRequests = async () => {
+      setIsLoadingRequests(true);
+      const result = await listOutgoingRequests();
+      if (!cancelled && result.success) {
+        setPendingRequests(result.requests.filter(r => r.status === 'pending'));
+      }
+      if (!cancelled) {
+        setIsLoadingRequests(false);
+      }
+    };
+
+    void fetchRequests();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [refreshTrigger]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +71,7 @@ export function RequestAccessForm() {
       setAccessLevel('viewer');
 
       // Reload pending requests
-      await loadRequests();
+      refreshRequests();
 
       setIsSubmitting(false);
     } catch (err) {
@@ -71,7 +84,7 @@ export function RequestAccessForm() {
     try {
       const result = await cancelAccessRequest({ requestId });
       if (result.success) {
-        await loadRequests();
+        refreshRequests();
       } else {
         setError(result.error);
       }
@@ -171,54 +184,56 @@ export function RequestAccessForm() {
             </div>
           )
         : pendingRequests.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold">Your Pending Requests</h2>
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold">Your Pending Requests</h2>
 
-              {pendingRequests.map(request => (
-                <div
-                  key={request.id}
-                  className="rounded-lg border bg-card p-4 shadow-sm"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 space-y-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium">{request.targetEmail}</p>
-                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
-                          Pending
-                        </span>
-                      </div>
-
-                      <p className="text-sm text-muted-foreground">
-                        Access Level: {request.requestedAccessLevel}
-                      </p>
-
-                      {request.message && (
-                        <p className="text-sm italic text-muted-foreground">
-                          "
-                          {request.message}
-                          "
-                        </p>
-                      )}
-
-                      <p className="text-xs text-muted-foreground">
-                        Sent on
-                        {' '}
-                        {new Date(request.createdAt).toLocaleDateString()}
-                      </p>
+            {pendingRequests.map(request => (
+              <div
+                key={request.id}
+                className="rounded-lg border bg-card p-4 shadow-sm"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium">{request.targetEmail}</p>
+                      <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+                        Pending
+                      </span>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => handleCancel(request.id)}
-                      className="rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
-                    >
-                      Cancel
-                    </button>
+                    <p className="text-sm text-muted-foreground">
+                      Access Level:
+                      {' '}
+                      {request.requestedAccessLevel}
+                    </p>
+
+                    {request.message && (
+                      <p className="text-sm text-muted-foreground italic">
+                        "
+                        {request.message}
+                        "
+                      </p>
+                    )}
+
+                    <p className="text-xs text-muted-foreground">
+                      Sent on
+                      {' '}
+                      {new Date(request.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleCancel(request.id)}
+                    className="rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+                  >
+                    Cancel
+                  </button>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
+        )}
     </div>
   );
 }

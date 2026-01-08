@@ -5,7 +5,7 @@ import type { StoredUser } from '@/stores/useUserStore';
 import { auth, clerkClient } from '@clerk/nextjs/server';
 import { and, desc, eq, or, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { db } from '@/libs/DB';
+import { db } from '@/lib/db';
 import {
   babiesSchema,
   babyAccessRequestsSchema,
@@ -13,6 +13,11 @@ import {
   babyInvitesSchema,
   userSchema,
 } from '@/models/Schema';
+import {
+  assertUserCanAccessBaby,
+  assertUserCanEditBaby,
+  getLocalUserByClerkId,
+} from '@/services/baby-access';
 
 type ResolveAccountResult = {
   success: true;
@@ -271,15 +276,12 @@ export async function createBaby(data: {
   }
 
   try {
-    const [localUser] = await db
-      .select()
-      .from(userSchema)
-      .where(eq(userSchema.clerkId, userId))
-      .limit(1);
-
-    if (!localUser) {
-      return { success: false, error: 'User not found' };
+    const userResult = await getLocalUserByClerkId(userId);
+    if (!userResult.success) {
+      return userResult;
     }
+
+    const localUser = userResult.data;
 
     if (localUser.locked) {
       return { success: false, error: 'Account is locked' };
@@ -350,15 +352,12 @@ export async function acceptInvite(inviteId: number): Promise<AcceptInviteResult
   }
 
   try {
-    const [localUser] = await db
-      .select()
-      .from(userSchema)
-      .where(eq(userSchema.clerkId, userId))
-      .limit(1);
-
-    if (!localUser) {
-      return { success: false, error: 'User not found' };
+    const userResult = await getLocalUserByClerkId(userId);
+    if (!userResult.success) {
+      return userResult;
     }
+
+    const localUser = userResult.data;
 
     // Get invite
     const [invite] = await db
@@ -476,39 +475,13 @@ export async function updateBaby(
   }
 
   try {
-    const [localUser] = await db
-      .select()
-      .from(userSchema)
-      .where(eq(userSchema.clerkId, userId))
-      .limit(1);
-
-    if (!localUser) {
-      return { success: false, error: 'User not found' };
+    // Verify user can edit this baby (owner or editor)
+    const accessResult = await assertUserCanEditBaby(userId, babyId);
+    if (!accessResult.success) {
+      return accessResult;
     }
 
-    // Verify user has owner or editor access to this baby
-    const [access] = await db
-      .select({
-        accessLevel: babyAccessSchema.accessLevel,
-      })
-      .from(babyAccessSchema)
-      .innerJoin(babiesSchema, eq(babyAccessSchema.babyId, babiesSchema.id))
-      .where(
-        and(
-          eq(babyAccessSchema.userId, localUser.id),
-          eq(babyAccessSchema.babyId, babyId),
-          sql`${babiesSchema.archivedAt} IS NULL`,
-        ),
-      )
-      .limit(1);
-
-    if (!access) {
-      return { success: false, error: 'You do not have access to this baby' };
-    }
-
-    if (access.accessLevel === 'viewer') {
-      return { success: false, error: 'You do not have permission to edit this baby' };
-    }
+    const { user } = accessResult.data;
 
     // Update baby details
     const updateData: Record<string, unknown> = {};
@@ -540,7 +513,7 @@ export async function updateBaby(
         .where(
           and(
             eq(babyAccessSchema.babyId, babyId),
-            eq(babyAccessSchema.userId, localUser.id),
+            eq(babyAccessSchema.userId, user.id),
           ),
         );
     }
@@ -569,44 +542,19 @@ export async function setDefaultBaby(babyId: number): Promise<SetDefaultBabyResu
   }
 
   try {
-    const [localUser] = await db
-      .select()
-      .from(userSchema)
-      .where(eq(userSchema.clerkId, userId))
-      .limit(1);
-
-    if (!localUser) {
-      return { success: false, error: 'User not found' };
+    // Verify user can access this baby
+    const accessResult = await assertUserCanAccessBaby(userId, babyId);
+    if (!accessResult.success) {
+      return accessResult;
     }
 
-    // Verify user has access to this baby
-    const [access] = await db
-      .select({
-        babyId: babiesSchema.id,
-        name: babiesSchema.name,
-        accessLevel: babyAccessSchema.accessLevel,
-        caregiverLabel: babyAccessSchema.caregiverLabel,
-      })
-      .from(babyAccessSchema)
-      .innerJoin(babiesSchema, eq(babyAccessSchema.babyId, babiesSchema.id))
-      .where(
-        and(
-          eq(babyAccessSchema.userId, localUser.id),
-          eq(babyAccessSchema.babyId, babyId),
-          sql`${babiesSchema.archivedAt} IS NULL`,
-        ),
-      )
-      .limit(1);
-
-    if (!access) {
-      return { success: false, error: 'You do not have access to this baby' };
-    }
+    const { user, access } = accessResult.data;
 
     // Update default baby
     await db
       .update(userSchema)
       .set({ defaultBabyId: babyId })
-      .where(eq(userSchema.id, localUser.id));
+      .where(eq(userSchema.id, user.id));
 
     // Update lastAccessedAt
     await db
@@ -615,7 +563,7 @@ export async function setDefaultBaby(babyId: number): Promise<SetDefaultBabyResu
       .where(
         and(
           eq(babyAccessSchema.babyId, babyId),
-          eq(babyAccessSchema.userId, localUser.id),
+          eq(babyAccessSchema.userId, user.id),
         ),
       );
 
@@ -626,7 +574,7 @@ export async function setDefaultBaby(babyId: number): Promise<SetDefaultBabyResu
       success: true,
       baby: {
         babyId: access.babyId,
-        name: access.name,
+        name: access.babyName,
         accessLevel: access.accessLevel,
         caregiverLabel: access.caregiverLabel,
       },

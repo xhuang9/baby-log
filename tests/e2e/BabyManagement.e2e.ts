@@ -200,16 +200,20 @@ test.describe('Baby Creation', () => {
 
       // Test each option
       await genderSelect.selectOption('male');
-      expect(await genderSelect.inputValue()).toBe('male');
+
+      await expect(genderSelect).toHaveValue('male');
 
       await genderSelect.selectOption('female');
-      expect(await genderSelect.inputValue()).toBe('female');
+
+      await expect(genderSelect).toHaveValue('female');
 
       await genderSelect.selectOption('other');
-      expect(await genderSelect.inputValue()).toBe('other');
+
+      await expect(genderSelect).toHaveValue('other');
 
       await genderSelect.selectOption('unknown');
-      expect(await genderSelect.inputValue()).toBe('unknown');
+
+      await expect(genderSelect).toHaveValue('unknown');
     });
   });
 
@@ -248,15 +252,17 @@ test.describe('Baby Creation', () => {
       const birthDateInput = page.getByLabel(/Birth Date/i);
 
       // Initially collapsed
-      await expect(birthDateInput).not.toBeVisible();
+      await expect(birthDateInput).toBeHidden();
 
       // Click to expand
       await detailsButton.click();
+
       await expect(birthDateInput).toBeVisible();
 
       // Click to collapse
       await detailsButton.click();
-      await expect(birthDateInput).not.toBeVisible();
+
+      await expect(birthDateInput).toBeHidden();
     });
 
     test('should toggle Preferences section', async ({ page }) => {
@@ -266,15 +272,17 @@ test.describe('Baby Creation', () => {
       const labelInput = page.getByLabel(/Your Name in System/i);
 
       // Initially collapsed
-      await expect(labelInput).not.toBeVisible();
+      await expect(labelInput).toBeHidden();
 
       // Click to expand
       await prefsButton.click();
+
       await expect(labelInput).toBeVisible();
 
       // Click to collapse
       await prefsButton.click();
-      await expect(labelInput).not.toBeVisible();
+
+      await expect(labelInput).toBeHidden();
     });
 
     test('should show loading state while submitting', async ({ page }) => {

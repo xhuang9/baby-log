@@ -21,7 +21,8 @@ export default async function RequestAccessPage(props: {
 
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
-            Or{' '}
+            Or
+            {' '}
             <Link
               href={getI18nPath('/account/onboarding/baby', locale)}
               className="font-medium text-primary hover:underline"

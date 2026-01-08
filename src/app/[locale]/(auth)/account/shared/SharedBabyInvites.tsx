@@ -81,8 +81,9 @@ export function SharedBabyInvites(props: {
   };
 
   const handleApproveRequest = async (babyId: number, accessLevel: 'owner' | 'editor' | 'viewer') => {
-    if (!selectedRequest)
+    if (!selectedRequest) {
       return;
+    }
 
     setError(null);
 
@@ -110,8 +111,9 @@ export function SharedBabyInvites(props: {
   };
 
   const handleRejectRequest = async () => {
-    if (!selectedRequest)
+    if (!selectedRequest) {
       return;
+    }
 
     setError(null);
 
@@ -175,7 +177,7 @@ export function SharedBabyInvites(props: {
                     access
                   </p>
                   {request.message && (
-                    <p className="text-sm italic text-muted-foreground">
+                    <p className="text-sm text-muted-foreground italic">
                       "
                       {request.message}
                       "
@@ -206,54 +208,54 @@ export function SharedBabyInvites(props: {
         <div className="space-y-4">
           {pendingRequests.length > 0 && <h2 className="text-lg font-semibold">Baby Invites</h2>}
           {invites.map(invite => (
-          <div
-            key={invite.id}
-            className="rounded-lg border bg-card p-4 shadow-sm"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center gap-2">
-                  <UserPlus className="h-5 w-5 text-primary" />
-                  <h3 className="font-semibold">{invite.babyName}</h3>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Invited by
-                  {' '}
-                  {invite.inviterFirstName || invite.inviterEmail || 'Unknown'}
-                </p>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span className="rounded-full bg-muted px-2 py-0.5">
-                    {invite.accessLevel}
-                  </span>
-                  <span>
-                    Expires
+            <div
+              key={invite.id}
+              className="rounded-lg border bg-card p-4 shadow-sm"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <UserPlus className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold">{invite.babyName}</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Invited by
                     {' '}
-                    {new Date(invite.expiresAt).toLocaleDateString()}
-                  </span>
+                    {invite.inviterFirstName || invite.inviterEmail || 'Unknown'}
+                  </p>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span className="rounded-full bg-muted px-2 py-0.5">
+                      {invite.accessLevel}
+                    </span>
+                    <span>
+                      Expires
+                      {' '}
+                      {new Date(invite.expiresAt).toLocaleDateString()}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex gap-2">
-                {acceptedIds.has(invite.id)
-                  ? (
-                      <div className="flex items-center gap-2 rounded-md bg-green-100 px-3 py-2 text-sm text-green-800 dark:bg-green-900/20 dark:text-green-400">
-                        <Check className="h-4 w-4" />
-                        Accepted
-                      </div>
-                    )
-                  : (
-                      <button
-                        type="button"
-                        onClick={() => handleAccept(invite.id)}
-                        disabled={acceptingId !== null}
-                        className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
-                      >
-                        {acceptingId === invite.id ? 'Accepting...' : 'Accept'}
-                      </button>
-                    )}
+                <div className="flex gap-2">
+                  {acceptedIds.has(invite.id)
+                    ? (
+                        <div className="flex items-center gap-2 rounded-md bg-green-100 px-3 py-2 text-sm text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                          <Check className="h-4 w-4" />
+                          Accepted
+                        </div>
+                      )
+                    : (
+                        <button
+                          type="button"
+                          onClick={() => handleAccept(invite.id)}
+                          disabled={acceptingId !== null}
+                          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+                        >
+                          {acceptingId === invite.id ? 'Accepting...' : 'Accept'}
+                        </button>
+                      )}
+                </div>
               </div>
             </div>
-          </div>
           ))}
         </div>
       )}

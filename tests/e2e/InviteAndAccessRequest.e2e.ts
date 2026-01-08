@@ -259,6 +259,7 @@ test.describe('Access Request Creation', () => {
       // HTML5 validation should prevent submission
       const emailInput = page.getByLabel(/Email/i);
       const isInvalid = await emailInput.evaluate((el: HTMLInputElement) => !el.validity.valid);
+
       expect(isInvalid).toBe(true);
     });
 
@@ -270,6 +271,7 @@ test.describe('Access Request Creation', () => {
 
       // HTML5 email validation
       const isInvalid = await emailInput.evaluate((el: HTMLInputElement) => !el.validity.valid);
+
       expect(isInvalid).toBe(true);
     });
 
@@ -277,9 +279,9 @@ test.describe('Access Request Creation', () => {
       await page.goto('/account/request-access');
 
       const accessSelect = page.getByLabel(/Access Level/i);
-      const defaultValue = await accessSelect.inputValue();
+      const defaultValue = accessSelect;
 
-      expect(defaultValue).toBe('viewer');
+      await expect(defaultValue).toHaveValue('viewer');
     });
 
     test('should show all access level options', async ({ page }) => {
@@ -289,6 +291,7 @@ test.describe('Access Request Creation', () => {
 
       // Should have viewer, editor, and potentially owner options
       const options = await accessSelect.locator('option').allTextContents();
+
       expect(options).toContain('Viewer');
       expect(options).toContain('Editor');
     });
@@ -492,7 +495,8 @@ test.describe('Access Request Approval (Recipient Side)', () => {
 
       // Can grant different level than requested
       await accessSelect.selectOption('editor');
-      expect(await accessSelect.inputValue()).toBe('editor');
+
+      await expect(accessSelect).toHaveValue('editor');
     });
 
     test('should show baby selection dropdown', async ({ page }) => {
@@ -503,6 +507,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
       // Currently using text input (temporary)
       // Will be replaced with dropdown showing user's babies
       const babyInput = page.getByLabel(/Select Baby/i);
+
       await expect(babyInput).toBeVisible();
     });
   });
@@ -529,6 +534,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
 
       // Try to approve without selecting baby
       const approveButton = page.getByRole('button', { name: /Approve/i });
+
       await expect(approveButton).toBeDisabled();
     });
 
@@ -618,6 +624,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
       await page.getByRole('button', { name: /Review/i }).first().click();
 
       const rejectButton = page.getByRole('button', { name: /Reject/i });
+
       await expect(rejectButton).toBeEnabled();
     });
 

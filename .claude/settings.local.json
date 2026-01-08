@@ -15,7 +15,16 @@
       "Bash(npm run lint:*)",
       "Bash(npm run dev:*)",
       "Skill(doc-update)",
-      "Bash(pnpm add:*)"
+      "Bash(pnpm add:*)",
+      "Bash(find:*)",
+      "Bash(npm run db:generate:*)",
+      "Bash(xargs basename:*)",
+      "Bash(rm:*)",
+      "Bash(pnpm run check:types:*)",
+      "Bash(pnpm run check:deps:*)",
+      "Bash(pnpm run lint:*)",
+      "Bash(pnpm run build:*)",
+      "Bash(tree:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

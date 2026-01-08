@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { and, eq, or, sql } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
-import { db } from '@/libs/DB';
+import { db } from '@/lib/db';
 import {
   babiesSchema,
   babyAccessRequestsSchema,

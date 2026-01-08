@@ -1,6 +1,6 @@
 'use client';
 
-import { Baby, ChevronRight, Plus } from 'lucide-react';
+import { ChevronRight, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { getI18nPath } from '@/utils/Helpers';
 

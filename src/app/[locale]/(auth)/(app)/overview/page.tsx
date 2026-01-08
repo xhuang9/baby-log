@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import { auth } from '@clerk/nextjs/server';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { PageTitleSetter } from '@/components/navigation/PageTitleSetter';
-import { db } from '@/libs/DB';
-import { babiesSchema, babyAccessSchema, userSchema } from '@/models/Schema';
+import { FeedTile } from '@/components/overview/FeedTile';
+import { db } from '@/lib/db';
+import { babiesSchema, babyAccessSchema, feedLogSchema, userSchema } from '@/models/Schema';
 import { getI18nPath } from '@/utils/Helpers';
 
 export async function generateMetadata(props: {
@@ -65,39 +66,111 @@ export default async function OverviewPage(props: {
     redirect(getI18nPath('/account/resolve', locale));
   }
 
-  // TODO: Fetch feed logs and other baby-specific data scoped to babyAccess.babyId
-  // Example: const feedLogs = await db.select().from(feedLogSchema).where(eq(feedLogSchema.babyId, babyAccess.babyId))
+  // Fetch latest feed log
+  const [latestFeedLog] = await db
+    .select({
+      id: feedLogSchema.id,
+      babyId: feedLogSchema.babyId,
+      method: feedLogSchema.method,
+      startedAt: feedLogSchema.startedAt,
+      endedAt: feedLogSchema.endedAt,
+      durationMinutes: feedLogSchema.durationMinutes,
+      amountMl: feedLogSchema.amountMl,
+      isEstimated: feedLogSchema.isEstimated,
+      endSide: feedLogSchema.endSide,
+      caregiverLabel: babyAccessSchema.caregiverLabel,
+      createdAt: feedLogSchema.createdAt,
+    })
+    .from(feedLogSchema)
+    .innerJoin(
+      babyAccessSchema,
+      eq(babyAccessSchema.userId, feedLogSchema.loggedByUserId),
+    )
+    .where(eq(feedLogSchema.babyId, babyAccess.babyId))
+    .orderBy(desc(feedLogSchema.startedAt))
+    .limit(1);
+
+  // Transform the feed log to match the expected type
+  const latestFeed = latestFeedLog
+    ? {
+        id: latestFeedLog.id,
+        babyId: latestFeedLog.babyId,
+        method: latestFeedLog.method as 'breast' | 'bottle',
+        startedAt: latestFeedLog.startedAt,
+        endedAt: latestFeedLog.endedAt,
+        durationMinutes: latestFeedLog.durationMinutes,
+        amountMl: latestFeedLog.amountMl,
+        isEstimated: latestFeedLog.isEstimated,
+        endSide: latestFeedLog.endSide as 'left' | 'right' | null,
+        caregiverLabel: latestFeedLog.caregiverLabel,
+        createdAt: latestFeedLog.createdAt,
+      }
+    : null;
 
   return (
     <>
       <PageTitleSetter title="Overview" />
-      <div className="space-y-6">
-        <div className="rounded-lg border bg-card p-6">
-          <h2 className="mb-2 text-xl font-bold">{babyAccess.name}</h2>
-          <div className="space-y-1 text-sm text-muted-foreground">
-            {babyAccess.birthDate && (
-              <p>
-                Birth Date:
-                {' '}
-                {new Date(babyAccess.birthDate).toLocaleDateString()}
-              </p>
-            )}
-            <p>
-              Your Role:
-              {babyAccess.caregiverLabel || 'Caregiver'}
-            </p>
-            <p>
-              Access Level:
-              {babyAccess.accessLevel}
-            </p>
-          </div>
+      <div className="space-y-4">
+        {/* Baby Info Card */}
+        <div className="rounded-lg border bg-card p-4">
+          <h2 className="text-lg font-bold">{babyAccess.name}</h2>
+          <p className="text-sm text-muted-foreground">
+            {babyAccess.caregiverLabel || 'Caregiver'}
+            {' '}
+            &bull;
+            {' '}
+            {babyAccess.accessLevel}
+          </p>
         </div>
 
-        <div className="rounded-lg border bg-card p-6">
-          <h3 className="mb-4 text-lg font-semibold">Latest Logs</h3>
-          <p className="text-sm text-muted-foreground">
-            Recent entries and quick add shortcuts will appear here
-          </p>
+        {/* Activity Grid */}
+        <div className="space-y-3">
+          <FeedTile babyId={babyAccess.babyId} latestFeed={latestFeed} />
+
+          {/* Placeholder tiles for future activities */}
+          <button
+            type="button"
+            className="flex w-full items-center justify-between rounded-lg border border-l-4 border-l-purple-500 bg-purple-500/5 p-4 text-left transition-colors hover:bg-purple-500/10"
+            disabled
+          >
+            <div>
+              <h3 className="text-lg font-semibold">Sleep</h3>
+              <p className="text-sm text-muted-foreground">Coming soon</p>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            className="flex w-full items-center justify-between rounded-lg border border-l-4 border-l-amber-500 bg-amber-500/5 p-4 text-left transition-colors hover:bg-amber-500/10"
+            disabled
+          >
+            <div>
+              <h3 className="text-lg font-semibold">Nappy</h3>
+              <p className="text-sm text-muted-foreground">Coming soon</p>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            className="flex w-full items-center justify-between rounded-lg border border-l-4 border-l-emerald-500 bg-emerald-500/5 p-4 text-left transition-colors hover:bg-emerald-500/10"
+            disabled
+          >
+            <div>
+              <h3 className="text-lg font-semibold">Solids</h3>
+              <p className="text-sm text-muted-foreground">Coming soon</p>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            className="flex w-full items-center justify-between rounded-lg border border-l-4 border-l-blue-500 bg-blue-500/5 p-4 text-left transition-colors hover:bg-blue-500/10"
+            disabled
+          >
+            <div>
+              <h3 className="text-lg font-semibold">Bath</h3>
+              <p className="text-sm text-muted-foreground">Coming soon</p>
+            </div>
+          </button>
         </div>
       </div>
     </>

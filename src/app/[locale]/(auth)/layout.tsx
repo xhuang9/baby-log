@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import { setRequestLocale } from 'next-intl/server';
-import { clerkAppearance } from '@/libs/ClerkTheme';
-import { routing } from '@/libs/I18nRouting';
+import { clerkAppearance } from '@/lib/clerk-theme';
+import { routing } from '@/lib/i18n-routing';
 import { AppConfig, ClerkLocalizations } from '@/utils/AppConfig';
 
 export const metadata: Metadata = {

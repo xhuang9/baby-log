@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { appNavItems } from '@/config/app-nav';
-import { cn } from '@/libs/utils';
+import { cn } from '@/lib/utils';
 import { getI18nPath } from '@/utils/Helpers';
 
 type AppNavItemsProps = {

@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-08T00:00:00Z
+last_verified_at: 2026-01-08T14:30:00Z
 source_paths:
   - .readme/sections/
 ---
@@ -34,9 +34,13 @@ Read when: Working with post-auth flows, baby selection, multi-baby management, 
 **Baby management UI, editing, and multi-baby switching**
 Read when: Building or modifying the baby list interface, implementing baby edit forms, understanding the flattened UI pattern, or working with inline switch actions.
 
+### `.readme/sections/feed-logging.index.md`
+**Feed logging system with dual methods, automatic estimation, and caregiver attribution**
+Read when: Implementing or modifying feed tracking, working with breast/bottle feeds, understanding amount estimation, or adding new activity types.
+
 ### `.readme/sections/configuration.index.md`
 **Centralized library configs and environment variables**
-Read when: Setting up third-party libraries, managing environment variables, or understanding the `/libs` structure.
+Read when: Setting up third-party libraries, managing environment variables, or understanding the `/lib` structure.
 
 ### `.readme/sections/testing.index.md`
 **Multi-mode testing with Vitest and Playwright**

@@ -9,7 +9,7 @@ vi.mock('@clerk/nextjs/server', () => ({
 }));
 
 // Mock database
-vi.mock('@/libs/DB', () => ({
+vi.mock('@/lib/db', () => ({
   db: {
     insert: vi.fn(),
     select: vi.fn(),
@@ -43,7 +43,7 @@ describe('babyActions', () => {
 
     it('should upsert user and return locked status if user is locked', async () => {
       const { auth, clerkClient } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
       vi.mocked(clerkClient).mockResolvedValue({
@@ -105,7 +105,7 @@ describe('babyActions', () => {
 
     it('should redirect to shared page if no babies but has pending invites', async () => {
       const { auth, clerkClient } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
       vi.mocked(clerkClient).mockResolvedValue({
@@ -186,7 +186,7 @@ describe('babyActions', () => {
 
     it('should redirect to onboarding if no babies and no invites', async () => {
       const { auth, clerkClient } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
       vi.mocked(clerkClient).mockResolvedValue({
@@ -256,7 +256,7 @@ describe('babyActions', () => {
 
     it('should redirect to overview with default baby if one baby exists', async () => {
       const { auth, clerkClient } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
       vi.mocked(clerkClient).mockResolvedValue({
@@ -347,7 +347,7 @@ describe('babyActions', () => {
 
     it('should redirect to select page if multiple babies without default', async () => {
       const { auth, clerkClient } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
       vi.mocked(clerkClient).mockResolvedValue({
@@ -458,7 +458,7 @@ describe('babyActions', () => {
 
     it('should return error if user is not found', async () => {
       const { auth } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
 
@@ -483,7 +483,7 @@ describe('babyActions', () => {
 
     it('should return error if user account is locked', async () => {
       const { auth } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
 
@@ -514,7 +514,7 @@ describe('babyActions', () => {
 
     it('should successfully create baby with owner access', async () => {
       const { auth } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
 
@@ -576,7 +576,7 @@ describe('babyActions', () => {
 
     it('should create baby with all optional fields', async () => {
       const { auth } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
 
@@ -655,7 +655,7 @@ describe('babyActions', () => {
 
     it('should return error if invite not found', async () => {
       const { auth } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
 
@@ -699,7 +699,7 @@ describe('babyActions', () => {
 
     it('should return error if invite is not pending', async () => {
       const { auth } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
 
@@ -752,7 +752,7 @@ describe('babyActions', () => {
 
     it('should return error if invite has expired', async () => {
       const { auth } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
 
@@ -805,7 +805,7 @@ describe('babyActions', () => {
 
     it('should return error if user already has access', async () => {
       const { auth } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
 
@@ -870,7 +870,7 @@ describe('babyActions', () => {
 
     it('should successfully accept invite and create baby access', async () => {
       const { auth } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
 
@@ -974,7 +974,7 @@ describe('babyActions', () => {
 
     it('should return error if user not found', async () => {
       const { auth } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
 
@@ -999,7 +999,7 @@ describe('babyActions', () => {
 
     it('should return error if user does not have access to baby', async () => {
       const { auth } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
 
@@ -1043,7 +1043,7 @@ describe('babyActions', () => {
 
     it('should successfully set default baby and update lastAccessedAt', async () => {
       const { auth } = await import('@clerk/nextjs/server');
-      const { db } = await import('@/libs/DB');
+      const { db } = await import('@/lib/db');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
 

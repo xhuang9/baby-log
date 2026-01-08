@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2025-12-31T15:30:00Z
+last_verified_at: 2026-01-08T22:30:00Z
 source_paths:
   - tsconfig.json
 ---
@@ -19,8 +19,8 @@ Standardized import paths using TypeScript path aliases to improve code maintain
 ### Primary Alias: `@/`
 Maps to `src/` directory:
 ```typescript
-// Instead of: import { db } from '../../libs/DB'
-import { db } from '@/libs/DB';
+// Instead of: import { db } from '../../lib/db'
+import { db } from '@/lib/db';
 ```
 
 ### Public Assets: `@/public/`
@@ -45,7 +45,7 @@ import icon from '@/public/icons/logo.svg';
 ## Important Patterns
 
 ### Import Conventions
-- **Libraries**: `import { db } from '@/libs/DB'`
+- **Libraries**: `import { db } from '@/lib/db'`
 - **Components**: `import { Button } from '@/components/Button'`
 - **Utils**: `import { formatDate } from '@/utils/helpers'`
 - **Models**: `import { counterSchema } from '@/models/Schema'`

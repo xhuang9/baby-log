@@ -1,0 +1,247 @@
+/Users/xiaotianhuang/Sites/localhost/_binary-top/baby-log
+├── migrations
+│   ├── meta
+│   │   ├── 0000_snapshot.json
+│   │   ├── 0001_snapshot.json
+│   │   ├── 0002_snapshot.json
+│   │   ├── 0003_snapshot.json
+│   │   ├── 0004_snapshot.json
+│   │   ├── 0005_snapshot.json
+│   │   └── _journal.json
+│   ├── 0000_init-db.sql
+│   ├── 0001_silent_frog_thor.sql
+│   ├── 0002_parallel_princess_powerful.sql
+│   ├── 0003_thin_patch.sql
+│   ├── 0004_brave_lionheart.sql
+│   └── 0005_real_masked_marvel.sql
+├── public
+│   ├── assets
+│   │   └── images
+│   │       ├── arcjet-dark.svg
+│   │       ├── arcjet-light.svg
+│   │       ├── better-stack-dark.png
+│   │       ├── better-stack-white.png
+│   │       ├── checkly-logo-dark.png
+│   │       ├── checkly-logo-light.png
+│   │       ├── clerk-logo-dark.png
+│   │       ├── codecov-dark.svg
+│   │       ├── codecov-white.svg
+│   │       ├── coderabbit-logo-dark.svg
+│   │       ├── coderabbit-logo-light.svg
+│   │       ├── crowdin-dark.png
+│   │       ├── crowdin-white.png
+│   │       ├── nextjs-boilerplate-saas.png
+│   │       ├── nextjs-boilerplate-sign-in.png
+│   │       ├── nextjs-boilerplate-sign-up.png
+│   │       ├── nextjs-starter-banner.png
+│   │       ├── sentry-dark.png
+│   │       ├── sentry-white.png
+│   │       ├── sevalla-dark.png
+│   │       └── sevalla-light.png
+│   ├── apple-touch-icon.png
+│   ├── favicon-16x16.png
+│   ├── favicon-32x32.png
+│   ├── favicon.ico
+│   ├── manifest.json
+│   ├── sw.js
+│   ├── sw.js.map
+│   ├── workbox-e9849328.js
+│   └── workbox-e9849328.js.map
+├── src
+│   ├── actions
+│   │   ├── accessRequestActions.ts
+│   │   ├── babyActions.test.ts
+│   │   ├── babyActions.ts
+│   │   └── feedLogActions.ts
+│   ├── app
+│   │   ├── [locale]
+│   │   │   ├── (auth)
+│   │   │   │   ├── (app)
+│   │   │   │   │   ├── insights
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   ├── logs
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   ├── overview
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   ├── settings
+│   │   │   │   │   │   ├── babies
+│   │   │   │   │   │   │   ├── [babyId]
+│   │   │   │   │   │   │   │   ├── EditBabyForm.tsx
+│   │   │   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   │   │   ├── new
+│   │   │   │   │   │   │   │   ├── NewBabyForm.tsx
+│   │   │   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   │   │   ├── BabiesManagement.tsx
+│   │   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   │   ├── BabiesList.tsx
+│   │   │   │   │   │   ├── SettingsContent.tsx
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   └── layout.tsx
+│   │   │   │   ├── (app-unwrapped)
+│   │   │   │   │   ├── settings
+│   │   │   │   │   │   └── user-profile
+│   │   │   │   │   │       └── [[...user-profile]]
+│   │   │   │   │   │           └── page.tsx
+│   │   │   │   │   └── layout.tsx
+│   │   │   │   ├── (center)
+│   │   │   │   │   ├── sign-in
+│   │   │   │   │   │   └── [[...sign-in]]
+│   │   │   │   │   │       └── page.tsx
+│   │   │   │   │   ├── sign-up
+│   │   │   │   │   │   └── [[...sign-up]]
+│   │   │   │   │   │       └── page.tsx
+│   │   │   │   │   ├── layout.tsx
+│   │   │   │   │   └── loading.tsx
+│   │   │   │   ├── account
+│   │   │   │   │   ├── locked
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   ├── onboarding
+│   │   │   │   │   │   └── baby
+│   │   │   │   │   │       ├── OnboardingBabyForm.tsx
+│   │   │   │   │   │       └── page.tsx
+│   │   │   │   │   ├── request-access
+│   │   │   │   │   │   ├── RequestAccessForm.tsx
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   ├── resolve
+│   │   │   │   │   │   ├── ResolveAccountClient.tsx
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   ├── select-baby
+│   │   │   │   │   │   ├── SelectBabyForm.tsx
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   └── shared
+│   │   │   │   │       ├── AccessRequestApprovalDialog.tsx
+│   │   │   │   │       ├── SharedBabyInvites.tsx
+│   │   │   │   │       └── page.tsx
+│   │   │   │   ├── layout.tsx
+│   │   │   │   └── loading.tsx
+│   │   │   ├── (marketing)
+│   │   │   │   ├── layout.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── api
+│   │   │   └── layout.tsx
+│   │   ├── global-error.tsx
+│   │   ├── robots.ts
+│   │   └── sitemap.ts
+│   ├── components
+│   │   ├── auth
+│   │   │   └── SignOutButton.tsx
+│   │   ├── navigation
+│   │   │   ├── AppHeader.tsx
+│   │   │   ├── AppNavItems.tsx
+│   │   │   ├── AppSidebar.tsx
+│   │   │   ├── BreadcrumbSetter.tsx
+│   │   │   ├── MobileBottomBar.tsx
+│   │   │   └── PageTitleSetter.tsx
+│   │   ├── overview
+│   │   │   ├── ActivityTile.tsx
+│   │   │   ├── AddFeedSheet.tsx
+│   │   │   └── FeedTile.tsx
+│   │   ├── ui
+│   │   │   ├── alert-dialog.tsx
+│   │   │   ├── badge.tsx
+│   │   │   ├── breadcrumb.tsx
+│   │   │   ├── button.tsx
+│   │   │   ├── card.tsx
+│   │   │   ├── combobox.tsx
+│   │   │   ├── default-dialog.tsx
+│   │   │   ├── dialog.tsx
+│   │   │   ├── dropdown-menu.tsx
+│   │   │   ├── field.tsx
+│   │   │   ├── input-group.tsx
+│   │   │   ├── input.tsx
+│   │   │   ├── label.tsx
+│   │   │   ├── page-skeleton.tsx
+│   │   │   ├── select.tsx
+│   │   │   ├── separator.tsx
+│   │   │   ├── sheet.tsx
+│   │   │   ├── sidebar.tsx
+│   │   │   ├── skeleton.tsx
+│   │   │   ├── slider.tsx
+│   │   │   ├── textarea.tsx
+│   │   │   └── tooltip.tsx
+│   │   ├── LocaleSwitcher.tsx
+│   │   └── theme-toggle.tsx
+│   ├── config
+│   │   ├── app-nav.ts
+│   │   └── page-metadata.ts
+│   ├── hooks
+│   │   └── use-mobile.tsx
+│   ├── lib
+│   │   ├── arcjet.ts
+│   │   ├── clerk-theme.ts
+│   │   ├── db.ts
+│   │   ├── env.ts
+│   │   ├── i18n-navigation.ts
+│   │   ├── i18n-routing.ts
+│   │   ├── i18n.ts
+│   │   ├── logger.ts
+│   │   └── utils.ts
+│   ├── locales
+│   │   └── en.json
+│   ├── models
+│   │   └── Schema.ts
+│   ├── providers
+│   │   ├── PostHogPageView.tsx
+│   │   ├── PostHogProvider.tsx
+│   │   └── ThemeProvider.tsx
+│   ├── stores
+│   │   ├── useBabyStore.ts
+│   │   ├── useBreadcrumbStore.ts
+│   │   └── useUserStore.ts
+│   ├── styles
+│   │   ├── clerk-overrides.css
+│   │   └── global.css
+│   ├── templates
+│   │   ├── AppShell.tsx
+│   │   ├── BaseTemplate.test.tsx
+│   │   └── BaseTemplate.tsx
+│   ├── types
+│   │   ├── I18n.ts
+│   │   └── next-pwa.d.ts
+│   ├── utils
+│   │   ├── AppConfig.ts
+│   │   ├── DBConnection.ts
+│   │   ├── Helpers.test.ts
+│   │   └── Helpers.ts
+│   ├── validations
+│   │   └── AccessRequestValidation.ts
+│   ├── instrumentation-client.ts
+│   ├── instrumentation.ts
+│   └── proxy.ts
+├── tests
+│   ├── e2e
+│   │   ├── AccountResolution.e2e.ts
+│   │   ├── BabyManagement.e2e.ts
+│   │   ├── Counter.e2e.ts
+│   │   ├── InviteAndAccessRequest.e2e.ts
+│   │   ├── MultiBabySelection.e2e.ts
+│   │   ├── Sanity.check.e2e.ts
+│   │   └── Visual.e2e.ts
+│   └── integration
+│       └── Counter.spec.ts
+├── Agent.md
+├── CLAUDE.md
+├── LICENSE
+├── LLM_IMPLEMENTATION_GUIDE.md
+├── LLM_IMPLEMENTATION_GUIDE_ACCESS_REQUESTS.md
+├── README.md
+├── checkly.config.ts
+├── codecov.yml
+├── commitlint.config.ts
+├── components.json
+├── crowdin.yml
+├── drizzle.config.ts
+├── eslint.config.mjs
+├── knip.config.ts
+├── lefthook.yml
+├── next-env.d.ts
+├── next.config.ts
+├── package.json
+├── playwright.config.ts
+├── pnpm-lock.yaml
+├── postcss.config.mjs
+├── tsconfig.json
+├── tsconfig.tsbuildinfo
+└── vitest.config.mts
+
+58 directories, 187 files

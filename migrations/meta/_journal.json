@@ -36,6 +36,13 @@
       "when": 1767678162138,
       "tag": "0004_brave_lionheart",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1767795586645,
+      "tag": "0005_real_masked_marvel",
+      "breakpoints": true
     }
   ]
 }

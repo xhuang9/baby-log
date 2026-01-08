@@ -26,7 +26,7 @@ export function AccessRequestApprovalDialog(props: {
 
   const handleApprove = async () => {
     if (!selectedBabyId) {
-      alert('Please select a baby');
+      // Early return if no baby selected
       return;
     }
 

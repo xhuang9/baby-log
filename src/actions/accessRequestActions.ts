@@ -9,13 +9,14 @@ import type {
 import { auth } from '@clerk/nextjs/server';
 import { and, eq, or, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { db } from '@/libs/DB';
+import { db } from '@/lib/db';
 import {
   babiesSchema,
   babyAccessRequestsSchema,
   babyAccessSchema,
   userSchema,
 } from '@/models/Schema';
+import { getLocalUserByClerkId } from '@/services/baby-access';
 
 // Types
 export type AccessRequest = {
@@ -59,15 +60,12 @@ export async function createAccessRequest(
   }
 
   try {
-    const [localUser] = await db
-      .select()
-      .from(userSchema)
-      .where(eq(userSchema.clerkId, userId))
-      .limit(1);
-
-    if (!localUser) {
-      return { success: false, error: 'User not found' };
+    const userResult = await getLocalUserByClerkId(userId);
+    if (!userResult.success) {
+      return userResult;
     }
+
+    const localUser = userResult.data;
 
     if (localUser.locked) {
       return { success: false, error: 'Account is locked' };
@@ -138,15 +136,12 @@ export async function listOutgoingRequests(): Promise<ListRequestsResult> {
   }
 
   try {
-    const [localUser] = await db
-      .select()
-      .from(userSchema)
-      .where(eq(userSchema.clerkId, userId))
-      .limit(1);
-
-    if (!localUser) {
-      return { success: false, error: 'User not found' };
+    const userResult = await getLocalUserByClerkId(userId);
+    if (!userResult.success) {
+      return userResult;
     }
+
+    const localUser = userResult.data;
 
     const requests = await db
       .select({
@@ -187,14 +182,15 @@ export async function listIncomingRequests(): Promise<ListRequestsResult> {
   }
 
   try {
-    const [localUser] = await db
-      .select()
-      .from(userSchema)
-      .where(eq(userSchema.clerkId, userId))
-      .limit(1);
+    const userResult = await getLocalUserByClerkId(userId);
+    if (!userResult.success) {
+      return userResult;
+    }
 
-    if (!localUser || !localUser.email) {
-      return { success: false, error: 'User not found' };
+    const localUser = userResult.data;
+
+    if (!localUser.email) {
+      return { success: false, error: 'User email not found' };
     }
 
     // Get requests by userId or email
@@ -251,15 +247,12 @@ export async function cancelAccessRequest(
   }
 
   try {
-    const [localUser] = await db
-      .select()
-      .from(userSchema)
-      .where(eq(userSchema.clerkId, userId))
-      .limit(1);
-
-    if (!localUser) {
-      return { success: false, error: 'User not found' };
+    const userResult = await getLocalUserByClerkId(userId);
+    if (!userResult.success) {
+      return userResult;
     }
+
+    const localUser = userResult.data;
 
     // Find request
     const [request] = await db
@@ -312,14 +305,15 @@ export async function approveAccessRequest(
   }
 
   try {
-    const [localUser] = await db
-      .select()
-      .from(userSchema)
-      .where(eq(userSchema.clerkId, userId))
-      .limit(1);
+    const userResult = await getLocalUserByClerkId(userId);
+    if (!userResult.success) {
+      return userResult;
+    }
 
-    if (!localUser || !localUser.email) {
-      return { success: false, error: 'User not found' };
+    const localUser = userResult.data;
+
+    if (!localUser.email) {
+      return { success: false, error: 'User email not found' };
     }
 
     // Find request
@@ -447,14 +441,15 @@ export async function rejectAccessRequest(
   }
 
   try {
-    const [localUser] = await db
-      .select()
-      .from(userSchema)
-      .where(eq(userSchema.clerkId, userId))
-      .limit(1);
+    const userResult = await getLocalUserByClerkId(userId);
+    if (!userResult.success) {
+      return userResult;
+    }
 
-    if (!localUser || !localUser.email) {
-      return { success: false, error: 'User not found' };
+    const localUser = userResult.data;
+
+    if (!localUser.email) {
+      return { success: false, error: 'User email not found' };
     }
 
     // Find request

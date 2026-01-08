@@ -3,7 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import { and, eq, sql } from 'drizzle-orm';
 import { notFound, redirect } from 'next/navigation';
 import { BreadcrumbSetter } from '@/components/navigation/BreadcrumbSetter';
-import { db } from '@/libs/DB';
+import { db } from '@/lib/db';
 import {
   babiesSchema,
   babyAccessSchema,

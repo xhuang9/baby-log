@@ -185,6 +185,10 @@ All third-party library configurations are centralized in `src/libs/`:
   **Purpose:** Global documentation navigation map showing all sections and chunks
   **Read when:** First time working with this codebase, or when you need to find specific documentation
 
+- `.readme/tree.txt`
+  **Purpose:** Snapshot of the repository tree (excludes `node_modules`, `packages`, `.git`, `.next`, `out`, `coverage`)
+  **Read when:** You need a fast map of file locations or a quick structure scan
+
 ### Architecture Documentation
 - `.readme/sections/architecture.index.md`
   **Purpose:** Core architectural patterns and project structure
@@ -195,7 +199,7 @@ All third-party library configurations are centralized in `src/libs/`:
   **Read when:** Creating pages, understanding the `(marketing)` and `(auth)` route groups
 
 - `.readme/chunks/architecture.libs-pattern.md`
-  **Purpose:** Centralized library configuration pattern in `src/libs/`
+  **Purpose:** Centralized library configuration pattern in `src/lib/`
   **Read when:** Configuring third-party libraries, understanding where configs live
 
 - `.readme/chunks/architecture.path-aliases.md`
@@ -306,6 +310,27 @@ All third-party library configurations are centralized in `src/libs/`:
 - `.readme/chunks/baby-management.edit-functionality.md`
   **Purpose:** Baby profile editing with dual-table updates and access control
   **Read when:** Implementing or modifying the edit baby form, working with `/settings/babies/[babyId]` route, or understanding caregiver label scoping
+
+### Feed Logging Documentation
+- `.readme/sections/feed-logging.index.md`
+  **Purpose:** Feed logging system with dual methods, automatic estimation, and caregiver attribution
+  **Read when:** Implementing or modifying feed tracking, working with breast/bottle feeds, understanding amount estimation, or adding new activity types
+
+- `.readme/chunks/feed-logging.server-actions.md`
+  **Purpose:** Type-safe server actions with access control and automatic estimation logic
+  **Read when:** Implementing feed logging, understanding permission checks, or working with automatic estimation
+
+- `.readme/chunks/feed-logging.schema-design.md`
+  **Purpose:** Feed log database schema with user attribution and estimation metadata
+  **Read when:** Modifying feed log schema, adding fields, or understanding the data model
+
+- `.readme/chunks/feed-logging.ui-components.md`
+  **Purpose:** Activity tile pattern, bottom sheet form, and time formatting
+  **Read when:** Building activity tiles, working with sheet UI, or understanding the feed form interaction
+
+- `.readme/chunks/feed-logging.estimation-algorithm.md`
+  **Purpose:** Breast feed amount estimation logic and future improvement paths
+  **Read when:** Modifying estimation logic, adding age/gender-based models, or debugging estimated amounts
 
 ### Configuration Documentation
 - `.readme/sections/configuration.index.md`

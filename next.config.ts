@@ -3,7 +3,7 @@ import withBundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
 import createNextIntlPlugin from 'next-intl/plugin';
 import withPWA from 'next-pwa';
-import './src/libs/Env';
+import './src/lib/env';
 
 // Define the base Next.js configuration
 const baseConfig: NextConfig = {
@@ -22,7 +22,7 @@ const baseConfig: NextConfig = {
 };
 
 // Initialize the Next-Intl plugin
-let configWithPlugins = createNextIntlPlugin('./src/libs/I18n.ts')(baseConfig);
+let configWithPlugins = createNextIntlPlugin('./src/lib/i18n.ts')(baseConfig);
 
 // Configure PWA
 configWithPlugins = withPWA({

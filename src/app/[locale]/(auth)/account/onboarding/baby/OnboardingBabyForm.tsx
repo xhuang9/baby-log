@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { createBaby } from '@/actions/babyActions';
@@ -197,13 +198,14 @@ export function OnboardingBabyForm(props: { redirectPath: string }) {
 
       <div className="text-center">
         <p className="text-sm text-muted-foreground">
-          Or{' '}
-          <a
+          Or
+          {' '}
+          <Link
             href="/account/request-access"
             className="font-medium text-primary hover:underline"
           >
             request access to an existing baby
-          </a>
+          </Link>
         </p>
       </div>
     </form>

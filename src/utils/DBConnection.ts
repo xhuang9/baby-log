@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { Env } from '@/libs/Env';
+import { Env } from '@/lib/env';
 import * as schema from '@/models/Schema';
 
 // Need a database for production? Just claim it by running `npm run neon:claim`.

@@ -1,7 +1,7 @@
 ---
-last_verified_at: 2025-12-31T15:30:00Z
+last_verified_at: 2026-01-08T22:30:00Z
 source_paths:
-  - src/libs/Env.ts
+  - src/lib/env.ts
   - next.config.ts
 ---
 
@@ -18,7 +18,7 @@ Type-safe environment variable validation at build time using @t3-oss/env-nextjs
 
 ## Configuration
 
-### File: `src/libs/Env.ts`
+### File: `src/lib/env.ts`
 ```typescript
 import { createEnv } from '@t3-oss/env-nextjs';
 import * as z from 'zod';
@@ -89,9 +89,9 @@ Examples:
 ## Build-Time Validation
 
 ### Triggered By
-Env.ts is imported in `next.config.ts`:
+env.ts is imported in `next.config.ts`:
 ```typescript
-import './src/libs/Env';
+import './src/lib/env';
 ```
 
 This runs validation before build starts.
@@ -113,7 +113,7 @@ Build fails immediately.
 
 ### Importing
 ```typescript
-import { Env } from '@/libs/Env';
+import { Env } from '@/lib/env';
 
 // TypeScript knows exact types:
 const dbUrl: string = Env.DATABASE_URL;
@@ -122,7 +122,7 @@ const apiKey: string | undefined = Env.ARCJET_KEY;
 
 ### Server Components
 ```typescript
-import { Env } from '@/libs/Env';
+import { Env } from '@/lib/env';
 
 export default function Page() {
   console.log(Env.DATABASE_URL); // ✅ Works (server-side)
@@ -133,7 +133,7 @@ export default function Page() {
 ### Client Components
 ```typescript
 'use client';
-import { Env } from '@/libs/Env';
+import { Env } from '@/lib/env';
 
 export default function Component() {
   console.log(Env.DATABASE_URL); // ❌ Error: server-only variable
@@ -143,7 +143,7 @@ export default function Component() {
 
 ### API Routes
 ```typescript
-import { Env } from '@/libs/Env';
+import { Env } from '@/lib/env';
 
 export async function GET() {
   const key = Env.CLERK_SECRET_KEY; // ✅ Type-safe, validated
@@ -153,7 +153,7 @@ export async function GET() {
 
 ## Adding New Environment Variables
 
-### 1. Add to Env.ts Schema
+### 1. Add to env.ts Schema
 ```typescript
 export const Env = createEnv({
   server: {
@@ -183,7 +183,7 @@ NEXT_PUBLIC_NEW_FEATURE=false
 
 ### 3. Use in Code
 ```typescript
-import { Env } from '@/libs/Env';
+import { Env } from '@/lib/env';
 
 const apiKey = Env.NEW_API_KEY; // string
 const featureEnabled = Env.NEXT_PUBLIC_NEW_FEATURE; // boolean
@@ -216,7 +216,7 @@ LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 - All client variables MUST start with `NEXT_PUBLIC_`
 - Must manually add each variable to `runtimeEnv` (no automatic mapping)
 - Validation runs at import time (eager, not lazy)
-- Changing Env.ts requires restarting dev server
+- Changing env.ts requires restarting dev server
 - Middleware should use `process.env` directly (Env increases bundle size)
 - `.optional()` allows undefined, `.default()` provides fallback
 
@@ -227,5 +227,5 @@ LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 3. `.env` (committed, shared defaults)
 
 ## Related Systems
-- `.readme/chunks/config.libs-pattern.md` - Library configuration pattern
+- `.readme/chunks/architecture.libs-pattern.md` - Library configuration pattern
 - `.readme/chunks/database.connection-pattern.md` - DATABASE_URL usage

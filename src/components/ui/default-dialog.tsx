@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/libs/utils';
+import { cn } from '@/lib/utils';
 
 type DefaultDialogProps = {
   trigger?: React.ReactNode;
