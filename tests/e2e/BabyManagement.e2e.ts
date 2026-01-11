@@ -8,7 +8,7 @@ import { expect, test } from '@playwright/test';
  */
 
 test.describe('Baby Creation', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page: _page }) => {
     // TODO: Authenticate as test user
     // await authenticateTestUser(page, 'test-user@example.com');
   });
@@ -334,7 +334,7 @@ test.describe('Baby Creation', () => {
 });
 
 test.describe('Baby Management in Settings', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page: _page }) => {
     // TODO: Authenticate and ensure user has at least one baby
     // await authenticateTestUser(page, 'multi-baby-user@example.com');
   });
@@ -387,7 +387,7 @@ test.describe('Baby Management in Settings', () => {
       // await expect(page.getByLabel(/Baby's Name/i)).toBeVisible();
     });
 
-    test('should not show edit option for non-owners', async ({ page }) => {
+    test('should not show edit option for non-owners', async ({ page: _page }) => {
       // Viewers and editors cannot edit baby info
       // TODO: Navigate to a baby where user is viewer/editor
       // await page.goto('/settings/babies');

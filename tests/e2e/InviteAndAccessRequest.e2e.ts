@@ -11,7 +11,7 @@ import { expect, test } from '@playwright/test';
  */
 
 test.describe('Baby Invite Acceptance', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page: _page }) => {
     // TODO: Authenticate as user with pending invites
     // await authenticateTestUser(page, 'invited-user@example.com');
   });
@@ -146,7 +146,7 @@ test.describe('Baby Invite Acceptance', () => {
   });
 
   test.describe('Invite Validation', () => {
-    test('should reject expired invite', async ({ page }) => {
+    test('should reject expired invite', async ({ page: _page }) => {
       // Attempt to accept expired invite
       // TODO: Set up expired invite in test data
       // await page.goto('/account/shared');
@@ -155,13 +155,13 @@ test.describe('Baby Invite Acceptance', () => {
       // Or clicking Accept should show error
     });
 
-    test('should reject revoked invite', async ({ page }) => {
+    test('should reject revoked invite', async ({ page: _page }) => {
       // Inviter can revoke invites
       // TODO: Set up revoked invite
       // Revoked invites should not appear or should show error
     });
 
-    test('should reject invite for archived baby', async ({ page }) => {
+    test('should reject invite for archived baby', async ({ page: _page }) => {
       // If baby gets archived, invites should become invalid
       // TODO: Set up invite for archived baby
     });
@@ -202,7 +202,7 @@ test.describe('Baby Invite Acceptance', () => {
       // await expect(page.getByRole('button', { name: /Accept/i })).toBeEnabled();
     });
 
-    test('should handle network errors gracefully', async ({ page }) => {
+    test('should handle network errors gracefully', async ({ page: _page }) => {
       // Test offline scenario
       // TODO: Set up offline condition and attempt to accept
     });
@@ -210,7 +210,7 @@ test.describe('Baby Invite Acceptance', () => {
 });
 
 test.describe('Access Request Creation', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page: _page }) => {
     // TODO: Authenticate as user without babies
     // await authenticateTestUser(page, 'requester@example.com');
   });
@@ -327,7 +327,7 @@ test.describe('Access Request Creation', () => {
       // await expect(page.getByText(/already have a pending request/i)).toBeVisible();
     });
 
-    test('should allow requesting after previous request is resolved', async ({ page }) => {
+    test('should allow requesting after previous request is resolved', async ({ page: _page }) => {
       // If previous request was approved/rejected, should allow new request
       // TODO: Set up scenario with resolved request
     });
@@ -382,7 +382,7 @@ test.describe('Access Request Creation', () => {
       // await expect(page.getByText('owner@example.com')).not.toBeVisible();
     });
 
-    test('should not allow canceling approved/rejected requests', async ({ page }) => {
+    test('should not allow canceling approved/rejected requests', async ({ page: _page }) => {
       // Only pending requests can be canceled
       // TODO: Verify cancel button not shown for resolved requests
     });
@@ -407,7 +407,7 @@ test.describe('Access Request Creation', () => {
 });
 
 test.describe('Access Request Approval (Recipient Side)', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page: _page }) => {
     // TODO: Authenticate as user who received access request
     // await authenticateTestUser(page, 'owner@example.com');
   });
@@ -479,10 +479,10 @@ test.describe('Access Request Approval (Recipient Side)', () => {
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 
-      const accessSelect = page.getByLabel(/Grant Access Level/i);
+      const _accessSelect = page.getByLabel(/Grant Access Level/i);
 
       // Should default to what requester asked for
-      // const defaultValue = await accessSelect.inputValue();
+      // const defaultValue = await _accessSelect.inputValue();
       // expect(defaultValue).toBeTruthy();
     });
 
@@ -740,7 +740,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
       // await expect(page.getByText(/Failed to reject/i)).toBeVisible();
     });
 
-    test('should handle concurrent request processing', async ({ page }) => {
+    test('should handle concurrent request processing', async ({ page: _page }) => {
       // If multiple people are approving same request
       // Should handle race condition gracefully
       // This is primarily a backend test

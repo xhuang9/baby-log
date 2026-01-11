@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-09T00:00:00Z
+last_verified_at: 2026-01-12T00:00:00Z
 source_paths:
   - .readme/sections/
 ---
@@ -41,8 +41,8 @@ Read when: Building or modifying the baby list interface, implementing baby edit
 Read when: Implementing or modifying feed tracking, working with breast/bottle feeds, understanding amount estimation, or adding new activity types.
 
 ### `.readme/sections/local-first.index.md`
-**Local-first architecture with Dexie, TanStack Query, and offline-first patterns**
-Read when: Working with IndexedDB, implementing offline features, understanding sync operations, setting up outbox pattern, or preparing for PWA/iOS development.
+**Local-first architecture with Dexie, TanStack Query, initial sync, background sync worker, and offline-first patterns**
+Read when: Working with IndexedDB, implementing offline features, understanding initial/background sync operations, adding new log types, debugging sync status, setting up outbox pattern, or preparing for PWA/iOS development.
 
 ### `.readme/sections/configuration.index.md`
 **Centralized library configs and environment variables**

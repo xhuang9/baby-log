@@ -3,7 +3,7 @@ last_verified_at: 2026-01-05T10:30:00Z
 source_paths:
   - src/app/[locale]/(auth)/layout.tsx
   - src/app/[locale]/layout.tsx
-  - src/utils/AppConfig.ts
+  - src/config/app.ts
 ---
 
 # Clerk Authentication Layout Pattern

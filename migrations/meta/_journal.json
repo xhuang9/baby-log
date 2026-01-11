@@ -43,6 +43,20 @@
       "when": 1767795586645,
       "tag": "0005_real_masked_marvel",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1768099705832,
+      "tag": "0006_whole_microbe",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1768134154659,
+      "tag": "0007_silent_hiroim",
+      "breakpoints": true
     }
   ]
 }

@@ -4,7 +4,7 @@ source_paths:
   - src/app/[locale]/(auth)/layout.tsx
   - src/app/[locale]/(auth)/(center)/layout.tsx
   - src/app/[locale]/(auth)/account/resolve/
-  - src/utils/AppConfig.ts
+  - src/config/app.ts
 ---
 
 # Authentication Overview

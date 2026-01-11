@@ -531,6 +531,59 @@ export async function updateBaby(
   }
 }
 
+type GetUserBabiesResult
+  = | { success: true; babies: ActiveBaby[] }
+    | { success: false; error: string };
+
+export async function getUserBabies(): Promise<GetUserBabiesResult> {
+  const { userId } = await auth();
+  if (!userId) {
+    return { success: false, error: 'Not authenticated' };
+  }
+
+  try {
+    const userResult = await getLocalUserByClerkId(userId);
+    if (!userResult.success) {
+      return userResult;
+    }
+
+    const localUser = userResult.data;
+
+    const babyAccess = await db
+      .select({
+        babyId: babiesSchema.id,
+        name: babiesSchema.name,
+        accessLevel: babyAccessSchema.accessLevel,
+        caregiverLabel: babyAccessSchema.caregiverLabel,
+      })
+      .from(babyAccessSchema)
+      .innerJoin(babiesSchema, eq(babyAccessSchema.babyId, babiesSchema.id))
+      .where(
+        and(
+          eq(babyAccessSchema.userId, localUser.id),
+          sql`${babiesSchema.archivedAt} IS NULL`,
+        ),
+      )
+      .orderBy(desc(babyAccessSchema.lastAccessedAt));
+
+    return {
+      success: true,
+      babies: babyAccess.map(b => ({
+        babyId: b.babyId,
+        name: b.name,
+        accessLevel: b.accessLevel,
+        caregiverLabel: b.caregiverLabel,
+      })),
+    };
+  } catch (error) {
+    console.error('Error getting user babies:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
 type SetDefaultBabyResult
   = | { success: true; baby: ActiveBaby }
     | { success: false; error: string };

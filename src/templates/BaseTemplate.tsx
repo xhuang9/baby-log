@@ -1,4 +1,4 @@
-import { AppConfig } from '@/utils/AppConfig';
+import { AppConfig } from '@/config/app';
 
 export const BaseTemplate = (props: {
   leftNav: React.ReactNode;

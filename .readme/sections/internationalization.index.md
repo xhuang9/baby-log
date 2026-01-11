@@ -5,7 +5,7 @@ source_paths:
   - src/lib/i18n-navigation.ts
   - src/lib/i18n-routing.ts
   - src/locales/
-  - src/utils/AppConfig.ts
+  - src/config/app.ts
 ---
 
 # Internationalization Overview

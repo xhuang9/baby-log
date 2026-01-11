@@ -1,7 +1,8 @@
 ---
-last_verified_at: 2026-01-09T00:00:00Z
+last_verified_at: 2026-01-12T00:00:00Z
 source_paths:
-  - src/lib/local-db.ts
+  - src/lib/local-db/database.ts
+  - src/lib/local-db/types/
 ---
 
 # Dexie IndexedDB Schema

@@ -64,6 +64,13 @@ export const accessRequestStatusEnum = pgEnum('access_request_status_enum', [
   'canceled',
 ]);
 
+export const nappyTypeEnum = pgEnum('nappy_type_enum', [
+  'wee',
+  'poo',
+  'mixed',
+  'dry',
+]);
+
 // Tables
 // Note: Circular references between userSchema and babiesSchema are intentional
 // This is a valid Drizzle ORM pattern - TypeScript strict checks may show errors
@@ -139,6 +146,31 @@ export const feedLogSchema = pgTable('feed_log', {
   ...timestamps,
 }, t => [
   index('feed_log_baby_started_at_idx').on(t.babyId, t.startedAt),
+]);
+
+export const sleepLogSchema = pgTable('sleep_log', {
+  id: serial('id').primaryKey(),
+  babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
+  loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
+  endedAt: timestamp('ended_at', { withTimezone: true }), // null if ongoing
+  durationMinutes: integer('duration_minutes'), // calculated when ended, or estimated
+  notes: text('notes'),
+  ...timestamps,
+}, t => [
+  index('sleep_log_baby_started_at_idx').on(t.babyId, t.startedAt),
+]);
+
+export const nappyLogSchema = pgTable('nappy_log', {
+  id: serial('id').primaryKey(),
+  babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
+  loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
+  type: nappyTypeEnum('type'), // wee, poo, mixed, dry - nullable
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+  notes: text('notes'),
+  ...timestamps,
+}, t => [
+  index('nappy_log_baby_started_at_idx').on(t.babyId, t.startedAt),
 ]);
 
 export const babyInvitesSchema = pgTable('baby_invites', {

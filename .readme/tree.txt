@@ -163,6 +163,7 @@
 │   │   └── theme-toggle.tsx
 │   ├── config
 │   │   ├── app-nav.ts
+│   │   ├── app.ts
 │   │   └── page-metadata.ts
 │   ├── hooks
 │   │   └── use-mobile.tsx
@@ -199,7 +200,6 @@
 │   │   ├── I18n.ts
 │   │   └── next-pwa.d.ts
 │   ├── utils
-│   │   ├── AppConfig.ts
 │   │   ├── DBConnection.ts
 │   │   ├── Helpers.test.ts
 │   │   └── Helpers.ts

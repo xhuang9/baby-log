@@ -10,7 +10,7 @@ import { expect, test } from '@playwright/test';
  */
 
 test.describe('Multi-Baby Selection Page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page: _page }) => {
     // TODO: Authenticate as user with multiple babies and no default
     // await authenticateTestUser(page, 'multi-baby-user@example.com');
   });
@@ -287,7 +287,7 @@ test.describe('Multi-Baby Selection Page', () => {
       // await expect(page.getByText(/no longer have access/i)).toBeVisible();
     });
 
-    test('should redirect to resolve if all babies become inaccessible', async ({ page }) => {
+    test('should redirect to resolve if all babies become inaccessible', async ({ page: _page }) => {
       // If somehow user ends up with zero accessible babies
       // TODO: Set up scenario where babies are removed
       // await page.goto('/account/select-baby');
@@ -453,7 +453,7 @@ test.describe('Multi-Baby Selection Page', () => {
   });
 
   test.describe('Integration with Account Resolution', () => {
-    test('should be reached from account resolution for multi-baby users', async ({ page }) => {
+    test('should be reached from account resolution for multi-baby users', async ({ page: _page }) => {
       // Test the flow: sign in → resolve → select-baby
       // TODO: Set up user with multiple babies and no default
       // await page.goto('/account/resolve');
@@ -462,7 +462,7 @@ test.describe('Multi-Baby Selection Page', () => {
       // await expect(page).toHaveURL(/\/account\/select-baby$/);
     });
 
-    test('should skip this page if user has only one baby', async ({ page }) => {
+    test('should skip this page if user has only one baby', async ({ page: _page }) => {
       // Single-baby users should go directly to dashboard
       // TODO: Sign in as single-baby user
       // await page.goto('/account/resolve');
@@ -471,7 +471,7 @@ test.describe('Multi-Baby Selection Page', () => {
       // await expect(page).toHaveURL(/\/dashboard$/);
     });
 
-    test('should skip this page if valid default is already set', async ({ page }) => {
+    test('should skip this page if valid default is already set', async ({ page: _page }) => {
       // Users with valid defaultBabyId should go to dashboard
       // TODO: Sign in as user with valid default
       // await page.goto('/account/resolve');
@@ -479,7 +479,7 @@ test.describe('Multi-Baby Selection Page', () => {
       // await expect(page).toHaveURL(/\/dashboard$/);
     });
 
-    test('should appear if default baby becomes invalid', async ({ page }) => {
+    test('should appear if default baby becomes invalid', async ({ page: _page }) => {
       // If default baby is archived or access is revoked
       // TODO: Set up scenario with invalid defaultBabyId
       // await page.goto('/account/resolve');

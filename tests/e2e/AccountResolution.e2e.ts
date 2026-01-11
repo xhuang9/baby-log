@@ -16,7 +16,7 @@ import { expect, test } from '@playwright/test';
  */
 
 test.describe('Account Resolution Flow', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page: _page }) => {
     // Note: These tests require Clerk authentication to be properly mocked or configured
     // In a real scenario, you'd need to set up test users in Clerk
   });
@@ -224,7 +224,7 @@ test.describe('Account Resolution Flow', () => {
       // await expect(page).toHaveURL(/\/dashboard$/);
     });
 
-    test('should update lastAccessedAt when accessing baby', async ({ page }) => {
+    test('should update lastAccessedAt when accessing baby', async ({ page: _page }) => {
       // Verify that accessing a baby updates the lastAccessedAt timestamp
       // This is important for auto-selecting most recently used baby
       // TODO: Set up test to verify database state
@@ -299,7 +299,7 @@ test.describe('Account Resolution Flow', () => {
   });
 
   test.describe('Error Handling', () => {
-    test('should handle database errors gracefully', async ({ page }) => {
+    test('should handle database errors gracefully', async ({ page: _page }) => {
       // Test that resolution handles database failures
       // TODO: Mock database error scenario
     });
@@ -312,7 +312,7 @@ test.describe('Account Resolution Flow', () => {
       await expect(page).toHaveURL(/\/sign-in$/);
     });
 
-    test('should handle missing Clerk user gracefully', async ({ page }) => {
+    test('should handle missing Clerk user gracefully', async ({ page: _page }) => {
       // Test edge case where Clerk user exists but local user creation fails
       // TODO: Mock Clerk user retrieval failure
     });

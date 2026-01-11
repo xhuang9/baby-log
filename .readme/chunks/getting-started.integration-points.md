@@ -2,7 +2,7 @@
 last_verified_at: 2026-01-11T00:00:00Z
 source_paths:
   - src/lib/Env.ts
-  - src/utils/AppConfig.ts
+  - src/config/app.ts
   - next.config.ts
 ---
 
@@ -16,7 +16,7 @@ source_paths:
 ## Clerk Authentication
 - Must set `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`
 - Get keys from Clerk Dashboard after creating application
-- Localization configured via `src/utils/AppConfig.ts` ClerkLocalizations
+- Localization configured via `src/config/app.ts` ClerkLocalizations
 
 ## Database Connection
 - Default: Temporary Neon PostgreSQL (72h expiration)
