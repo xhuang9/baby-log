@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2025-12-31T15:30:00Z
+last_verified_at: 2026-01-10T00:00:00Z
 source_paths:
   - src/app/[locale]/layout.tsx
   - src/app/[locale]/(marketing)/layout.tsx
@@ -17,19 +17,20 @@ This boilerplate uses a highly organized route structure with route groups to se
 - Uses three nested route groups: `(marketing)`, `(auth)`, and `(auth)/(center)`
 - Route groups don't affect URL structure but control layout boundaries
 - `[locale]` segment is required for ALL routes (locale-aware by default)
+- Marketing pages have been stripped down to minimal home page only
 
 ## Route Organization
 
 ### Top Level: `src/app/[locale]/`
-- `layout.tsx` - Root layout with locale validation, metadata, PostHog provider
-- `(marketing)/` - Public pages with marketing layout
+- `layout.tsx` - Root layout with locale validation, metadata, providers
+- `(marketing)/` - Public pages with marketing layout (minimal, home page only)
 - `(auth)/` - Protected pages with Clerk authentication
 - `api/` - API routes (also locale-prefixed)
 
 ### Marketing Route Group: `(marketing)/`
 - Purpose: Public-facing pages
 - Layout: `layout.tsx` provides navigation with sign-in/sign-up links
-- Pages: Home (`page.tsx`), About, Portfolio, Counter
+- Pages: Only home page (`page.tsx`) - about/portfolio/counter pages removed
 - No authentication required
 
 ### Auth Route Group: `(auth)/`
@@ -62,7 +63,7 @@ Automatically gets Clerk protection and auth layout.
 
 ### Layout Composition
 Layouts nest from root → route group → page:
-1. `src/app/[locale]/layout.tsx` (PostHog, locale validation)
+1. `src/app/[locale]/layout.tsx` (providers, locale validation)
 2. `src/app/[locale]/(auth)/layout.tsx` (ClerkProvider)
 3. `src/app/[locale]/(auth)/(center)/layout.tsx` (centered styling)
 4. Page component

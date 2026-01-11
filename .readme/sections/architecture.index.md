@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-09T00:00:00Z
+last_verified_at: 2026-01-10T00:00:00Z
 source_paths:
   - src/app/[locale]/
   - src/lib/

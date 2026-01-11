@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2025-12-31T15:30:00Z
+last_verified_at: 2026-01-10T00:00:00Z
 source_paths:
   - src/models/Schema.ts
   - drizzle.config.ts
@@ -67,7 +67,7 @@ This:
 ### 4. Use in Code
 Types are automatically available:
 ```typescript
-import { db } from '@/libs/DB';
+import { db } from '@/lib/db';
 import { userSchema } from '@/models/Schema';
 
 // Fully typed:
@@ -134,4 +134,4 @@ type NewCounter = InferInsertModel<typeof counterSchema>;
 
 ## Related Systems
 - `.readme/chunks/database.connection-pattern.md` - How to use the `db` instance
-- `.readme/chunks/config.libs-pattern.md` - Importing the configured DB client
+- `.readme/chunks/architecture.libs-pattern.md` - Importing the configured DB client

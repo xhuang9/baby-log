@@ -111,18 +111,6 @@ export default async function OverviewPage(props: {
     <>
       <PageTitleSetter title="Overview" />
       <div className="space-y-4">
-        {/* Baby Info Card */}
-        <div className="rounded-lg border bg-card p-4">
-          <h2 className="text-lg font-bold">{babyAccess.name}</h2>
-          <p className="text-sm text-muted-foreground">
-            {babyAccess.caregiverLabel || 'Caregiver'}
-            {' '}
-            &bull;
-            {' '}
-            {babyAccess.accessLevel}
-          </p>
-        </div>
-
         {/* Activity Grid */}
         <div className="space-y-3">
           <FeedTile babyId={babyAccess.babyId} latestFeed={latestFeed} />
