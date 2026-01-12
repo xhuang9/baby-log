@@ -29,7 +29,7 @@ export function EditBabyForm(props: {
   };
 
   const [name, setName] = useState(initialData.name);
-  const [birthDate, setBirthDate] = useState(formatDateForInput(initialData.birthDate));
+  const [birthDate, setBirthDate] = useState(() => formatDateForInput(initialData.birthDate));
   const [gender, setGender] = useState<'male' | 'female' | 'other' | 'unknown'>(
     initialData.gender ?? 'unknown',
   );

@@ -1,3 +1,4 @@
+/* eslint-disable playwright/expect-expect -- Test scaffolds pending auth fixtures. */
 import { expect, test } from '@playwright/test';
 
 /**
@@ -18,7 +19,7 @@ test.describe('Baby Invite Acceptance', () => {
 
   test.describe('Viewing Invites', () => {
     test('should display all pending invites', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await expect(page.getByText(/Baby Invites/i)).toBeVisible();
 
@@ -28,7 +29,7 @@ test.describe('Baby Invite Acceptance', () => {
     });
 
     test('should show invite details', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // Each invite should display:
       // - Baby name
@@ -42,7 +43,7 @@ test.describe('Baby Invite Acceptance', () => {
 
     test('should not show expired invites', async ({ page }) => {
       // Expired invites should be filtered out
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // TODO: Verify expired invite is not in the list
       // This requires setting up test data with expired invites
@@ -50,7 +51,7 @@ test.describe('Baby Invite Acceptance', () => {
 
     test('should distinguish between invites and access requests', async ({ page }) => {
       // When both exist, they should be clearly separated
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // Should show both sections if applicable
       // await expect(page.getByText('Access Requests')).toBeVisible();
@@ -60,7 +61,7 @@ test.describe('Baby Invite Acceptance', () => {
 
   test.describe('Accepting Invites', () => {
     test('should accept invite and redirect to dashboard', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // Click accept on first invite
       await page.getByRole('button', { name: /Accept/i }).first().click();
@@ -73,7 +74,7 @@ test.describe('Baby Invite Acceptance', () => {
     });
 
     test('should prevent accepting same invite twice', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       const acceptButton = page.getByRole('button', { name: /Accept/i }).first();
 
@@ -89,7 +90,7 @@ test.describe('Baby Invite Acceptance', () => {
 
     test('should handle accepting invite with existing access', async ({ page }) => {
       // Edge case: user somehow already has access to the baby
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // TODO: Set up scenario where user has access but invite exists
       // await page.getByRole('button', { name: /Accept/i }).first().click();
@@ -100,7 +101,7 @@ test.describe('Baby Invite Acceptance', () => {
 
     test('should set accepted baby as default if no default exists', async ({ page }) => {
       // When accepting first baby, it should become default
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Accept/i }).first().click();
 
@@ -113,7 +114,7 @@ test.describe('Baby Invite Acceptance', () => {
 
     test('should grant specified access level from invite', async ({ page }) => {
       // Verify user gets the access level from the invite
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // TODO: Accept an invite with specific access level
       // await page.getByRole('button', { name: /Accept/i }).first().click();
@@ -125,7 +126,7 @@ test.describe('Baby Invite Acceptance', () => {
 
     test('should update invite status in database', async ({ page }) => {
       // After accepting, invite should be marked as accepted
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Accept/i }).first().click();
 
@@ -136,7 +137,7 @@ test.describe('Baby Invite Acceptance', () => {
 
     test('should link invite to user account', async ({ page }) => {
       // Invite's invitedUserId should be updated to user's ID
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Accept/i }).first().click();
 
@@ -149,7 +150,7 @@ test.describe('Baby Invite Acceptance', () => {
     test('should reject expired invite', async ({ page: _page }) => {
       // Attempt to accept expired invite
       // TODO: Set up expired invite in test data
-      // await page.goto('/account/shared');
+      // await page.goto('/account/bootstrap');
 
       // Expired invites should not have Accept button
       // Or clicking Accept should show error
@@ -169,7 +170,7 @@ test.describe('Baby Invite Acceptance', () => {
 
   test.describe('Skipping Invites', () => {
     test('should allow skipping invites to continue to dashboard', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Skip for now/i }).click();
 
@@ -178,19 +179,19 @@ test.describe('Baby Invite Acceptance', () => {
     });
 
     test('should not affect invites when skipping', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Skip for now/i }).click();
 
       // Navigate back - invites should still be there
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
       // await expect(page.getByRole('button', { name: /Accept/i })).toBeVisible();
     });
   });
 
   test.describe('Error Handling', () => {
     test('should display error message on acceptance failure', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // TODO: Mock server error during acceptance
       // await page.getByRole('button', { name: /Accept/i }).first().click();
@@ -217,7 +218,7 @@ test.describe('Access Request Creation', () => {
 
   test.describe('Request Form', () => {
     test('should display access request form', async ({ page }) => {
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       await expect(page.getByText(/Request Access/i)).toBeVisible();
       await expect(page.getByLabel(/Email/i)).toBeVisible();
@@ -225,7 +226,7 @@ test.describe('Access Request Creation', () => {
     });
 
     test('should submit access request with all fields', async ({ page }) => {
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Email/i).fill('owner@example.com');
       await page.getByLabel(/Access Level/i).selectOption('editor');
@@ -238,7 +239,7 @@ test.describe('Access Request Creation', () => {
     });
 
     test('should submit request with minimal fields (no message)', async ({ page }) => {
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Email/i).fill('owner@example.com');
       await page.getByLabel(/Access Level/i).selectOption('viewer');
@@ -250,7 +251,7 @@ test.describe('Access Request Creation', () => {
     });
 
     test('should require email field', async ({ page }) => {
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       // Try to submit without email
       await page.getByLabel(/Access Level/i).selectOption('viewer');
@@ -264,7 +265,7 @@ test.describe('Access Request Creation', () => {
     });
 
     test('should validate email format', async ({ page }) => {
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       const emailInput = page.getByLabel(/Email/i);
       await emailInput.fill('invalid-email');
@@ -276,7 +277,7 @@ test.describe('Access Request Creation', () => {
     });
 
     test('should default to viewer access level', async ({ page }) => {
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       const accessSelect = page.getByLabel(/Access Level/i);
       const defaultValue = accessSelect;
@@ -285,7 +286,7 @@ test.describe('Access Request Creation', () => {
     });
 
     test('should show all access level options', async ({ page }) => {
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       const accessSelect = page.getByLabel(/Access Level/i);
 
@@ -299,7 +300,7 @@ test.describe('Access Request Creation', () => {
 
   test.describe('Request Validation', () => {
     test('should prevent requesting from own email', async ({ page }) => {
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       // Try to send request to own email
       await page.getByLabel(/Email/i).fill('requester@example.com'); // Same as logged-in user
@@ -311,7 +312,7 @@ test.describe('Access Request Creation', () => {
     });
 
     test('should prevent duplicate pending requests', async ({ page }) => {
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       // Submit first request
       await page.getByLabel(/Email/i).fill('owner@example.com');
@@ -319,7 +320,7 @@ test.describe('Access Request Creation', () => {
       await page.getByRole('button', { name: /Send Request/i }).click();
 
       // Try to submit another request to same email
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
       await page.getByLabel(/Email/i).fill('owner@example.com');
       await page.getByRole('button', { name: /Send Request/i }).click();
 
@@ -333,7 +334,7 @@ test.describe('Access Request Creation', () => {
     });
 
     test('should convert email to lowercase', async ({ page }) => {
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Email/i).fill('OWNER@EXAMPLE.COM');
       await page.getByRole('button', { name: /Send Request/i }).click();
@@ -346,7 +347,7 @@ test.describe('Access Request Creation', () => {
   test.describe('Pending Request Status', () => {
     test('should show pending requests list', async ({ page }) => {
       // After creating request, user should see it in a list
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Email/i).fill('owner@example.com');
       await page.getByRole('button', { name: /Send Request/i }).click();
@@ -357,7 +358,7 @@ test.describe('Access Request Creation', () => {
     });
 
     test('should show request details', async ({ page }) => {
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       // Should show:
       // - Target email
@@ -370,7 +371,7 @@ test.describe('Access Request Creation', () => {
     });
 
     test('should allow canceling pending request', async ({ page }) => {
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       // TODO: Click cancel on a pending request
       // await page.getByRole('button', { name: /Cancel/i }).click();
@@ -390,15 +391,15 @@ test.describe('Access Request Creation', () => {
 
   test.describe('Navigation', () => {
     test('should navigate from onboarding to request access', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('link', { name: /request access/i }).click();
 
-      await expect(page).toHaveURL(/\/account\/request-access$/);
+      await expect(page).toHaveURL(/\/account\/bootstrap$/);
     });
 
     test('should show link back to onboarding', async ({ page }) => {
-      await page.goto('/account/request-access');
+      await page.goto('/account/bootstrap');
 
       // Should have option to create own baby instead
       // await expect(page.getByRole('link', { name: /create your own/i })).toBeVisible();
@@ -414,7 +415,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
 
   test.describe('Viewing Incoming Requests', () => {
     test('should display incoming access requests', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await expect(page.getByText(/Access Requests/i)).toBeVisible();
 
@@ -424,7 +425,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should show requester information', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // Each request should show:
       // - Requester name/email
@@ -437,7 +438,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
 
     test('should auto-open first request dialog', async ({ page }) => {
       // When user lands on page with requests, first request should auto-open
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // Review dialog should be visible
       // await expect(page.getByText('Review Access Request')).toBeVisible();
@@ -446,7 +447,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
 
   test.describe('Request Approval Dialog', () => {
     test('should open review dialog when clicking review button', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 
@@ -456,7 +457,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should display requester details in dialog', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 
@@ -466,7 +467,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should show message if provided', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 
@@ -475,7 +476,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should default to requested access level', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 
@@ -487,7 +488,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should allow changing access level before approval', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 
@@ -500,7 +501,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should show baby selection dropdown', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 
@@ -514,7 +515,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
 
   test.describe('Approving Requests', () => {
     test('should approve request and grant access', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 
@@ -528,7 +529,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should require baby selection before approval', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 
@@ -540,7 +541,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
 
     test('should only allow approving for owned babies', async ({ page }) => {
       // Verify backend validation: can only grant access to babies you own
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 
@@ -555,7 +556,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     test('should create baby_access record on approval', async ({ page }) => {
       // Approving should create access record in database
       // This is primarily a backend test
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
       await page.getByLabel(/Select Baby/i).fill('1');
@@ -567,7 +568,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     test('should set default baby for requester if they have none', async ({ page }) => {
       // When approving, if requester has no default baby, set this one
       // This is backend behavior
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
       await page.getByLabel(/Select Baby/i).fill('1');
@@ -577,7 +578,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should update request status to approved', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
       await page.getByLabel(/Select Baby/i).fill('1');
@@ -590,7 +591,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
 
     test('should prevent approving duplicate access', async ({ page }) => {
       // If requester already has access to the baby
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 
@@ -605,7 +606,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
 
   test.describe('Rejecting Requests', () => {
     test('should reject request', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
       await page.getByRole('button', { name: /Reject/i }).click();
@@ -619,7 +620,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
 
     test('should not require baby selection to reject', async ({ page }) => {
       // Can reject without selecting a baby
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 
@@ -629,7 +630,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should update request status to rejected', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
       await page.getByRole('button', { name: /Reject/i }).click();
@@ -640,7 +641,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should not grant access when rejecting', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
       await page.getByRole('button', { name: /Reject/i }).click();
@@ -652,7 +653,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
 
   test.describe('Dialog Controls', () => {
     test('should close dialog with cancel button', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
       await page.getByRole('button', { name: /Cancel/i }).click();
@@ -665,7 +666,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should disable buttons while processing', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
       await page.getByLabel(/Select Baby/i).fill('1');
@@ -680,7 +681,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should show loading state on buttons', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
       await page.getByLabel(/Select Baby/i).fill('1');
@@ -694,7 +695,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
   test.describe('Multiple Requests Handling', () => {
     test('should process requests one at a time', async ({ page }) => {
       // After approving/rejecting one request, next one should be available
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
       await page.getByRole('button', { name: /Reject/i }).click();
@@ -704,7 +705,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should show count of pending requests', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // Should indicate how many requests are pending
       // await expect(page.getByText(/\d+ requests?/i)).toBeVisible();
@@ -713,7 +714,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
 
   test.describe('Error Handling', () => {
     test('should display error on approval failure', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 
@@ -729,7 +730,7 @@ test.describe('Access Request Approval (Recipient Side)', () => {
     });
 
     test('should display error on rejection failure', async ({ page }) => {
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('button', { name: /Review/i }).first().click();
 

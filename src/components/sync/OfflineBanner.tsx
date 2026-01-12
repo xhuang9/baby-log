@@ -77,7 +77,7 @@ export function OfflineBanner(props: OfflineBannerProps) {
   // Show reconnected message
   if (showReconnected) {
     return (
-      <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md animate-in fade-in slide-in-from-bottom-4 sm:left-auto sm:right-4 sm:w-auto">
+      <div className="fixed right-4 bottom-4 left-4 z-50 mx-auto max-w-md animate-in fade-in slide-in-from-bottom-4 sm:right-4 sm:left-auto sm:w-auto">
         <div className="flex items-center gap-3 rounded-lg bg-green-600 px-4 py-3 text-white shadow-lg">
           <RefreshCw className="h-5 w-5" />
           <span className="text-sm font-medium">Back online</span>
@@ -97,7 +97,7 @@ export function OfflineBanner(props: OfflineBannerProps) {
 
   // Show offline banner
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md animate-in fade-in slide-in-from-bottom-4 sm:left-auto sm:right-4 sm:w-auto">
+    <div className="fixed right-4 bottom-4 left-4 z-50 mx-auto max-w-md animate-in fade-in slide-in-from-bottom-4 sm:right-4 sm:left-auto sm:w-auto">
       <div className="flex items-center gap-3 rounded-lg bg-amber-600 px-4 py-3 text-white shadow-lg">
         <CloudOff className="h-5 w-5 flex-shrink-0" />
         <div className="flex-1">

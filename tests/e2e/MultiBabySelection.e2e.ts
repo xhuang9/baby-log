@@ -1,3 +1,4 @@
+/* eslint-disable playwright/expect-expect -- Test scaffolds pending auth fixtures. */
 import { expect, test } from '@playwright/test';
 
 /**
@@ -17,14 +18,14 @@ test.describe('Multi-Baby Selection Page', () => {
 
   test.describe('Page Display', () => {
     test('should display baby selection page', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       await expect(page.getByText(/Select Baby/i)).toBeVisible();
       await expect(page.getByText(/Choose which baby/i)).toBeVisible();
     });
 
     test('should show all accessible babies', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Should display cards/options for all babies user has access to
       // const babyOptions = page.locator('input[type="radio"]');
@@ -32,7 +33,7 @@ test.describe('Multi-Baby Selection Page', () => {
     });
 
     test('should display baby information', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Each baby option should show:
       // - Baby name
@@ -43,7 +44,7 @@ test.describe('Multi-Baby Selection Page', () => {
 
     test('should not show archived babies', async ({ page }) => {
       // Archived babies should be excluded
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // TODO: Verify archived babies are not in the list
       // This requires test data with archived babies
@@ -51,7 +52,7 @@ test.describe('Multi-Baby Selection Page', () => {
 
     test('should sort babies by lastAccessedAt', async ({ page }) => {
       // Most recently accessed babies should appear first
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // TODO: Verify order matches lastAccessedAt descending
       // This requires inspecting the rendered order
@@ -60,7 +61,7 @@ test.describe('Multi-Baby Selection Page', () => {
 
   test.describe('Baby Selection', () => {
     test('should select baby with radio button', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       const firstRadio = page.locator('input[type="radio"]').first();
       await firstRadio.check();
@@ -69,7 +70,7 @@ test.describe('Multi-Baby Selection Page', () => {
     });
 
     test('should allow selecting different babies', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       const radios = page.locator('input[type="radio"]');
 
@@ -86,7 +87,7 @@ test.describe('Multi-Baby Selection Page', () => {
     });
 
     test('should enable continue button when baby is selected', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       const continueButton = page.getByRole('button', { name: /Continue/i });
 
@@ -100,7 +101,7 @@ test.describe('Multi-Baby Selection Page', () => {
     });
 
     test('should highlight selected baby', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       const firstOption = page.locator('label').first();
       await firstOption.click();
@@ -113,7 +114,7 @@ test.describe('Multi-Baby Selection Page', () => {
 
   test.describe('Submitting Selection', () => {
     test('should set selected baby as default and redirect to dashboard', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       await page.locator('input[type="radio"]').first().check();
       await page.getByRole('button', { name: /Continue/i }).click();
@@ -123,7 +124,7 @@ test.describe('Multi-Baby Selection Page', () => {
     });
 
     test('should update defaultBabyId in database', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       await page.locator('input[type="radio"]').nth(1).check();
       await page.getByRole('button', { name: /Continue/i }).click();
@@ -133,7 +134,7 @@ test.describe('Multi-Baby Selection Page', () => {
     });
 
     test('should update lastAccessedAt timestamp', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       await page.locator('input[type="radio"]').first().check();
       await page.getByRole('button', { name: /Continue/i }).click();
@@ -143,7 +144,7 @@ test.describe('Multi-Baby Selection Page', () => {
     });
 
     test('should sync selected baby to sessionStorage', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       await page.locator('input[type="radio"]').first().check();
       await page.getByRole('button', { name: /Continue/i }).click();
@@ -156,7 +157,7 @@ test.describe('Multi-Baby Selection Page', () => {
     });
 
     test('should show loading state while submitting', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       await page.locator('input[type="radio"]').first().check();
 
@@ -168,7 +169,7 @@ test.describe('Multi-Baby Selection Page', () => {
     });
 
     test('should disable submit button while loading', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       await page.locator('input[type="radio"]').first().check();
 
@@ -180,7 +181,7 @@ test.describe('Multi-Baby Selection Page', () => {
     });
 
     test('should disable radio buttons while submitting', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       await page.locator('input[type="radio"]').first().check();
       await page.getByRole('button', { name: /Continue/i }).click();
@@ -195,7 +196,7 @@ test.describe('Multi-Baby Selection Page', () => {
   test.describe('Auto-Selection Logic', () => {
     test('should pre-select most recently accessed baby', async ({ page }) => {
       // If user was just using a baby, it should be pre-selected
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Most recent baby (first in sorted list) should be checked
       // const firstRadio = page.locator('input[type="radio"]').first();
@@ -204,17 +205,17 @@ test.describe('Multi-Baby Selection Page', () => {
 
     test('should not auto-submit, wait for user confirmation', async ({ page }) => {
       // Even if one is pre-selected, don't auto-submit
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Should remain on select-baby page
-      await expect(page).toHaveURL(/\/account\/select-baby$/);
+      await expect(page).toHaveURL(/\/account\/bootstrap$/);
       await expect(page.getByRole('button', { name: /Continue/i })).toBeVisible();
     });
 
     test('should remember selection if navigating away and back', async ({ page }) => {
       // If user selects a baby but doesn't submit, then navigates away
       // Selection should be remembered when they return (in same session)
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       await page.locator('input[type="radio"]').nth(1).check();
 
@@ -222,7 +223,7 @@ test.describe('Multi-Baby Selection Page', () => {
       await page.goto('/settings');
 
       // Come back
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Selection might or might not be remembered
       // (depends on whether form state is persisted)
@@ -231,27 +232,27 @@ test.describe('Multi-Baby Selection Page', () => {
 
   test.describe('Access Level Display', () => {
     test('should show owner badge for owned babies', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Babies where user is owner should show owner badge
       // await expect(page.getByText('owner', { exact: false })).toBeVisible();
     });
 
     test('should show editor badge for editor access', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Should display access level for each baby
       // await expect(page.locator('text=/editor/i')).toBeVisible();
     });
 
     test('should show viewer badge for viewer access', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // await expect(page.locator('text=/viewer/i')).toBeVisible();
     });
 
     test('should show caregiver label if set', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Should display custom caregiver labels (Mom, Dad, etc.)
       // await expect(page.getByText(/Mom|Dad|Parent/i)).toBeVisible();
@@ -260,7 +261,7 @@ test.describe('Multi-Baby Selection Page', () => {
 
   test.describe('Error Handling', () => {
     test('should handle submission errors gracefully', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       await page.locator('input[type="radio"]').first().check();
 
@@ -276,7 +277,7 @@ test.describe('Multi-Baby Selection Page', () => {
 
     test('should handle baby no longer accessible', async ({ page }) => {
       // Edge case: baby was archived or access was revoked between page load and submission
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       await page.locator('input[type="radio"]').first().check();
 
@@ -290,23 +291,23 @@ test.describe('Multi-Baby Selection Page', () => {
     test('should redirect to resolve if all babies become inaccessible', async ({ page: _page }) => {
       // If somehow user ends up with zero accessible babies
       // TODO: Set up scenario where babies are removed
-      // await page.goto('/account/select-baby');
+      // await page.goto('/account/bootstrap');
 
       // Should redirect to account resolution
-      // await expect(page).toHaveURL(/\/account\/resolve$/);
+      // await expect(page).toHaveURL(/\/account\/bootstrap$/);
     });
   });
 
   test.describe('Navigation', () => {
     test('should show link to add new baby', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Should have option to create a new baby instead of selecting existing
       // await expect(page.getByRole('link', { name: /Add New Baby/i })).toBeVisible();
     });
 
     test('should navigate to baby creation from select page', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // await page.getByRole('link', { name: /Add New Baby/i }).click();
 
@@ -315,7 +316,7 @@ test.describe('Multi-Baby Selection Page', () => {
     });
 
     test('should show link to settings', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Allow navigating to settings to manage babies
       // await expect(page.getByRole('link', { name: /Settings|Manage Babies/i })).toBeVisible();
@@ -326,7 +327,7 @@ test.describe('Multi-Baby Selection Page', () => {
       await page.goto('/dashboard');
 
       // Should redirect back to select-baby
-      // await expect(page).toHaveURL(/\/account\/select-baby$/);
+      // await expect(page).toHaveURL(/\/account\/bootstrap$/);
     });
   });
 
@@ -334,14 +335,14 @@ test.describe('Multi-Baby Selection Page', () => {
     test('should prompt to select default when accepting first invite', async ({ page }) => {
       // Scenario: user accepts invite, gets redirected to select-baby
       // (This happens if they had no babies and now have one from invite + one they created)
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Should explain this is setting default
       // await expect(page.getByText(/will be your default/i)).toBeVisible();
     });
 
     test('should explain default baby concept', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Should have explanatory text about what default baby means
       // await expect(page.getByText(/You can change this later/i)).toBeVisible();
@@ -351,7 +352,7 @@ test.describe('Multi-Baby Selection Page', () => {
   test.describe('Responsive Design', () => {
     test('should display properly on mobile', async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Should be readable and usable on mobile
       await expect(page.getByText(/Select Baby/i)).toBeVisible();
@@ -360,14 +361,14 @@ test.describe('Multi-Baby Selection Page', () => {
 
     test('should display properly on tablet', async ({ page }) => {
       await page.setViewportSize({ width: 768, height: 1024 });
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       await expect(page.getByText(/Select Baby/i)).toBeVisible();
     });
 
     test('should display properly on desktop', async ({ page }) => {
       await page.setViewportSize({ width: 1920, height: 1080 });
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       await expect(page.getByText(/Select Baby/i)).toBeVisible();
     });
@@ -375,14 +376,14 @@ test.describe('Multi-Baby Selection Page', () => {
 
   test.describe('Baby Cards Layout', () => {
     test('should display babies in a grid or list', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Babies should be organized visually
       // TODO: Verify layout structure
     });
 
     test('should show baby metadata', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Each card should show relevant info:
       // - Name
@@ -395,14 +396,14 @@ test.describe('Multi-Baby Selection Page', () => {
 
     test('should handle long baby names gracefully', async ({ page }) => {
       // Test text overflow/wrapping
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // TODO: Verify long names don't break layout
     });
 
     test('should handle many babies (scrolling)', async ({ page }) => {
       // If user has many babies, page should be scrollable
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // TODO: Test with user who has 10+ babies
     });
@@ -410,7 +411,7 @@ test.describe('Multi-Baby Selection Page', () => {
 
   test.describe('Accessibility', () => {
     test('should be keyboard navigable', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Should be able to navigate with Tab and select with Enter/Space
       await page.keyboard.press('Tab'); // Focus first radio
@@ -428,7 +429,7 @@ test.describe('Multi-Baby Selection Page', () => {
     });
 
     test('should have proper ARIA labels', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // Radio buttons should have accessible labels
       const radios = page.locator('input[type="radio"]');
@@ -442,7 +443,7 @@ test.describe('Multi-Baby Selection Page', () => {
     });
 
     test('should announce selection to screen readers', async ({ page }) => {
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // When selecting a baby, screen readers should be informed
       // This is tested through ARIA attributes and role assignments
@@ -456,16 +457,16 @@ test.describe('Multi-Baby Selection Page', () => {
     test('should be reached from account resolution for multi-baby users', async ({ page: _page }) => {
       // Test the flow: sign in → resolve → select-baby
       // TODO: Set up user with multiple babies and no default
-      // await page.goto('/account/resolve');
+      // await page.goto('/account/bootstrap');
 
       // Should redirect to select-baby
-      // await expect(page).toHaveURL(/\/account\/select-baby$/);
+      // await expect(page).toHaveURL(/\/account\/bootstrap$/);
     });
 
     test('should skip this page if user has only one baby', async ({ page: _page }) => {
       // Single-baby users should go directly to dashboard
       // TODO: Sign in as single-baby user
-      // await page.goto('/account/resolve');
+      // await page.goto('/account/bootstrap');
 
       // Should go directly to dashboard
       // await expect(page).toHaveURL(/\/dashboard$/);
@@ -474,7 +475,7 @@ test.describe('Multi-Baby Selection Page', () => {
     test('should skip this page if valid default is already set', async ({ page: _page }) => {
       // Users with valid defaultBabyId should go to dashboard
       // TODO: Sign in as user with valid default
-      // await page.goto('/account/resolve');
+      // await page.goto('/account/bootstrap');
 
       // await expect(page).toHaveURL(/\/dashboard$/);
     });
@@ -482,10 +483,10 @@ test.describe('Multi-Baby Selection Page', () => {
     test('should appear if default baby becomes invalid', async ({ page: _page }) => {
       // If default baby is archived or access is revoked
       // TODO: Set up scenario with invalid defaultBabyId
-      // await page.goto('/account/resolve');
+      // await page.goto('/account/bootstrap');
 
       // Should redirect to select-baby to choose new default
-      // await expect(page).toHaveURL(/\/account\/select-baby$/);
+      // await expect(page).toHaveURL(/\/account\/bootstrap$/);
     });
   });
 

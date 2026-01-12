@@ -18,8 +18,8 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useBootstrapMachine } from './hooks/useBootstrapMachine';
 import { getI18nPath } from '@/utils/Helpers';
+import { useBootstrapMachine } from './hooks/useBootstrapMachine';
 import { BootstrapInit } from './states/BootstrapInit';
 import { BootstrapInvites } from './states/BootstrapInvites';
 import { BootstrapLocked } from './states/BootstrapLocked';

@@ -151,19 +151,29 @@ describe('babyActions', () => {
             }),
           };
         }
-        // Second call: pendingInvites (has invites) - needs to handle chained innerJoin
-        const innerJoinChain = {
-          innerJoin: vi.fn().mockReturnThis(),
-          where: vi.fn().mockResolvedValue([
-            {
-              id: 1,
-              babyName: 'Baby One',
-              inviterEmail: 'parent@example.com',
-            },
-          ]),
-        };
+        if (selectCallCount === 2) {
+          // Second call: pendingInvites (has invites) - needs to handle chained innerJoin
+          const innerJoinChain = {
+            innerJoin: vi.fn().mockReturnThis(),
+            where: vi.fn().mockResolvedValue([
+              {
+                id: 1,
+                babyName: 'Baby One',
+                inviterEmail: 'parent@example.com',
+              },
+            ]),
+          };
+          return {
+            from: vi.fn().mockReturnValue(innerJoinChain),
+          };
+        }
+        // Third+ call: access requests (none)
         return {
-          from: vi.fn().mockReturnValue(innerJoinChain),
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockReturnValue({
+              limit: vi.fn().mockResolvedValue([]),
+            }),
+          }),
         };
       });
 
@@ -232,13 +242,23 @@ describe('babyActions', () => {
             }),
           };
         }
-        // Second call: pendingInvites (empty) - needs to handle chained innerJoin
-        const innerJoinChain = {
-          innerJoin: vi.fn().mockReturnThis(),
-          where: vi.fn().mockResolvedValue([]),
-        };
+        if (selectCallCount === 2) {
+          // Second call: pendingInvites (empty) - needs to handle chained innerJoin
+          const innerJoinChain = {
+            innerJoin: vi.fn().mockReturnThis(),
+            where: vi.fn().mockResolvedValue([]),
+          };
+          return {
+            from: vi.fn().mockReturnValue(innerJoinChain),
+          };
+        }
+        // Third+ call: access requests (none)
         return {
-          from: vi.fn().mockReturnValue(innerJoinChain),
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockReturnValue({
+              limit: vi.fn().mockResolvedValue([]),
+            }),
+          }),
         };
       });
 
@@ -1070,7 +1090,7 @@ describe('babyActions', () => {
                 limit: vi.fn().mockResolvedValue([
                   {
                     babyId: 1,
-                    name: 'Test Baby',
+                    babyName: 'Test Baby',
                     accessLevel: 'owner',
                     caregiverLabel: 'Parent',
                   },

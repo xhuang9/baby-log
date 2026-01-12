@@ -1,3 +1,4 @@
+/* eslint-disable playwright/expect-expect -- Test scaffolds pending auth fixtures. */
 import { expect, test } from '@playwright/test';
 
 /**
@@ -7,12 +8,12 @@ import { expect, test } from '@playwright/test';
  * where users are redirected after authentication based on their account state.
  *
  * Decision Tree:
- * 1. Locked account → /account/locked
- * 2. Has outgoing access request → /account/request-access
- * 3. Has incoming access request or invites → /account/shared
- * 4. No babies → /account/onboarding/baby
+ * 1. Locked account → /account/bootstrap
+ * 2. Has outgoing access request → /account/bootstrap
+ * 3. Has incoming access request or invites → /account/bootstrap
+ * 4. No babies → /account/bootstrap
  * 5. One baby or valid default → /dashboard
- * 6. Multiple babies without default → /account/select-baby
+ * 6. Multiple babies without default → /account/bootstrap
  */
 
 test.describe('Account Resolution Flow', () => {
@@ -25,16 +26,16 @@ test.describe('Account Resolution Flow', () => {
     test('should redirect new user with no babies to onboarding', async ({ page }) => {
       // This test would require:
       // 1. Sign in as a new user
-      // 2. Verify redirect to /account/resolve
-      // 3. Verify final redirect to /account/onboarding/baby
+      // 2. Verify redirect to /account/bootstrap
+      // 3. Verify final redirect to /account/bootstrap
 
       await page.goto('/sign-in');
 
       // TODO: Complete authentication flow
       // await authenticateTestUser(page, 'new-user@example.com');
 
-      // Expect to be redirected through /account/resolve to onboarding
-      // await expect(page).toHaveURL(/\/account\/onboarding\/baby$/);
+      // Expect to be redirected to /account/bootstrap
+      // await expect(page).toHaveURL(/\/account\/bootstrap$/);
 
       // Verify onboarding form is displayed
       // await expect(page.getByLabel("Baby's Name")).toBeVisible();
@@ -47,7 +48,7 @@ test.describe('Account Resolution Flow', () => {
       // 3. Verify redirect to dashboard
       // 4. Verify baby is set as default
 
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       // TODO: Fill form and submit
       // await page.getByLabel("Baby's Name").fill('Test Baby');
@@ -63,10 +64,10 @@ test.describe('Account Resolution Flow', () => {
       // TODO: Set up a locked test user in the database
       // await authenticateTestUser(page, 'locked-user@example.com');
 
-      await page.goto('/account/resolve');
+      await page.goto('/account/bootstrap');
 
       // Should redirect to locked page
-      // await expect(page).toHaveURL(/\/account\/locked$/);
+      // await expect(page).toHaveURL(/\/account\/bootstrap$/);
       // await expect(page.getByText('Account Locked')).toBeVisible();
     });
 
@@ -77,7 +78,7 @@ test.describe('Account Resolution Flow', () => {
       await page.goto('/dashboard');
 
       // Should redirect back to locked page
-      // await expect(page).toHaveURL(/\/account\/locked$/);
+      // await expect(page).toHaveURL(/\/account\/bootstrap$/);
     });
   });
 
@@ -87,15 +88,15 @@ test.describe('Account Resolution Flow', () => {
       // TODO: Set up test user with pending invite in database
       // await authenticateTestUser(page, 'invited-user@example.com');
 
-      await page.goto('/account/resolve');
+      await page.goto('/account/bootstrap');
 
-      // await expect(page).toHaveURL(/\/account\/shared$/);
+      // await expect(page).toHaveURL(/\/account\/bootstrap$/);
       // await expect(page.getByText('Shared Baby Invites')).toBeVisible();
     });
 
     test('should allow user to accept invite and set as default baby', async ({ page }) => {
       // Test the complete invite acceptance flow
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // TODO: Click accept on invite
       // await page.getByRole('button', { name: 'Accept' }).first().click();
@@ -107,7 +108,7 @@ test.describe('Account Resolution Flow', () => {
 
     test('should allow user to skip invites and continue', async ({ page }) => {
       // Test that users can skip invites
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // await page.getByRole('button', { name: 'Skip for now' }).click();
       // await expect(page).toHaveURL(/\/dashboard$/);
@@ -120,9 +121,9 @@ test.describe('Account Resolution Flow', () => {
       // TODO: Set up test user with outgoing access request
       // await authenticateTestUser(page, 'requester-user@example.com');
 
-      await page.goto('/account/resolve');
+      await page.goto('/account/bootstrap');
 
-      // await expect(page).toHaveURL(/\/account\/request-access$/);
+      // await expect(page).toHaveURL(/\/account\/bootstrap$/);
       // await expect(page.getByText('Access Request Pending')).toBeVisible();
     });
 
@@ -131,15 +132,15 @@ test.describe('Account Resolution Flow', () => {
       // TODO: Set up test user with incoming access request
       // await authenticateTestUser(page, 'recipient-user@example.com');
 
-      await page.goto('/account/resolve');
+      await page.goto('/account/bootstrap');
 
-      // await expect(page).toHaveURL(/\/account\/shared$/);
+      // await expect(page).toHaveURL(/\/account\/bootstrap$/);
       // await expect(page.getByText('Access Requests')).toBeVisible();
     });
 
     test('should allow user to approve access request', async ({ page }) => {
       // Test access request approval flow
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // TODO: Click review on access request
       // await page.getByRole('button', { name: 'Review' }).first().click();
@@ -157,7 +158,7 @@ test.describe('Account Resolution Flow', () => {
 
     test('should allow user to reject access request', async ({ page }) => {
       // Test access request rejection flow
-      await page.goto('/account/shared');
+      await page.goto('/account/bootstrap');
 
       // TODO: Click review and reject
       // await page.getByRole('button', { name: 'Review' }).first().click();
@@ -174,15 +175,15 @@ test.describe('Account Resolution Flow', () => {
       // TODO: Set up test user with multiple babies, no default
       // await authenticateTestUser(page, 'multi-baby-user@example.com');
 
-      await page.goto('/account/resolve');
+      await page.goto('/account/bootstrap');
 
-      // await expect(page).toHaveURL(/\/account\/select-baby$/);
+      // await expect(page).toHaveURL(/\/account\/bootstrap$/);
       // await expect(page.getByText('Select Baby')).toBeVisible();
     });
 
     test('should allow user to select a baby and set as default', async ({ page }) => {
       // Test baby selection and default setting
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // TODO: Select first baby
       // await page.getByRole('radio').first().check();
@@ -194,7 +195,7 @@ test.describe('Account Resolution Flow', () => {
 
     test('should display all accessible babies in selection list', async ({ page }) => {
       // Verify that all babies user has access to are shown
-      await page.goto('/account/select-baby');
+      await page.goto('/account/bootstrap');
 
       // TODO: Verify baby list
       // const babyCards = page.locator('[data-testid="baby-card"]');
@@ -208,7 +209,7 @@ test.describe('Account Resolution Flow', () => {
       // TODO: Set up test user with one baby
       // await authenticateTestUser(page, 'single-baby-user@example.com');
 
-      await page.goto('/account/resolve');
+      await page.goto('/account/bootstrap');
 
       // Should go straight to dashboard
       // await expect(page).toHaveURL(/\/dashboard$/);
@@ -219,7 +220,7 @@ test.describe('Account Resolution Flow', () => {
       // TODO: Set up test user with default baby set
       // await authenticateTestUser(page, 'default-baby-user@example.com');
 
-      await page.goto('/account/resolve');
+      await page.goto('/account/bootstrap');
 
       // await expect(page).toHaveURL(/\/dashboard$/);
     });
@@ -240,7 +241,7 @@ test.describe('Account Resolution Flow', () => {
       await page.goto('/dashboard');
 
       // Should redirect to account resolution
-      // await expect(page).toHaveURL(/\/account\/resolve$/);
+      // await expect(page).toHaveURL(/\/account\/bootstrap$/);
     });
 
     test('should allow navigation to settings from dashboard', async ({ page }) => {
@@ -259,7 +260,7 @@ test.describe('Account Resolution Flow', () => {
       // Verify that resolution populates sessionStorage
       // await authenticateTestUser(page, 'single-baby-user@example.com');
 
-      await page.goto('/account/resolve');
+      await page.goto('/account/bootstrap');
 
       // Check sessionStorage
       // const userData = await page.evaluate(() => {
@@ -273,7 +274,7 @@ test.describe('Account Resolution Flow', () => {
       // Verify that active baby is stored
       // await authenticateTestUser(page, 'single-baby-user@example.com');
 
-      await page.goto('/account/resolve');
+      await page.goto('/account/bootstrap');
 
       // const babyData = await page.evaluate(() => {
       //   return sessionStorage.getItem('baby-log:active-baby');
@@ -306,7 +307,7 @@ test.describe('Account Resolution Flow', () => {
 
     test('should redirect to sign-in if not authenticated', async ({ page }) => {
       // Verify unauthenticated users are redirected
-      await page.goto('/account/resolve');
+      await page.goto('/account/bootstrap');
 
       // Should redirect to sign-in
       await expect(page).toHaveURL(/\/sign-in$/);

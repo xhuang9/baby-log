@@ -20,10 +20,12 @@ export function CardSkeleton() {
 }
 
 export function ListSkeleton({ count = 3 }: { count?: number }) {
+  const listKeys = Array.from({ length: count }, (_, index) => `list-skeleton-${index}`);
+
   return (
     <div className="space-y-4">
-      {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="flex items-center space-x-4">
+      {listKeys.map(listKey => (
+        <div key={listKey} className="flex items-center space-x-4">
           <Skeleton className="size-12 rounded-full" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-1/4" />
@@ -36,6 +38,8 @@ export function ListSkeleton({ count = 3 }: { count?: number }) {
 }
 
 export function TableSkeleton({ rows = 5 }: { rows?: number }) {
+  const rowKeys = Array.from({ length: rows }, (_, index) => `table-skeleton-${index}`);
+
   return (
     <div className="space-y-3">
       {/* Header */}
@@ -46,8 +50,8 @@ export function TableSkeleton({ rows = 5 }: { rows?: number }) {
         <Skeleton className="h-4 w-1/4" />
       </div>
       {/* Rows */}
-      {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex gap-4">
+      {rowKeys.map(rowKey => (
+        <div key={rowKey} className="flex gap-4">
           <Skeleton className="h-4 w-1/4" />
           <Skeleton className="h-4 w-1/4" />
           <Skeleton className="h-4 w-1/4" />

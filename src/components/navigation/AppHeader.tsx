@@ -92,9 +92,10 @@ export const AppHeader = () => {
                     <BreadcrumbList>
                       {breadcrumbs.map((item, index) => {
                         const isLast = index === breadcrumbs.length - 1;
+                        const breadcrumbKey = item.href ? `${item.href}-${item.label}` : item.label;
 
                         return (
-                          <div key={`${item.label}-${index}`} className="contents">
+                          <div key={breadcrumbKey} className="contents">
                             <BreadcrumbItem>
                               {isLast
                                 ? (

@@ -149,18 +149,36 @@ export function useSyncOnLogin(clerkId: string | null | undefined): SyncOnLoginS
  * Hook to check if sync is needed without triggering it
  */
 export function useNeedsSync(clerkId: string | null | undefined): boolean | null {
-  const [needsSync, setNeedsSync] = useState<boolean | null>(null);
+  const [needsSyncState, setNeedsSyncState] = useState<{
+    clerkId: string | null;
+    value: boolean | null;
+  }>({
+    clerkId: null,
+    value: null,
+  });
 
   useEffect(() => {
     if (!clerkId) {
-      setNeedsSync(null);
       return;
     }
 
-    import('@/services/initial-sync').then(({ needsInitialSync }) => {
-      needsInitialSync(clerkId).then(setNeedsSync);
-    });
+    let isActive = true;
+
+    const checkSync = async () => {
+      const { needsInitialSync } = await import('@/services/initial-sync');
+      const value = await needsInitialSync(clerkId);
+
+      if (isActive) {
+        setNeedsSyncState({ clerkId, value });
+      }
+    };
+
+    void checkSync();
+
+    return () => {
+      isActive = false;
+    };
   }, [clerkId]);
 
-  return needsSync;
+  return clerkId && needsSyncState.clerkId === clerkId ? needsSyncState.value : null;
 }

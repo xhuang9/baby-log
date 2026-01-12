@@ -1,3 +1,4 @@
+/* eslint-disable playwright/expect-expect -- Test scaffolds pending auth fixtures. */
 import { expect, test } from '@playwright/test';
 
 /**
@@ -15,7 +16,7 @@ test.describe('Baby Creation', () => {
 
   test.describe('Onboarding Baby Creation', () => {
     test('should create baby with minimal required fields', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       // Fill only required field (name)
       await page.getByLabel(/Baby's Name/i).fill('Charlie');
@@ -29,7 +30,7 @@ test.describe('Baby Creation', () => {
     });
 
     test('should create baby with all optional fields', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       // Fill required field
       await page.getByLabel(/Baby's Name/i).fill('Emma');
@@ -51,7 +52,7 @@ test.describe('Baby Creation', () => {
     });
 
     test('should use default name "My Baby" if name is empty', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       // Clear the default name and submit empty
       await page.getByLabel(/Baby's Name/i).clear();
@@ -63,7 +64,7 @@ test.describe('Baby Creation', () => {
     });
 
     test('should validate birth date is not in the future', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Baby's Name/i).fill('Test Baby');
 
@@ -85,7 +86,7 @@ test.describe('Baby Creation', () => {
 
     test('should set new baby as default baby', async ({ page }) => {
       // Verify that creating a baby sets it as the user's default
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Baby's Name/i).fill('Default Baby');
       await page.getByRole('button', { name: /Continue to Dashboard/i }).click();
@@ -101,7 +102,7 @@ test.describe('Baby Creation', () => {
 
     test('should grant owner access to creator', async ({ page }) => {
       // Verify that baby creator gets owner access
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Baby's Name/i).fill('Owner Test');
       await page.getByRole('button', { name: /Continue to Dashboard/i }).click();
@@ -149,7 +150,7 @@ test.describe('Baby Creation', () => {
 
   test.describe('Baby Information Validation', () => {
     test('should require baby name', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       // Try to submit without name
       const nameInput = page.getByLabel(/Baby's Name/i);
@@ -159,11 +160,11 @@ test.describe('Baby Creation', () => {
       await page.getByRole('button', { name: /Continue to Dashboard/i }).click();
 
       // Should not redirect (HTML5 validation prevents submission)
-      await expect(page).toHaveURL(/\/account\/onboarding\/baby$/);
+      await expect(page).toHaveURL(/\/account\/bootstrap$/);
     });
 
     test('should accept birth weight in grams', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Baby's Name/i).fill('Weight Test');
       await page.getByRole('button', { name: /Baby Details/i }).click();
@@ -176,7 +177,7 @@ test.describe('Baby Creation', () => {
     });
 
     test('should reject negative birth weight', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Baby's Name/i).fill('Weight Test');
       await page.getByRole('button', { name: /Baby Details/i }).click();
@@ -191,7 +192,7 @@ test.describe('Baby Creation', () => {
     });
 
     test('should accept all gender options', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Baby's Name/i).fill('Gender Test');
       await page.getByRole('button', { name: /Baby Details/i }).click();
@@ -219,7 +220,7 @@ test.describe('Baby Creation', () => {
 
   test.describe('Caregiver Label', () => {
     test('should default caregiver label to "Parent"', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Baby's Name/i).fill('Label Test');
       await page.getByRole('button', { name: /Continue to Dashboard/i }).click();
@@ -230,7 +231,7 @@ test.describe('Baby Creation', () => {
     });
 
     test('should accept custom caregiver label', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Baby's Name/i).fill('Label Test');
       await page.getByRole('button', { name: /Your Preferences/i }).click();
@@ -246,7 +247,7 @@ test.describe('Baby Creation', () => {
 
   test.describe('Form UI Behavior', () => {
     test('should toggle Baby Details section', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       const detailsButton = page.getByRole('button', { name: /Baby Details/i });
       const birthDateInput = page.getByLabel(/Birth Date/i);
@@ -266,7 +267,7 @@ test.describe('Baby Creation', () => {
     });
 
     test('should toggle Preferences section', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       const prefsButton = page.getByRole('button', { name: /Your Preferences/i });
       const labelInput = page.getByLabel(/Your Name in System/i);
@@ -286,7 +287,7 @@ test.describe('Baby Creation', () => {
     });
 
     test('should show loading state while submitting', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Baby's Name/i).fill('Loading Test');
 
@@ -300,7 +301,7 @@ test.describe('Baby Creation', () => {
     });
 
     test('should disable submit button while loading', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       await page.getByLabel(/Baby's Name/i).fill('Disabled Test');
 
@@ -315,20 +316,20 @@ test.describe('Baby Creation', () => {
 
   test.describe('Navigation', () => {
     test('should show link to request access from onboarding', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       const requestLink = page.getByRole('link', { name: /request access to an existing baby/i });
 
       await expect(requestLink).toBeVisible();
-      expect(await requestLink.getAttribute('href')).toContain('/account/request-access');
+      expect(await requestLink.getAttribute('href')).toContain('/account/bootstrap');
     });
 
     test('should navigate to request access page from onboarding', async ({ page }) => {
-      await page.goto('/account/onboarding/baby');
+      await page.goto('/account/bootstrap');
 
       await page.getByRole('link', { name: /request access/i }).click();
 
-      await expect(page).toHaveURL(/\/account\/request-access$/);
+      await expect(page).toHaveURL(/\/account\/bootstrap$/);
     });
   });
 });
