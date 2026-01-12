@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(test:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "mcp__shadcn__get_project_registries",
+      "mcp__shadcn__search_items_in_registries",
+      "mcp__shadcn__view_items_in_registries",
+      "mcp__shadcn__get_item_examples_from_registries",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(yes:*)",
+      "Bash(npm run check:types:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run dev:*)",
+      "Skill(doc-update)",
+      "Skill(doc-task)",
+      "Skill(chrome)",
+      "Skill(lint)",
+      "Skill(typecheck)",
+      "Bash(pnpm add:*)",
+      "Bash(find:*)",
+      "Bash(npm run db:generate:*)",
+      "Bash(xargs basename:*)",
+      "Bash(rm:*)",
+      "Bash(pnpm run check:types:*)",
+      "Bash(pnpm run check:deps:*)",
+      "Bash(pnpm run lint:*)",
+      "Bash(pnpm run build:*)",
+      "Bash(tree:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "shadcn"
+  ]
+}

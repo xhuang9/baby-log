@@ -1,0 +1,20 @@
+@layer clerk {
+  .cl-userProfile-root,
+  .cl-userProfile-root .cl-rootBox,
+  .cl-userProfile-root .cl-cardBox {
+    width: 100% !important;
+  }
+
+  /* Remove the white flash of this user button avatar box */
+  .cl-userButtonAvatarBox span {
+    display: none !important;
+  }
+
+  .cl-avatarImageActionsUpload {
+    color: var(--text-muted-foreground) !important;
+  }
+
+  .cl-userButtonPopoverActionButton {
+    color: var(--text-muted-foreground) !important;
+  }
+}
