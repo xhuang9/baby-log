@@ -19,6 +19,10 @@ const isProtectedRoute = createRouteMatcher([
   '/:locale/insights(.*)',
   '/account(.*)',
   '/:locale/account(.*)',
+  '/api/bootstrap(.*)',
+  '/:locale/api/bootstrap(.*)',
+  '/api/sync(.*)',
+  '/:locale/api/sync(.*)',
 ]);
 
 const isAuthPage = createRouteMatcher([

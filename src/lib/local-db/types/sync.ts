@@ -16,7 +16,8 @@ export type SyncEntityType
     | 'feed_logs'
     | 'sleep_logs'
     | 'nappy_logs'
-    | 'ui_config';
+    | 'ui_config'
+    | 'bootstrap';
 
 export type SyncStatusValue = 'idle' | 'syncing' | 'complete' | 'error';
 

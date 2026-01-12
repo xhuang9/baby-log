@@ -38,12 +38,12 @@ export default async function OverviewPage(props: {
     .limit(1);
 
   if (!localUser) {
-    redirect(getI18nPath('/account/resolve', locale));
+    redirect(getI18nPath('/account/bootstrap', locale));
   }
 
   // Check if user has a default baby
   if (!localUser.defaultBabyId) {
-    redirect(getI18nPath('/account/resolve', locale));
+    redirect(getI18nPath('/account/bootstrap', locale));
   }
 
   // Get the default baby details
@@ -63,7 +63,7 @@ export default async function OverviewPage(props: {
 
   // If baby not found or no access, redirect to resolve
   if (!babyAccess) {
-    redirect(getI18nPath('/account/resolve', locale));
+    redirect(getI18nPath('/account/bootstrap', locale));
   }
 
   // Fetch latest feed log

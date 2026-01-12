@@ -68,6 +68,10 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
 
 ### Sync System
 
+- `.readme/chunks/local-first.bootstrap-storage.md`
+  - Content: How unified bootstrap API data is stored in IndexedDB for offline access and sync status tracking
+  - Read when: Understanding offline bootstrap behavior, debugging cache issues, or working with sync status system
+
 - `.readme/chunks/local-first.initial-sync-service.md`
   - Content: Initial data sync on login (user, babies, recent 7-day logs) with API contract
   - Read when: Understanding login flow, implementing new log types, or debugging sync issues

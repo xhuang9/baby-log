@@ -621,7 +621,7 @@ export async function setDefaultBaby(babyId: number): Promise<SetDefaultBabyResu
       );
 
     revalidatePath('/overview');
-    revalidatePath('/account/select-baby');
+    revalidatePath('/account/bootstrap');
 
     return {
       success: true,

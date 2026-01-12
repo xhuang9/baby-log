@@ -41,7 +41,7 @@ export default async function EditBabyPage(props: {
     .limit(1);
 
   if (!localUser) {
-    redirect(getI18nPath('/account/resolve', locale));
+    redirect(getI18nPath('/account/bootstrap', locale));
   }
 
   // Get baby details and verify access

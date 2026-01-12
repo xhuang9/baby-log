@@ -41,7 +41,7 @@ export default async function ManageBabiesPage(props: {
     .limit(1);
 
   if (!localUser) {
-    redirect(getI18nPath('/account/resolve', locale));
+    redirect(getI18nPath('/account/bootstrap', locale));
   }
 
   // Get all babies the user has access to

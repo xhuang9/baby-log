@@ -63,6 +63,7 @@ export const useSyncStore = create<SyncStore>((set, get) => ({
     sleep_logs: { ...defaultEntityStatus },
     nappy_logs: { ...defaultEntityStatus },
     ui_config: { ...defaultEntityStatus },
+    bootstrap: { ...defaultEntityStatus },
   },
 
   backgroundSync: { ...defaultBackgroundSync },
@@ -132,6 +133,7 @@ export const useSyncStore = create<SyncStore>((set, get) => ({
         sleep_logs: { ...defaultEntityStatus },
         nappy_logs: { ...defaultEntityStatus },
         ui_config: { ...defaultEntityStatus },
+        bootstrap: { ...defaultEntityStatus },
       },
       backgroundSync: { ...defaultBackgroundSync },
       isInitialSyncComplete: false,

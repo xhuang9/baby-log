@@ -115,8 +115,7 @@ export async function createAccessRequest(
       status: 'pending',
     });
 
-    revalidatePath('/account/request-access');
-    revalidatePath('/account/shared');
+    revalidatePath('/account/bootstrap');
 
     return { success: true, message: 'Access request sent successfully' };
   } catch (error) {
@@ -283,7 +282,7 @@ export async function cancelAccessRequest(
       })
       .where(eq(babyAccessRequestsSchema.id, data.requestId));
 
-    revalidatePath('/account/request-access');
+    revalidatePath('/account/bootstrap');
 
     return { success: true };
   } catch (error) {
@@ -415,7 +414,7 @@ export async function approveAccessRequest(
         .where(eq(userSchema.id, request.requesterUserId));
     }
 
-    revalidatePath('/account/shared');
+    revalidatePath('/account/bootstrap');
     revalidatePath('/settings/babies/share');
 
     return {
@@ -485,7 +484,7 @@ export async function rejectAccessRequest(
       })
       .where(eq(babyAccessRequestsSchema.id, data.requestId));
 
-    revalidatePath('/account/shared');
+    revalidatePath('/account/bootstrap');
     revalidatePath('/settings/babies/share');
 
     return { success: true };

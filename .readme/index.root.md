@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-12T00:00:00Z
+last_verified_at: 2026-01-12T01:00:00Z
 source_paths:
   - .readme/sections/
 ---
@@ -29,8 +29,8 @@ Read when: Adding translations, working with locale-aware routes, or integrating
 Read when: Working with Clerk authentication setup, protected routes, or understanding auth-to-account flow integration.
 
 ### `.readme/sections/account-management.index.md`
-**Account resolution, baby multi-tenancy, and sharing system**
-Read when: Working with post-auth flows, baby selection, multi-baby management, invite acceptance, or understanding sessionStorage state sync patterns.
+**Unified bootstrap post-auth flow, baby multi-tenancy, and sharing system**
+Read when: Working with post-auth flows, understanding the unified bootstrap API, implementing offline fallback, baby selection, multi-baby management, invite acceptance, or debugging account state logic.
 
 ### `.readme/sections/baby-management.index.md`
 **Baby management UI, editing, and multi-baby switching**
@@ -65,8 +65,8 @@ Read when: Understanding linting rules, commit conventions, type safety patterns
 Read when: Configuring builds, setting up CI/CD, or understanding the custom Next.js configuration.
 
 ### `.readme/sections/performance.index.md`
-**PWA configuration, service worker caching, loading states, and performance optimization**
-Read when: Working with Progressive Web App features, configuring offline support, adding loading states, or optimizing navigation performance.
+**PWA configuration, service worker caching, offline indicators, loading states, and performance optimization**
+Read when: Working with Progressive Web App features, implementing offline indicators, configuring offline support, adding loading states, or optimizing navigation performance.
 
 ## Quick Reference
 

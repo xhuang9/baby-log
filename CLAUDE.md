@@ -23,14 +23,14 @@ All detailed documentation lives in `.readme/sections/`. Each section contains c
 | `database.index.md` | DrizzleORM, schema, migrations, Neon | Adding tables, running migrations, database setup |
 | `internationalization.index.md` | next-intl, locale routing, translations | Adding translations, working with i18n |
 | `authentication.index.md` | Clerk setup, protected routes, layouts | Working with auth, adding protected pages |
-| `account-management.index.md` | Account resolution, baby multi-tenancy, sharing | Post-auth flows, baby selection, invite system |
+| `account-management.index.md` | Bootstrap unified post-auth flow, multi-tenancy, sharing | Post-auth flows, offline fallback, baby selection, invite system |
 | `baby-management.index.md` | Baby UI, editing, switching | Building baby management features |
 | `feed-logging.index.md` | Feed logging, estimation, server actions | Implementing activity tracking |
 | `local-first.index.md` | Dexie, offline patterns, sync | IndexedDB, offline mutations, sync operations |
 | `configuration.index.md` | Environment variables, lib configs | Adding env vars, configuring libraries |
 | `testing.index.md` | Vitest, Playwright, test modes | Writing tests, understanding test environments |
 | `build-deploy.index.md` | Next.js config, build patterns | Build configuration, deployment |
-| `performance.index.md` | PWA, service workers, loading states | Offline support, performance optimization |
+| `performance.index.md` | PWA, offline indicators, loading states | Offline support, network status UI, performance optimization |
 | `monitoring.index.md` | Sentry, logging, observability | Error monitoring, logging setup |
 | `code-quality.index.md` | ESLint, TypeScript strictness | Code style, type errors |
 

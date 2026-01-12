@@ -35,12 +35,22 @@ export async function getSyncStatus(entityType: SyncEntityType): Promise<LocalSy
 export async function updateSyncStatus(
   entityType: SyncEntityType,
   status: SyncStatusValue,
-  options?: { errorMessage?: string; progress?: number },
+  options?: { errorMessage?: string; progress?: number; lastSyncedAt?: string },
 ): Promise<void> {
+  let lastSyncAt: Date | null;
+
+  if (options?.lastSyncedAt) {
+    lastSyncAt = new Date(options.lastSyncedAt);
+  } else if (status === 'complete') {
+    lastSyncAt = new Date();
+  } else {
+    lastSyncAt = (await getSyncStatus(entityType)).lastSyncAt;
+  }
+
   await localDb.syncStatus.put({
     entityType,
     status,
-    lastSyncAt: status === 'complete' ? new Date() : (await getSyncStatus(entityType)).lastSyncAt,
+    lastSyncAt,
     errorMessage: options?.errorMessage ?? null,
     progress: options?.progress ?? null,
   });
