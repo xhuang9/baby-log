@@ -31,7 +31,7 @@ jobs:
           path: |
             .next/cache
           # Generate a new cache whenever packages or source files change.
-          key: nextjs-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**') }}
+          key: nextjs-${{ matrix.node-version }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**') }}
 
       - name: Build Next.js
         run: npm run build-local
