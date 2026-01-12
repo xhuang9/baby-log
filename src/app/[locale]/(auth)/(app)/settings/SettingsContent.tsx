@@ -24,7 +24,7 @@ export function SettingsContent(props: {
   const { user } = useUser();
 
   return (
-    <div className="mr-auto max-w-2xl space-y-6">
+    <div className="mx-auto max-w-2xl min-w-80 space-y-6">
       {/* Account Section */}
       <Link
         href="/settings/user-profile"
@@ -33,8 +33,8 @@ export function SettingsContent(props: {
         <div className="flex items-center">
           <UserAvatar />
           <div className="ml-4">
-            <p className="font-medium">{user?.fullName || 'Account Name'}</p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm font-medium">{user?.fullName || 'Account Name'}</p>
+            <p className="text-xs text-muted-foreground">
               {user?.primaryEmailAddress?.emailAddress}
             </p>
           </div>
@@ -46,7 +46,7 @@ export function SettingsContent(props: {
       <BabiesList babies={babies} locale={locale} />
 
       {/* Sign Out Button */}
-      <div className="pt-4">
+      <div className="rounded-lg border bg-background p-4">
         <SignOutButton />
       </div>
     </div>

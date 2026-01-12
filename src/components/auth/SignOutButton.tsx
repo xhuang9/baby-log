@@ -10,7 +10,7 @@ export function SignOutButton(props: {
   const clearUser = useUserStore(state => state.clearUser);
   const clearActiveBaby = useBabyStore(state => state.clearActiveBaby);
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     // Clear Zustand stores (which also clear sessionStorage)
     clearUser();
     clearActiveBaby();
@@ -19,6 +19,15 @@ export function SignOutButton(props: {
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('baby-log:init-step');
     }
+
+    // Clear auth session marker for offline access
+    // This prevents offline access after explicit sign out
+    try {
+      const { clearAuthSession } = await import('@/lib/local-db');
+      await clearAuthSession();
+    } catch (error) {
+      console.error('Failed to clear auth session:', error);
+    }
   };
 
   return (
@@ -26,7 +35,7 @@ export function SignOutButton(props: {
       <button
         type="button"
         onClick={handleSignOut}
-        className="text-red-500 hover:text-red-600"
+        className="text-sm text-muted-foreground transition-colors hover:text-destructive"
       >
         {props.children || 'Sign out'}
       </button>

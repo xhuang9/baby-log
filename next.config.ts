@@ -25,6 +25,8 @@ const baseConfig: NextConfig = {
 let configWithPlugins = createNextIntlPlugin('./src/lib/i18n.ts')(baseConfig);
 
 // Configure PWA
+// Note: Some options like fallbacks and workboxOptions.importScripts are valid at runtime
+// but may not be in TypeScript definitions. Using type assertion for these.
 configWithPlugins = withPWA({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',

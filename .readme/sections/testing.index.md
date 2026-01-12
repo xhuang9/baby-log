@@ -1,9 +1,12 @@
 ---
-last_verified_at: 2025-12-31T15:30:00Z
+last_verified_at: 2026-01-13T00:00:00Z
 source_paths:
   - vitest.config.mts
   - playwright.config.ts
   - tests/
+  - src/app/[locale]/api/sync/pull/route.test.ts
+  - src/app/[locale]/api/sync/push/route.test.ts
+  - src/services/sync-service.test.ts
 ---
 
 # Testing Overview
@@ -24,6 +27,10 @@ The testing setup is designed for both local development and CI environments.
 - `.readme/chunks/testing.vitest-dual-mode.md`
   - Content: Vitest configuration with separate `unit` (Node) and `ui` (browser) projects
   - Read when: Writing tests, understanding test environment selection, or debugging test failures
+
+- `.readme/chunks/testing.sync-mocking-patterns.md`
+  - Content: Mocking patterns for Clerk auth, Drizzle ORM, IndexedDB, and fetch in sync API tests
+  - Read when: Writing unit tests for API routes with auth, testing database operations, or mocking external dependencies
 
 - `.readme/chunks/testing.playwright-e2e.md`
   - Content: Playwright setup with in-memory database and custom test patterns

@@ -20,7 +20,7 @@ import type { LocalBaby, LocalBabyAccess, LocalUIConfig, LocalUser } from './typ
 
 import type { LocalFeedLog, LocalNappyLog, LocalSleepLog } from './types/logs';
 import type { OutboxEntry } from './types/outbox';
-import type { LocalSyncStatus, SyncMeta } from './types/sync';
+import type { AuthSession, LocalSyncStatus, SyncMeta } from './types/sync';
 import Dexie from 'dexie';
 
 // ============================================================================
@@ -43,6 +43,9 @@ class BabyLogDatabase extends Dexie {
   syncMeta!: EntityTable<SyncMeta, 'babyId'>;
   syncStatus!: EntityTable<LocalSyncStatus, 'entityType'>;
   outbox!: EntityTable<OutboxEntry, 'mutationId'>;
+
+  // Auth session for offline access
+  authSession!: EntityTable<AuthSession, 'id'>;
 
   constructor() {
     super('baby-log');
@@ -91,6 +94,26 @@ class BabyLogDatabase extends Dexie {
       syncMeta: 'babyId',
       syncStatus: 'entityType',
       outbox: 'mutationId, status, createdAt, entityType',
+    });
+
+    // Version 4: Add authSession table for offline authentication bypass
+    // Stores session marker to allow offline access to previously authenticated users
+    this.version(4).stores({
+      // Log tables - unchanged
+      feedLogs: 'id, babyId, startedAt, [babyId+startedAt]',
+      sleepLogs: 'id, babyId, startedAt, [babyId+startedAt]',
+      nappyLogs: 'id, babyId, startedAt, [babyId+startedAt]',
+      // Entity tables - unchanged
+      babies: 'id, ownerUserId',
+      babyAccess: '[oduserId+babyId], oduserId, babyId',
+      users: 'id, clerkId',
+      uiConfig: 'userId',
+      // Sync management - unchanged
+      syncMeta: 'babyId',
+      syncStatus: 'entityType',
+      outbox: 'mutationId, status, createdAt, entityType',
+      // Auth session - new
+      authSession: 'id',
     });
   }
 }

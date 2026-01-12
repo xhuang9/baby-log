@@ -208,3 +208,23 @@ export const babyAccessRequestsSchema = pgTable('baby_access_requests', {
   index('baby_access_requests_requester_user_id_idx').on(t.requesterUserId),
   index('baby_access_requests_status_idx').on(t.status),
 ]);
+
+// Sync event operation enum
+export const syncOpEnum = pgEnum('sync_op_enum', [
+  'create',
+  'update',
+  'delete',
+]);
+
+// Sync events table for cursor-based delta sync
+export const syncEventsSchema = pgTable('sync_events', {
+  id: serial('id').primaryKey(),
+  babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
+  entityType: text('entity_type').notNull(), // feed_log, sleep_log, nappy_log, baby
+  entityId: integer('entity_id').notNull(), // ID of the entity being synced
+  op: syncOpEnum('op').notNull(), // create, update, delete
+  payload: text('payload'), // JSON string of entity data (for create/update)
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+}, t => [
+  index('sync_events_baby_id_idx').on(t.babyId, t.id),
+]);

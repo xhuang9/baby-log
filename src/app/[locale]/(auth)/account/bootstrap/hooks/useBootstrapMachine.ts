@@ -246,6 +246,10 @@ export function useBootstrapMachine(
       await updateSyncStatus('bootstrap', 'complete', {
         lastSyncedAt: new Date(response.syncedAt).toISOString(),
       });
+
+      // Save auth session marker for offline access
+      const { saveAuthSession } = await import('@/lib/local-db');
+      await saveAuthSession(response.user.id, response.user.clerkId);
     } catch (error) {
       console.error('Failed to store bootstrap data:', error);
       // Don't throw - we can continue even if storage fails

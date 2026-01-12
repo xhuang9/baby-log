@@ -57,7 +57,7 @@ export function BabiesList(props: {
 
   return (
     <div className="space-y-3">
-      <h2 className="text-lg font-semibold">Children</h2>
+      <h2 className="text-base font-semibold text-foreground">Children</h2>
 
       {/* Babies List */}
       <div className="space-y-2">
@@ -74,9 +74,9 @@ export function BabiesList(props: {
 
             {/* Baby Info */}
             <div className="flex-1">
-              <p className="font-medium">{baby.name}</p>
+              <p className="text-sm font-medium">{baby.name}</p>
               {formatAge(baby.birthDate) && (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   {formatAge(baby.birthDate)}
                 </p>
               )}
@@ -93,8 +93,8 @@ export function BabiesList(props: {
         href={getI18nPath('/settings/babies/new', locale)}
         className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed bg-background py-4 text-center transition-colors hover:bg-muted/50"
       >
-        <Plus className="size-5 text-primary" />
-        <span className="font-medium text-primary">Add Child</span>
+        <Plus className="size-4 text-primary" />
+        <span className="text-sm font-medium text-primary">Add Child</span>
       </Link>
     </div>
   );

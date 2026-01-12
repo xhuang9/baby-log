@@ -1,14 +1,26 @@
 ---
-last_verified_at: 2026-01-12T00:00:00Z
+last_verified_at: 2026-01-13T00:00:00Z
 source_paths:
   - src/lib/local-db/
   - src/lib/query-keys.ts
   - src/providers/QueryProvider.tsx
   - src/services/initial-sync.ts
+  - src/services/sync-service.ts
   - src/services/sync-worker-manager.ts
   - src/workers/sync-worker.ts
   - src/stores/useSyncStore.ts
   - src/hooks/useSyncOnLogin.ts
+  - src/hooks/useSyncScheduler.ts
+  - src/app/[locale]/api/sync/pull/route.ts
+  - src/app/[locale]/api/sync/push/route.ts
+  - src/app/[locale]/api/sync/pull/route.test.ts
+  - src/app/[locale]/api/sync/push/route.test.ts
+  - src/services/sync-service.test.ts
+  - src/models/Schema.ts
+  - src/components/OfflineBanner.tsx
+  - src/templates/AppShell.tsx
+  - public/offline-auth-sw.js
+  - public/offline.html
 ---
 
 # Local-First Architecture
@@ -68,6 +80,18 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
 
 ### Sync System
 
+- `.readme/chunks/local-first.delta-sync-architecture.md`
+  - Content: Cursor-based delta sync system with sync_events table, bidirectional pull/push operations, and LWW conflict resolution
+  - Read when: Understanding sync architecture, working with incremental sync, or debugging cursor-based synchronization
+
+- `.readme/chunks/local-first.delta-sync-api.md`
+  - Content: HTTP API contracts for GET /api/sync/pull and POST /api/sync/push endpoints with request/response formats
+  - Read when: Implementing sync endpoints, debugging API integration, or understanding sync protocol
+
+- `.readme/chunks/local-first.delta-sync-client.md`
+  - Content: Client-side sync service and React hooks (useSyncScheduler, useMultiBabySync) for automatic polling and outbox flushing
+  - Read when: Implementing sync UI, adding automatic sync to pages, or understanding client sync patterns
+
 - `.readme/chunks/local-first.bootstrap-storage.md`
   - Content: How unified bootstrap API data is stored in IndexedDB for offline access and sync status tracking
   - Read when: Understanding offline bootstrap behavior, debugging cache issues, or working with sync status system
@@ -86,6 +110,10 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
 
 ### Offline & Conflict Handling
 
+- `.readme/chunks/local-first.offline-auth-bypass.md`
+  - Content: Session marker in IndexedDB for offline authentication bypass, service worker navigation interception, and OfflineBanner UI component
+  - Read when: Understanding offline auth flow, implementing session management, or working with offline UI indicators
+
 - `.readme/chunks/local-first.outbox-pattern.md`
   - Content: Outbox table for offline mutation replay with idempotent server writes
   - Read when: Implementing offline mutations, understanding sync replay, or adding mutation tracking
@@ -99,3 +127,9 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
 - `.readme/chunks/local-first.services-layer.md`
   - Content: Shared business logic extracted to services/ for reuse across server actions and future API routes
   - Read when: Adding business logic, preparing for iOS API, or understanding access control patterns
+
+## Testing
+
+- `.readme/chunks/testing.sync-mocking-patterns.md`
+  - Content: Mocking patterns for Clerk auth, Drizzle ORM, IndexedDB, and fetch in sync API tests
+  - Read when: Writing unit tests for sync endpoints, testing database operations, or mocking external dependencies in sync tests

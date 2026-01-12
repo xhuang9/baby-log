@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-12T01:00:00Z
+last_verified_at: 2026-01-13T00:00:00Z
 source_paths:
   - .readme/sections/
 ---
@@ -41,16 +41,16 @@ Read when: Building or modifying the baby list interface, implementing baby edit
 Read when: Implementing or modifying feed tracking, working with breast/bottle feeds, understanding amount estimation, or adding new activity types.
 
 ### `.readme/sections/local-first.index.md`
-**Local-first architecture with Dexie, TanStack Query, initial sync, background sync worker, and offline-first patterns**
-Read when: Working with IndexedDB, implementing offline features, understanding initial/background sync operations, adding new log types, debugging sync status, setting up outbox pattern, or preparing for PWA/iOS development.
+**Local-first architecture with Dexie, TanStack Query, delta sync, and offline-first patterns**
+Read when: Working with IndexedDB, implementing offline features, understanding cursor-based delta sync, working with sync endpoints (pull/push), using sync hooks (useSyncScheduler), adding new log types, debugging sync status, setting up outbox pattern, or preparing for PWA/iOS development.
 
 ### `.readme/sections/configuration.index.md`
 **Centralized library configs and environment variables**
 Read when: Setting up third-party libraries, managing environment variables, or understanding the `/lib` structure.
 
 ### `.readme/sections/testing.index.md`
-**Multi-mode testing with Vitest and Playwright**
-Read when: Writing tests, configuring test environments, or understanding the dual-project Vitest setup.
+**Multi-mode testing with Vitest and Playwright, including mocking patterns for sync APIs**
+Read when: Writing tests, configuring test environments, understanding the dual-project Vitest setup, or mocking Clerk auth, Drizzle ORM, and IndexedDB in unit tests.
 
 ### `.readme/sections/monitoring.index.md`
 **Sentry, logging, analytics, and security integrations**

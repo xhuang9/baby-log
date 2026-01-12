@@ -3,6 +3,7 @@
 import { AppHeader } from '@/components/navigation/AppHeader';
 import { AppSidebar } from '@/components/navigation/AppSidebar';
 import { MobileBottomBar } from '@/components/navigation/MobileBottomBar';
+import { OfflineBanner } from '@/components/OfflineBanner';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 type AppShellProps = {
@@ -14,6 +15,7 @@ type AppShellProps = {
 export const AppShell = ({ children, locale, variant = 'default' }: AppShellProps) => {
   return (
     <SidebarProvider>
+      <OfflineBanner />
       <AppSidebar locale={locale} />
       <SidebarInset>
         <AppHeader />

@@ -42,3 +42,20 @@ export type SyncMeta = {
   cursor: number; // Monotonic cursor for delta sync
   lastSyncAt: Date;
 };
+
+// ============================================================================
+// Auth Session (Offline Auth Bypass)
+// ============================================================================
+
+/**
+ * Stores session marker for offline authentication bypass.
+ * When a user has previously authenticated and we have cached data,
+ * this allows them to access the app offline without Clerk validation.
+ */
+export type AuthSession = {
+  id: 'current'; // Singleton - only one session record
+  userId: number; // Local user ID from users table
+  clerkId: string; // Clerk user ID for validation
+  lastAuthAt: Date; // Last successful authentication timestamp
+  expiresAt: Date | null; // Optional expiration (null = no expiration)
+};

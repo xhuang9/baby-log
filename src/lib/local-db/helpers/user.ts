@@ -43,6 +43,7 @@ export async function clearAllLocalData(): Promise<void> {
     localDb.syncMeta,
     localDb.syncStatus,
     localDb.outbox,
+    localDb.authSession,
   ], async () => {
     await localDb.users.clear();
     await localDb.babies.clear();
@@ -54,5 +55,6 @@ export async function clearAllLocalData(): Promise<void> {
     await localDb.syncMeta.clear();
     await localDb.syncStatus.clear();
     await localDb.outbox.clear();
+    await localDb.authSession.clear();
   });
 }

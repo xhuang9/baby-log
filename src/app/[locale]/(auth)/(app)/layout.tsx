@@ -1,7 +1,7 @@
 import { setRequestLocale } from 'next-intl/server';
 import { AppShell } from '@/templates/AppShell';
 
-export default async function AppLayout(props: {
+export default async function AppUnwrappedLayout(props: {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
