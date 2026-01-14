@@ -1,9 +1,9 @@
 ---
-last_verified_at: 2026-01-12T00:00:00Z
+last_verified_at: 2026-01-14T00:00:00Z
 source_paths:
   - src/app/[locale]/api/bootstrap/route.ts
   - src/app/[locale]/(auth)/account/bootstrap/page.tsx
-  - src/hooks/useBootstrapMachine.ts
+  - src/app/[locale]/(auth)/account/bootstrap/hooks/useBootstrapMachine.ts
   - src/types/bootstrap.ts
   - src/app/[locale]/(auth)/layout.tsx
 ---
@@ -97,7 +97,7 @@ Response: BootstrapResponse = {
 
 ### 3. Bootstrap State Machine Hook
 
-**Location**: `src/hooks/useBootstrapMachine.ts`
+**Location**: `src/app/[locale]/(auth)/account/bootstrap/hooks/useBootstrapMachine.ts`
 
 **Responsibilities**:
 - Manages state transitions using useReducer

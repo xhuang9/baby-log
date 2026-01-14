@@ -1,7 +1,9 @@
 ---
-last_verified_at: 2026-01-09T00:00:00Z
+last_verified_at: 2026-01-14T00:00:00Z
 source_paths:
-  - src/lib/local-db.ts
+  - src/lib/local-db/database.ts
+  - src/lib/local-db/helpers/outbox.ts
+  - src/lib/local-db/types/outbox.ts
 ---
 
 # Outbox Pattern for Offline Mutations
@@ -53,7 +55,8 @@ outbox: 'mutationId, status, createdAt, entityType'
 
 ```typescript
 import { v4 as uuid } from 'uuid';
-import { localDb, addToOutbox } from '@/lib/local-db';
+import { localDb } from '@/lib/local-db/database';
+import { addToOutbox } from '@/lib/local-db/helpers/outbox';
 
 async function createFeedLog(feedLog: Omit<LocalFeedLog, 'id' | 'createdAt' | 'updatedAt'>) {
   // 1. Generate client UUID (enables idempotent server write)
@@ -137,7 +140,7 @@ async function deleteFeedLog(feedLogId: string) {
 ### Get Pending Entries
 
 ```typescript
-import { getPendingOutboxEntries } from '@/lib/local-db';
+import { getPendingOutboxEntries } from '@/lib/local-db/helpers/outbox';
 
 const pendingMutations = await getPendingOutboxEntries();
 // Returns all entries with status === 'pending'
@@ -295,5 +298,6 @@ await addToOutbox({ entityId: feedLog.id, ... }); // Same UUID on retry
 
 ## Related
 - `.readme/chunks/local-first.dexie-schema.md` - Outbox table schema
+- `.readme/chunks/local-first.modular-db-structure.md` - Database file organization
 - `.readme/chunks/local-first.conflict-resolution.md` - LWW after server response
-- `.readme/chunks/local-first.tanstack-query-setup.md` - Retry triggers
+- `.readme/chunks/local-first.delta-sync-client.md` - Sync service patterns

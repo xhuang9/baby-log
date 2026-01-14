@@ -5,6 +5,7 @@ import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { BabiesList } from './BabiesList';
+import { HandPreferenceSetting } from './HandPreferenceSetting';
 
 type BabyInfo = {
   babyId: number;
@@ -44,6 +45,12 @@ export function SettingsContent(props: {
 
       {/* Babies List Section */}
       <BabiesList babies={babies} locale={locale} />
+
+      {/* Preferences Section */}
+      <div className="space-y-3">
+        <h2 className="text-base font-semibold text-foreground">Preferences</h2>
+        <HandPreferenceSetting />
+      </div>
 
       {/* Sign Out Button */}
       <div className="rounded-lg border bg-background p-4">

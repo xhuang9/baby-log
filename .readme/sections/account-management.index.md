@@ -1,12 +1,12 @@
 ---
-last_verified_at: 2026-01-12T00:00:00Z
+last_verified_at: 2026-01-14T00:00:00Z
 source_paths:
   - src/app/[locale]/(auth)/account/
   - src/app/[locale]/api/bootstrap/
   - src/actions/babyActions.ts
   - src/stores/useBabyStore.ts
   - src/stores/useUserStore.ts
-  - src/hooks/useBootstrapMachine.ts
+  - src/app/[locale]/(auth)/account/bootstrap/hooks/useBootstrapMachine.ts
   - src/types/bootstrap.ts
 ---
 
@@ -46,7 +46,7 @@ This is NOT standard Clerk behavior - it's a custom implementation designed for 
   - Read when: Working with baby queries, implementing baby-scoped features, or understanding access levels
 
 - `.readme/chunks/account.state-sync-pattern.md`
-  - Content: Zustand store synchronization patterns with IndexedDB
+  - Content: Zustand store synchronization patterns with sessionStorage for PWA-safe state management
   - Read when: Adding new client state, debugging hydration issues, or understanding store persistence
 
 ### Sharing & Invites

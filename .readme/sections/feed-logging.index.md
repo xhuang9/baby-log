@@ -1,9 +1,9 @@
 ---
-last_verified_at: 2026-01-08T14:30:00Z
+last_verified_at: 2026-01-14T00:00:00Z
 source_paths:
   - src/actions/feedLogActions.ts
   - src/models/Schema.ts
-  - src/components/overview/
+  - src/app/[locale]/(auth)/(app)/overview/_components/
 ---
 
 # Feed Logging System

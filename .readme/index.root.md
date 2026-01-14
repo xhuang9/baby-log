@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-13T00:00:00Z
+last_verified_at: 2026-01-14T00:00:00Z
 source_paths:
   - .readme/sections/
 ---
@@ -49,8 +49,8 @@ Read when: Working with IndexedDB, implementing offline features, understanding 
 Read when: Setting up third-party libraries, managing environment variables, or understanding the `/lib` structure.
 
 ### `.readme/sections/testing.index.md`
-**Multi-mode testing with Vitest and Playwright, including mocking patterns for sync APIs**
-Read when: Writing tests, configuring test environments, understanding the dual-project Vitest setup, or mocking Clerk auth, Drizzle ORM, and IndexedDB in unit tests.
+**Multi-mode testing with Vitest and Playwright, E2E test infrastructure with fixtures and page objects**
+Read when: Writing tests, configuring test environments, understanding the dual-project Vitest setup, creating E2E tests with authentication fixtures, using page object models, seeding test data, organizing test files, or mocking Clerk auth, Drizzle ORM, and IndexedDB in unit tests.
 
 ### `.readme/sections/monitoring.index.md`
 **Sentry, logging, analytics, and security integrations**
@@ -68,6 +68,10 @@ Read when: Configuring builds, setting up CI/CD, or understanding the custom Nex
 **PWA configuration, service worker caching, offline indicators, loading states, and performance optimization**
 Read when: Working with Progressive Web App features, implementing offline indicators, configuring offline support, adding loading states, or optimizing navigation performance.
 
+### `.readme/sections/styling.index.md`
+**Brand guidelines, color system, dark/light mode theming, and activity-specific styling**
+Read when: Applying colors or styles, creating UI components, working with dark/light mode, understanding the brand palette, or adding new color tokens. **IMPORTANT:** This project requires both dark and light mode support - always test in both themes.
+
 ## Quick Reference
 
 **Default Locale:** `en` (English)
@@ -76,4 +80,6 @@ Read when: Working with Progressive Web App features, implementing offline indic
 **Path Alias:** `@/` → `src/`
 **Database:** PostgreSQL via DrizzleORM (Neon in dev)
 **Auth Provider:** Clerk
-**Styling:** Tailwind CSS 4
+**Styling:** Tailwind CSS 4 with custom brand palette
+**Theme:** Dark + Light mode required (`.dark` class toggle)
+**Brand Colors:** Mint green (primary), soft pink (secondary), soft blue (accent)

@@ -1,10 +1,10 @@
 ---
-last_verified_at: 2026-01-06T00:30:00Z
+last_verified_at: 2026-01-14T00:00:00Z
 source_paths:
   - src/stores/useUserStore.ts
   - src/stores/useBabyStore.ts
   - src/components/auth/SignOutButton.tsx
-  - src/app/[locale]/(auth)/account/resolve/ResolveAccountClient.tsx
+  - src/app/[locale]/(auth)/account/bootstrap/hooks/useBootstrapMachine.ts
 ---
 
 # SessionStorage State Sync Pattern
@@ -105,23 +105,24 @@ export const useBabyStore = create<BabyStore>(set => ({
 
 ## Patterns
 
-### Initializing State After Resolution
-**Location:** `src/app/[locale]/(auth)/account/resolve/ResolveAccountClient.tsx`
+### Initializing State After Bootstrap
+**Location:** `src/app/[locale]/(auth)/account/bootstrap/hooks/useBootstrapMachine.ts`
 
-After `resolveAccountContext()` returns:
+After bootstrap API returns, the state machine initializes stores:
 ```typescript
-const { user, nextStep } = result;
+// In useBootstrapMachine.ts
+const { user, accountState } = bootstrapResponse;
 
 // Initialize user store
 useUserStore.getState().setUser(user);
 
-// Initialize baby store if dashboard step
-if (nextStep.type === 'dashboard') {
-  useBabyStore.getState().setActiveBaby(nextStep.baby);
+// Initialize baby store if ready state
+if (accountState.state === 'ready' && accountState.activeBaby) {
+  useBabyStore.getState().setActiveBaby(accountState.activeBaby);
 }
 ```
 
-This ensures stores are populated before redirecting to dashboard.
+This ensures stores are populated before redirecting to overview.
 
 ### Reading State in Components
 **Client Components:**
@@ -235,6 +236,6 @@ When offline (PWA mode):
 **Future:** Implement IndexedDB + sync queue for offline support (not yet implemented).
 
 ## Related
-- `.readme/chunks/account.resolution-flow.md` - How stores are initialized during resolution
-- `.readme/chunks/auth.post-auth-flow.md` - Previous auth flow (now superseded)
+- `.readme/chunks/account.bootstrap-unified-flow.md` - How stores are initialized during bootstrap
+- `.readme/chunks/local-first.bootstrap-storage.md` - Bootstrap data storage in IndexedDB
 - `.readme/chunks/performance.pwa-config.md` - PWA best practices and storage constraints

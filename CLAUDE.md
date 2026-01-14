@@ -33,5 +33,19 @@ All detailed documentation lives in `.readme/sections/`. Each section contains c
 | `performance.index.md` | PWA, offline indicators, loading states | Offline support, network status UI, performance optimization |
 | `monitoring.index.md` | Sentry, logging, observability | Error monitoring, logging setup |
 | `code-quality.index.md` | ESLint, TypeScript strictness | Code style, type errors |
+| `styling.index.md` | Brand colors, theming, dark/light mode | **Any styling work**, colors, UI design |
+
+## Styling & Dark/Light Mode (IMPORTANT)
+
+This project has a **brand guideline** optimized for new parents - calming pastels, soft greens/pinks/blues. **Dark and light mode are both required.**
+
+- Full brand research: `.readme/planning/brand-guideline.md`
+- Styling rules & color tokens: `.readme/sections/styling.index.md`
+- CSS entry point: `src/styles/global.css`
+
+**Key rules:**
+- Always use CSS variables (`--primary`, `--foreground`, etc.) - never hardcode colors
+- Test all UI changes in **both** light and dark mode
+- Activity types have dedicated color tokens in `activity-colors.css`
 
 For complete navigation: `.readme/index.root.md`

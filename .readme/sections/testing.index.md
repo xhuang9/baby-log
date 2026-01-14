@@ -1,9 +1,12 @@
 ---
-last_verified_at: 2026-01-13T00:00:00Z
+last_verified_at: 2026-01-14T00:00:00Z
 source_paths:
   - vitest.config.mts
   - playwright.config.ts
   - tests/
+  - tests/fixtures/
+  - tests/pages/
+  - tests/e2e/
   - src/app/[locale]/api/sync/pull/route.test.ts
   - src/app/[locale]/api/sync/push/route.test.ts
   - src/services/sync-service.test.ts
@@ -35,6 +38,22 @@ The testing setup is designed for both local development and CI environments.
 - `.readme/chunks/testing.playwright-e2e.md`
   - Content: Playwright setup with in-memory database and custom test patterns
   - Read when: Writing E2E tests, configuring test database, or working with `.spec.ts` and `.e2e.ts` files
+
+- `.readme/chunks/testing.e2e-test-organization.md`
+  - Content: E2E test directory structure, feature-based organization, test workflow patterns
+  - Read when: Creating new E2E tests, understanding test file organization, or restructuring test suite
+
+- `.readme/chunks/testing.e2e-fixtures-auth.md`
+  - Content: Authentication fixtures with TEST_USERS, authenticateAs(), clearAuth() for Clerk test mode
+  - Read when: Writing authenticated E2E tests, mocking user sessions, or testing different user scenarios
+
+- `.readme/chunks/testing.e2e-fixtures-seed.md`
+  - Content: Database seeding helpers for test data via API endpoints with test isolation patterns
+  - Read when: Seeding test data, creating test babies/invites, or implementing test API endpoints
+
+- `.readme/chunks/testing.e2e-page-objects.md`
+  - Content: Page Object Model pattern with BasePage, BootstrapPage, SettingsPage, and common utilities
+  - Read when: Writing E2E tests with page objects, creating new page objects, or understanding locator patterns
 
 - `.readme/chunks/testing.checkly-monitoring.md`
   - Content: Checkly monitoring-as-code with `.check.e2e.ts` files for uptime monitoring

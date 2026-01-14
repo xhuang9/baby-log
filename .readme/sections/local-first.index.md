@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-13T00:00:00Z
+last_verified_at: 2026-01-14T00:00:00Z
 source_paths:
   - src/lib/local-db/
   - src/lib/query-keys.ts

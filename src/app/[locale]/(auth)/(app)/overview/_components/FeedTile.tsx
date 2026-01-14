@@ -60,7 +60,7 @@ export function FeedTile({ babyId, latestFeed }: FeedTileProps) {
       <ActivityTile
         title="Feed"
         subtitle={formatFeedSubtitle(latestFeed)}
-        color="teal"
+        activity="feed"
         onClick={() => setSheetOpen(true)}
       />
       <AddFeedSheet

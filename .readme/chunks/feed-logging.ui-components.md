@@ -1,9 +1,9 @@
 ---
-last_verified_at: 2026-01-08T14:30:00Z
+last_verified_at: 2026-01-14T00:00:00Z
 source_paths:
-  - src/components/overview/FeedTile.tsx
-  - src/components/overview/AddFeedSheet.tsx
-  - src/components/overview/ActivityTile.tsx
+  - src/app/[locale]/(auth)/(app)/overview/_components/FeedTile.tsx
+  - src/app/[locale]/(auth)/(app)/overview/_components/AddFeedSheet.tsx
+  - src/app/[locale]/(auth)/(app)/overview/_components/ActivityTile.tsx
   - src/components/ui/slider.tsx
 ---
 
@@ -27,7 +27,7 @@ FeedTile (stateful)
 
 ### 1. Activity Tile Pattern
 
-**Location**: `src/components/overview/ActivityTile.tsx`
+**Location**: `src/app/[locale]/(auth)/(app)/overview/_components/ActivityTile.tsx`
 
 ```typescript
 export type ActivityTileProps = {
@@ -55,7 +55,7 @@ const colorClasses = {
 
 ### 2. Bottom Sheet Form Pattern
 
-**Location**: `src/components/overview/AddFeedSheet.tsx`
+**Location**: `src/app/[locale]/(auth)/(app)/overview/_components/AddFeedSheet.tsx`
 
 **Non-Standard Choices**:
 
@@ -148,7 +148,7 @@ const _values = React.useMemo(
 
 ### 4. Time Ago Formatting
 
-**Location**: `src/components/overview/FeedTile.tsx`
+**Location**: `src/app/[locale]/(auth)/(app)/overview/_components/FeedTile.tsx`
 
 ```typescript
 function formatTimeAgo(date: Date): string {

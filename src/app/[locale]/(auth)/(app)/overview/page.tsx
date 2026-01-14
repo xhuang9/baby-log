@@ -6,6 +6,7 @@ import { PageTitleSetter } from '@/components/navigation/PageTitleSetter';
 import { db } from '@/lib/db';
 import { babiesSchema, babyAccessSchema, feedLogSchema, userSchema } from '@/models/Schema';
 import { getI18nPath } from '@/utils/Helpers';
+import { ActivityTile } from './_components/ActivityTile';
 import { FeedTile } from './_components/FeedTile';
 
 export async function generateMetadata(props: {
@@ -116,49 +117,30 @@ export default async function OverviewPage(props: {
           <FeedTile babyId={babyAccess.babyId} latestFeed={latestFeed} />
 
           {/* Placeholder tiles for future activities */}
-          <button
-            type="button"
-            className="flex w-full items-center justify-between rounded-lg border border-l-4 border-l-purple-500 bg-purple-500/5 p-4 text-left transition-colors hover:bg-purple-500/10"
+          <ActivityTile
+            title="Sleep"
+            subtitle="Coming soon"
+            activity="sleep"
             disabled
-          >
-            <div>
-              <h3 className="text-lg font-semibold">Sleep</h3>
-              <p className="text-sm text-muted-foreground">Coming soon</p>
-            </div>
-          </button>
-
-          <button
-            type="button"
-            className="flex w-full items-center justify-between rounded-lg border border-l-4 border-l-amber-500 bg-amber-500/5 p-4 text-left transition-colors hover:bg-amber-500/10"
+          />
+          <ActivityTile
+            title="Nappy"
+            subtitle="Coming soon"
+            activity="nappy"
             disabled
-          >
-            <div>
-              <h3 className="text-lg font-semibold">Nappy</h3>
-              <p className="text-sm text-muted-foreground">Coming soon</p>
-            </div>
-          </button>
-
-          <button
-            type="button"
-            className="flex w-full items-center justify-between rounded-lg border border-l-4 border-l-emerald-500 bg-emerald-500/5 p-4 text-left transition-colors hover:bg-emerald-500/10"
+          />
+          <ActivityTile
+            title="Solids"
+            subtitle="Coming soon"
+            activity="solids"
             disabled
-          >
-            <div>
-              <h3 className="text-lg font-semibold">Solids</h3>
-              <p className="text-sm text-muted-foreground">Coming soon</p>
-            </div>
-          </button>
-
-          <button
-            type="button"
-            className="flex w-full items-center justify-between rounded-lg border border-l-4 border-l-blue-500 bg-blue-500/5 p-4 text-left transition-colors hover:bg-blue-500/10"
+          />
+          <ActivityTile
+            title="Bath"
+            subtitle="Coming soon"
+            activity="bath"
             disabled
-          >
-            <div>
-              <h3 className="text-lg font-semibold">Bath</h3>
-              <p className="text-sm text-muted-foreground">Coming soon</p>
-            </div>
-          </button>
+          />
         </div>
       </div>
     </>

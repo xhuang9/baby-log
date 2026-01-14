@@ -30,7 +30,7 @@ The auth setup is deeply integrated with the i18n system for URL generation and 
   - Content: How ClerkProvider is scoped to `(auth)` route group with locale-aware URLs
   - Read when: Working with protected routes, configuring Clerk, or debugging auth redirects
 
-- `.readme/chunks/auth.post-auth-flow.md`
+- `.readme/chunks/auth.post-auth-flow.expired.md` **[EXPIRED]**
   - Content: Legacy post-authentication workflow (SUPERSEDED by account resolution flow)
   - Read when: Understanding historical implementation or migrating from old pattern
 

@@ -1,9 +1,13 @@
 'use client';
 
 import type { FeedMethod } from '@/actions/feedLogActions';
-import { useState } from 'react';
+import { XIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { createFeedLog } from '@/actions/feedLogActions';
+import { BaseButton } from '@/components/base/BaseButton';
+import { TimeSwiper } from '@/components/feed/TimeSwiper';
 import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
 import { Label } from '@/components/ui/label';
 import {
   Sheet,
@@ -14,7 +18,8 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Slider } from '@/components/ui/slider';
-import { cn } from '@/lib/utils';
+import { getUIConfig } from '@/lib/local-db/helpers/ui-config';
+import { useUserStore } from '@/stores/useUserStore';
 
 type AddFeedSheetProps = {
   babyId: number;
@@ -23,26 +28,43 @@ type AddFeedSheetProps = {
   onSuccess?: () => void;
 };
 
+type InputMode = 'timer' | 'manual';
+
 export function AddFeedSheet({
   babyId,
   open,
   onOpenChange,
   onSuccess,
 }: AddFeedSheetProps) {
+  const user = useUserStore(s => s.user);
+  const [inputMode, setInputMode] = useState<InputMode>('manual');
   const [method, setMethod] = useState<FeedMethod>('bottle');
-  const [hour, setHour] = useState(() => new Date().getHours());
-  const [minute, setMinute] = useState(() => new Date().getMinutes());
+  const [startTime, setStartTime] = useState(() => new Date());
   const [amountMl, setAmountMl] = useState(120);
   const [durationMinutes, setDurationMinutes] = useState(15);
   const [endSide, setEndSide] = useState<'left' | 'right'>('left');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [handMode, setHandMode] = useState<'left' | 'right'>('right');
+
+  // Load hand preference from IndexedDB
+  useEffect(() => {
+    async function loadHandMode() {
+      if (!user?.localId) return;
+      try {
+        const config = await getUIConfig(user.localId);
+        setHandMode(config.handMode);
+      } catch (err) {
+        console.error('Failed to load hand mode:', err);
+      }
+    }
+    loadHandMode();
+  }, [user?.localId]);
 
   const resetForm = () => {
-    const now = new Date();
+    setInputMode('manual');
     setMethod('bottle');
-    setHour(now.getHours());
-    setMinute(now.getMinutes());
+    setStartTime(new Date());
     setAmountMl(120);
     setDurationMinutes(15);
     setEndSide('left');
@@ -54,19 +76,10 @@ export function AddFeedSheet({
     setError(null);
 
     try {
-      const now = new Date();
-      const startedAt = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        hour,
-        minute,
-      );
-
       const result = await createFeedLog({
         babyId,
         method,
-        startedAt,
+        startedAt: startTime,
         ...(method === 'bottle' ? { amountMl } : { durationMinutes, endSide }),
       });
 
@@ -94,12 +107,13 @@ export function AddFeedSheet({
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetContent side="bottom" className="h-auto max-h-[90vh] rounded-t-xl" showCloseButton={false}>
+      <SheetContent side="bottom" className="inset-0 h-full w-full rounded-none" showCloseButton={false}>
         <SheetHeader className="flex-row items-center justify-between gap-4 space-y-0 border-b pb-4">
           <SheetClose
-            render={<Button variant="ghost" size="sm" className="text-muted-foreground" />}
+            render={<Button variant="ghost" size="icon-sm" className="text-muted-foreground" />}
           >
-            Cancel
+            <XIcon className="h-5 w-5" />
+            <span className="sr-only">Close</span>
           </SheetClose>
 
           <SheetTitle className="text-center">
@@ -113,123 +127,129 @@ export function AddFeedSheet({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setMethod(method === 'bottle' ? 'breast' : 'bottle')}
+            onClick={() => setInputMode(inputMode === 'manual' ? 'timer' : 'manual')}
             className="text-primary"
           >
-            {method === 'bottle' ? 'Breast' : 'Bottle'}
+            {inputMode === 'manual' ? 'Timer' : 'Manual'}
           </Button>
         </SheetHeader>
 
-        <div className="space-y-6 py-6">
-          {/* Time Picker */}
-          <div className="space-y-3">
-            <Label className="text-muted-foreground">Start Time</Label>
-            <div className="flex items-center justify-center gap-4">
-              <div className="flex flex-col items-center">
-                <input
-                  type="number"
-                  min={0}
-                  max={23}
-                  value={hour}
-                  onChange={e => setHour(Math.min(23, Math.max(0, Number.parseInt(e.target.value) || 0)))}
-                  className="h-16 w-20 rounded-lg border bg-background text-center text-2xl font-semibold focus:ring-2 focus:ring-primary focus:outline-none"
-                />
-                <span className="mt-1 text-xs text-muted-foreground">Hour</span>
-              </div>
-              <span className="text-2xl font-semibold">:</span>
-              <div className="flex flex-col items-center">
-                <input
-                  type="number"
-                  min={0}
-                  max={59}
-                  value={minute}
-                  onChange={e => setMinute(Math.min(59, Math.max(0, Number.parseInt(e.target.value) || 0)))}
-                  className="h-16 w-20 rounded-lg border bg-background text-center text-2xl font-semibold focus:ring-2 focus:ring-primary focus:outline-none"
-                />
-                <span className="mt-1 text-xs text-muted-foreground">Min</span>
-              </div>
-            </div>
-          </div>
+        <div className="space-y-6 px-4 py-6">
+          {/* Feed Method Toggle - Breast/Bottle (Feed-specific) */}
+          <ButtonGroup className="w-full">
+            <Button
+              type="button"
+              variant={method === 'bottle' ? 'default' : 'outline'}
+              className="h-12 flex-1"
+              onClick={() => setMethod('bottle')}
+            >
+              Bottle
+            </Button>
+            <Button
+              type="button"
+              variant={method === 'breast' ? 'default' : 'outline'}
+              className="h-12 flex-1"
+              onClick={() => setMethod('breast')}
+            >
+              Breast
+            </Button>
+          </ButtonGroup>
 
-          {/* Bottle Feed: Amount Slider */}
-          {method === 'bottle' && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label className="text-muted-foreground">Amount</Label>
-                <span className="text-lg font-semibold">
-                  {amountMl}
-                  {' '}
-                  ml
-                </span>
-              </div>
-              <div className="px-2">
-                <Slider
-                  value={[amountMl]}
-                  onValueChange={(value) => {
-                    const newValue = Array.isArray(value) ? value[0] : value;
-                    setAmountMl(newValue ?? 0);
-                  }}
-                  min={0}
-                  max={350}
-                  step={10}
-                  className="py-4"
-                />
-                <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-                  <span>0</span>
-                  <span>350</span>
-                </div>
-              </div>
+          {/* Timer Mode - Placeholder */}
+          {inputMode === 'timer' && (
+            <div className="flex flex-1 items-center justify-center py-12">
+              <p className="text-muted-foreground">Timer widget coming soon</p>
             </div>
           )}
 
-          {/* Breast Feed: Duration */}
-          {method === 'breast' && (
+          {/* Manual Mode - Form Fields */}
+          {inputMode === 'manual' && (
             <>
-              <div className="space-y-3">
-                <Label className="text-muted-foreground">Duration</Label>
-                <div className="flex items-center justify-center">
-                  <div className="flex flex-col items-center">
-                    <input
-                      type="number"
-                      min={1}
-                      max={60}
-                      value={durationMinutes}
-                      onChange={e => setDurationMinutes(Math.min(60, Math.max(1, Number.parseInt(e.target.value) || 1)))}
-                      className="h-16 w-20 rounded-lg border bg-background text-center text-2xl font-semibold focus:ring-2 focus:ring-primary focus:outline-none"
-                    />
-                    <span className="mt-1 text-xs text-muted-foreground">Min</span>
-                  </div>
-                </div>
+              {/* Time Swiper */}
+              <div className="space-y-2">
+                <Label className="text-muted-foreground">Start Time</Label>
+                <TimeSwiper
+                  value={startTime}
+                  onChange={setStartTime}
+                  handMode={handMode}
+                />
               </div>
 
-              {/* End Side */}
-              <div className="space-y-3">
-                <Label className="text-muted-foreground">End On</Label>
-                <div className="grid grid-cols-2 gap-3">
-                  <Button
-                    type="button"
-                    variant={endSide === 'left' ? 'default' : 'outline'}
-                    className={cn(
-                      'h-12',
-                      endSide === 'left' && 'ring-2 ring-primary ring-offset-2',
-                    )}
-                    onClick={() => setEndSide('left')}
-                  >
-                    Left
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={endSide === 'right' ? 'default' : 'outline'}
-                    className={cn(
-                      'h-12',
-                      endSide === 'right' && 'ring-2 ring-primary ring-offset-2',
-                    )}
-                    onClick={() => setEndSide('right')}
-                  >
-                    Right
-                  </Button>
+              {/* Bottle Feed: Amount Slider */}
+              {method === 'bottle' && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-muted-foreground">Amount</Label>
+                    <span className="text-lg font-semibold">
+                      {amountMl}
+                      {' '}
+                      ml
+                    </span>
+                  </div>
+                  <div className="px-2">
+                    <Slider
+                      value={[amountMl]}
+                      onValueChange={(value) => {
+                        const newValue = Array.isArray(value) ? value[0] : value;
+                        setAmountMl(newValue ?? 0);
+                      }}
+                      min={0}
+                      max={350}
+                      step={10}
+                      className="py-4"
+                    />
+                    <div className="mt-1 flex justify-between text-xs text-muted-foreground">
+                      <span>0</span>
+                      <span>350</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Breast Feed: Duration */}
+              {method === 'breast' && (
+                <>
+                  <div className="space-y-3">
+                    <Label className="text-muted-foreground">Duration</Label>
+                    <div className="flex items-center justify-center">
+                      <div className="flex flex-col items-center">
+                        <input
+                          type="number"
+                          min={1}
+                          max={60}
+                          value={durationMinutes}
+                          onChange={e => setDurationMinutes(Math.min(60, Math.max(1, Number.parseInt(e.target.value) || 1)))}
+                          className="h-16 w-20 rounded-lg border bg-background text-center text-2xl font-semibold focus:ring-2 focus:ring-primary focus:outline-none"
+                        />
+                        <span className="mt-1 text-xs text-muted-foreground">Min</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* End Side */}
+                  <div className="space-y-3">
+                    <Label className="text-muted-foreground">End On</Label>
+                    <ButtonGroup className="w-full">
+                      <Button
+                        type="button"
+                        variant={endSide === 'left' ? 'default' : 'outline'}
+                        className="h-12 flex-1"
+                        onClick={() => setEndSide('left')}
+                      >
+                        Left
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={endSide === 'right' ? 'default' : 'outline'}
+                        className="h-12 flex-1"
+                        onClick={() => setEndSide('right')}
+                      >
+                        Right
+                      </Button>
+                    </ButtonGroup>
+                  </div>
+                </>
+              )}
             </>
           )}
 
@@ -238,15 +258,23 @@ export function AddFeedSheet({
           )}
         </div>
 
-        <SheetFooter className="border-t pt-4">
-          <Button
-            onClick={handleSubmit}
+        <SheetFooter className="flex-row gap-3 border-t px-4 pt-4">
+          <BaseButton
+            variant="secondary"
+            onClick={() => handleOpenChange(false)}
             disabled={isSubmitting}
-            className="w-full"
-            size="lg"
+            className="flex-1"
           >
-            {isSubmitting ? 'Saving...' : 'Save'}
-          </Button>
+            Cancel
+          </BaseButton>
+          <BaseButton
+            variant="primary"
+            onClick={handleSubmit}
+            loading={isSubmitting}
+            className="flex-1"
+          >
+            Save
+          </BaseButton>
         </SheetFooter>
       </SheetContent>
     </Sheet>
