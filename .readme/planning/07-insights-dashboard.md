@@ -1,7 +1,7 @@
 # Insights Dashboard with Charts
 
 **Priority:** Medium
-**Dependencies:** 01-state-management-sync.md, 07-additional-data-models.md
+**Dependencies:** 01-state-management-sync.md, 08-additional-data-models.md
 **Estimated Scope:** Medium
 
 ---

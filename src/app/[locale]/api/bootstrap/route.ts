@@ -23,6 +23,7 @@ import {
   nappyLogSchema,
   sleepLogSchema,
   userSchema,
+  userUiConfigSchema,
 } from '@/models/Schema';
 
 export const dynamic = 'force-dynamic';
@@ -129,7 +130,12 @@ type BootstrapResponse = {
       createdAt: string;
       updatedAt: string;
     }>;
-    uiConfig: null; // UI config is stored locally only for now
+    uiConfig: {
+      data: Record<string, unknown>;
+      keyUpdatedAt: Record<string, string>;
+      schemaVersion: number;
+      updatedAt: string;
+    } | null;
   };
   syncedAt: string;
 };
@@ -451,6 +457,23 @@ export async function GET() {
       )
       .orderBy(desc(nappyLogSchema.startedAt));
 
+    // Get UI config
+    const uiConfigResult = await db
+      .select()
+      .from(userUiConfigSchema)
+      .where(eq(userUiConfigSchema.userId, localUser.id))
+      .limit(1);
+
+    const uiConfigRecord = uiConfigResult[0];
+    const uiConfig = uiConfigRecord
+      ? {
+          data: uiConfigRecord.data,
+          keyUpdatedAt: uiConfigRecord.keyUpdatedAt,
+          schemaVersion: uiConfigRecord.schemaVersion,
+          updatedAt: uiConfigRecord.updatedAt.toISOString(),
+        }
+      : null;
+
     // Build sync data
     const syncData: BootstrapResponse['syncData'] = {
       babies: babies.map(baby => ({
@@ -506,7 +529,7 @@ export async function GET() {
         createdAt: log.createdAt.toISOString(),
         updatedAt: log.updatedAt?.toISOString() ?? log.createdAt.toISOString(),
       })),
-      uiConfig: null,
+      uiConfig,
     };
 
     // Determine active baby

@@ -9,6 +9,7 @@ import { TimeSwiper } from '@/components/feed/TimeSwiper';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Sheet,
   SheetClose,
@@ -21,7 +22,7 @@ import { Slider } from '@/components/ui/slider';
 import { getUIConfig } from '@/lib/local-db/helpers/ui-config';
 import { useUserStore } from '@/stores/useUserStore';
 
-type AddFeedSheetProps = {
+type AddFeedModalProps = {
   babyId: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -30,12 +31,12 @@ type AddFeedSheetProps = {
 
 type InputMode = 'timer' | 'manual';
 
-export function AddFeedSheet({
+export function AddFeedModal({
   babyId,
   open,
   onOpenChange,
   onSuccess,
-}: AddFeedSheetProps) {
+}: AddFeedModalProps) {
   const user = useUserStore(s => s.user);
   const [inputMode, setInputMode] = useState<InputMode>('manual');
   const [method, setMethod] = useState<FeedMethod>('bottle');
@@ -50,10 +51,12 @@ export function AddFeedSheet({
   // Load hand preference from IndexedDB
   useEffect(() => {
     async function loadHandMode() {
-      if (!user?.localId) return;
+      if (!user?.localId) {
+        return;
+      }
       try {
         const config = await getUIConfig(user.localId);
-        setHandMode(config.handMode);
+        setHandMode(config.data.handMode ?? 'right');
       } catch (err) {
         console.error('Failed to load hand mode:', err);
       }
@@ -117,10 +120,6 @@ export function AddFeedSheet({
           </SheetClose>
 
           <SheetTitle className="text-center">
-            Add
-            {' '}
-            {method === 'bottle' ? 'Bottle' : 'Breast'}
-            {' '}
             Feed
           </SheetTitle>
 
@@ -166,14 +165,12 @@ export function AddFeedSheet({
           {inputMode === 'manual' && (
             <>
               {/* Time Swiper */}
-              <div className="space-y-2">
-                <Label className="text-muted-foreground">Start Time</Label>
-                <TimeSwiper
-                  value={startTime}
-                  onChange={setStartTime}
-                  handMode={handMode}
-                />
-              </div>
+              <TimeSwiper
+                value={startTime}
+                onChange={setStartTime}
+                handMode={handMode}
+                userId={user?.localId}
+              />
 
               {/* Bottle Feed: Amount Slider */}
               {method === 'bottle' && (
@@ -229,24 +226,34 @@ export function AddFeedSheet({
                   {/* End Side */}
                   <div className="space-y-3">
                     <Label className="text-muted-foreground">End On</Label>
-                    <ButtonGroup className="w-full">
-                      <Button
-                        type="button"
-                        variant={endSide === 'left' ? 'default' : 'outline'}
-                        className="h-12 flex-1"
-                        onClick={() => setEndSide('left')}
+                    <RadioGroup
+                      value={endSide}
+                      onValueChange={value => setEndSide(value as 'left' | 'right')}
+                      className="grid grid-cols-2 gap-3"
+                    >
+                      <label
+                        htmlFor="side-left"
+                        className={`flex cursor-pointer items-center gap-3 rounded-full border px-4 py-3 transition-colors ${
+                          endSide === 'left'
+                            ? 'border-primary bg-primary/5'
+                            : 'border-border hover:bg-muted/50'
+                        }`}
                       >
-                        Left
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={endSide === 'right' ? 'default' : 'outline'}
-                        className="h-12 flex-1"
-                        onClick={() => setEndSide('right')}
+                        <RadioGroupItem value="left" id="side-left" />
+                        <span className="font-medium">Left</span>
+                      </label>
+                      <label
+                        htmlFor="side-right"
+                        className={`flex cursor-pointer items-center gap-3 rounded-full border px-4 py-3 transition-colors ${
+                          endSide === 'right'
+                            ? 'border-primary bg-primary/5'
+                            : 'border-border hover:bg-muted/50'
+                        }`}
                       >
-                        Right
-                      </Button>
-                    </ButtonGroup>
+                        <RadioGroupItem value="right" id="side-right" />
+                        <span className="font-medium">Right</span>
+                      </label>
+                    </RadioGroup>
                   </div>
                 </>
               )}

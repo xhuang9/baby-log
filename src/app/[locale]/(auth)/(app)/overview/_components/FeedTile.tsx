@@ -3,7 +3,7 @@
 import type { FeedLogWithCaregiver } from '@/actions/feedLogActions';
 import { useState } from 'react';
 import { ActivityTile } from './ActivityTile';
-import { AddFeedSheet } from './AddFeedSheet';
+import { AddFeedModal } from './AddFeedModal';
 
 type FeedTileProps = {
   babyId: number;
@@ -63,7 +63,7 @@ export function FeedTile({ babyId, latestFeed }: FeedTileProps) {
         activity="feed"
         onClick={() => setSheetOpen(true)}
       />
-      <AddFeedSheet
+      <AddFeedModal
         babyId={babyId}
         open={sheetOpen}
         onOpenChange={setSheetOpen}

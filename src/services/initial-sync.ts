@@ -13,12 +13,12 @@ import type {
   LocalFeedLog,
   LocalNappyLog,
   LocalSleepLog,
-  LocalUIConfig,
   LocalUser,
   NappyType,
+  UIConfigData,
 } from '@/lib/local-db';
 import {
-  getUIConfig,
+  mergeUIConfig,
   saveBabies,
   saveBabyAccess,
   saveFeedLogs,
@@ -26,12 +26,18 @@ import {
   saveNappyLogs,
   saveSleepLogs,
   updateSyncStatus,
-  updateUIConfig,
 } from '@/lib/local-db';
 
 // ============================================================================
 // Types
 // ============================================================================
+
+export type ServerUIConfig = {
+  data: UIConfigData;
+  keyUpdatedAt: Record<string, string>;
+  schemaVersion: number;
+  updatedAt: string;
+};
 
 export type InitialSyncData = {
   user: LocalUser;
@@ -40,7 +46,7 @@ export type InitialSyncData = {
   recentFeedLogs: LocalFeedLog[];
   recentSleepLogs: LocalSleepLog[];
   recentNappyLogs: LocalNappyLog[];
-  uiConfig: Partial<LocalUIConfig> | null;
+  uiConfig: ServerUIConfig | null;
 };
 
 export type InitialSyncResult = { success: true; data: InitialSyncData } | { success: false; error: string };
@@ -115,7 +121,7 @@ type ServerInitialSyncResponse = {
     createdAt: string;
     updatedAt: string;
   }>;
-  uiConfig: Partial<LocalUIConfig> | null;
+  uiConfig: ServerUIConfig | null;
 };
 
 // ============================================================================
@@ -272,13 +278,13 @@ export async function storeInitialSyncData(data: InitialSyncData): Promise<void>
     await saveNappyLogs(data.recentNappyLogs);
     await updateSyncStatus('nappy_logs', 'complete');
 
-    // Store UI config
+    // Store UI config using LWW merge
     if (data.uiConfig && data.user.id) {
-      const currentConfig = await getUIConfig(data.user.id);
-      await updateUIConfig(data.user.id, {
-        ...currentConfig,
-        ...data.uiConfig,
-      });
+      await mergeUIConfig(
+        data.user.id,
+        data.uiConfig.data,
+        data.uiConfig.keyUpdatedAt,
+      );
     }
     await updateSyncStatus('ui_config', 'complete');
   } catch (error) {

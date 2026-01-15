@@ -17,7 +17,6 @@
 
 import type { EntityTable } from 'dexie';
 import type { LocalBaby, LocalBabyAccess, LocalUIConfig, LocalUser } from './types/entities';
-
 import type { LocalFeedLog, LocalNappyLog, LocalSleepLog } from './types/logs';
 import type { OutboxEntry } from './types/outbox';
 import type { AuthSession, LocalSyncStatus, SyncMeta } from './types/sync';
@@ -53,34 +52,12 @@ class BabyLogDatabase extends Dexie {
     // ========================================================================
     // Version History
     // ========================================================================
-    // IMPORTANT: Never delete old versions - users need them to upgrade.
-    // See .readme/user/qa.md for versioning documentation.
+    // IMPORTANT: Before production, add proper versioning with migrations.
+    // Current schema is development-only and will be reset for production.
     // ========================================================================
 
-    // Version 1: Initial schema
+    // Version 1: Complete schema (development)
     this.version(1).stores({
-      feedLogs: 'id, babyId, startedAt, createdAt',
-      babies: 'id',
-      babyAccess: '[oduserId+babyId], oduserId, babyId',
-      syncMeta: 'babyId',
-      outbox: 'mutationId, status, createdAt, entityType',
-    });
-
-    // Version 2: Add user, uiConfig, syncStatus tables
-    this.version(2).stores({
-      feedLogs: 'id, babyId, startedAt, createdAt',
-      babies: 'id, ownerUserId',
-      babyAccess: '[oduserId+babyId], oduserId, babyId',
-      users: 'id, clerkId',
-      uiConfig: 'userId',
-      syncMeta: 'babyId',
-      syncStatus: 'entityType',
-      outbox: 'mutationId, status, createdAt, entityType',
-    });
-
-    // Version 3: Add sleepLogs and nappyLogs tables
-    // Also updated feedLogs index to use compound [babyId+startedAt]
-    this.version(3).stores({
       // Log tables - all use consistent [babyId+startedAt] compound index
       feedLogs: 'id, babyId, startedAt, [babyId+startedAt]',
       sleepLogs: 'id, babyId, startedAt, [babyId+startedAt]',
@@ -94,25 +71,7 @@ class BabyLogDatabase extends Dexie {
       syncMeta: 'babyId',
       syncStatus: 'entityType',
       outbox: 'mutationId, status, createdAt, entityType',
-    });
-
-    // Version 4: Add authSession table for offline authentication bypass
-    // Stores session marker to allow offline access to previously authenticated users
-    this.version(4).stores({
-      // Log tables - unchanged
-      feedLogs: 'id, babyId, startedAt, [babyId+startedAt]',
-      sleepLogs: 'id, babyId, startedAt, [babyId+startedAt]',
-      nappyLogs: 'id, babyId, startedAt, [babyId+startedAt]',
-      // Entity tables - unchanged
-      babies: 'id, ownerUserId',
-      babyAccess: '[oduserId+babyId], oduserId, babyId',
-      users: 'id, clerkId',
-      uiConfig: 'userId',
-      // Sync management - unchanged
-      syncMeta: 'babyId',
-      syncStatus: 'entityType',
-      outbox: 'mutationId, status, createdAt, entityType',
-      // Auth session - new
+      // Auth session
       authSession: 'id',
     });
   }

@@ -1,4 +1,4 @@
-import { boolean, index, integer, pgEnum, pgTable, primaryKey, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { boolean, index, integer, jsonb, pgEnum, pgTable, primaryKey, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
 // This file defines the structure of your database tables using the Drizzle ORM.
 
@@ -228,3 +228,13 @@ export const syncEventsSchema = pgTable('sync_events', {
 }, t => [
   index('sync_events_baby_id_idx').on(t.babyId, t.id),
 ]);
+
+// User UI configuration table for syncing UI preferences
+// Uses JSONB for flexible schema with per-key timestamps for LWW merge
+export const userUiConfigSchema = pgTable('user_ui_config', {
+  userId: integer('user_id').primaryKey().references(() => userSchema.id, { onDelete: 'cascade' }),
+  data: jsonb('data').notNull().$type<Record<string, unknown>>().default({}),
+  keyUpdatedAt: jsonb('key_updated_at').notNull().$type<Record<string, string>>().default({}),
+  schemaVersion: integer('schema_version').notNull().default(1),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});

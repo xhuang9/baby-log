@@ -51,18 +51,60 @@ export type LocalUser = {
 
 export type HandMode = 'left' | 'right';
 export type ThemeMode = 'light' | 'dark' | 'system';
+export type DefaultLogView = 'all' | 'feed' | 'sleep';
 
+/**
+ * Shape of the UI config data object.
+ * This is the flexible JSON structure stored in both Dexie and Postgres.
+ */
+export type UIConfigData = {
+  theme?: ThemeMode;
+  handMode?: HandMode;
+  defaultLogView?: DefaultLogView;
+  notificationsEnabled?: boolean;
+  dashboardVisibility?: {
+    feed?: boolean;
+    sleep?: boolean;
+    solids?: boolean;
+    bath?: boolean;
+    activities?: boolean;
+  };
+  timeSwiper?: {
+    use24Hour?: boolean;
+    swipeSpeed?: number;
+    incrementMinutes?: number;
+    magneticFeel?: boolean;
+    showCurrentTime?: boolean;
+  };
+  // Allow additional keys for future extensibility
+  [key: string]: unknown;
+};
+
+/**
+ * Default values for UI config
+ */
+export const DEFAULT_UI_CONFIG_DATA: UIConfigData = {
+  theme: 'system',
+  handMode: 'right',
+  defaultLogView: 'all',
+  notificationsEnabled: true,
+  dashboardVisibility: {
+    feed: true,
+    sleep: true,
+    solids: false,
+    bath: false,
+    activities: false,
+  },
+};
+
+/**
+ * Local UI configuration stored in Dexie.
+ * Uses flexible JSON structure with per-key timestamps for LWW merge.
+ */
 export type LocalUIConfig = {
   userId: number; // Primary key - one config per user
-  theme: ThemeMode;
-  handMode: HandMode;
-  defaultLogView: 'all' | 'feed' | 'sleep';
-  dashboardVisibility: {
-    feed: boolean;
-    sleep: boolean;
-    solids: boolean;
-    bath: boolean;
-    activities: boolean;
-  };
+  data: UIConfigData;
+  keyUpdatedAt: Record<string, string>; // ISO timestamps by key path
+  schemaVersion: number;
   updatedAt: Date;
 };

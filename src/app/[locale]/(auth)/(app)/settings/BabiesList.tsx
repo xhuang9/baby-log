@@ -56,9 +56,7 @@ export function BabiesList(props: {
   };
 
   return (
-    <div className="space-y-3">
-      <h2 className="text-base font-semibold text-foreground">Children</h2>
-
+    <div className="space-y-2">
       {/* Babies List */}
       <div className="space-y-2">
         {babies.map(baby => (

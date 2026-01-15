@@ -21,21 +21,21 @@ This folder contains implementation plans for future features. Each document is 
 | # | Document | Priority | Dependencies |
 |---|----------|----------|--------------|
 | 04 | [Logs Page](./04-logs-page.md) | High | 01 |
-| 07 | [Additional Data Models](./07-additional-data-models.md) | High | 01 |
-| 08 | [Feed UI Timer](./08-feed-ui-timer.md) | High | None |
+| 08 | [Additional Data Models](./08-additional-data-models.md) | High | 01 |
+| 09 | [Feed UI Timer](./09-feed-ui-timer.md) | High | None |
 
 ### Polish & Enhancement
 
 | # | Document | Priority | Dependencies |
 |---|----------|----------|--------------|
-| 05 | [Insights Dashboard](./05-insights-dashboard.md) | Medium | 01, 07 |
-| 06 | [Settings Refinement](./06-settings-refinement.md) | Medium | None |
+| 05 | [UI Config Sync & Settings Refinement](./05-ui-config-sync.md) | Medium | 01, 03 |
+| 07 | [Insights Dashboard](./07-insights-dashboard.md) | Medium | 01, 08 |
 
 ### Future (When Needed)
 
 | # | Document | Priority | Dependencies |
 |---|----------|----------|--------------|
-| 09 | [iOS API](./09-ios-api.md) | Low | 03 |
+| 10 | [iOS API](./10-ios-api.md) | Low | 03 |
 
 ---
 
@@ -48,15 +48,15 @@ This folder contains implementation plans for future features. Each document is 
 
 ### High Priority - Features
 - **04-logs-page.md** - Filter logs, edit existing entries
-- **07-additional-data-models.md** - Sleep, Solids, Bath, Activities
-- **08-feed-ui-timer.md** - Timer-based feed tracking
+- **08-additional-data-models.md** - Sleep, Solids, Bath, Activities
+- **09-feed-ui-timer.md** - Timer-based feed tracking
 
 ### Medium Priority
-- **05-insights-dashboard.md** - Charts with shadcn/ui
-- **06-settings-refinement.md** - Hand mode, layout fixes
+- **05-ui-config-sync.md** - UI settings storage, merge, sync, and settings layout
+- **07-insights-dashboard.md** - Charts with shadcn/ui
 
 ### Low Priority
-- **09-ios-api.md** - Non-localized API for mobile app
+- **10-ios-api.md** - Non-localized API for mobile app
 
 ---
 
