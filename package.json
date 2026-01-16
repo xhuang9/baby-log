@@ -68,6 +68,8 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^6.3.0",
+    "@babel/core": "^7.28.6",
+    "@babel/preset-env": "^7.28.6",
     "@chromatic-com/playwright": "^0.12.7",
     "@clerk/types": "^4.101.9",
     "@commitlint/cli": "^20.1.0",
@@ -89,6 +91,7 @@
     "@vitest/browser": "^4.0.15",
     "@vitest/browser-playwright": "^4.0.15",
     "@vitest/coverage-v8": "^4.0.15",
+    "babel-loader": "^10.0.0",
     "babel-plugin-react-compiler": "^1.0.0",
     "checkly": "^6.9.5",
     "conventional-changelog-conventionalcommits": "^9.1.0",

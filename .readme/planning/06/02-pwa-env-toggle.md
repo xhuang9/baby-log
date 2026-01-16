@@ -1,6 +1,6 @@
 # Task 02: Add PWA Environment Toggle
 
-**Status:** [ ] Not started
+**Status:** [x] Complete
 
 ## Problem
 
@@ -28,8 +28,8 @@ disable: process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_ENABL
 
 ## Checklist
 
-- [ ] Edit `next.config.ts` line 32
-- [ ] Add the env toggle condition
+- [x] Edit `next.config.ts` line 32
+- [x] Add the env toggle condition
 
 ## Usage
 

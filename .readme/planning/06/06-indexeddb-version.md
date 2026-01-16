@@ -1,6 +1,6 @@
 # Task 06: Align IndexedDB Version Numbers
 
-**Status:** [ ] Not started
+**Status:** [x] Complete
 
 ## Problem
 
@@ -35,10 +35,11 @@ Line 139:
 
 ## Checklist
 
-- [ ] Edit `public/offline-auth-sw.js` line 16
-- [ ] Change `DB_VERSION = 4` to `DB_VERSION = 1`
-- [ ] Edit `public/offline.html` line 139
-- [ ] Change `DB_VERSION = 4` to `DB_VERSION = 1`
+- [x] Edit `public/offline-auth-sw.js` line 16
+- [x] Change `DB_VERSION = 4` to `DB_VERSION = 1`
+- [x] Edit `public/offline.html` line 139
+- [x] Change `DB_VERSION = 4` to `DB_VERSION = 1`
+- [x] Verified both files use DB_VERSION = 1
 
 ## Validation
 

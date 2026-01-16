@@ -1,6 +1,6 @@
 # Task 04: Update next-pwa TypeScript Definitions
 
-**Status:** [ ] Not started
+**Status:** [x] Complete
 
 ## Problem
 
@@ -68,9 +68,9 @@ declare module 'next-pwa' {
 
 ## Checklist
 
-- [ ] Open `src/types/next-pwa.d.ts`
-- [ ] Replace entire file content
-- [ ] Verify no TS errors: `pnpm typecheck` (or `npm run typecheck`)
+- [x] Open `src/types/next-pwa.d.ts`
+- [x] Replace entire file content
+- [x] Verify no TS errors: `pnpm check:types`
 
 ## Notes
 

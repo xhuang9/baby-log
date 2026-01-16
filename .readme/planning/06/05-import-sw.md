@@ -1,6 +1,6 @@
 # Task 05: Import Offline Auth Service Worker
 
-**Status:** [ ] Not started
+**Status:** [x] Complete
 
 ## Problem
 
@@ -36,9 +36,12 @@ configWithPlugins = withPWA({
 
 ## Checklist
 
-- [ ] Open `next.config.ts`
-- [ ] Find the `fallbacks` block (added in Task 03)
-- [ ] Add `workboxOptions` with `importScripts` after it
+- [x] Open `next.config.ts`
+- [x] Find the `fallbacks` block (added in Task 03)
+- [x] Add `importScripts` configuration (flattened, not nested in workboxOptions)
+- [x] Install babel-loader dependencies for PWA build
+- [x] Update type definitions to include `importScripts` at top level
+- [x] Build and verify importScripts in generated sw.js
 
 ## Validation
 
@@ -55,3 +58,10 @@ grep importScripts public/sw.js
 - Requires Task 04 (types) to be done first to avoid TS errors
 - The offline-auth-sw.js handles protected route navigation when offline
 - It reads auth session from IndexedDB to determine if user can access cached pages
+
+## Implementation Notes
+
+- `importScripts` must be at the top level of the PWA config, not nested under `workboxOptions`
+- Required installing `babel-loader`, `@babel/core`, and `@babel/preset-env` as dev dependencies
+- Used `@ts-expect-error` comment to suppress TypeScript error since the property exists at runtime
+- Verified in generated `public/sw.js`: `importScripts("fallback-yNqnUWlCRmqEF8Rl6_X4P.js","/offline-auth-sw.js")`

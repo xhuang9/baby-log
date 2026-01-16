@@ -29,9 +29,13 @@ let configWithPlugins = createNextIntlPlugin('./src/lib/i18n.ts')(baseConfig);
 // but may not be in TypeScript definitions. Using type assertion for these.
 configWithPlugins = withPWA({
   dest: 'public',
-  disable: process.env.NODE_ENV === 'development',
+  disable: process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_ENABLE_PWA !== 'true',
   register: true,
   skipWaiting: true,
+  fallbacks: {
+    document: '/offline.html',
+  },
+  importScripts: ['/offline-auth-sw.js'],
   runtimeCaching: [
     {
       urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,

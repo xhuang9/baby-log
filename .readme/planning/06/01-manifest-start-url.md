@@ -1,6 +1,6 @@
 # Task 01: Fix Manifest Start URL
 
-**Status:** [ ] Not started
+**Status:** [x] Complete
 
 ## Problem
 
@@ -23,8 +23,8 @@ Change `start_url` from `/dashboard` to `/en/overview`.
 
 ## Checklist
 
-- [ ] Edit `public/manifest.json` line 10
-- [ ] Change `"/dashboard"` to `"/en/overview"`
+- [x] Edit `public/manifest.json` line 10
+- [x] Change `"/dashboard"` to `"/en/overview"`
 
 ## Validation
 

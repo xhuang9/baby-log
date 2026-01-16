@@ -2,79 +2,83 @@
 
 ## Quick Start
 
-Tell Claude: "Execute task 01" (or whichever task number).
+Tell Claude: "Execute task 10" (or whichever task number).
 
-Claude will:
-1. Read only that task file
-2. Make the specified changes
-3. Run validation if specified
+## Phase 1: Config Fixes (COMPLETE ✅)
 
-## Recommended Session Flow
+Tasks 01-07 are done.
 
-### Session A (Config Fixes)
+## Phase 2: Offline-First Refactor
+
+### Recommended Session Grouping
+
+**Session A: Infrastructure (Tasks 10, 11, 14)**
+```
+Execute tasks 10, 11, and 14
+```
+- Removes Clerk from dashboard routes
+- Creates IndexedDB guard component
+- Sets up auth session persistence
+
+**Session B: Sync System (Tasks 12, 13)**
+```
+Execute tasks 12 and 13
+```
+- Creates outbox processor
+- Creates background sync scheduler
+
+**Session C+: Page Conversions (Task 15)**
+```
+Execute task 15
+```
+- Converts remaining pages to client components
+- May need multiple sessions depending on scope
+
+**Optional: Task 08 (if needed after testing)**
+```
+Execute task 08
+```
+- Only needed if RSC errors occur during offline navigation
+
+## Task Reference
+
+| # | Name | What It Does |
+|---|------|--------------|
+| 08 | RSC handling | Safety net for offline navigation (LOW priority) |
+| 09 | Architecture doc | Reference document (no changes) |
+| 10 | Middleware | Remove Clerk from dashboard routes |
+| 11 | Guard component | Check IndexedDB before rendering pages |
+| 12 | Outbox processor | Process mutation queue |
+| 13 | Sync scheduler | Background sync service |
+| 14 | Auth session | Persist Clerk auth to IndexedDB |
+| 15 | Page conversions | Convert remaining pages to IndexedDB |
+
+## Dependencies
 
 ```
-Execute tasks 01, 02, 03
+Task 10 (middleware) ←┐
+Task 11 (guard)      ←┼─ Can be done together
+Task 14 (auth)       ←┘
+
+Task 12 (outbox)     ←┐
+Task 13 (scheduler)  ←┴─ Depends on 12
+
+Task 15 (pages)      ←── Depends on 10, 11
+
+Task 08 (RSC)        ←── Optional, after testing
 ```
-
-These are quick edits to `manifest.json` and `next.config.ts`.
-
-### Session B (SW Integration)
-
-```
-Execute tasks 04, 05, 06
-```
-
-These complete the service worker setup.
-
-### Session C (Validation)
-
-```
-pnpm build && pnpm start
-# Test offline mode manually
-```
-
-### Session D (Structural - if needed)
-
-```
-Execute task 07
-```
-
-This converts the overview page to IndexedDB reads.
-
-## Commands for Each Task
-
-| Task | One-liner |
-|------|-----------|
-| 01 | "Fix the manifest start_url to /en/overview" |
-| 02 | "Add PWA env toggle in next.config.ts" |
-| 03 | "Add offline fallback config" |
-| 04 | "Update next-pwa TypeScript types" |
-| 05 | "Import offline-auth-sw.js in PWA config" |
-| 06 | "Change DB_VERSION to 1 in offline scripts" |
-| 07 | "Convert overview page to IndexedDB reads" |
-
-## Batch Execution
-
-To run multiple tasks:
-
-```
-Read and execute tasks 01 through 06
-```
-
-Claude will process them sequentially.
 
 ## Verifying Completion
 
-After all Phase 1 tasks:
+After Phase 2:
 
 ```bash
 pnpm build && pnpm start
 ```
 
-Then in browser:
-1. Open DevTools → Application → Service Workers
-2. Confirm SW is registered
-3. Visit /en/overview while online
-4. Toggle Network → Offline
-5. Reload - expect page to load from cache
+1. Sign in and visit all pages (populate IndexedDB)
+2. Go offline (DevTools → Network → Offline)
+3. Reload `/en/overview` → should load from IndexedDB
+4. Click nav links → should navigate (full page reload)
+5. Create a feed log → should save locally
+6. Go online → should sync automatically

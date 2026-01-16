@@ -13,7 +13,7 @@
 
 // Database constants (must match src/lib/local-db/database.ts)
 const DB_NAME = 'baby-log';
-const DB_VERSION = 4;
+const DB_VERSION = 1;
 const AUTH_SESSION_STORE = 'authSession';
 const AUTH_SESSION_KEY = 'current';
 

@@ -1,6 +1,6 @@
 # Task 03: Add Offline Fallback Page
 
-**Status:** [ ] Not started
+**Status:** [x] Complete
 
 ## Problem
 
@@ -33,9 +33,9 @@ configWithPlugins = withPWA({
 
 ## Checklist
 
-- [ ] Open `next.config.ts`
-- [ ] Find line 34 (after `skipWaiting: true,`)
-- [ ] Add fallbacks config before `runtimeCaching`
+- [x] Open `next.config.ts`
+- [x] Find line 34 (after `skipWaiting: true,`)
+- [x] Add fallbacks config before `runtimeCaching`
 
 ## Notes
 
