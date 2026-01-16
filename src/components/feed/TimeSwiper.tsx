@@ -30,16 +30,16 @@ const TOTAL_WIDTH = HOUR_WIDTH * 24;
 // Default settings
 type TimeSwiperSettings = {
   use24Hour: boolean;
-  swipeSpeed: number; // 0.5 to 2.0, default 1.0
-  incrementMinutes: number; // 15, 30, 60, 120, 180
+  swipeSpeed: number; // 0.1 to 3.0, default 0.5
+  incrementMinutes: number; // 5, 15, 30, 60, 120
   magneticFeel: boolean;
   showCurrentTime: boolean;
 };
 
 const DEFAULT_SETTINGS: TimeSwiperSettings = {
   use24Hour: false,
-  swipeSpeed: 1.0,
-  incrementMinutes: 60,
+  swipeSpeed: 0.5,
+  incrementMinutes: 30,
   magneticFeel: false,
   showCurrentTime: true,
 };
@@ -294,6 +294,11 @@ export function TimeSwiper({
       offsetRef.current = ((offsetRef.current % TOTAL_WIDTH) + TOTAL_WIDTH) % TOTAL_WIDTH;
 
       setOffset(offsetRef.current);
+
+      // Update time during momentum animation
+      const currentDate = offsetToDate(offsetRef.current, valueRef.current);
+      onChangeRef.current(currentDate);
+
       animationRef.current = requestAnimationFrame(() => animateLoopRef.current?.());
     };
   }, [offsetToDate]);
@@ -334,9 +339,13 @@ export function TimeSwiper({
     offsetRef.current = ((offsetRef.current % TOTAL_WIDTH) + TOTAL_WIDTH) % TOTAL_WIDTH;
     setOffset(offsetRef.current);
 
+    // Update time during swipe
+    const newDate = offsetToDate(offsetRef.current, valueRef.current);
+    onChangeRef.current(newDate);
+
     lastXRef.current = currentX;
     lastTimeRef.current = currentTime;
-  }, [settings.swipeSpeed]);
+  }, [settings.swipeSpeed, offsetToDate]);
 
   const handlePointerUp = useCallback((e: React.PointerEvent) => {
     if (!isDraggingRef.current) {
@@ -500,10 +509,10 @@ export function TimeSwiper({
                 value={[settings.swipeSpeed]}
                 onValueChange={(value) => {
                   const newValue = Array.isArray(value) ? value[0] : value;
-                  setSettings(s => ({ ...s, swipeSpeed: newValue ?? 1 }));
+                  setSettings(s => ({ ...s, swipeSpeed: newValue ?? 0.5 }));
                 }}
-                min={0.5}
-                max={2}
+                min={0.1}
+                max={3.0}
                 step={0.1}
               />
               <div className="flex justify-between text-xs text-muted-foreground/60">
@@ -521,7 +530,7 @@ export function TimeSwiper({
                   setSettings(s => ({ ...s, incrementMinutes: Number.parseInt(String(val)) }))}
                 className="grid grid-cols-5 gap-1"
               >
-                {[15, 30, 60, 120, 180].map(mins => (
+                {[5, 15, 30, 60, 120].map(mins => (
                   <label
                     key={mins}
                     className={cn(
