@@ -30,13 +30,6 @@ export const counterSchema = pgTable('counter', {
 });
 
 // Enums - must be defined before tables that use them
-export const handPreferenceEnum = pgEnum('hand_preference_enum', [
-  'left',
-  'right',
-  'both',
-  'unknown',
-]);
-
 export const genderEnum = pgEnum('gender_enum', [
   'male',
   'female',
@@ -82,9 +75,6 @@ export const userSchema = pgTable('user', {
   email: text('email'),
   firstName: text('first_name'),
   locked: boolean('locked').default(false),
-  useMetric: boolean('use_metric').notNull().default(true), // true = metric (cm, kg), false = imperial (inches, lbs)
-  colorTheme: text('color_theme').notNull().default('system'), // 'light', 'dark', 'system'
-  handPreference: handPreferenceEnum('hand_preference').notNull().default('unknown'),
   // @ts-expect-error - Circular reference is intentional in Drizzle
   // eslint-disable-next-line ts/no-use-before-define
   defaultBabyId: integer('default_baby_id').references(() => babiesSchema.id, { onDelete: 'set null' }),

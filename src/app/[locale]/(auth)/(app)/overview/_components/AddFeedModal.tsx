@@ -1,15 +1,15 @@
 'use client';
 
 import type { FeedMethod } from '@/actions/feedLogActions';
-import { XIcon } from 'lucide-react';
+import { ChevronLeftIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createFeedLog } from '@/actions/feedLogActions';
 import { BaseButton } from '@/components/base/BaseButton';
+import { AmountSlider } from '@/components/feed/AmountSlider';
 import { TimeSwiper } from '@/components/feed/TimeSwiper';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Sheet,
   SheetClose,
@@ -18,7 +18,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { Slider } from '@/components/ui/slider';
 import { getUIConfig } from '@/lib/local-db/helpers/ui-config';
 import { useUserStore } from '@/stores/useUserStore';
 
@@ -42,11 +41,31 @@ export function AddFeedModal({
   const [method, setMethod] = useState<FeedMethod>('bottle');
   const [startTime, setStartTime] = useState(() => new Date());
   const [amountMl, setAmountMl] = useState(120);
-  const [durationMinutes, setDurationMinutes] = useState(15);
+  const [endTime, setEndTime] = useState(() => {
+    const end = new Date();
+    end.setMinutes(end.getMinutes() + 15);
+    return end;
+  });
   const [endSide, setEndSide] = useState<'left' | 'right'>('left');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [handMode, setHandMode] = useState<'left' | 'right'>('right');
+
+  // When method changes to breast feeding, set start time to 20 minutes ago
+  useEffect(() => {
+    if (method === 'breast') {
+      const twentyMinutesAgo = new Date();
+      twentyMinutesAgo.setMinutes(twentyMinutesAgo.getMinutes() - 20);
+      setStartTime(twentyMinutesAgo);
+
+      // Set end time to now (5 minutes after the 20 minutes ago start)
+      const now = new Date();
+      setEndTime(now);
+    } else {
+      // Bottle feeding: reset to now
+      setStartTime(new Date());
+    }
+  }, [method]);
 
   // Load hand preference from IndexedDB
   useEffect(() => {
@@ -69,7 +88,9 @@ export function AddFeedModal({
     setMethod('bottle');
     setStartTime(new Date());
     setAmountMl(120);
-    setDurationMinutes(15);
+    const end = new Date();
+    end.setMinutes(end.getMinutes() + 15);
+    setEndTime(end);
     setEndSide('left');
     setError(null);
   };
@@ -79,6 +100,17 @@ export function AddFeedModal({
     setError(null);
 
     try {
+      // Calculate duration in minutes from start and end times
+      const durationMs = endTime.getTime() - startTime.getTime();
+      const durationMinutes = Math.round(durationMs / (1000 * 60));
+
+      // Validate duration
+      if (method === 'breast' && durationMinutes <= 0) {
+        setError('End time must be after start time');
+        setIsSubmitting(false);
+        return;
+      }
+
       const result = await createFeedLog({
         babyId,
         method,
@@ -111,15 +143,15 @@ export function AddFeedModal({
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent side="bottom" className="inset-0 h-full w-full rounded-none" showCloseButton={false}>
-        <SheetHeader className="flex-row items-center justify-between gap-4 space-y-0 border-b pb-4">
+        <SheetHeader className="relative flex-row items-center space-y-0 border-b pb-4">
           <SheetClose
             render={<Button variant="ghost" size="icon-sm" className="text-muted-foreground" />}
           >
-            <XIcon className="h-5 w-5" />
+            <ChevronLeftIcon className="h-5 w-5" />
             <span className="sr-only">Close</span>
           </SheetClose>
 
-          <SheetTitle className="text-center">
+          <SheetTitle className="absolute left-1/2 -translate-x-1/2">
             Feed
           </SheetTitle>
 
@@ -127,13 +159,13 @@ export function AddFeedModal({
             variant="ghost"
             size="sm"
             onClick={() => setInputMode(inputMode === 'manual' ? 'timer' : 'manual')}
-            className="text-primary"
+            className="ml-auto text-primary"
           >
             {inputMode === 'manual' ? 'Timer' : 'Manual'}
           </Button>
         </SheetHeader>
 
-        <div className="space-y-6 px-4 py-6">
+        <div className="mx-auto w-full max-w-[600px] space-y-6 px-4 py-6">
           {/* Feed Method Toggle - Breast/Bottle (Feed-specific) */}
           <ButtonGroup className="w-full">
             <Button
@@ -142,7 +174,7 @@ export function AddFeedModal({
               className="h-12 flex-1"
               onClick={() => setMethod('bottle')}
             >
-              Bottle
+              Bottle Feeding
             </Button>
             <Button
               type="button"
@@ -150,7 +182,7 @@ export function AddFeedModal({
               className="h-12 flex-1"
               onClick={() => setMethod('breast')}
             >
-              Breast
+              Breast Feeding
             </Button>
           </ButtonGroup>
 
@@ -165,95 +197,78 @@ export function AddFeedModal({
           {inputMode === 'manual' && (
             <>
               {/* Time Swiper */}
-              <TimeSwiper
-                value={startTime}
-                onChange={setStartTime}
-                handMode={handMode}
-                userId={user?.localId}
-              />
+              <div className="space-y-3">
+                <Label className="text-muted-foreground">Start time</Label>
+                <TimeSwiper
+                  value={startTime}
+                  onChange={setStartTime}
+                  handMode={handMode}
+                />
+              </div>
 
               {/* Bottle Feed: Amount Slider */}
               {method === 'bottle' && (
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-muted-foreground">Amount</Label>
-                    <span className="text-lg font-semibold">
-                      {amountMl}
-                      {' '}
-                      ml
-                    </span>
-                  </div>
-                  <div className="px-2">
-                    <Slider
-                      value={[amountMl]}
-                      onValueChange={(value) => {
-                        const newValue = Array.isArray(value) ? value[0] : value;
-                        setAmountMl(newValue ?? 0);
-                      }}
-                      min={0}
-                      max={350}
-                      step={10}
-                      className="py-4"
-                    />
-                    <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-                      <span>0</span>
-                      <span>350</span>
-                    </div>
-                  </div>
+                  <Label className="text-muted-foreground">Amount</Label>
+                  <AmountSlider
+                    value={amountMl}
+                    onChange={setAmountMl}
+                    handMode={handMode}
+                  />
                 </div>
               )}
 
-              {/* Breast Feed: Duration */}
+              {/* Breast Feed: End Time */}
               {method === 'breast' && (
                 <>
                   <div className="space-y-3">
-                    <Label className="text-muted-foreground">Duration</Label>
-                    <div className="flex items-center justify-center">
-                      <div className="flex flex-col items-center">
-                        <input
-                          type="number"
-                          min={1}
-                          max={60}
-                          value={durationMinutes}
-                          onChange={e => setDurationMinutes(Math.min(60, Math.max(1, Number.parseInt(e.target.value) || 1)))}
-                          className="h-16 w-20 rounded-lg border bg-background text-center text-2xl font-semibold focus:ring-2 focus:ring-primary focus:outline-none"
-                        />
-                        <span className="mt-1 text-xs text-muted-foreground">Min</span>
-                      </div>
+                    <Label className="text-muted-foreground">End time</Label>
+                    <TimeSwiper
+                      value={endTime}
+                      onChange={setEndTime}
+                      handMode={handMode}
+                    />
+                  </div>
+
+                  {/* Calculated Duration */}
+                  <div className="flex items-center justify-center py-2">
+                    <div className="rounded-lg bg-muted/50 px-4 py-2">
+                      <span className="text-sm text-muted-foreground">Duration: </span>
+                      <span className="text-lg font-semibold">
+                        {(() => {
+                          const durationMs = endTime.getTime() - startTime.getTime();
+                          const durationMinutes = Math.round(durationMs / (1000 * 60));
+                          if (durationMinutes < 0) {
+                            return '0 min';
+                          }
+                          if (durationMinutes < 60) {
+                            return `${durationMinutes} min`;
+                          }
+                          const hours = Math.floor(durationMinutes / 60);
+                          const mins = durationMinutes % 60;
+                          return `${hours}h ${mins}m`;
+                        })()}
+                      </span>
                     </div>
                   </div>
 
                   {/* End Side */}
-                  <div className="space-y-3">
-                    <Label className="text-muted-foreground">End On</Label>
-                    <RadioGroup
-                      value={endSide}
-                      onValueChange={value => setEndSide(value as 'left' | 'right')}
-                      className="grid grid-cols-2 gap-3"
-                    >
-                      <label
-                        htmlFor="side-left"
-                        className={`flex cursor-pointer items-center gap-3 rounded-full border px-4 py-3 transition-colors ${
-                          endSide === 'left'
-                            ? 'border-primary bg-primary/5'
-                            : 'border-border hover:bg-muted/50'
-                        }`}
+                  <div className={`${handMode === 'left' ? 'space-y-3' : 'flex items-center justify-between'}`}>
+                    <Label className="text-muted-foreground">End on</Label>
+                    <div className={`flex gap-3 ${handMode === 'left' ? '' : 'ml-auto'}`}>
+                      <BaseButton
+                        variant={endSide === 'left' ? 'primary' : 'secondary'}
+                        onClick={() => setEndSide('left')}
                       >
-                        <RadioGroupItem value="left" id="side-left" />
-                        <span className="font-medium">Left</span>
-                      </label>
-                      <label
-                        htmlFor="side-right"
-                        className={`flex cursor-pointer items-center gap-3 rounded-full border px-4 py-3 transition-colors ${
-                          endSide === 'right'
-                            ? 'border-primary bg-primary/5'
-                            : 'border-border hover:bg-muted/50'
-                        }`}
+                        Left
+                      </BaseButton>
+                      <BaseButton
+                        variant={endSide === 'right' ? 'primary' : 'secondary'}
+                        onClick={() => setEndSide('right')}
                       >
-                        <RadioGroupItem value="right" id="side-right" />
-                        <span className="font-medium">Right</span>
-                      </label>
-                    </RadioGroup>
+                        Right
+                      </BaseButton>
+                    </div>
                   </div>
                 </>
               )}
@@ -265,12 +280,11 @@ export function AddFeedModal({
           )}
         </div>
 
-        <SheetFooter className="flex-row gap-3 border-t px-4 pt-4">
+        <SheetFooter className={`mx-auto w-full max-w-[600px] flex-row gap-4 border-t px-4 pt-4 ${handMode === 'left' ? 'justify-start' : 'justify-end'}`}>
           <BaseButton
             variant="secondary"
             onClick={() => handleOpenChange(false)}
             disabled={isSubmitting}
-            className="flex-1"
           >
             Cancel
           </BaseButton>
@@ -278,7 +292,6 @@ export function AddFeedModal({
             variant="primary"
             onClick={handleSubmit}
             loading={isSubmitting}
-            className="flex-1"
           >
             Save
           </BaseButton>

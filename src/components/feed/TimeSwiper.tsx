@@ -20,7 +20,6 @@ type TimeSwiperProps = {
   value: Date;
   onChange: (date: Date) => void;
   handMode?: 'left' | 'right';
-  userId?: number;
   className?: string;
 };
 
@@ -54,8 +53,10 @@ export function TimeSwiper({
   handMode = 'right',
   className,
 }: TimeSwiperProps) {
-  // Get userId directly from store
-  const userId = useUserStore(s => s.user?.localId);
+  // Get userId directly from store (wait for hydration)
+  const user = useUserStore(s => s.user);
+  const userId = user?.localId;
+  const isHydrated = useUserStore(s => s.isHydrated);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
@@ -76,23 +77,23 @@ export function TimeSwiper({
   const [savedSettings, setSavedSettings] = useState<TimeSwiperSettings>(DEFAULT_SETTINGS);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Load settings from IndexedDB
+  // Load settings from IndexedDB (wait for store hydration)
   useEffect(() => {
-    // console.warn('[TimeSwiper] useEffect triggered, userIdProp:', userIdProp, 'userFromStore:', userFromStore, 'final userId:', userId);
+    // Wait for store to hydrate before loading settings
+    if (!isHydrated) {
+      return;
+    }
 
     if (!userId) {
-      console.warn('[TimeSwiper] No userId, skipping settings load');
       return;
     }
 
     let mounted = true;
     async function loadSettings() {
       try {
-        console.warn('[TimeSwiper] Loading settings for userId:', userId);
         const config = await getUIConfig(userId!);
-        console.warn('[TimeSwiper] Loaded config:', config);
-        console.warn('[TimeSwiper] timeSwiper data:', config.data.timeSwiper);
 
         if (mounted) {
           const loadedSettings = {
@@ -102,7 +103,6 @@ export function TimeSwiper({
             magneticFeel: config.data.timeSwiper?.magneticFeel ?? DEFAULT_SETTINGS.magneticFeel,
             showCurrentTime: config.data.timeSwiper?.showCurrentTime ?? DEFAULT_SETTINGS.showCurrentTime,
           };
-          console.warn('[TimeSwiper] Setting loaded settings:', loadedSettings);
           setSettings(loadedSettings);
           setSavedSettings(loadedSettings);
         }
@@ -114,34 +114,53 @@ export function TimeSwiper({
     return () => {
       mounted = false;
     };
-  }, [userId]);
+  }, [isHydrated, userId]);
+
+  // Update current time periodically for time markers
+  useEffect(() => {
+    // Update every 2 minutes (120000ms)
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 120000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Cleanup on unmount - stop animations and reset state
+  useEffect(() => {
+    return () => {
+      // Stop any ongoing animation
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+
+      // Reset dragging state
+      isDraggingRef.current = false;
+      velocityRef.current = 0;
+    };
+  }, []);
 
   // Check if settings have changed
   const isDirty = JSON.stringify(settings) !== JSON.stringify(savedSettings);
 
   // Save settings to IndexedDB (or just close if no changes)
   const handleSave = useCallback(async () => {
-    console.warn('[TimeSwiper] handleSave called, isDirty:', isDirty, 'userId:', userId);
-
     // If no changes, just close
     if (!isDirty) {
-      console.warn('[TimeSwiper] No changes, closing');
       setSettingsOpen(false);
       return;
     }
 
     // If no userId, can't save to DB but still close
     if (!userId) {
-      console.warn('[TimeSwiper] No userId, closing without save');
       setSettingsOpen(false);
       return;
     }
 
     setIsSaving(true);
     try {
-      console.warn('[TimeSwiper] Saving settings:', settings);
       await updateUIConfig(userId, { timeSwiper: settings });
-      console.warn('[TimeSwiper] Settings saved successfully');
       setSavedSettings(settings);
       setSettingsOpen(false);
     } catch (e) {
@@ -396,8 +415,7 @@ export function TimeSwiper({
   const buttonsOnLeft = handMode === 'left';
 
   // Calculate current time position for "now" indicator
-  const now = new Date();
-  const nowOffset = dateToOffset(now);
+  const nowOffset = dateToOffset(currentTime);
 
   // Increment label for display
   const getIncrementLabel = (mins: number): string => {
@@ -460,7 +478,7 @@ export function TimeSwiper({
 
             {/* Show Current Time Toggle */}
             <div className="flex items-center justify-between">
-              <Label htmlFor="showCurrentTime" className="text-sm text-muted-foreground">Show current time</Label>
+              <Label htmlFor="showCurrentTime" className="text-sm text-muted-foreground">Show time markers</Label>
               <Switch
                 id="showCurrentTime"
                 checked={settings.showCurrentTime}
@@ -629,7 +647,7 @@ export function TimeSwiper({
                         {tick.label && (
                           <span
                             className="absolute text-xs font-medium text-muted-foreground/80"
-                            style={{ bottom: 22 }}
+                            style={{ bottom: 18 }}
                           >
                             {tick.label}
                           </span>
@@ -637,21 +655,69 @@ export function TimeSwiper({
                       </div>
                     ))}
 
-                    {/* Current time indicator - subtle line + dot + label */}
+                    {/* Current time indicators */}
                     {settings.showCurrentTime && (
-                      <div
-                        className="pointer-events-none absolute bottom-0 flex flex-col items-center"
-                        style={{ left: nowOffset, transform: 'translateX(-50%)' }}
-                      >
-                        {/* "now" label at top */}
-                        <div className="absolute text-[10px] font-semibold tracking-wider text-muted-foreground/50 uppercase" style={{ bottom: 44 }}>
-                          now
+                      <>
+                        {/* -2hr marker */}
+                        <div
+                          className="pointer-events-none absolute bottom-0 flex flex-col items-center opacity-30"
+                          style={{ left: nowOffset - (HOUR_WIDTH * 2), transform: 'translateX(-50%)' }}
+                        >
+                          <div className="absolute text-[10px] font-bold tracking-wider text-muted-foreground" style={{ bottom: 44 }}>
+                            -2hr
+                          </div>
+                          <div className="absolute h-1.5 w-1.5 rounded-full bg-muted-foreground" style={{ bottom: 38 }} />
+                          <div className="h-9 w-px bg-muted-foreground" />
                         </div>
-                        {/* Small dot */}
-                        <div className="absolute h-1.5 w-1.5 rounded-full bg-muted-foreground/40" style={{ bottom: 38 }} />
-                        {/* Thin vertical line */}
-                        <div className="h-9 w-px bg-muted-foreground/30" />
-                      </div>
+
+                        {/* -1hr marker */}
+                        <div
+                          className="pointer-events-none absolute bottom-0 flex flex-col items-center opacity-30"
+                          style={{ left: nowOffset - HOUR_WIDTH, transform: 'translateX(-50%)' }}
+                        >
+                          <div className="absolute text-[10px] font-bold tracking-wider text-primary" style={{ bottom: 44 }}>
+                            -1hr
+                          </div>
+                          <div className="absolute h-1.5 w-1.5 rounded-full bg-primary" style={{ bottom: 38 }} />
+                          <div className="h-9 w-px bg-primary" />
+                        </div>
+
+                        {/* NOW marker */}
+                        <div
+                          className="pointer-events-none absolute bottom-0 flex flex-col items-center opacity-60"
+                          style={{ left: nowOffset, transform: 'translateX(-50%)' }}
+                        >
+                          <div className="absolute text-[10px] font-bold tracking-wider text-primary" style={{ bottom: 44 }}>
+                            now
+                          </div>
+                          <div className="absolute h-1.5 w-1.5 rounded-full bg-primary" style={{ bottom: 38 }} />
+                          <div className="h-9 w-px bg-primary" />
+                        </div>
+
+                        {/* +1hr marker */}
+                        <div
+                          className="pointer-events-none absolute bottom-0 flex flex-col items-center opacity-30"
+                          style={{ left: nowOffset + HOUR_WIDTH, transform: 'translateX(-50%)' }}
+                        >
+                          <div className="absolute text-[10px] font-bold tracking-wider text-primary" style={{ bottom: 44 }}>
+                            +1hr
+                          </div>
+                          <div className="absolute h-1.5 w-1.5 rounded-full bg-primary" style={{ bottom: 38 }} />
+                          <div className="h-9 w-px bg-primary" />
+                        </div>
+
+                        {/* +2hr marker */}
+                        <div
+                          className="pointer-events-none absolute bottom-0 flex flex-col items-center opacity-30"
+                          style={{ left: nowOffset + (HOUR_WIDTH * 2), transform: 'translateX(-50%)' }}
+                        >
+                          <div className="absolute text-[10px] font-bold tracking-wider text-muted-foreground" style={{ bottom: 44 }}>
+                            +2hr
+                          </div>
+                          <div className="absolute h-1.5 w-1.5 rounded-full bg-muted-foreground" style={{ bottom: 38 }} />
+                          <div className="h-9 w-px bg-muted-foreground" />
+                        </div>
+                      </>
                     )}
                   </div>
                 ))}

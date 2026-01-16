@@ -1,9 +1,10 @@
 ---
-last_verified_at: 2026-01-14T00:00:00Z
+last_verified_at: 2026-01-16T00:00:00Z
 source_paths:
   - src/actions/feedLogActions.ts
   - src/models/Schema.ts
   - src/app/[locale]/(auth)/(app)/overview/_components/
+  - src/components/feed/
 ---
 
 # Feed Logging System
@@ -41,8 +42,12 @@ This section documents the feed logging implementation including:
 - **Read when**: Modifying feed log schema, adding fields, or understanding the data model
 
 ### `chunks/feed-logging.ui-components.md`
-- **Content**: Activity tile pattern and bottom sheet form for adding feeds
-- **Read when**: Building activity tiles, working with sheet UI, or understanding the feed form interaction
+- **Content**: Activity tile pattern, full-screen bottom sheet with hand-mode ergonomics, TimeSwiper and AmountSlider integration
+- **Read when**: Building activity tiles, working with sheet UI, understanding AddFeedModal improvements, or implementing hand-mode aware layouts
+
+### `chunks/feed-logging.amount-slider.md`
+- **Content**: AmountSlider component with persistent settings, hand-mode support, metric/imperial conversion, and reversible direction
+- **Read when**: Working with bottle feed amount input, implementing settings popovers, understanding hand-mode patterns, or adding similar configurable input components
 
 ### `chunks/feed-logging.estimation-algorithm.md`
 - **Content**: Breast feed amount estimation logic and future improvement paths

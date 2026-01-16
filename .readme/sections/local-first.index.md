@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-14T00:00:00Z
+last_verified_at: 2026-01-16T00:00:00Z
 source_paths:
   - src/lib/local-db/
   - src/lib/query-keys.ts
@@ -9,6 +9,8 @@ source_paths:
   - src/services/sync-worker-manager.ts
   - src/workers/sync-worker.ts
   - src/stores/useSyncStore.ts
+  - src/stores/useUserStore.ts
+  - src/stores/useBabyStore.ts
   - src/hooks/useSyncOnLogin.ts
   - src/hooks/useSyncScheduler.ts
   - src/app/[locale]/api/sync/pull/route.ts
@@ -18,6 +20,7 @@ source_paths:
   - src/services/sync-service.test.ts
   - src/models/Schema.ts
   - src/components/OfflineBanner.tsx
+  - src/components/SyncProvider.tsx
   - src/templates/AppShell.tsx
   - public/offline-auth-sw.js
   - public/offline.html
@@ -95,6 +98,14 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
 - `.readme/chunks/local-first.bootstrap-storage.md`
   - Content: How unified bootstrap API data is stored in IndexedDB for offline access and sync status tracking
   - Read when: Understanding offline bootstrap behavior, debugging cache issues, or working with sync status system
+
+- `.readme/chunks/local-first.ui-config-storage.md`
+  - Content: Persistent storage system for user UI preferences (theme, hand mode, TimeSwiper settings) with per-key timestamp tracking for LWW merge
+  - Read when: Implementing settings UI, working with user preferences, understanding TimeSwiper persistence, or debugging "settings not loading" bug
+
+- `.readme/chunks/local-first.store-hydration-pattern.md`
+  - Content: Local-first store hydration flow with SyncProvider, dual persistence (sessionStorage + IndexedDB), and wait-for-hydration pattern
+  - Read when: Working with Zustand stores, implementing components that read user/baby data, debugging "settings not loading" issues, or understanding app initialization flow
 
 - `.readme/chunks/local-first.initial-sync-service.md`
   - Content: Initial data sync on login (user, babies, recent 7-day logs) with API contract

@@ -60,6 +60,7 @@ export type DefaultLogView = 'all' | 'feed' | 'sleep';
 export type UIConfigData = {
   theme?: ThemeMode;
   handMode?: HandMode;
+  useMetric?: boolean; // true = metric (cm, kg, ml), false = imperial (inches, lbs, oz)
   defaultLogView?: DefaultLogView;
   notificationsEnabled?: boolean;
   dashboardVisibility?: {
@@ -76,6 +77,14 @@ export type UIConfigData = {
     magneticFeel?: boolean;
     showCurrentTime?: boolean;
   };
+  amountSlider?: {
+    minAmount?: number;
+    defaultAmount?: number;
+    maxAmount?: number;
+    increment?: number;
+    dragStep?: number;
+    startOnLeft?: boolean;
+  };
   // Allow additional keys for future extensibility
   [key: string]: unknown;
 };
@@ -86,6 +95,7 @@ export type UIConfigData = {
 export const DEFAULT_UI_CONFIG_DATA: UIConfigData = {
   theme: 'system',
   handMode: 'right',
+  useMetric: true, // Default to metric system
   defaultLogView: 'all',
   notificationsEnabled: true,
   dashboardVisibility: {

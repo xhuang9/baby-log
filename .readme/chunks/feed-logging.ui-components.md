@@ -1,26 +1,29 @@
 ---
-last_verified_at: 2026-01-14T00:00:00Z
+last_verified_at: 2026-01-16T00:00:00Z
 source_paths:
   - src/app/[locale]/(auth)/(app)/overview/_components/FeedTile.tsx
-  - src/app/[locale]/(auth)/(app)/overview/_components/AddFeedSheet.tsx
+  - src/app/[locale]/(auth)/(app)/overview/_components/AddFeedModal.tsx
   - src/app/[locale]/(auth)/(app)/overview/_components/ActivityTile.tsx
-  - src/components/ui/slider.tsx
+  - src/components/feed/AmountSlider.tsx
+  - src/components/feed/TimeSwiper.tsx
 ---
 
 # Feed Logging UI Components
 
 ## Purpose
 
-Reusable UI components for displaying and adding feed logs with mobile-first design and bottom sheet interaction pattern.
+Reusable UI components for displaying and adding feed logs with mobile-first design, hand-mode ergonomics, and bottom sheet interaction pattern.
 
 ## Component Hierarchy
 
 ```
 FeedTile (stateful)
 ├── ActivityTile (presentation)
-└── AddFeedSheet (form modal)
-    ├── Sheet (shadcn/ui)
-    └── Slider (custom Base UI component)
+└── AddFeedModal (full-screen sheet form)
+    ├── TimeSwiper (start time picker)
+    ├── AmountSlider (bottle feed amount with settings)
+    ├── Duration input (breast feed minutes)
+    └── End side radio buttons (breast feed L/R)
 ```
 
 ## Key Patterns
@@ -53,54 +56,116 @@ const colorClasses = {
 
 **Pattern**: Left border accent + subtle background tint (5% opacity, 10% on hover).
 
-### 2. Bottom Sheet Form Pattern
+### 2. Full-Screen Bottom Sheet Pattern
 
-**Location**: `src/app/[locale]/(auth)/(app)/overview/_components/AddFeedSheet.tsx`
+**Location**: `src/app/[locale]/(auth)/(app)/overview/_components/AddFeedModal.tsx`
 
 **Non-Standard Choices**:
 
-#### A. Sheet Header with Cancel/Switch Actions
+#### A. Full-Screen Sheet
 
 ```tsx
-<SheetHeader className="flex-row items-center justify-between gap-4 space-y-0 border-b pb-4">
-  <SheetClose render={<Button variant="ghost" size="sm" />}>
-    Cancel
+<Sheet open={open} onOpenChange={handleOpenChange}>
+  <SheetContent
+    side="bottom"
+    className="inset-0 h-full w-full rounded-none"
+    showCloseButton={false}
+  >
+```
+
+**Pattern**: Full-screen overlay with `inset-0 h-full w-full rounded-none`.
+**Why**: More space for TimeSwiper and AmountSlider controls, immersive mobile experience.
+
+#### B. Centered Fixed Header
+
+```tsx
+<SheetHeader className="relative flex-row items-center border-b pb-4 space-y-0">
+  <SheetClose render={<Button variant="ghost" size="icon-sm" />}>
+    <ChevronLeftIcon className="h-5 w-5" />
   </SheetClose>
 
-  <SheetTitle className="text-center">
-    Add {method === 'bottle' ? 'Bottle' : 'Breast'} Feed
+  <SheetTitle className="absolute left-1/2 -translate-x-1/2">
+    Feed
   </SheetTitle>
 
-  <Button variant="ghost" size="sm" onClick={() => setMethod(...)}>
-    {method === 'bottle' ? 'Breast' : 'Bottle'}
+  <Button
+    variant="ghost"
+    size="sm"
+    onClick={() => setInputMode(...)}
+    className="ml-auto text-primary"
+  >
+    {inputMode === 'manual' ? 'Timer' : 'Manual'}
   </Button>
 </SheetHeader>
 ```
 
-**Pattern**: Three-column header with action buttons (Cancel left, Switch right, Title center).
-**Why**: Mobile-friendly, reduces taps (no need for separate method picker).
+**Pattern**: Left back button (ChevronLeft), absolutely centered title, right mode switcher.
+**Why**:
+- iOS-style back navigation (familiar pattern)
+- Centered title for symmetry
+- Mode switcher always visible (no need to hunt for it)
 
-#### B. Custom Time Picker
+**Change from previous**: Was X icon + Cancel text, now ChevronLeft icon only.
+
+#### C. Max-Width Constrained Content
 
 ```tsx
-<input
-  type="number"
-  min={0}
-  max={23}
-  value={hour}
-  className="h-16 w-20 rounded-lg border bg-background text-center text-2xl font-semibold"
-/>
+<div className="mx-auto w-full max-w-[600px] space-y-6 px-4 py-6">
+  {/* Form fields */}
+</div>
 ```
 
-**Choice**: Custom numeric inputs instead of native time picker.
-**Why**: Better UX on mobile, larger touch targets, instant validation.
+**Pattern**: Content area and footer both have `max-w-[600px]` constraint.
+**Why**: Prevents inputs from being too wide on tablets/desktop, keeps controls reachable.
 
-#### C. Conditional Form Fields
+#### D. Hand-Mode Aware Footer
+
+```tsx
+<SheetFooter className={`mx-auto w-full max-w-[600px] flex-row gap-4 border-t px-4 pt-4 ${handMode === 'left' ? 'justify-start' : 'justify-end'}`}>
+  <BaseButton variant="secondary">Cancel</BaseButton>
+  <BaseButton variant="primary" loading={isSubmitting}>Save</BaseButton>
+</SheetFooter>
+```
+
+**Pattern**: Footer buttons flip based on hand mode:
+- Right-handed: Cancel on left, Save on right (default)
+- Left-handed: Cancel on right, Save on left
+
+**Why**: Primary action (Save) is always closest to the user's dominant thumb.
+
+**Change from previous**: Buttons were full-width `flex-1`, now natural width with gap.
+
+#### E. Method Toggle with ButtonGroup
+
+```tsx
+<ButtonGroup className="w-full">
+  <Button
+    variant={method === 'bottle' ? 'default' : 'outline'}
+    className="h-12 flex-1"
+    onClick={() => setMethod('bottle')}
+  >
+    Bottle Feeding
+  </Button>
+  <Button
+    variant={method === 'breast' ? 'default' : 'outline'}
+    className="h-12 flex-1"
+    onClick={() => setMethod('breast')}
+  >
+    Breast Feeding
+  </Button>
+</ButtonGroup>
+```
+
+**Pattern**: Full-width button group with explicit "Bottle Feeding" / "Breast Feeding" labels.
+**Change**: Was "Bottle" / "Breast" (shorter), now more explicit.
+
+#### F. Conditional Form Fields
 
 ```tsx
 {method === 'bottle' && (
   <div className="space-y-3">
-    {/* Amount Slider */}
+    <Label className="text-muted-foreground">Amount</Label>
+    <AmountSlider value={amountMl} onChange={setAmountMl} handMode={handMode} />
   </div>
 )}
 
@@ -113,40 +178,53 @@ const colorClasses = {
 ```
 
 **Pattern**: Different fields for bottle vs. breast feeds, no shared form state.
+**Change**: Bottle amount now uses AmountSlider (with settings) instead of plain Slider.
 
-### 3. Slider Component (Base UI)
-
-**Location**: `src/components/ui/slider.tsx`
-
-**Library**: `@base-ui/react/slider` (not radix-ui).
-
-**Custom Logic**:
-
-```typescript
-const _values = React.useMemo(
-  () =>
-    Array.isArray(value)
-      ? value
-      : Array.isArray(defaultValue)
-        ? defaultValue
-        : [min, max],
-  [value, defaultValue, min, max]
-)
-```
-
-**Why**: Handles both controlled and uncontrolled modes, always provides array for multi-thumb support.
-
-**Styling Pattern**:
+#### G. Time Picker with Label
 
 ```tsx
-<SliderPrimitive.Track className="bg-muted rounded-full data-horizontal:h-1">
-  <SliderPrimitive.Indicator className="bg-primary" />
-</SliderPrimitive.Track>
+<div className="space-y-3">
+  <Label className="text-muted-foreground">Start time</Label>
+  <TimeSwiper value={startTime} onChange={setStartTime} handMode={handMode} />
+</div>
 ```
 
-**Note**: Uses `data-horizontal`/`data-vertical` attributes for responsive sizing.
+**Pattern**: Label above TimeSwiper (was embedded in TimeSwiper before).
+**Why**: Consistent with AmountSlider pattern, clearer form structure.
+**Change**: TimeSwiper no longer shows label internally, parent provides it.
 
-### 4. Time Ago Formatting
+### 3. TimeSwiper Component
+
+**Location**: `src/components/feed/TimeSwiper.tsx`
+
+Horizontal swipe timeline with momentum physics, persistent settings (24h format, swipe speed, magnetic feel), and hand-mode layout mirroring.
+
+**Key Pattern**: Wait-for-hydration before loading settings from IndexedDB.
+
+**Change**: Removed `userId` prop, now loads directly from Zustand store.
+
+```typescript
+// OLD (prop drilling)
+<TimeSwiper userId={user?.localId} ... />
+
+// NEW (store-based)
+<TimeSwiper ... /> // Loads userId from useUserStore internally
+```
+
+### 4. AmountSlider Component
+
+**Location**: `src/components/feed/AmountSlider.tsx`
+
+**Full documentation**: `.readme/chunks/feed-logging.amount-slider.md`
+
+**Key features**:
+- Settings popover (min/max/increment/drag step/flip direction)
+- Metric/imperial conversion (ml ↔ oz)
+- Hand-mode layout mirroring
+- IndexedDB persistence with wait-for-hydration
+- Thicker touch targets (h-3 track, size-7 thumb)
+
+### 5. Time Ago Formatting
 
 **Location**: `src/app/[locale]/(auth)/(app)/overview/_components/FeedTile.tsx`
 
@@ -173,7 +251,7 @@ function formatTimeAgo(date: Date): string {
 
 **Pattern**: Always shows two units when available (e.g., "2h 15m", not just "2h").
 
-### 5. Feed Subtitle Formatting
+### 6. Feed Subtitle Formatting
 
 ```typescript
 function formatFeedSubtitle(feed: FeedLogWithCaregiver | null): string {
@@ -223,14 +301,21 @@ const handleOpenChange = (newOpen: boolean) => {
 
 ## Gotchas
 
-- **Sheet Side**: Uses `side="bottom"` for mobile-first drawer pattern
-- **No Close Button**: `showCloseButton={false}` because header has Cancel button
+- **Sheet Side**: Uses `side="bottom"` for mobile-first full-screen pattern
+- **No Close Button**: `showCloseButton={false}` because header has back button
+- **Full Screen**: `inset-0 h-full w-full rounded-none` for immersive mobile UX
+- **Max Width**: Content constrained to 600px to keep controls reachable on tablets
 - **Form Reset**: Always reset on cancel/close to avoid stale state
 - **Time Defaults**: Initialize to current time for convenience
-- **Amount Range**: Slider max is 350ml (typical max for baby bottle)
+- **Hand Mode**: Loaded from IndexedDB on mount, affects layout of TimeSwiper, AmountSlider, and footer buttons
+- **Amount Range**: Configurable via AmountSlider settings, defaults to 0-350ml
 - **Duration Max**: 60 minutes max for breast feeds (typical maximum)
+- **Wait for Hydration**: TimeSwiper and AmountSlider wait for store hydration before loading settings
 
 ## Related
 
 - `chunks/feed-logging.server-actions.md` - Server-side feed creation logic
+- `chunks/feed-logging.amount-slider.md` - AmountSlider component details
+- `chunks/local-first.ui-config-storage.md` - UI config persistence system
+- `chunks/local-first.store-hydration-pattern.md` - Store hydration and wait pattern
 - `chunks/performance.loading-states.md` - Loading patterns for async actions
