@@ -1,7 +1,7 @@
 /* Activity tile typography styles for titles and labels. */
 @layer components {
   .activity-tile-title {
-    @apply font-sans text-lg font-semibold leading-snug tracking-tight text-current;
+    @apply font-sans text-lg font-semibold leading-snug tracking-tight text-white;
   }
 
   .activity-tile-label {

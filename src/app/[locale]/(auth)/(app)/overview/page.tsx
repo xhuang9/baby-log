@@ -111,37 +111,35 @@ export default async function OverviewPage(props: {
   return (
     <>
       <PageTitleSetter title="Overview" />
-      <div className="space-y-4">
-        {/* Activity Grid */}
-        <div className="space-y-3">
-          <FeedTile babyId={babyAccess.babyId} latestFeed={latestFeed} />
+      {/* Activity Grid */}
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        <FeedTile babyId={babyAccess.babyId} latestFeed={latestFeed} />
 
-          {/* Placeholder tiles for future activities */}
-          <ActivityTile
-            title="Sleep"
-            subtitle="Coming soon"
-            activity="sleep"
-            disabled
-          />
-          <ActivityTile
-            title="Nappy"
-            subtitle="Coming soon"
-            activity="nappy"
-            disabled
-          />
-          <ActivityTile
-            title="Solids"
-            subtitle="Coming soon"
-            activity="solids"
-            disabled
-          />
-          <ActivityTile
-            title="Bath"
-            subtitle="Coming soon"
-            activity="bath"
-            disabled
-          />
-        </div>
+        {/* Placeholder tiles for future activities */}
+        <ActivityTile
+          title="Sleep"
+          subtitle="Coming soon"
+          activity="sleep"
+          disabled
+        />
+        <ActivityTile
+          title="Nappy"
+          subtitle="Coming soon"
+          activity="nappy"
+          disabled
+        />
+        <ActivityTile
+          title="Solids"
+          subtitle="Coming soon"
+          activity="solids"
+          disabled
+        />
+        <ActivityTile
+          title="Bath"
+          subtitle="Coming soon"
+          activity="bath"
+          disabled
+        />
       </div>
     </>
   );

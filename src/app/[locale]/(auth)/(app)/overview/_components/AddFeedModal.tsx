@@ -1,7 +1,7 @@
 'use client';
 
 import type { FeedMethod } from '@/actions/feedLogActions';
-import { ChevronLeftIcon } from 'lucide-react';
+import { ArrowLeftRightIcon, ChevronLeftIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createFeedLog } from '@/actions/feedLogActions';
 import { BaseButton } from '@/components/base/BaseButton';
@@ -161,6 +161,7 @@ export function AddFeedModal({
             onClick={() => setInputMode(inputMode === 'manual' ? 'timer' : 'manual')}
             className="ml-auto text-primary"
           >
+            <ArrowLeftRightIcon className="h-4 w-4" />
             {inputMode === 'manual' ? 'Timer' : 'Manual'}
           </Button>
         </SheetHeader>
