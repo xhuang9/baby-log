@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-12T00:00:00Z
+last_verified_at: 2026-01-17T09:12:39Z
 source_paths:
   - src/lib/local-db/database.ts
   - src/lib/local-db/types/
@@ -7,197 +7,59 @@ source_paths:
 
 # Dexie IndexedDB Schema
 
+> Status: active
+> Last updated: 2026-01-17
+> Owner: Core
+
 ## Purpose
-Defines the client-side database schema using Dexie.js for offline-first data storage. This is the **immediate read model** that the dashboard UI reads from for instant responsiveness.
+
+Define the local-first IndexedDB schema used as the UI read model for offline and instant access.
 
 ## Key Deviations from Standard
 
-Unlike typical React applications that rely solely on server API calls:
-- **IndexedDB is the primary read source** for the UI (not server API)
-- **Server updates are applied to IndexedDB** after successful mutations
-- **All UI queries use `liveQuery`** from Dexie for reactive updates
-- **Schema mirrors server Postgres schema** to enable seamless sync
+- **Local DB as primary read**: UI queries go to Dexie first; server is authoritative but not the primary read path.
+- **Compound indexes for logs**: All log tables index `[babyId+startedAt]` for fast recent-log queries.
 
-## Schema Design
+## Architecture / Implementation
 
-### Core Tables
+### Components
+- `src/lib/local-db/database.ts` - Dexie schema + indexes.
+- `src/lib/local-db/types/*` - Type definitions for entities, logs, sync, and outbox.
 
-```typescript
-// src/lib/local-db.ts
+### Data Flow
+1. Local data is written into Dexie tables.
+2. UI reads via `useLiveQuery` or helper functions.
+3. Sync processes update Dexie and advance cursors in `syncMeta`.
 
-class BabyLogDatabase extends Dexie {
-  feedLogs!: EntityTable<LocalFeedLog, 'id'>;
-  babies!: EntityTable<LocalBaby, 'id'>;
-  babyAccess!: EntityTable<LocalBabyAccess, 'userId'>;
-  syncMeta!: EntityTable<SyncMeta, 'babyId'>;
-  outbox!: EntityTable<OutboxEntry, 'mutationId'>;
-}
-```
-
-### Table Purposes
-
-| Table | Purpose | Primary Key | Indexes |
-|-------|---------|-------------|---------|
-| `feedLogs` | Mirror of server feed_logs table | `id` (UUID) | `babyId`, `startedAt`, `createdAt` |
-| `babies` | Mirror of server babies table | `id` (number) | - |
-| `babyAccess` | Mirror of server baby_access table | `[userId+babyId]` | `userId`, `babyId` |
-| `syncMeta` | Delta sync cursors per baby | `babyId` | - |
-| `outbox` | Pending offline mutations | `mutationId` (UUID) | `status`, `createdAt`, `entityType` |
-
-### Index Strategy
-
-```typescript
+### Code Pattern
+```ts
 this.version(1).stores({
-  // Feed logs - indexed for queries by baby and time
-  feedLogs: 'id, babyId, startedAt, createdAt',
-
-  // Babies - simple id lookup
-  babies: 'id',
-
-  // Baby access - compound index for user+baby lookup
-  babyAccess: '[userId+babyId], userId, babyId',
-
-  // Sync metadata - one entry per baby
-  syncMeta: 'babyId',
-
-  // Outbox - for offline mutation replay
+  feedLogs: 'id, babyId, startedAt, [babyId+startedAt]',
+  babyAccess: '[oduserId+babyId], oduserId, babyId',
   outbox: 'mutationId, status, createdAt, entityType',
 });
 ```
 
-**Index Rationale**:
-- `feedLogs` indexed by `babyId` and `startedAt` for efficient "recent feeds for baby X" queries
-- `babyAccess` uses compound index `[userId+babyId]` for fast permission checks
-- `outbox` indexed by `status` to quickly find `pending` entries for sync
+## Configuration
 
-## Type Mirroring
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `feedLogs` | `id, babyId, startedAt, [babyId+startedAt]` | Feed log indexes for per-baby time queries.
+| `babyAccess` | `[oduserId+babyId], oduserId, babyId` | Compound index for access lookup.
+| `syncStatus` | `entityType` | Tracks per-entity sync state.
+| `authSession` | `id` | Singleton record for offline auth session.
 
-Types in `local-db.ts` mirror server schema with adjustments for client use:
+## Gotchas / Constraints
 
-```typescript
-export type LocalFeedLog = {
-  id: string;              // UUID - client-generated for idempotent creates
-  babyId: number;
-  loggedByUserId: number;
-  method: FeedMethod;
-  startedAt: Date;         // Date objects (not strings) for IndexedDB
-  endedAt: Date | null;
-  durationMinutes: number | null;
-  amountMl: number | null;
-  isEstimated: boolean;
-  endSide: FeedSide | null;
-  notes: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-};
-```
+- **Single schema version**: Only `version(1)` is defined; schema changes require a migration plan.
+- **Date storage**: Dexie stores `Date` objects; server sync must convert from/to ISO strings.
 
-**Key Differences from Server Schema**:
-- `id` is `string` (UUID) not auto-increment (enables client-generated IDs)
-- Dates are `Date` objects (IndexedDB native) not ISO strings
-- Nullable fields use `| null` explicitly
+## Testing Notes
 
-## Helper Functions
+- Validate that `babyAccess` queries use the compound `[oduserId+babyId]` index.
+- Insert logs and confirm queries by `babyId` + `startedAt` are efficient.
 
-### Outbox Operations
+## Related Systems
 
-```typescript
-// Add mutation to outbox for later replay
-await addToOutbox({
-  mutationId: uuid(),
-  entityType: 'feed_log',
-  entityId: feedLog.id,
-  op: 'create',
-  payload: feedLog,
-});
-
-// Get pending mutations for sync
-const pending = await getPendingOutboxEntries();
-
-// Update status after sync attempt
-await updateOutboxStatus(mutationId, 'synced');
-```
-
-### Sync Cursor Management
-
-```typescript
-// Get cursor for delta sync
-const cursor = await getSyncCursor(babyId);
-
-// Fetch changes since cursor from server
-const changes = await fetch(`/api/babies/${babyId}/sync?since=${cursor}`);
-
-// Update cursor after successful sync
-await updateSyncCursor(babyId, newCursor);
-```
-
-## Patterns
-
-### Client-Generated UUIDs
-All new entities use client-generated UUIDs (not server auto-increment):
-```typescript
-import { v4 as uuid } from 'uuid';
-
-const feedLog: LocalFeedLog = {
-  id: uuid(), // Client generates UUID
-  babyId: currentBaby.id,
-  // ... other fields
-};
-
-await localDb.feedLogs.add(feedLog);
-await addToOutbox({
-  mutationId: uuid(),
-  entityType: 'feed_log',
-  entityId: feedLog.id,
-  op: 'create',
-  payload: feedLog,
-});
-```
-
-**Why**: Enables idempotent replay. Server can use `INSERT ... ON CONFLICT (id) DO UPDATE` without creating duplicates.
-
-### Reactive Queries with liveQuery
-
-```typescript
-import { useLiveQuery } from 'dexie-react-hooks';
-
-// UI components read from Dexie, not server
-const feedLogs = useLiveQuery(
-  () => localDb.feedLogs
-    .where('babyId').equals(babyId)
-    .reverse()
-    .sortBy('startedAt'),
-  [babyId]
-);
-```
-
-**Why**: Instant UI updates when IndexedDB changes (no server round-trip needed).
-
-## Gotchas
-
-### No Auto-Increment IDs
-- **Don't** rely on server auto-increment for entity IDs
-- **Do** use client-generated UUIDs for all new entities
-- Server schema must accept UUID primary keys or have unique constraints
-
-### Date Serialization
-- IndexedDB stores `Date` objects natively
-- When syncing to/from server, convert between `Date` ↔ ISO strings:
-  ```typescript
-  // Server → IndexedDB
-  createdAt: new Date(serverData.created_at)
-
-  // IndexedDB → Server
-  created_at: feedLog.createdAt.toISOString()
-  ```
-
-### Schema Migrations
-- Dexie uses version numbers: `this.version(2).stores({ ... })`
-- Increment version when adding fields or tables
-- Existing data persists across schema changes
-- See Dexie docs for upgrade handlers
-
-## Related
-- `.readme/chunks/local-first.outbox-pattern.md` - Outbox mutation replay pattern
-- `.readme/chunks/local-first.tanstack-query-setup.md` - Network scheduler using TanStack Query
-- `.readme/chunks/local-first.conflict-resolution.md` - LWW conflict resolution strategy
+- `.readme/chunks/local-first.modular-db-structure.md` - Local DB module layout.
+- `.readme/chunks/local-first.sync-status-tracking.md` - Sync status tables.

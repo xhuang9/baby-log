@@ -168,8 +168,8 @@ export async function POST(request: Request) {
       .where(eq(userUiConfigSchema.userId, user.id))
       .limit(1);
 
-    let currentData = (configResult[0]?.data ?? {}) as Record<string, unknown>;
-    let currentKeyUpdatedAt = (configResult[0]?.keyUpdatedAt ?? {}) as Record<string, string>;
+    const currentData = (configResult[0]?.data ?? {}) as Record<string, unknown>;
+    const currentKeyUpdatedAt = (configResult[0]?.keyUpdatedAt ?? {}) as Record<string, string>;
 
     // Apply patches using LWW per key
     for (const patch of body.patches) {

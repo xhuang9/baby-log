@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-17T00:00:00Z
+last_verified_at: 2026-01-17T09:12:39Z
 source_paths:
   - src/app/[locale]/
   - src/lib/
@@ -42,10 +42,6 @@ The architecture emphasizes separation of concerns, performance-first patterns, 
 - `.readme/chunks/architecture.libs-pattern.md`
   - Content: The `src/lib/` centralization pattern for all third-party library configurations
   - Read when: Configuring new libraries, understanding environment variables, or working with DB/I18n/Logger setup
-
-- `.readme/chunks/architecture.folder-reorganization.md`
-  - Content: Folder structure reorganization with providers/ extraction, lib/ rename, _components/ colocation, and services/ layer
-  - Read when: Understanding project structure, adding providers, creating page-specific components, or preparing for iOS API
 
 - `.readme/chunks/architecture.path-aliases.md`
   - Content: Path alias configuration and import conventions

@@ -1,8 +1,8 @@
 'use client';
 
+import type { HandMode } from '@/lib/local-db/types/entities';
 import { useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
-import type { HandMode } from '@/lib/local-db/types/entities';
 import {
   Select,
   SelectContent,

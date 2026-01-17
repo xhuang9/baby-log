@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-17T00:00:00Z
+last_verified_at: 2026-01-17T09:12:39Z
 source_paths:
   - src/proxy.ts
   - src/app/[locale]/(auth)/(app)/overview/
@@ -7,7 +7,7 @@ source_paths:
   - next.config.ts
   - src/app/[locale]/(auth)/loading.tsx
   - src/components/ui/page-skeleton.tsx
-  - src/components/sync/OfflineBanner.tsx
+  - src/components/OfflineBanner.tsx
   - src/hooks/useOnlineStatus.ts
   - public/manifest.json
 ---

@@ -400,7 +400,7 @@ export function AmountSlider({
 
           {/* Slider - thicker track and bigger thumb */}
           <div className="px-2">
-            <div className="[&_[data-slot='slider-track']]:h-3 [&_[data-slot='slider-thumb']]:size-7">
+            <div className="[&_[data-slot='slider-thumb']]:size-7 [&_[data-slot='slider-track']]:h-3">
               <Slider
                 value={[value]}
                 onValueChange={(val) => {
@@ -417,25 +417,27 @@ export function AmountSlider({
               />
             </div>
             <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-              {shouldFlipSlider ? (
-                <>
-                  <span>
-                    {mlToDisplay(settings.maxAmount).toFixed(useMetric ? 0 : 1)}
-                  </span>
-                  <span>
-                    {mlToDisplay(settings.minAmount).toFixed(useMetric ? 0 : 1)}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span>
-                    {mlToDisplay(settings.minAmount).toFixed(useMetric ? 0 : 1)}
-                  </span>
-                  <span>
-                    {mlToDisplay(settings.maxAmount).toFixed(useMetric ? 0 : 1)}
-                  </span>
-                </>
-              )}
+              {shouldFlipSlider
+                ? (
+                    <>
+                      <span>
+                        {mlToDisplay(settings.maxAmount).toFixed(useMetric ? 0 : 1)}
+                      </span>
+                      <span>
+                        {mlToDisplay(settings.minAmount).toFixed(useMetric ? 0 : 1)}
+                      </span>
+                    </>
+                  )
+                : (
+                    <>
+                      <span>
+                        {mlToDisplay(settings.minAmount).toFixed(useMetric ? 0 : 1)}
+                      </span>
+                      <span>
+                        {mlToDisplay(settings.maxAmount).toFixed(useMetric ? 0 : 1)}
+                      </span>
+                    </>
+                  )}
             </div>
           </div>
         </div>

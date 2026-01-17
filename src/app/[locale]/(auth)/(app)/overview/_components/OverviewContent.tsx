@@ -26,7 +26,9 @@ export function OverviewContent({ locale }: OverviewContentProps) {
   // Redirect if no local data (needs bootstrap)
   useEffect(() => {
     // Wait for query to complete (undefined = loading)
-    if (userData === undefined) return;
+    if (userData === undefined) {
+      return;
+    }
 
     // No user in IndexedDB = needs bootstrap
     if (userData === null || userData.defaultBabyId === null) {
@@ -39,7 +41,9 @@ export function OverviewContent({ locale }: OverviewContentProps) {
 
   // Read latest feed from IndexedDB with caregiver info
   const latestFeedData = useLiveQuery(async () => {
-    if (!babyId) return null;
+    if (!babyId) {
+      return null;
+    }
     const feeds = await localDb.feedLogs
       .where('babyId')
       .equals(babyId)
@@ -61,7 +65,7 @@ export function OverviewContent({ locale }: OverviewContentProps) {
     // Transform to FeedLogWithCaregiver type expected by FeedTile
     // Note: LocalFeedLog has id as string (UUID), but FeedLogWithCaregiver expects number
     // We'll use a hash of the UUID for the numeric id (only for display purposes)
-    const numericId = parseInt(latestFeed.id.slice(0, 8), 16);
+    const numericId = Number.parseInt(latestFeed.id.slice(0, 8), 16);
 
     const transformedFeed: FeedLogWithCaregiver = {
       id: numericId,
@@ -123,7 +127,7 @@ export function OverviewContent({ locale }: OverviewContentProps) {
 function OverviewSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-      {[...Array(5)].map((_, i) => (
+      {[...Array.from({ length: 5 })].map((_, i) => (
         <div key={i} className="h-32 animate-pulse rounded-lg bg-muted" />
       ))}
     </div>

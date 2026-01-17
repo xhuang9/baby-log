@@ -1,11 +1,11 @@
 'use client';
 
-import { ChevronDown } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { OfflineLink as Link } from '@/components/ui/offline-link';
+import { ChevronDown } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useTransition } from 'react';
 import { setDefaultBaby } from '@/actions/babyActions';
+import { OfflineLink as Link } from '@/components/ui/offline-link';
 import {
   Sidebar,
   SidebarContent,
@@ -37,7 +37,9 @@ export const AppSidebar = ({ locale, ...props }: AppSidebarProps & React.Compone
   // Read babies from IndexedDB instead of server action
   const babiesFromDb = useLiveQuery(async () => {
     const user = await localDb.users.toCollection().first();
-    if (!user) return [];
+    if (!user) {
+      return [];
+    }
 
     const accessList = await localDb.babyAccess.toArray();
     const babyIds = accessList.map(a => a.babyId);
@@ -49,7 +51,7 @@ export const AppSidebar = ({ locale, ...props }: AppSidebarProps & React.Compone
 
     return babies
       .filter(b => b.archivedAt === null)
-      .map(baby => {
+      .map((baby) => {
         const access = accessList.find(a => a.babyId === baby.id);
         return {
           babyId: baby.id,

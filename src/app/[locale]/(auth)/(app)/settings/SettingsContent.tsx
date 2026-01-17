@@ -2,10 +2,12 @@
 
 import { UserAvatar, useUser } from '@clerk/nextjs';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ChevronRight } from 'lucide-react';
-import { OfflineLink as Link } from '@/components/ui/offline-link';
+import { ChevronDown, ChevronRight, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { localDb } from '@/lib/local-db/database';
+import { AmountSliderSettings } from './AmountSliderSettings';
 import { BabiesList } from './BabiesList';
 import { HandPreferenceSetting } from './HandPreferenceSetting';
 import { ThemeSetting } from './ThemeSetting';
@@ -26,6 +28,8 @@ export function SettingsContent(props: {
 }) {
   const { locale } = props;
   const { user } = useUser();
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [showAmountSlider, setShowAmountSlider] = useState(false);
 
   // Read babies from IndexedDB
   const babies = useLiveQuery(async (): Promise<BabyInfo[]> => {
@@ -40,7 +44,7 @@ export function SettingsContent(props: {
     // Filter out archived babies and join with access info
     return allBabies
       .filter(b => b.archivedAt === null)
-      .map(baby => {
+      .map((baby) => {
         const access = accessList.find(a => a.babyId === baby.id);
         return {
           babyId: baby.id,
@@ -95,13 +99,49 @@ export function SettingsContent(props: {
         </div>
       </section>
 
-      {/* Time Picker Section */}
+      {/* Input Controls Section */}
       <section className="space-y-3">
         <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-          Time Picker
+          Input Controls
         </h2>
-        <div className="rounded-lg border bg-background p-4">
-          <TimeSwiperSettings />
+        <div className="divide-y rounded-lg border bg-background">
+          {/* Time Picker Accordion */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setShowTimePicker(!showTimePicker)}
+              className="flex w-full items-center justify-between p-4 text-left text-sm font-medium transition-colors hover:bg-muted/50"
+            >
+              <span>Time Picker</span>
+              {showTimePicker
+                ? <ChevronUp className="size-4 text-muted-foreground" />
+                : <ChevronDown className="size-4 text-muted-foreground" />}
+            </button>
+            {showTimePicker && (
+              <div className="border-t p-4">
+                <TimeSwiperSettings />
+              </div>
+            )}
+          </div>
+
+          {/* Amount Slider Accordion */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setShowAmountSlider(!showAmountSlider)}
+              className="flex w-full items-center justify-between p-4 text-left text-sm font-medium transition-colors hover:bg-muted/50"
+            >
+              <span>Amount Slider</span>
+              {showAmountSlider
+                ? <ChevronUp className="size-4 text-muted-foreground" />
+                : <ChevronDown className="size-4 text-muted-foreground" />}
+            </button>
+            {showAmountSlider && (
+              <div className="border-t p-4">
+                <AmountSliderSettings />
+              </div>
+            )}
+          </div>
         </div>
       </section>
 

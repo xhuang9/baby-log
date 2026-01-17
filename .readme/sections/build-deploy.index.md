@@ -1,10 +1,11 @@
 ---
-last_verified_at: 2025-12-31T15:30:00Z
+last_verified_at: 2026-01-17T11:12:21Z
 source_paths:
   - next.config.ts
-  - sentry.client.config.ts
-  - sentry.server.config.ts
+  - src/instrumentation.ts
+  - src/instrumentation-client.ts
   - package.json
+  - README.md
 ---
 
 # Build & Deployment Overview
@@ -29,8 +30,8 @@ Build configuration is environment-aware and optimized for both dev and producti
   - Read when: Adding Next.js plugins, configuring builds, or understanding the plugin chain
 
 - `.readme/chunks/build.sentry-integration.md`
-  - Content: Sentry webpack plugin with source maps and tunnel route configuration
-  - Read when: Configuring Sentry uploads, setting up error tracking, or debugging source map issues
+  - Content: Sentry initialization and environment requirements (TODO)
+  - Read when: Wiring error monitoring, configuring DSN and source map upload, or validating the instrumentation hooks
 
 - `.readme/chunks/build.migration-bundling.md`
   - Content: Including migration files in output for serverless deployments

@@ -1,241 +1,67 @@
 ---
-last_verified_at: 2026-01-04T00:00:00Z
+last_verified_at: 2026-01-17T09:12:39Z
 source_paths:
   - next.config.ts
+  - src/lib/env.ts
 ---
 
 # Next.js Configuration Pattern
 
+> Status: active
+> Last updated: 2026-01-17
+> Owner: Core
+
 ## Purpose
-Demonstrates conditional plugin composition in next.config.ts for environment-specific features.
+
+Compose Next.js plugins (next-intl, PWA, bundle analyzer, Sentry) with environment-driven toggles and shared base config.
 
 ## Key Deviations from Standard
-- Plugins applied conditionally based on environment variables
-- Single config object progressively enhanced
-- Imports Env.ts for build-time validation
-- Uses chaining pattern for plugin composition
 
-## Configuration Structure
+- **Side-effect env validation**: `next.config.ts` imports `src/lib/env.ts` to validate required environment variables at build time.
+- **Always-on PWA wrapper**: `withPWA` wraps the config and internally disables itself in dev unless `NEXT_PUBLIC_ENABLE_PWA` is set.
 
-### File: `next.config.ts`
-```typescript
-import type { NextConfig } from 'next';
-import withBundleAnalyzer from '@next/bundle-analyzer';
-import { withSentryConfig } from '@sentry/nextjs';
-import createNextIntlPlugin from 'next-intl/plugin';
-import './src/libs/Env'; // Validates env vars at build time
+## Architecture / Implementation
 
-// Base configuration (always applied)
-const baseConfig: NextConfig = {
-  devIndicators: {
-    position: 'bottom-right',
-  },
-  poweredByHeader: false,
-  reactStrictMode: true,
-  reactCompiler: true, // React 19 compiler
-  outputFileTracingIncludes: {
-    '/': ['./migrations/**/*'], // Bundle migrations for serverless
-  },
-  experimental: {
-    turbopackFileSystemCacheForDev: true, // Faster dev builds
-  },
-};
+### Components
+- `next.config.ts` - Base config and plugin composition.
+- `src/lib/env.ts` - Environment validation via `@t3-oss/env-nextjs`.
 
-// 1. Always apply next-intl plugin
-let configWithPlugins = createNextIntlPlugin('./src/libs/I18n.ts')(baseConfig);
+### Data Flow
+1. Base config defines shared Next.js settings.
+2. `createNextIntlPlugin` wraps config for i18n routing.
+3. `withPWA` applies runtime caching and offline fallbacks.
+4. Bundle analyzer and Sentry wrap the config conditionally.
 
-// 2. Conditionally apply bundle analyzer
-if (process.env.ANALYZE === 'true') {
-  configWithPlugins = withBundleAnalyzer()(configWithPlugins);
-}
-
-// 3. Conditionally apply Sentry
-if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
-  configWithPlugins = withSentryConfig(configWithPlugins, {
-    org: process.env.SENTRY_ORGANIZATION,
-    project: process.env.SENTRY_PROJECT,
-    silent: !process.env.CI,
-    widenClientFileUpload: true,
-    tunnelRoute: '/monitoring',
-    telemetry: false,
-    webpack: {
-      reactComponentAnnotation: { enabled: true },
-      treeshake: { removeDebugLogging: true },
-    },
-  });
-}
-
-export default configWithPlugins;
-```
-
-## Plugin Application Order
-
-### Order Matters
-Plugins wrap configuration in reverse order:
-
-```typescript
-const config = plugin3(plugin2(plugin1(baseConfig)));
-```
-
-Results in execution order: plugin1 → plugin2 → plugin3
-
-### This Config
-1. `baseConfig` - Base Next.js options
-2. `createNextIntlPlugin` - Adds i18n support
-3. `withBundleAnalyzer` - (if ANALYZE=true) Adds bundle analysis
-4. `withSentryConfig` - (if Sentry enabled) Adds error tracking
-
-## Conditional Features
-
-### Bundle Analyzer
-**Trigger:** `ANALYZE=true`
-
-```bash
-npm run build-stats
-# Sets ANALYZE=true and runs build
-```
-
-Opens bundle analyzer at `http://localhost:8888` after build.
-
-**Use Cases:**
-- Analyzing bundle sizes
-- Finding large dependencies
-- Optimizing bundle splitting
-
-### Sentry Integration
-**Trigger:** NOT `NEXT_PUBLIC_SENTRY_DISABLED`
-
-**Development:**
-```bash
-# Sentry disabled by default in dev (uses Spotlight instead)
-npm run dev
-```
-
-**Production:**
-```bash
-# Sentry enabled, requires env vars:
-SENTRY_ORGANIZATION=my-org
-SENTRY_PROJECT=my-project
-SENTRY_AUTH_TOKEN=...
-npm run build
-```
-
-**Webpack Options:**
-- `reactComponentAnnotation: { enabled: true }` - Annotates React components for better stack traces
-- `treeshake: { removeDebugLogging: true }` - Removes Sentry debug logging from production bundle
-
-## Base Config Options
-
-### React Compiler
-```typescript
-reactCompiler: true;
-```
-
-Enables React 19's automatic memoization compiler.
-
-**Impact:**
-- Automatic optimization of React components
-- Reduces need for useMemo/useCallback
-- May break some patterns (check console warnings)
-
-### Turbopack Caching
-```typescript
-experimental: {
-  turbopackFileSystemCacheForDev: true,
-}
-```
-
-Enables persistent caching for Turbopack in dev mode.
-
-**Impact:**
-- Faster subsequent dev server starts
-- Cache stored in `.next/cache`
-- Faster HMR after restarts
-
-### Output File Tracing
-```typescript
-outputFileTracingIncludes: {
-  '/': ['./migrations/**/*'],
-}
-```
-
-Includes migration files in serverless output.
-
-**Why Needed:**
-- Migrations not automatically detected as dependencies
-- Serverless platforms (Vercel) bundle only traced files
-- Without this, migrations missing in production
-
-### Powered By Header
-```typescript
-poweredByHeader: false;
-```
-
-Removes `X-Powered-By: Next.js` header.
-
-**Why:**
-- Security (don't advertise framework)
-- Reduces response size
-
-## Important Patterns
-
-### Adding New Plugin
-```typescript
-import myPlugin from 'my-next-plugin';
-
-let configWithPlugins = createNextIntlPlugin('./src/libs/I18n.ts')(baseConfig);
-
-// Add conditionally
-if (process.env.USE_MY_PLUGIN === 'true') {
-  configWithPlugins = myPlugin(configWithPlugins);
-}
-
-// Or always
-configWithPlugins = myPlugin(configWithPlugins);
-```
-
-### Plugin with Options
-```typescript
-configWithPlugins = withBundleAnalyzer({
-  enabled: process.env.ANALYZE === 'true',
-  openAnalyzer: true,
+### Code Pattern
+```ts
+let configWithPlugins = createNextIntlPlugin('./src/lib/i18n.ts')(baseConfig);
+configWithPlugins = withPWA({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development'
+    && process.env.NEXT_PUBLIC_ENABLE_PWA !== 'true',
 })(configWithPlugins);
 ```
 
-## Environment Variables in next.config.ts
+## Configuration
 
-### Important: Use process.env Directly
-```typescript
-// ✅ Correct
-if (process.env.ANALYZE === 'true') { ... }
-
-// ❌ Wrong
-import { Env } from './src/libs/Env';
-if (Env.ANALYZE === 'true') { ... }
-```
-
-**Why:**
-- Env.ts validates only specific variables
-- next.config.ts runs before validation
-- Feature flags (ANALYZE) often not in Env schema
-
-### Validation Import
-```typescript
-import './src/libs/Env';
-```
-
-Side effect import validates environment before build proceeds.
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `NEXT_PUBLIC_ENABLE_PWA` | `false` | Enables PWA in development when set to `true`.
+| `ANALYZE` | `false` | Enables bundle analyzer when set to `true`.
+| `NEXT_PUBLIC_SENTRY_DISABLED` | `undefined` | When set, skips Sentry config wrapping.
+| `outputFileTracingIncludes['/']` | `./migrations/**/*` | Ensures migrations are bundled for serverless output.
 
 ## Gotchas / Constraints
 
-- Plugin order matters (test if issues arise)
-- next.config.ts runs in Node.js (no browser APIs)
-- Changes require restart (not hot-reloaded)
-- Env.ts import must come before baseConfig for validation
-- Some plugins modify webpack config (may conflict)
-- TypeScript: Use `NextConfig` type for safety
+- **PWA caching is broad**: Runtime caching includes API routes and `_next` data; verify cache rules before changing.
+- **Sentry tunnel route**: `tunnelRoute: '/monitoring'` must not conflict with middleware rewrites.
+
+## Testing Notes
+
+- Run `ANALYZE=true npm run build` and confirm analyzer opens.
+- Toggle `NEXT_PUBLIC_ENABLE_PWA` in dev and verify service worker registration.
 
 ## Related Systems
-- `.readme/chunks/config.env-validation.md` - Environment validation
-- `.readme/chunks/build.sentry-integration.md` - Sentry details
-- `.readme/chunks/build.migration-bundling.md` - Migration inclusion
+
+- `.readme/chunks/performance.pwa-config.md` - PWA runtime cache details.
+- `.readme/chunks/i18n.routing-integration.md` - next-intl plugin behavior.

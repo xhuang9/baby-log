@@ -143,7 +143,7 @@ export function AddFeedModal({
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent side="bottom" className="inset-0 h-full w-full rounded-none" showCloseButton={false}>
-        <SheetHeader className="relative flex-row items-center space-y-0 border-b pb-4">
+        <SheetHeader className="relative mx-auto w-full max-w-[600px] flex-row items-center space-y-0 border-b px-4 pb-4">
           <SheetClose
             render={<Button variant="ghost" size="icon-sm" className="text-muted-foreground" />}
           >

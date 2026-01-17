@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-16T00:00:00Z
+last_verified_at: 2026-01-17T13:44:08Z
 source_paths:
   - src/lib/local-db/
   - src/lib/query-keys.ts
@@ -95,10 +95,6 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
   - Content: Client-side sync service and React hooks (useSyncScheduler, useMultiBabySync) for automatic polling and outbox flushing
   - Read when: Implementing sync UI, adding automatic sync to pages, or understanding client sync patterns
 
-- `.readme/chunks/local-first.bootstrap-storage.md`
-  - Content: How unified bootstrap API data is stored in IndexedDB for offline access and sync status tracking
-  - Read when: Understanding offline bootstrap behavior, debugging cache issues, or working with sync status system
-
 - `.readme/chunks/local-first.ui-config-storage.md`
   - Content: Persistent storage system for user UI preferences (theme, hand mode, TimeSwiper settings) with per-key timestamp tracking for LWW merge
   - Read when: Implementing settings UI, working with user preferences, understanding TimeSwiper persistence, or debugging "settings not loading" bug
@@ -110,6 +106,10 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
 - `.readme/chunks/local-first.initial-sync-service.md`
   - Content: Initial data sync on login (user, babies, recent 7-day logs) with API contract
   - Read when: Understanding login flow, implementing new log types, or debugging sync issues
+
+- `.readme/chunks/local-first.bootstrap-storage.md`
+  - Content: Bootstrap response storage in IndexedDB + offline fallback tracking
+  - Read when: Debugging bootstrap caching, offline fallback, or sync status hydration
 
 - `.readme/chunks/local-first.background-sync-worker.md`
   - Content: Web Worker for progressive historical data fetching without blocking UI
@@ -129,15 +129,13 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
   - Content: Outbox table for offline mutation replay with idempotent server writes
   - Read when: Implementing offline mutations, understanding sync replay, or adding mutation tracking
 
-- `.readme/chunks/local-first.conflict-resolution.md`
-  - Content: Last-Write-Wins (LWW) conflict resolution strategy and rationale
-  - Read when: Understanding sync conflicts, implementing merge logic, or debugging data inconsistencies
-
-### Business Logic
-
 - `.readme/chunks/local-first.services-layer.md`
-  - Content: Shared business logic extracted to services/ for reuse across server actions and future API routes
-  - Read when: Adding business logic, preparing for iOS API, or understanding access control patterns
+  - Content: Service layer inventory for sync + access logic (client/server split)
+  - Read when: Working in `src/services/`, adding sync flows, or understanding runtime boundaries
+
+- `.readme/chunks/local-first.conflict-resolution.md`
+  - Content: LWW conflict handling for outbox updates, plus planned conflict UX
+  - Read when: Handling sync conflicts, comparing IndexedDB updates to server data, or planning conflict resolution improvements
 
 ## Testing
 

@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-13T00:00:00Z
+last_verified_at: 2026-01-17T09:12:39Z
 source_paths:
   - src/lib/local-db/database.ts
   - src/lib/local-db/types/sync.ts
@@ -9,155 +9,75 @@ source_paths:
   - src/components/OfflineBanner.tsx
   - src/templates/AppShell.tsx
   - src/services/sync-service.ts
+  - src/hooks/useAuthSessionSync.ts
+  - src/lib/auth/session-manager.ts
   - public/offline-auth-sw.js
   - public/offline.html
 ---
 
 # Offline Authentication Bypass
 
+> Status: active
+> Last updated: 2026-01-17
+> Owner: Core
+
 ## Purpose
 
-Enables users who have previously authenticated to access the app offline without requiring Clerk validation. Solves the problem where Clerk's middleware blocks protected routes before the app can check IndexedDB for cached data.
+Allow previously authenticated users to access protected routes while offline by checking a local auth session marker in IndexedDB.
 
-## Problem Addressed
+## Key Deviations from Standard
 
-**Before**: User opens app offline -> Clerk middleware -> Network request -> BLOCKED
+- **Service-worker interception**: A custom SW script checks IndexedDB before blocking navigation when offline.
+- **Local session marker**: `authSession` table stores a short-lived offline window (default 7 days).
 
-**After**: User opens app offline -> Check cached session in IndexedDB -> If valid, serve cached app
+## Architecture / Implementation
 
-## Architecture
+### Components
+- `src/lib/local-db/database.ts` - Includes the `authSession` table in schema v1.
+- `src/lib/local-db/helpers/auth-session.ts` - CRUD helpers for offline session.
+- `src/hooks/useAuthSessionSync.ts` - Syncs Clerk auth into IndexedDB.
+- `src/lib/auth/session-manager.ts` - Writes session records used by the hook.
+- `src/app/[locale]/(auth)/account/bootstrap/hooks/useBootstrapMachine.ts` - Saves session on successful bootstrap.
+- `src/components/auth/SignOutButton.tsx` - Clears session on sign out.
+- `src/services/sync-service.ts` - Refreshes session during successful sync.
+- `public/offline-auth-sw.js` - SW logic for offline protected routes.
+- `public/offline.html` - Fallback UI when offline and cache miss.
 
-### Session Marker in IndexedDB
+### Data Flow
+1. On sign-in/bootstrap, `saveAuthSession` stores `authSession` in IndexedDB.
+2. `offline-auth-sw.js` intercepts protected navigation when offline and checks `authSession`.
+3. If valid, SW serves cached content or offline shell; otherwise it lets the request fail.
+4. Sign-out clears the session marker.
 
-A new `authSession` table (added in database version 4) stores a session marker:
-
-```typescript
-type AuthSession = {
-  id: 'current';           // Singleton key
-  userId: number;          // Local user ID
-  clerkId: string;         // Clerk user ID for validation
-  lastAuthAt: Date;        // Last successful auth timestamp
-  expiresAt: Date | null;  // Expiration (default: 7 days)
-};
+### Code Pattern
+```js
+const session = await getAuthSessionFromIndexedDB();
+if (session) {
+  const cache = await caches.open('others');
+  const cachedResponse = await cache.match(request, { ignoreSearch: true });
+  return cachedResponse ?? fetch(request);
+}
 ```
-
-### Session Lifecycle
-
-1. **On Login/Bootstrap**: Session marker saved to IndexedDB
-2. **On Successful Sync**: Session refreshed (extends offline window)
-3. **On Sign Out**: Session marker cleared
-4. **On Expiration**: Offline access denied, requires re-authentication
-
-## Key Files
-
-### Helper Functions (`src/lib/local-db/helpers/auth-session.ts`)
-
-```typescript
-// Save session after successful authentication
-await saveAuthSession(userId, clerkId);
-
-// Check if user has valid offline session
-const { hasValidSession, session, isExpired } = await checkOfflineSession();
-
-// Clear session on sign out
-await clearAuthSession();
-
-// Refresh session to extend offline window
-await refreshAuthSession();
-```
-
-### Integration Points
-
-**Bootstrap Machine** (`useBootstrapMachine.ts`):
-- Calls `saveAuthSession()` after successful bootstrap sync
-
-**Sign Out Button** (`SignOutButton.tsx`):
-- Calls `clearAuthSession()` when user signs out
-
-**Sync Service** (`sync-service.ts`):
-- Calls `refreshAuthSession()` after successful full sync
-
-### Offline UI (`OfflineBanner.tsx`)
-
-Shows a banner when offline with states:
-- **Offline**: Yellow banner "You're offline - changes will sync when reconnected"
-- **Reconnecting**: Green banner "Back online - syncing..."
-
-Uses data attributes for CSS-based state management (avoids setState in useEffect):
-```tsx
-<div
-  data-offline={!isOnline}
-  data-reconnecting="false"
-  className="data-[offline=true]:bg-yellow-500 data-[reconnecting=true]:bg-green-500"
->
-```
-
-### Service Worker (`public/offline-auth-sw.js`)
-
-Custom service worker logic for navigation interception:
-1. Listens for fetch events on protected routes
-2. If offline, checks IndexedDB for valid auth session
-3. If valid session exists, serves cached app from next-pwa cache
-4. Falls back to `offline.html` if no cache available
-
-**Note**: This file needs to be imported into the main service worker. Configure via `workboxOptions.importScripts` or custom worker integration.
-
-### Offline Fallback Page (`public/offline.html`)
-
-Static HTML page shown when:
-- User is offline
-- Has valid session but no cached page content
-
-Features:
-- Shows connection status
-- Checks and displays session status from IndexedDB
-- Auto-reloads when back online
 
 ## Configuration
 
-### Offline Window Duration
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `DEFAULT_OFFLINE_WINDOW_MS` | `7 days` | Offline access window in auth-session helper.
+| `AUTH_SESSION_KEY` | `current` | Singleton key for the session record.
+| `PROTECTED_ROUTE_PATTERNS` | `/overview`, `/logs`, `/insights`, `/settings`, `/account/bootstrap` | Routes intercepted by the offline SW.
 
-Default is 7 days, configurable in `auth-session.ts`:
+## Gotchas / Constraints
 
-```typescript
-const DEFAULT_OFFLINE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-```
+- **First-time users**: Without a cached session, offline access falls back to `offline.html`.
+- **Cache dependency**: SW looks in the `others` cache; if no cached response exists, offline access still fails.
 
-### Protected Routes (in service worker)
+## Testing Notes
 
-```javascript
-const PROTECTED_ROUTE_PATTERNS = [
-  /^\/[a-z]{2}\/overview/,
-  /^\/overview/,
-  /^\/[a-z]{2}\/logs/,
-  // ... etc
-];
-```
+- Log in, navigate to a protected route, go offline, and refresh to verify cached content loads.
+- Sign out and confirm offline navigation no longer works.
 
-## Testing Offline Auth Bypass
+## Related Systems
 
-1. Log in to the app (creates session marker)
-2. Navigate around to cache pages
-3. Go offline (DevTools > Network > Offline)
-4. Refresh - app should load from cache
-5. OfflineBanner shows "You're offline"
-6. Go back online - shows "Back online - syncing..."
-
-## Security Considerations
-
-- **7-day offline window**: Limits exposure if device is compromised
-- **Session cleared on sign out**: Explicit logout prevents offline access
-- **Session refresh on sync**: Active users get extended access
-- **Mutations still queue**: Offline changes sync when online (outbox pattern)
-
-## Limitations
-
-1. **First-time users**: Must be online for initial login
-2. **Session expiration**: After 7 days offline, re-authentication required
-3. **Service worker integration**: Custom SW needs manual integration with next-pwa
-
-## Related Chunks
-
-- `local-first.dexie-schema.md` - Database schema including authSession table
-- `local-first.bootstrap-storage.md` - How bootstrap data is stored
-- `local-first.outbox-pattern.md` - How offline mutations are handled
+- `.readme/chunks/performance.pwa-config.md` - Service worker importScript integration.
+- `.readme/chunks/local-first.sync-status-tracking.md` - Sync refresh extends session.

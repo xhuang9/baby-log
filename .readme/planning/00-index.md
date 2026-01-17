@@ -1,6 +1,6 @@
 # Planning Index
 
-**Last updated:** 2026-01-10
+**Last updated:** 2026-01-17
 
 This folder contains implementation plans for future features. Each document is self-contained with requirements, tasks, and success criteria.
 
@@ -23,6 +23,7 @@ This folder contains implementation plans for future features. Each document is 
 | 04 | [Logs Page](./04-logs-page.md) | High | 01 |
 | 08 | [Additional Data Models](./08-additional-data-models.md) | High | 01 |
 | 09 | [Feed UI Timer](./09-feed-ui-timer.md) | High | None |
+| 11 | [Baby Access Requests & Sharing](./11-baby-access-requests.md) | High | 01 |
 
 ### Polish & Enhancement
 
@@ -50,6 +51,7 @@ This folder contains implementation plans for future features. Each document is 
 - **04-logs-page.md** - Filter logs, edit existing entries
 - **08-additional-data-models.md** - Sleep, Solids, Bath, Activities
 - **09-feed-ui-timer.md** - Timer-based feed tracking
+- **11-baby-access-requests.md** - Access requests, invites, caregiver management
 
 ### Medium Priority
 - **05-ui-config-sync.md** - UI settings storage, merge, sync, and settings layout
@@ -77,7 +79,6 @@ This folder contains implementation plans for future features. Each document is 
 The following have been implemented and removed from task folder:
 
 - Account + Baby resolution flow
-- Baby access requests (in-app approval)
 - Folder reorganization (Phases 1-5)
 - Local-first foundation (Dexie schema, QueryProvider, query-keys)
 - Services layer (`baby-access.ts`)

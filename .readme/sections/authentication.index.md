@@ -1,16 +1,16 @@
 ---
-last_verified_at: 2026-01-06T00:30:00Z
+last_verified_at: 2026-01-17T09:12:39Z
 source_paths:
   - src/app/[locale]/(auth)/layout.tsx
   - src/app/[locale]/(auth)/(center)/layout.tsx
-  - src/app/[locale]/(auth)/account/resolve/
+  - src/app/[locale]/(auth)/account/bootstrap/
   - src/config/app.ts
 ---
 
 # Authentication Overview
 
 ## Purpose
-Covers Clerk authentication setup with locale-aware configuration, protected route patterns, and custom account resolution workflow.
+Covers Clerk authentication setup with locale-aware configuration, protected route patterns, and the bootstrap post-auth flow.
 
 ## Scope
 Authentication is handled by Clerk with extensive custom configuration:
@@ -18,21 +18,17 @@ Authentication is handled by Clerk with extensive custom configuration:
 - ClerkProvider wraps only authenticated routes via `(auth)` route group
 - Centered layout for auth pages via nested `(center)` route group
 - Tailwind CSS v4 compatibility via custom CSS layer configuration
-- Custom account resolution flow (replaces standard post-auth redirect)
+- Custom bootstrap flow (replaces standard post-auth redirect)
 
 The auth setup is deeply integrated with the i18n system for URL generation and includes a sophisticated decision-tree flow for account initialization and baby selection.
 
-**IMPORTANT:** The post-auth flow has been replaced with `/account/resolve` - see Account Management section for details.
+**IMPORTANT:** The post-auth flow routes through `/account/bootstrap` - see Account Management for details.
 
 ## Chunks
 
 - `.readme/chunks/auth.clerk-layout-pattern.md`
   - Content: How ClerkProvider is scoped to `(auth)` route group with locale-aware URLs
   - Read when: Working with protected routes, configuring Clerk, or debugging auth redirects
-
-- `.readme/chunks/auth.post-auth-flow.expired.md` **[EXPIRED]**
-  - Content: Legacy post-authentication workflow (SUPERSEDED by account resolution flow)
-  - Read when: Understanding historical implementation or migrating from old pattern
 
 - `.readme/chunks/auth.route-group-structure.md`
   - Content: The `(auth)` and `(center)` route group pattern for authentication pages

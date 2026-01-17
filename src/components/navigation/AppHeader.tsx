@@ -2,8 +2,8 @@
 
 import { UserButton } from '@clerk/nextjs';
 import { ChevronLeft } from 'lucide-react';
-import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { useRouter } from 'next/navigation';
+import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { useBreadcrumbStore } from '@/stores/useBreadcrumbStore';
 import { ThemeToggle } from '../theme-toggle';
 import {

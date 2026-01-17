@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-11T00:00:00Z
+last_verified_at: 2026-01-17T09:12:39Z
 source_paths:
   - package.json
   - next.config.ts

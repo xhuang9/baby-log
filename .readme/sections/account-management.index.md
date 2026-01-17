@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-14T00:00:00Z
+last_verified_at: 2026-01-17T09:12:39Z
 source_paths:
   - src/app/[locale]/(auth)/account/
   - src/app/[locale]/api/bootstrap/
@@ -35,22 +35,14 @@ This is NOT standard Clerk behavior - it's a custom implementation designed for 
   - Content: Unified bootstrap API endpoint, state machine, and post-login flow architecture
   - Read when: Understanding post-auth flow, adding new account states, debugging redirect loops, or implementing offline-first features
 
-- `.readme/chunks/local-first.bootstrap-storage.md`
-  - Content: How bootstrap data is stored in IndexedDB for offline access and sync status tracking
-  - Read when: Understanding offline behavior, debugging cache issues, or working with sync indicators
-
 ### Multi-Baby Management
-
-- `.readme/chunks/account.baby-multi-tenancy.md`
-  - Content: Baby access control, default baby selection, and multi-baby management patterns
-  - Read when: Working with baby queries, implementing baby-scoped features, or understanding access levels
 
 - `.readme/chunks/account.state-sync-pattern.md`
   - Content: Zustand store synchronization patterns with sessionStorage for PWA-safe state management
   - Read when: Adding new client state, debugging hydration issues, or understanding store persistence
 
-### Sharing & Invites
+### Settings UI
 
-- `.readme/chunks/account.baby-sharing.md`
-  - Content: Baby invite system, access requests, and sharing workflows
-  - Read when: Implementing sharing features, working with baby_invites table, or debugging invite flows
+- `.readme/chunks/account.settings-page-ui.md`
+  - Content: Client-first settings page layout and local-first preferences UI
+  - Read when: Updating settings layout, adding preference sections, or troubleshooting IndexedDB-backed settings

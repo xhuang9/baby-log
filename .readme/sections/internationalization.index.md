@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-10T00:00:00Z
+last_verified_at: 2026-01-17T09:12:39Z
 source_paths:
   - src/lib/i18n.ts
   - src/lib/i18n-navigation.ts

@@ -1,11 +1,11 @@
 'use client';
 
-import { Baby, Check, ChevronRight, Plus } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { OfflineLink as Link } from '@/components/ui/offline-link';
+import { Baby, Check, ChevronRight, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { setDefaultBaby } from '@/actions/babyActions';
+import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { localDb } from '@/lib/local-db/database';
 import { useBabyStore } from '@/stores/useBabyStore';
 import { getI18nPath } from '@/utils/Helpers';
@@ -42,7 +42,7 @@ export function BabiesManagement(props: {
 
     return allBabies
       .filter(b => b.archivedAt === null)
-      .map(baby => {
+      .map((baby) => {
         const access = accessList.find(a => a.babyId === baby.id);
         return {
           babyId: baby.id,

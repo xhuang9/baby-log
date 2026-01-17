@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-14T00:00:00Z
+last_verified_at: 2026-01-17T09:12:39Z
 source_paths:
   - src/stores/useUserStore.ts
   - src/stores/useBabyStore.ts
@@ -7,235 +7,65 @@ source_paths:
   - src/app/[locale]/(auth)/account/bootstrap/hooks/useBootstrapMachine.ts
 ---
 
-# SessionStorage State Sync Pattern
+# User/Baby State Sync Pattern
+
+> Status: active
+> Last updated: 2026-01-17
+> Owner: Core
 
 ## Purpose
-Zustand stores that automatically synchronize with sessionStorage for PWA-safe, session-scoped client state management. Provides persistence across page refreshes without violating PWA best practices.
+
+Keep user and baby context available across refreshes and offline sessions with a dual persistence strategy (sessionStorage + IndexedDB).
 
 ## Key Deviations from Standard
-Unlike typical Zustand or React state patterns, this implementation:
-- **Automatic sessionStorage sync**: Every state update writes to sessionStorage
-- **No localStorage**: Deliberately avoids localStorage to prevent cross-session data leakage
-- **No cookies for client state**: PII is never stored in cookies (only Clerk auth cookies)
-- **Manual cleanup on sign-out**: Custom SignOutButton explicitly clears stores
-- **Session-scoped**: State disappears when browser tab closes (sessionStorage behavior)
 
-This is critical for PWA compliance and prevents "wrong account login" issues where previous user's data persists.
+- **Dual persistence**: Zustand stores hydrate quickly from sessionStorage, then fall back to IndexedDB for offline durability.
+- **Explicit hydration flow**: Stores expose `hydrate` and `hydrateFromIndexedDB` rather than relying on implicit persistence middleware.
 
-## Implementation
+## Architecture / Implementation
 
-### User Store
-**Location:** `src/stores/useUserStore.ts`
+### Components
+- `src/stores/useUserStore.ts` - User state, sessionStorage mirror, IndexedDB hydration.
+- `src/stores/useBabyStore.ts` - Active baby + all babies list, dual persistence.
+- `src/app/[locale]/(auth)/account/bootstrap/hooks/useBootstrapMachine.ts` - Writes bootstrap data and hydrates stores offline.
+- `src/components/auth/SignOutButton.tsx` - Clears stores, sessionStorage, and offline auth session.
 
-```typescript
-export type StoredUser = {
-  id: string;           // Clerk user ID
-  localId: number;      // Local database user.id
-  firstName: string | null;
-  email: string | null;
-  imageUrl: string;
-};
+### Data Flow
+1. Bootstrap fetch stores server data in IndexedDB and updates Zustand stores.
+2. When offline, `useBootstrapMachine` calls `hydrateFromIndexedDB` to rebuild stores.
+3. Stores mirror to sessionStorage for fast rehydration on refresh.
+4. Sign-out clears Zustand, sessionStorage keys, and the offline auth marker.
 
-type UserStore = {
-  user: StoredUser | null;
-  setUser: (user: StoredUser) => void;
-  clearUser: () => void;
-};
-
-export const useUserStore = create<UserStore>(set => ({
-  user: null,
-  setUser: (user) => {
-    set({ user });
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('baby-log:user', JSON.stringify(user));
-    }
-  },
-  clearUser: () => {
-    set({ user: null });
-    if (typeof window !== 'undefined') {
-      sessionStorage.removeItem('baby-log:user');
-    }
-  },
-}));
-```
-
-**Key Fields:**
-- `localId`: Local database primary key (needed for queries)
-- `id`: Clerk ID (used for Clerk API calls)
-- Stores minimal PII - no birthdate, phone, etc.
-
-### Baby Store
-**Location:** `src/stores/useBabyStore.ts`
-
-```typescript
-export type ActiveBaby = {
-  babyId: number;
-  name: string;
-  accessLevel: 'owner' | 'editor' | 'viewer';
-  caregiverLabel: string | null;
-};
-
-type BabyStore = {
-  activeBaby: ActiveBaby | null;
-  setActiveBaby: (baby: ActiveBaby) => void;
-  clearActiveBaby: () => void;
-};
-
-export const useBabyStore = create<BabyStore>(set => ({
-  activeBaby: null,
-  setActiveBaby: (baby) => {
-    set({ activeBaby: baby });
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('baby-log:active-baby', JSON.stringify(baby));
-    }
-  },
-  clearActiveBaby: () => {
-    set({ activeBaby: null });
-    if (typeof window !== 'undefined') {
-      sessionStorage.removeItem('baby-log:active-baby');
-    }
-  },
-}));
-```
-
-**Key Fields:**
-- `babyId`: Database primary key for queries
-- `accessLevel`: Cached from `baby_access` for UI permissions
-- `caregiverLabel`: Display label for current user's role
-
-## Patterns
-
-### Initializing State After Bootstrap
-**Location:** `src/app/[locale]/(auth)/account/bootstrap/hooks/useBootstrapMachine.ts`
-
-After bootstrap API returns, the state machine initializes stores:
-```typescript
-// In useBootstrapMachine.ts
-const { user, accountState } = bootstrapResponse;
-
-// Initialize user store
-useUserStore.getState().setUser(user);
-
-// Initialize baby store if ready state
-if (accountState.state === 'ready' && accountState.activeBaby) {
-  useBabyStore.getState().setActiveBaby(accountState.activeBaby);
+### Code Pattern
+```ts
+const userStore = useUserStore.getState();
+await userStore.hydrateFromIndexedDB();
+const user = useUserStore.getState().user;
+if (user) {
+  const babyStore = useBabyStore.getState();
+  await babyStore.hydrateFromIndexedDB(user.localId);
 }
 ```
 
-This ensures stores are populated before redirecting to overview.
+## Configuration
 
-### Reading State in Components
-**Client Components:**
-```typescript
-import { useUserStore } from '@/stores/useUserStore';
-import { useBabyStore } from '@/stores/useBabyStore';
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `sessionStorage: baby-log:user` | `null` | Serialized `StoredUser` for quick hydration.
+| `sessionStorage: baby-log:active-baby` | `null` | Active baby snapshot used on refresh.
+| `sessionStorage: baby-log:all-babies` | `[]` | Cached list of accessible babies.
 
-export function MyComponent() {
-  const user = useUserStore(state => state.user);
-  const activeBaby = useBabyStore(state => state.activeBaby);
+## Gotchas / Constraints
 
-  if (!user || !activeBaby) {
-    return <div>Loading...</div>;
-  }
+- **IndexedDB dependency**: `hydrateFromIndexedDB` runs only in the browser and uses dynamic imports to avoid SSR crashes.
+- **Hydration ordering**: `hydrateFromIndexedDB` for babies requires a user localId; call after user hydration.
 
-  return <div>Tracking {activeBaby.name} as {activeBaby.caregiverLabel}</div>;
-}
-```
+## Testing Notes
 
-**Server Components:**
-Cannot directly read Zustand stores (server-side). Instead:
-1. Query database using Clerk `auth().userId`
-2. Pass data as props to client components
-3. Client components can compare DB data with store data
+- Simulate offline bootstrap to ensure `hydrateFromIndexedDB` populates both stores.
+- Verify sign-out clears sessionStorage keys and `clearAuthSession`.
 
-### Clearing State on Sign-Out
-**Location:** `src/components/auth/SignOutButton.tsx`
+## Related Systems
 
-```typescript
-import { SignOutButton as ClerkSignOutButton } from '@clerk/nextjs';
-import { useBabyStore } from '@/stores/useBabyStore';
-import { useUserStore } from '@/stores/useUserStore';
-
-export function SignOutButton() {
-  const clearUser = useUserStore(state => state.clearUser);
-  const clearActiveBaby = useBabyStore(state => state.clearActiveBaby);
-
-  return (
-    <ClerkSignOutButton>
-      <button
-        onClick={() => {
-          clearUser();
-          clearActiveBaby();
-          sessionStorage.removeItem('baby-log:init-step');
-        }}
-      >
-        Sign Out
-      </button>
-    </ClerkSignOutButton>
-  );
-}
-```
-
-**Critical:** This prevents previous user's data from appearing to new user on shared device.
-
-### SessionStorage Keys
-All keys use `baby-log:` prefix for namespacing:
-- `baby-log:user` - User store state
-- `baby-log:active-baby` - Baby store state
-- `baby-log:init-step` - UI-only state (optional, for loading screens)
-
-## Gotchas
-
-### SSR Hydration Mismatch
-Zustand state is client-only. During SSR:
-- Initial render: `user = null`, `activeBaby = null`
-- After hydration: State loaded from sessionStorage
-- This causes hydration mismatch warnings if you render different content
-
-**Solution:** Use `mounted` state or null checks:
-```typescript
-const [mounted, setMounted] = useState(false);
-useEffect(() => setMounted(true), []);
-
-if (!mounted) return <Skeleton />;
-```
-
-### SessionStorage Not Available in Server Components
-Never try to read sessionStorage in server components:
-```typescript
-// ❌ WRONG: Will crash during SSR
-export default function ServerComponent() {
-  const data = sessionStorage.getItem('baby-log:user'); // ReferenceError
-}
-```
-
-**Solution:** Only read sessionStorage in client components or useEffect.
-
-### Store State vs Database State
-Stores are a **cache**, database is the **source of truth**:
-- Store may be stale if database updated in another tab/device
-- Resolution flow re-syncs on every page load
-- Never write to database based on store state - always re-query first
-
-### SignOutButton Must Be Custom
-Clerk's default `<SignOutButton>` does NOT clear sessionStorage:
-```typescript
-// ❌ WRONG: Leaves stale data in sessionStorage
-import { SignOutButton } from '@clerk/nextjs';
-<SignOutButton />
-```
-
-Always use custom `SignOutButton` from `@/components/auth/SignOutButton`.
-
-### Offline Behavior
-When offline (PWA mode):
-- sessionStorage still works (local to device)
-- But cannot sync with database
-- User sees last cached state until reconnection
-
-**Future:** Implement IndexedDB + sync queue for offline support (not yet implemented).
-
-## Related
-- `.readme/chunks/account.bootstrap-unified-flow.md` - How stores are initialized during bootstrap
-- `.readme/chunks/local-first.bootstrap-storage.md` - Bootstrap data storage in IndexedDB
-- `.readme/chunks/performance.pwa-config.md` - PWA best practices and storage constraints
+- `.readme/chunks/local-first.offline-auth-bypass.md` - Offline auth session marker used on sign-out.
+- `.readme/chunks/account.bootstrap-unified-flow.md` - Bootstrap flow that populates stores.

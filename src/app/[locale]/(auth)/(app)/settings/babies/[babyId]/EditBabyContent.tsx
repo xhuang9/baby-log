@@ -24,21 +24,29 @@ export function EditBabyContent({ babyId, locale }: EditBabyContentProps) {
 
   // Get baby and access info from IndexedDB
   const babyData = useLiveQuery(async () => {
-    if (Number.isNaN(numericBabyId)) return null;
+    if (Number.isNaN(numericBabyId)) {
+      return null;
+    }
 
     const baby = await localDb.babies.get(numericBabyId);
-    if (!baby || baby.archivedAt !== null) return null;
+    if (!baby || baby.archivedAt !== null) {
+      return null;
+    }
 
     // Get user's access to this baby
     const user = await localDb.users.toCollection().first();
-    if (!user) return null;
+    if (!user) {
+      return null;
+    }
 
     const access = await localDb.babyAccess
       .where('[oduserId+babyId]')
       .equals([user.id, numericBabyId])
       .first();
 
-    if (!access) return null;
+    if (!access) {
+      return null;
+    }
 
     return {
       baby,
@@ -48,7 +56,9 @@ export function EditBabyContent({ babyId, locale }: EditBabyContentProps) {
 
   // Redirect if no access or viewer-only
   useEffect(() => {
-    if (babyData === undefined) return; // Still loading
+    if (babyData === undefined) {
+      return;
+    } // Still loading
 
     if (babyData === null) {
       // No baby or no access - redirect
@@ -65,9 +75,9 @@ export function EditBabyContent({ babyId, locale }: EditBabyContentProps) {
   // Loading state
   if (userData === undefined || babyData === undefined) {
     return (
-      <div className="mr-auto max-w-2xl space-y-6">
-        <div className="h-8 w-32 animate-pulse rounded bg-muted" />
-        <div className="h-64 animate-pulse rounded-lg bg-muted" />
+      <div className="mx-auto w-fit space-y-6 px-4 pb-20">
+        <div className="h-10 w-80 animate-pulse rounded-lg bg-muted" />
+        <div className="h-14 w-80 animate-pulse rounded-lg bg-muted" />
       </div>
     );
   }
@@ -80,14 +90,7 @@ export function EditBabyContent({ babyId, locale }: EditBabyContentProps) {
   const { baby, access } = babyData;
 
   return (
-    <div className="mr-auto max-w-2xl space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold">Edit Baby</h1>
-        <p className="text-sm text-muted-foreground">
-          Update {baby.name}'s information
-        </p>
-      </div>
-
+    <div className="mx-auto w-fit space-y-6 px-4 pb-20">
       <EditBabyForm
         babyId={baby.id}
         initialData={{

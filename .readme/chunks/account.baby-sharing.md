@@ -1,24 +1,28 @@
 ---
-last_verified_at: 2026-01-06T00:30:00Z
+last_verified_at: 2026-01-17T11:12:21Z
 source_paths:
   - src/models/Schema.ts
   - src/actions/babyActions.ts
-  - src/app/[locale]/(auth)/account/shared/page.tsx
-  - src/app/[locale]/(auth)/account/shared/SharedBabyInvites.tsx
+  - src/actions/accessRequestActions.ts
+  - src/app/[locale]/api/bootstrap/route.ts
+  - src/app/[locale]/(auth)/account/bootstrap/page.tsx
+  - src/app/[locale]/(auth)/account/bootstrap/states/BootstrapInvites.tsx
+  - src/app/[locale]/(auth)/account/bootstrap/states/BootstrapPendingRequest.tsx
+  - src/types/bootstrap.ts
 ---
 
-# Baby Sharing and Invite System
+# Baby Sharing and Access Requests
 
 ## Purpose
-Token-based baby sharing system that allows baby owners to invite other users (by email) to access their baby's data with specific permission levels.
+Email-based sharing system that lets baby owners invite caregivers and lets caregivers request access when no invite exists. The bootstrap flow surfaces pending invites or requests before onboarding.
 
 ## Key Deviations from Standard
 Unlike typical sharing systems, this implementation:
 - **Email-based invites**: Invites sent to email, NOT to existing user IDs
-- **Token expiration**: Invites expire after a set time (default: 7 days)
+- **Token storage**: Invites store a token, but current acceptance uses invite IDs from bootstrap
 - **Pre-auth invites**: Can invite email addresses that don't have accounts yet
-- **Invite acceptance flow**: Dedicated `/account/shared` route for reviewing pending invites
-- **Access request system**: Separate flow for requesting access without invite token
+- **Bootstrap gating**: Post-login flow shows pending invites or requests before onboarding
+- **Request-first flow**: Access requests are tied to target email, not to a specific baby
 
 This allows flexible sharing even when the recipient hasn't created an account yet.
 
@@ -30,8 +34,8 @@ This allows flexible sharing even when the recipient hasn't created an account y
 ```typescript
 export const babyInvitesSchema = pgTable('baby_invites', {
   id: serial('id').primaryKey(),
-  babyId: integer('baby_id').notNull().references(() => babiesSchema.id),
-  inviterUserId: integer('inviter_user_id').notNull().references(() => userSchema.id),
+  babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
+  inviterUserId: integer('inviter_user_id').references(() => userSchema.id).notNull(),
   invitedEmail: text('invited_email').notNull(),
   invitedUserId: integer('invited_user_id').references(() => userSchema.id),
   accessLevel: accessLevelEnum('access_level').notNull().default('viewer'),
@@ -39,6 +43,7 @@ export const babyInvitesSchema = pgTable('baby_invites', {
   token: text('token').notNull().unique(),
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }),
 });
 
 export const inviteStatusEnum = pgEnum('invite_status', [
@@ -47,14 +52,39 @@ export const inviteStatusEnum = pgEnum('invite_status', [
   'revoked',
   'expired',
 ]);
+
+export const babyAccessRequestsSchema = pgTable('baby_access_requests', {
+  id: serial('id').primaryKey(),
+  requesterUserId: integer('requester_user_id').references(() => userSchema.id).notNull(),
+  targetEmail: text('target_email').notNull(),
+  targetUserId: integer('target_user_id').references(() => userSchema.id),
+  requestedAccessLevel: accessLevelEnum('requested_access_level').notNull().default('viewer'),
+  message: text('message'),
+  status: accessRequestStatusEnum('status').notNull().default('pending'),
+  resolvedBabyId: integer('resolved_baby_id').references(() => babiesSchema.id),
+  resolvedByUserId: integer('resolved_by_user_id').references(() => userSchema.id),
+  resolvedAt: timestamp('resolved_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }),
+});
+
+export const accessRequestStatusEnum = pgEnum('access_request_status_enum', [
+  'pending',
+  'approved',
+  'rejected',
+  'canceled',
+]);
 ```
 
 **Key Fields:**
 - `invitedEmail`: Target email (may not match any user yet)
 - `invitedUserId`: Filled when recipient creates account and accepts
-- `token`: Unique UUID for invite URL (e.g., `/invite/abc123`)
+- `token`: Reserved for deep-link invite URLs (not wired yet)
 - `expiresAt`: Hard expiration - invites cannot be accepted after this time
 - `status`: Lifecycle tracking (pending → accepted/revoked/expired)
+- `targetEmail`: Request recipient (normalized lower-case)
+- `resolvedBabyId`: Baby chosen by owner when approving a request
+- `status`: `pending` → `approved`/`rejected`/`canceled`
 
 ### Accepting Invites
 **Location:** `src/actions/babyActions.ts` → `acceptInvite()`
@@ -65,102 +95,50 @@ export const inviteStatusEnum = pgEnum('invite_status', [
 2. Query invite by ID
 3. Check: invite.status === 'pending'
 4. Check: invite.expiresAt > now()
-5. Check: invite.invitedEmail matches user's email
-6. Check: User doesn't already have baby_access (prevent duplicates)
-7. Create baby_access row with invited access level
-8. Update invite status to 'accepted'
-9. Update invite.invitedUserId to current user.id
-10. If user has no defaultBabyId, set this baby as default
-11. Revalidate dashboard and shared pages
-12. Return success + baby details
+5. Check: User doesn't already have baby_access (prevent duplicates)
+6. Create baby_access row with invited access level
+7. Update invite status to 'accepted' + invitedUserId
+8. If user has no defaultBabyId, set this baby as default
+9. Revalidate overview
+10. Return success + baby details
 ```
 
-**Validation:**
-```typescript
-// Invite must be pending
-if (invite.status !== 'pending') {
-  return { success: false, error: 'Invite already processed' };
-}
+**Note:** Email matching is enforced by the bootstrap invite query. `acceptInvite()` itself does not re-check invitedEmail.
 
-// Invite must not be expired
-if (invite.expiresAt < new Date()) {
-  return { success: false, error: 'Invite has expired' };
-}
+### Bootstrap Flow Integration
+**Location:** `src/app/[locale]/api/bootstrap/route.ts`
 
-// Email must match current user
-if (invite.invitedEmail !== user.email) {
-  return { success: false, error: 'Invite not for this email' };
-}
-```
+**Behavior:**
+- If user has **no baby access** and has an **outgoing request**, return `accountState.type = pending_request`.
+- If user has **no baby access** and has **incoming requests or invites**, return `accountState.type = has_invites` with invite list.
 
-### Shared Invites Page
-**Location:** `src/app/[locale]/(auth)/account/shared/page.tsx`
-
-**Purpose:** Display pending invites for user's email after first sign-up
-
-**Query:**
-```typescript
-const invites = await db
-  .select({
-    id: babyInvitesSchema.id,
-    babyName: babiesSchema.name,
-    inviterEmail: inviterUser.email,
-    inviterName: inviterUser.firstName,
-    accessLevel: babyInvitesSchema.accessLevel,
-    expiresAt: babyInvitesSchema.expiresAt,
-  })
-  .from(babyInvitesSchema)
-  .innerJoin(babiesSchema, eq(babyInvitesSchema.babyId, babiesSchema.id))
-  .innerJoin(userSchema, eq(babyInvitesSchema.inviterUserId, userSchema.id))
-  .where(and(
-    eq(babyInvitesSchema.invitedEmail, user.email),
-    eq(babyInvitesSchema.status, 'pending'),
-    sql`${babyInvitesSchema.expiresAt} > now()`
-  ));
-```
-
-**UI Features:**
-- Shows baby name, inviter name, access level, expiration time
-- "Accept" button calls `acceptInvite()` server action
-- "Skip for now" button redirects to onboarding (user can accept later)
-- Visual confirmation when invite accepted
-
-### Resolution Flow Integration
-**Location:** `src/actions/babyActions.ts` → `resolveAccountContext()`
-
-When user has no babies but has pending invites:
-```typescript
-if (babyAccess.length === 0) {
-  const invites = await db.select(/* ... */)
-    .where(and(
-      eq(babyInvitesSchema.invitedEmail, localUser.email),
-      eq(babyInvitesSchema.status, 'pending'),
-      sql`${babyInvitesSchema.expiresAt} > now()`
-    ));
-
-  if (invites.length > 0) {
-    return {
-      success: true,
-      user,
-      nextStep: { type: 'shared', invites },
-    };
-  }
-}
-```
-
-This ensures new users see their invites before being forced to create a baby.
+**Client UI:**
+- `BootstrapInvites` shows invite cards with accept action.
+- `BootstrapPendingRequest` shows request status and a cancel button (still TODO).
 
 ## Patterns
 
-### Creating Invites (Not Yet Implemented)
-**Future Route:** `/settings/babies/share`
+### Access Request Actions (Implemented)
+**Location:** `src/actions/accessRequestActions.ts`
+
+- `createAccessRequest` (requester)
+- `listOutgoingRequests` (requester)
+- `listIncomingRequests` (owner)
+- `cancelAccessRequest` (requester)
+- `approveAccessRequest` (owner; creates `baby_access`)
+- `rejectAccessRequest` (owner)
+
+Approvals require owner access to the selected baby and create `baby_access` rows.
+
+### Invite Creation (Not Yet Implemented)
+Expected server action: `createInvite()`
 
 **Expected Flow:**
 ```typescript
 // Server action: createInvite()
 1. Verify user has 'owner' access to baby
 2. Generate unique token (UUID)
-3. Set expiration date (now + 7 days)
+3. Set expiration date (now + N days)
 4. Insert into baby_invites table
 5. Optional: Send email notification with invite link
 6. Return invite token for sharing
@@ -180,30 +158,6 @@ https://app.example.com/invite/{token}
 3. Revalidate shared pages
 ```
 
-### Access Requests (Not Yet Implemented)
-**Future Feature:** Allow users to request access without invite token
-
-**Flow:**
-1. User navigates to `/request-access?babyId=123`
-2. Creates `baby_access_requests` entry (status: pending)
-3. Baby owner receives notification
-4. Owner approves/denies via `/settings/babies/requests`
-5. If approved, create `baby_access` row + notify requester
-
-**Schema Table (Already Exists):**
-```typescript
-export const babyAccessRequestsSchema = pgTable('baby_access_requests', {
-  id: serial('id').primaryKey(),
-  babyId: integer('baby_id').notNull().references(() => babiesSchema.id),
-  requesterUserId: integer('requester_user_id').notNull().references(() => userSchema.id),
-  status: sql`TEXT NOT NULL DEFAULT 'pending'`,
-  requestMessage: text('request_message'),
-  resolvedAt: timestamp('resolved_at', { withTimezone: true }),
-  resolvedByUserId: integer('resolved_by_user_id').references(() => userSchema.id),
-  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-});
-```
-
 ## Gotchas
 
 ### Expired Invites in Database
@@ -214,17 +168,8 @@ Invites are NOT automatically deleted when they expire:
 
 **Future:** Add cleanup job to mark old invites as 'expired'.
 
-### Email Case Sensitivity
-Email comparison should be case-insensitive:
-```typescript
-// ❌ WRONG: Case-sensitive match
-invite.invitedEmail === user.email
-
-// ✅ CORRECT: Case-insensitive match
-invite.invitedEmail.toLowerCase() === user.email.toLowerCase()
-```
-
-Current implementation uses exact match - may need adjustment.
+### Invite Ownership Validation
+`acceptInvite()` does not verify invitedEmail. It assumes the invite list was filtered by email in bootstrap.
 
 ### Duplicate Access Prevention
 `acceptInvite()` checks for existing `baby_access` before creating:
@@ -252,15 +197,10 @@ If same invite accepted by multiple users simultaneously:
 
 This is correct behavior - invites are single-use.
 
-### Invites for Existing Users
-If invited email already has an account:
-- They don't receive invite until next sign-in (when resolution runs)
-- No email notification sent (not implemented yet)
-- Inviter has no way to know if invite was seen
-
-**Future:** Implement email notifications for invite delivery.
+### Pending Requests Without UI
+Incoming requests only affect `accountState.type`, but invite data is the only payload. Owner-facing approvals still need a settings UI.
 
 ## Related
-- `.readme/chunks/account.resolution-flow.md` - How pending invites trigger shared flow
+- `.readme/chunks/account.bootstrap-unified-flow.md` - Bootstrap account state machine
 - `.readme/chunks/account.baby-multi-tenancy.md` - Access levels and baby_access table
-- `.readme/chunks/database.schema-workflow.md` - baby_invites table schema
+- `.readme/planning/11-baby-access-requests.md` - Implementation plan for full sharing UI

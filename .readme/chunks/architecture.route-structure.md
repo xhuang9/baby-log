@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-10T00:00:00Z
+last_verified_at: 2026-01-17T09:12:39Z
 source_paths:
   - src/app/[locale]/layout.tsx
   - src/app/[locale]/(marketing)/layout.tsx
@@ -9,73 +9,60 @@ source_paths:
 
 # Route Structure & Route Groups
 
+> Status: active
+> Last updated: 2026-01-17
+> Owner: Core
+
 ## Purpose
-This boilerplate uses a highly organized route structure with route groups to separate concerns and apply different layouts.
+
+Define a locale-first App Router structure with distinct marketing and authenticated layouts, while keeping required global routes at the root.
 
 ## Key Deviations from Standard
-- All routes are under `src/app/[locale]/` - no routes exist outside this directory
-- Uses three nested route groups: `(marketing)`, `(auth)`, and `(auth)/(center)`
-- Route groups don't affect URL structure but control layout boundaries
-- `[locale]` segment is required for ALL routes (locale-aware by default)
-- Marketing pages have been stripped down to minimal home page only
 
-## Route Organization
+- **Locale-first routing**: Most pages live under `src/app/[locale]/` and require a locale segment.
+- **Root-only special routes**: `global-error.tsx`, `robots.ts`, and `sitemap.ts` live outside `[locale]` because Next.js requires them at the app root.
 
-### Top Level: `src/app/[locale]/`
-- `layout.tsx` - Root layout with locale validation, metadata, providers
-- `(marketing)/` - Public pages with marketing layout (minimal, home page only)
-- `(auth)/` - Protected pages with Clerk authentication
-- `api/` - API routes (also locale-prefixed)
+## Architecture / Implementation
 
-### Marketing Route Group: `(marketing)/`
-- Purpose: Public-facing pages
-- Layout: `layout.tsx` provides navigation with sign-in/sign-up links
-- Pages: Only home page (`page.tsx`) - about/portfolio/counter pages removed
-- No authentication required
+### Components
+- `src/app/[locale]/layout.tsx` - Root layout with `ThemeProvider`, `NextIntlClientProvider`, and request locale validation.
+- `src/app/[locale]/(marketing)/layout.tsx` - Public layout with `BaseTemplate` and navigation.
+- `src/app/[locale]/(auth)/layout.tsx` - ClerkProvider scope and localized auth URLs.
+- `src/app/[locale]/(auth)/(center)/layout.tsx` - Centered layout for auth forms.
 
-### Auth Route Group: `(auth)/`
-- Purpose: Protected pages requiring authentication
-- Layout: `layout.tsx` wraps children in `ClerkProvider` with locale-aware URLs
-- Contains dashboard and nested `(center)` group
-- All pages automatically protected by Clerk
+### Data Flow
+1. Root layout validates the locale and calls `setRequestLocale`.
+2. Marketing or auth layouts nest under the root based on route group.
+3. Auth layout configures Clerk URLs based on locale.
 
-### Centered Auth Route Group: `(auth)/(center)/`
-- Purpose: Authentication UI pages that need centered layout
-- Contains: `sign-in/[[...sign-in]]/`, `sign-up/[[...sign-up]]/`
-- Catch-all routes (`[[...sign-in]]`) allow Clerk to handle sub-paths
-- Layout applies centered styling for auth forms
-
-## Important Patterns
-
-### Creating New Pages
-
-**Marketing page:**
+### Code Pattern
+```tsx
+if (!hasLocale(routing.locales, locale)) {
+  notFound();
+}
+setRequestLocale(locale);
 ```
-src/app/[locale]/(marketing)/my-page/page.tsx
-```
-Automatically gets marketing layout and locale routing.
 
-**Protected page:**
-```
-src/app/[locale]/(auth)/my-protected/page.tsx
-```
-Automatically gets Clerk protection and auth layout.
+## Configuration
 
-### Layout Composition
-Layouts nest from root → route group → page:
-1. `src/app/[locale]/layout.tsx` (providers, locale validation)
-2. `src/app/[locale]/(auth)/layout.tsx` (ClerkProvider)
-3. `src/app/[locale]/(auth)/(center)/layout.tsx` (centered styling)
-4. Page component
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `signInUrl` | `/sign-in` | Clerk sign-in entry; prefixed with `/${locale}` when not default.
+| `signUpUrl` | `/sign-up` | Clerk sign-up entry; prefixed with `/${locale}` when not default.
+| `accountBootstrapUrl` | `/account/bootstrap` | Post-auth bootstrap route used for sign-in/up fallback redirects.
+| `afterSignOutUrl` | `/` | Post sign-out redirect, localized when needed.
 
 ## Gotchas / Constraints
 
-- Never create routes outside `[locale]` - breaks i18n
-- Route groups use parentheses: `(marketing)` not `marketing`
-- Clerk catch-all routes must use double brackets: `[[...sign-in]]`
-- API routes are also locale-prefixed: `/en/api/counter`
-- Root `layout.tsx` MUST call `setRequestLocale(locale)` for static rendering
+- **Root-only files**: `global-error.tsx`, `robots.ts`, and `sitemap.ts` must stay at the app root.
+- **Locale validation**: `setRequestLocale` must be called in each layout that handles locale.
+
+## Testing Notes
+
+- Hit `/robots.txt` and `/sitemap.xml` to confirm root routes are served.
+- Verify non-default locales generate localized Clerk URLs in auth flows.
 
 ## Related Systems
-- `.readme/chunks/i18n.routing-integration.md` - How locale routing works
-- `.readme/chunks/auth.clerk-layout-pattern.md` - ClerkProvider scoping
+
+- `.readme/chunks/i18n.routing-integration.md` - Locale routing and navigation helpers.
+- `.readme/chunks/auth.clerk-layout-pattern.md` - Clerk provider configuration details.

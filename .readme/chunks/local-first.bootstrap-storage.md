@@ -1,20 +1,29 @@
 ---
-last_verified_at: 2026-01-12T00:00:00Z
+last_verified_at: 2026-01-17T13:13:13Z
 source_paths:
-  - src/hooks/useBootstrapMachine.ts
+  - src/app/[locale]/(auth)/account/bootstrap/hooks/useBootstrapMachine.ts
+  - src/app/[locale]/api/bootstrap/route.ts
+  - src/lib/local-db/database.ts
+  - src/lib/local-db/helpers/auth-session.ts
   - src/lib/local-db/helpers/sync-status.ts
   - src/lib/local-db/types/sync.ts
   - src/stores/useSyncStore.ts
+  - src/stores/useUserStore.ts
+  - src/stores/useBabyStore.ts
 ---
 
 # Bootstrap Data Storage in IndexedDB
 
+> Status: active (storage), TODO: persist uiConfig
+> Last updated: 2026-01-17
+> Owner: Core
+
 ## Purpose
-Documents how bootstrap data from `/api/bootstrap` is stored in IndexedDB for offline access and how sync status is tracked.
+Documents how the `/api/bootstrap` response is stored in IndexedDB by `useBootstrapMachine`, and how sync status + offline fallback are tracked.
 
 ## Bootstrap Storage Flow
 
-When `useBootstrapMachine` receives a successful response from `/api/bootstrap`, it stores all data in IndexedDB:
+When `useBootstrapMachine` receives a successful response from `/api/bootstrap` (locale-aware), it stores all data in IndexedDB via `storeBootstrapData`.
 
 ### 1. User Data
 
@@ -94,8 +103,6 @@ Stored in: `localDb.feedLogs` table
 
 ### 5. Sync Status Tracking
 
-After all data is stored, update sync status:
-
 ```typescript
 await updateSyncStatus('bootstrap', 'complete', {
   lastSyncedAt: new Date(response.syncedAt).toISOString(),
@@ -103,6 +110,19 @@ await updateSyncStatus('bootstrap', 'complete', {
 ```
 
 Stored in: `localDb.syncStatus` table with key `'bootstrap'`
+
+### 6. Auth Session Marker (Offline Access)
+
+```typescript
+await saveAuthSession(response.user.id, response.user.clerkId);
+```
+
+Stored in: `localDb.authSession` table for offline auth bypass.
+
+### UI Config (TODO)
+
+`/api/bootstrap` returns `syncData.uiConfig`, but `storeBootstrapData` does not persist it yet.
+Plan: store the returned config in `localDb.uiConfig` when the bootstrap + UI config sync flow is finalized.
 
 ## Sync Status System
 
@@ -119,7 +139,7 @@ type SyncEntityType =
   | 'sleep_logs'
   | 'nappy_logs'
   | 'ui_config'
-  | 'bootstrap'; // Tracks the unified bootstrap sync
+  | 'bootstrap';
 ```
 
 ### Sync Status Values
@@ -140,27 +160,6 @@ type LocalSyncStatus = {
 };
 ```
 
-### Helper Functions
-
-**Get Sync Status**:
-```typescript
-const status = await getSyncStatus('bootstrap');
-// Returns { entityType: 'bootstrap', status: 'complete', lastSyncAt: Date, ... }
-```
-
-**Update Sync Status**:
-```typescript
-await updateSyncStatus('bootstrap', 'complete', {
-  lastSyncedAt: new Date().toISOString(),
-});
-```
-
-**Get All Sync Statuses**:
-```typescript
-const allStatuses = await getAllSyncStatuses();
-// Returns array of all sync status records
-```
-
 ## Zustand Sync Store
 
 **Location**: `src/stores/useSyncStore.ts`
@@ -169,35 +168,12 @@ Tracks sync status in memory for reactive UI updates:
 
 ```typescript
 type SyncStore = {
-  // Per-entity sync status
   entities: Record<SyncEntityType, EntitySyncStatus>;
-
-  // Background worker sync progress
   backgroundSync: SyncProgress;
-
-  // Overall sync state
   isInitialSyncComplete: boolean;
   isBackgroundSyncRunning: boolean;
-
-  // Actions
-  setEntityStatus: (entity: SyncEntityType, status: EntitySyncStatus) => void;
-  setBackgroundProgress: (progress: SyncProgress) => void;
   hydrateFromIndexedDB: () => Promise<void>;
 };
-```
-
-**Hydration Pattern**:
-
-```typescript
-// On app load, hydrate sync store from IndexedDB
-const syncStore = useSyncStore.getState();
-await syncStore.hydrateFromIndexedDB();
-
-// Check if initial sync was completed
-const criticalEntities: SyncEntityType[] = ['user', 'babies', 'baby_access'];
-const allCriticalComplete = criticalEntities.every(
-  entity => entities[entity].status === 'complete',
-);
 ```
 
 ## Offline Fallback Behavior
@@ -223,13 +199,11 @@ When `useBootstrapMachine` detects offline mode or API error:
 When using cached data, the bootstrap machine hydrates Zustand stores:
 
 ```typescript
-// Hydrate user store
 const userStore = useUserStore.getState();
 await userStore.hydrateFromIndexedDB();
 
 const user = useUserStore.getState().user;
 if (user) {
-  // Hydrate baby store
   const babyStore = useBabyStore.getState();
   await babyStore.hydrateFromIndexedDB(user.localId);
 
@@ -252,5 +226,6 @@ if (user) {
 ## Related Chunks
 
 - `.readme/chunks/account.bootstrap-unified-flow.md` - Bootstrap API and state machine
+- `.readme/chunks/local-first.offline-auth-bypass.md` - Auth session marker behavior
 - `.readme/chunks/local-first.dexie-schema.md` - IndexedDB schema
 - `.readme/chunks/local-first.sync-status-tracking.md` - Sync status UI patterns

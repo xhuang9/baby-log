@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-04T12:00:00Z
+last_verified_at: 2026-01-17T09:12:39Z
 source_paths:
   - next.config.ts
   - src/types/next-pwa.d.ts
@@ -8,118 +8,62 @@ source_paths:
 
 # PWA Service Worker Configuration
 
+> Status: active
+> Last updated: 2026-01-17
+> Owner: Core
+
 ## Purpose
-Implements Progressive Web App functionality using next-pwa with multi-tier caching strategies for offline support and performance optimization.
+
+Configure `next-pwa` to provide offline support with runtime caching tuned for fonts, assets, and API calls.
 
 ## Key Deviations from Standard
-- **Production-Only**: PWA is explicitly disabled in development (`disable: !isProduction`)
-- **Custom Caching Rules**: Five distinct caching strategies based on resource type
-- **Long-Term Font Caching**: Google Fonts cached for 365 days with CacheFirst
-- **API Fallback**: NetworkFirst with 10s timeout before falling back to cache
 
-## Implementation
+- **Dev opt-in**: PWA is disabled in development unless `NEXT_PUBLIC_ENABLE_PWA` is set.
+- **Custom runtime caching**: Explicit caching rules for fonts, media, Next.js data, API routes, and fallbacks.
 
-### next.config.ts Integration
-```typescript
-import withPWA from '@ducanh2912/next-pwa';
+## Architecture / Implementation
 
-const isProduction = process.env.NODE_ENV === 'production';
+### Components
+- `next.config.ts` - PWA plugin setup and caching rules.
+- `src/types/next-pwa.d.ts` - Type definitions for `next-pwa` options.
+- `.gitignore` - Excludes generated service worker artifacts.
 
-const config = withPWA({
+### Data Flow
+1. `withPWA` wraps the Next.js config.
+2. Runtime caching rules define caching strategy per asset type.
+3. Service worker artifacts are generated under `public/` on build.
+
+### Code Pattern
+```ts
+configWithPlugins = withPWA({
   dest: 'public',
-  disable: !isProduction,
-  runtimeCaching: [/* strategies */]
-})(nextConfig);
+  disable: process.env.NODE_ENV === 'development'
+    && process.env.NEXT_PUBLIC_ENABLE_PWA !== 'true',
+  fallbacks: { document: '/offline.html' },
+  importScripts: ['/offline-auth-sw.js'],
+})(configWithPlugins);
 ```
 
-### Caching Strategies
+## Configuration
 
-#### 1. Google Fonts (CacheFirst - 365 days)
-**Pattern**: `https://fonts.googleapis.com`, `https://fonts.gstatic.com`
-**Rationale**: Fonts rarely change, prioritize cache speed
-**Cache Name**: `google-fonts`
-**Max Entries**: 20
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `dest` | `public` | Output directory for the generated service worker.
+| `disable` | `NODE_ENV === 'development'` | Disables SW in dev unless `NEXT_PUBLIC_ENABLE_PWA=true`.
+| `fallbacks.document` | `/offline.html` | Offline document fallback route.
+| `importScripts` | `['/offline-auth-sw.js']` | Extra SW script for offline auth handling.
 
-#### 2. Static Assets (StaleWhileRevalidate - 7-24 hours)
-**Pattern**: `/\.(png|jpg|jpeg|svg|gif|webp|ico|woff|woff2|ttf|eot)$/`
-**Rationale**: Show cached version immediately, update in background
-**Cache Name**: `static-assets`
-**Max Entries**: 60
+## Gotchas / Constraints
 
-#### 3. App Shell (StaleWhileRevalidate - 24 hours)
-**Pattern**: `/\.(js|css)$/`
-**Rationale**: Instant load from cache, background update for new versions
-**Cache Name**: `app-shell`
-**Max Entries**: 50
+- **Service worker artifacts**: `/public/sw.js` and Workbox files are gitignored.
+- **Runtime caching breadth**: API and `/_next/data` are cached; verify cache behavior when changing routes.
 
-#### 4. Next.js Data (StaleWhileRevalidate - 24 hours)
-**Pattern**: `/_next/data/`
-**Rationale**: Instant navigation with background refresh
-**Cache Name**: `next-data`
-**Max Entries**: 50
+## Testing Notes
 
-#### 5. API Routes (NetworkFirst - 24 hours)
-**Pattern**: `/^https?:\/\/.*\/api\//`
-**Rationale**: Prioritize fresh data, fallback to cache after 10s timeout
-**Cache Name**: `api-cache`
-**Network Timeout**: 10000ms
-**Max Entries**: 50
+- Build and run production (`npm run build && npm start`), then verify SW registration.
+- Toggle `NEXT_PUBLIC_ENABLE_PWA=true` in dev to test service worker behavior.
 
-#### 6. Pages (NetworkFirst - 24 hours)
-**Pattern**: `/^https?:\/\/.*/`
-**Rationale**: Fresh content preferred, cache as offline fallback
-**Cache Name**: `pages`
-**Network Timeout**: 10000ms
-**Max Entries**: 50
+## Related Systems
 
-## Generated Files
-On production build, next-pwa generates:
-- `public/sw.js` - Service worker
-- `public/workbox-*.js` - Workbox runtime files
-- `public/sw.js.map` - Source map (gitignored)
-
-## Patterns
-
-### TypeScript Definitions
-```typescript
-// src/types/next-pwa.d.ts
-declare module '@ducanh2912/next-pwa' {
-  export default function withPWA(config: {
-    dest: string;
-    disable?: boolean;
-    runtimeCaching?: Array<{/* */}>;
-  }): (nextConfig: any) => any;
-}
-```
-
-### Gitignore Entries
-```
-# PWA
-/public/sw.js
-/public/sw.js.map
-/public/workbox-*.js
-/public/workbox-*.js.map
-```
-
-## Gotchas
-- **Dev Disabled**: Service worker does NOT run in `npm run dev` - must use `npm run build && npm start` to test PWA
-- **Hard Refresh**: During testing, use Chrome DevTools → Application → Clear Storage to force cache refresh
-- **HTTPS Required**: PWA only works on localhost or HTTPS domains (not HTTP in production)
-- **Update Delay**: Users on cached version may not see updates until background refresh completes
-
-## Testing PWA
-```bash
-# 1. Build production bundle
-npm run build
-
-# 2. Start production server
-npm start
-
-# 3. Open Chrome DevTools → Application
-# 4. Verify Service Worker registered
-# 5. Check "Offline" and reload to test caching
-```
-
-## Related
-- `.readme/chunks/performance.pwa-manifest.md` - PWA manifest and installation config
-- `.readme/chunks/build.next-config-pattern.md` - Next.js config plugin composition
+- `.readme/chunks/performance.pwa-manifest.md` - Manifest and install metadata.
+- `.readme/chunks/build.next-config-pattern.md` - Plugin composition order.
