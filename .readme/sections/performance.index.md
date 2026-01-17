@@ -1,6 +1,9 @@
 ---
-last_verified_at: 2026-01-12T00:00:00Z
+last_verified_at: 2026-01-17T00:00:00Z
 source_paths:
+  - src/proxy.ts
+  - src/app/[locale]/(auth)/(app)/overview/
+  - src/app/[locale]/(auth)/(app)/settings/
   - next.config.ts
   - src/app/[locale]/(auth)/loading.tsx
   - src/components/ui/page-skeleton.tsx
@@ -12,19 +15,31 @@ source_paths:
 # Performance & PWA Overview
 
 ## Purpose
-Documents Progressive Web App (PWA) implementation, service worker caching strategies, offline indicators, loading states with Suspense, and performance optimization patterns.
+Documents Progressive Web App (PWA) implementation, service worker caching strategies, offline indicators, loading states with Suspense, and instant navigation architecture.
 
 ## Scope
-This project implements PWA functionality for:
+This project prioritizes performance-first architecture:
+- **Instant Navigation**: Dashboard pages skip server auth checks and render from IndexedDB client-side
 - **Offline Support**: Service worker with multi-tier caching strategies + IndexedDB cache
 - **Offline Indicators**: Reactive banner showing network status and last sync time
-- **Instant Navigation**: Suspense-based loading states with skeleton UI
+- **Loading States**: Suspense-based loading with skeleton UI
 - **App Installation**: PWA manifest for mobile/desktop installation
-- **Performance**: StaleWhileRevalidate and NetworkFirst patterns for optimal UX
 
-The PWA is production-only (disabled in dev) and includes comprehensive caching rules for fonts, static assets, app shell, and API routes.
+The architecture prioritizes perceived instant performance by eliminating server round-trip delays on page navigation.
+
+## Key Architectural Decision
+
+**Priority**: Instant page loads > Full offline support
+
+Dashboard pages bypass Clerk middleware and render entirely client-side from IndexedDB. This eliminates 200-500ms+ server auth delays, delivering instant perceived performance.
 
 ## Chunks
+
+### Instant Navigation Architecture
+
+- `.readme/chunks/performance.instant-navigation.md`
+  - Content: Performance-first architecture with middleware bypass, instant-loading page shells, and IndexedDB-driven rendering
+  - Read when: Understanding why dashboard pages skip server auth, working with middleware routing, converting pages to client-first pattern, or optimizing navigation performance
 
 ### PWA Configuration
 

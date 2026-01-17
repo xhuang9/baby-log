@@ -1,10 +1,11 @@
 'use client';
 
 import { ChevronDown } from 'lucide-react';
-import Link from 'next/link';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useRef, useTransition } from 'react';
-import { getUserBabies, setDefaultBaby } from '@/actions/babyActions';
+import { useEffect, useTransition } from 'react';
+import { setDefaultBaby } from '@/actions/babyActions';
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +16,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { appNavItems } from '@/config/app-nav';
+import { localDb } from '@/lib/local-db/database';
 import { useBabyStore } from '@/stores/useBabyStore';
 import { getI18nPath } from '@/utils/Helpers';
 
@@ -26,13 +28,44 @@ export const AppSidebar = ({ locale, ...props }: AppSidebarProps & React.Compone
   const pathname = usePathname();
   const router = useRouter();
   const activeBaby = useBabyStore(state => state.activeBaby);
-  const allBabies = useBabyStore(state => state.allBabies);
   const isHydrated = useBabyStore(state => state.isHydrated);
   const hydrate = useBabyStore(state => state.hydrate);
   const setActiveBaby = useBabyStore(state => state.setActiveBaby);
   const setAllBabies = useBabyStore(state => state.setAllBabies);
   const [isPending, startTransition] = useTransition();
-  const hasFetchedBabies = useRef(false);
+
+  // Read babies from IndexedDB instead of server action
+  const babiesFromDb = useLiveQuery(async () => {
+    const user = await localDb.users.toCollection().first();
+    if (!user) return [];
+
+    const accessList = await localDb.babyAccess.toArray();
+    const babyIds = accessList.map(a => a.babyId);
+
+    const babies = await localDb.babies
+      .where('id')
+      .anyOf(babyIds)
+      .toArray();
+
+    return babies
+      .filter(b => b.archivedAt === null)
+      .map(baby => {
+        const access = accessList.find(a => a.babyId === baby.id);
+        return {
+          babyId: baby.id,
+          name: baby.name,
+          birthDate: baby.birthDate,
+          accessLevel: access?.accessLevel ?? 'viewer' as const,
+          caregiverLabel: access?.caregiverLabel ?? null,
+        };
+      })
+      .sort((a, b) => {
+        const order = { owner: 0, editor: 1, viewer: 2 };
+        return order[a.accessLevel] - order[b.accessLevel];
+      });
+  }, []);
+
+  const allBabies = babiesFromDb ?? [];
 
   useEffect(() => {
     if (!isHydrated) {
@@ -40,17 +73,12 @@ export const AppSidebar = ({ locale, ...props }: AppSidebarProps & React.Compone
     }
   }, [isHydrated, hydrate]);
 
-  // Fetch all babies once on mount
+  // Sync babies to store when loaded from IndexedDB
   useEffect(() => {
-    if (isHydrated && !hasFetchedBabies.current) {
-      hasFetchedBabies.current = true;
-      getUserBabies().then((result) => {
-        if (result.success) {
-          setAllBabies(result.babies);
-        }
-      });
+    if (babiesFromDb && babiesFromDb.length > 0) {
+      setAllBabies(babiesFromDb);
     }
-  }, [isHydrated, setAllBabies]);
+  }, [babiesFromDb, setAllBabies]);
 
   const displayName = activeBaby?.name || 'Baby Log';
   const hasMultipleBabies = allBabies.length > 1;

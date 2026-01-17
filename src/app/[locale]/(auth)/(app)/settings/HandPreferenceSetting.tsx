@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
+import { toast } from 'sonner';
 import type { HandMode } from '@/lib/local-db/types/entities';
 import {
   Select,
@@ -69,9 +70,14 @@ export function HandPreferenceSetting({ isCompact = false }: HandPreferenceSetti
 
     // Update IndexedDB immediately for local-first experience
     if (user?.localId) {
-      updateUIConfig(user.localId, { handMode: value }).catch((error) => {
-        console.error('Failed to update IndexedDB:', error);
-      });
+      updateUIConfig(user.localId, { handMode: value })
+        .then(() => {
+          toast.success('Settings updated');
+        })
+        .catch((error) => {
+          console.error('Failed to update IndexedDB:', error);
+          toast.error('Failed to save settings');
+        });
     }
 
     // TODO: Sync to server via outbox when API is ready

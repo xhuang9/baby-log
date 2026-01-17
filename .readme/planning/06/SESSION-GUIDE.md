@@ -1,84 +1,71 @@
-# Session Execution Guide
+# Current Status
 
-## Quick Start
+## Priority: Performance (Instant Navigation)
 
-Tell Claude: "Execute task 10" (or whichever task number).
+All dashboard pages are now **instant-loading shells** that read from IndexedDB.
 
-## Phase 1: Config Fixes (COMPLETE ✅)
+## What's Done ✅
 
-Tasks 01-07 are done.
+| Area | Status |
+|------|--------|
+| Pages don't call `auth()` or query DB | ✅ Done |
+| Data loads from IndexedDB client-side | ✅ Done |
+| Server actions only on user interaction | ✅ Done |
+| Middleware skips Clerk for dashboard | ✅ Done |
+| Sidebar reads from IndexedDB | ✅ Done |
 
-## Phase 2: Offline-First Refactor
+## What's Deferred 🔜
 
-### Recommended Session Grouping
+| Task | Reason |
+|------|--------|
+| Full offline support | Performance first |
+| RSC offline handling | Not blocking perf |
+| Clerk offline fallback | Clerk works fine online |
+| Outbox/Sync processor | Background feature |
 
-**Session A: Infrastructure (Tasks 10, 11, 14)**
-```
-Execute tasks 10, 11, and 14
-```
-- Removes Clerk from dashboard routes
-- Creates IndexedDB guard component
-- Sets up auth session persistence
-
-**Session B: Sync System (Tasks 12, 13)**
-```
-Execute tasks 12 and 13
-```
-- Creates outbox processor
-- Creates background sync scheduler
-
-**Session C+: Page Conversions (Task 15)**
-```
-Execute task 15
-```
-- Converts remaining pages to client components
-- May need multiple sessions depending on scope
-
-**Optional: Task 08 (if needed after testing)**
-```
-Execute task 08
-```
-- Only needed if RSC errors occur during offline navigation
-
-## Task Reference
-
-| # | Name | What It Does |
-|---|------|--------------|
-| 08 | RSC handling | Safety net for offline navigation (LOW priority) |
-| 09 | Architecture doc | Reference document (no changes) |
-| 10 | Middleware | Remove Clerk from dashboard routes |
-| 11 | Guard component | Check IndexedDB before rendering pages |
-| 12 | Outbox processor | Process mutation queue |
-| 13 | Sync scheduler | Background sync service |
-| 14 | Auth session | Persist Clerk auth to IndexedDB |
-| 15 | Page conversions | Convert remaining pages to IndexedDB |
-
-## Dependencies
+## Architecture
 
 ```
-Task 10 (middleware) ←┐
-Task 11 (guard)      ←┼─ Can be done together
-Task 14 (auth)       ←┘
+Navigation Flow:
+  Click link → Instant shell render → Client hydration → IndexedDB → UI
 
-Task 12 (outbox)     ←┐
-Task 13 (scheduler)  ←┴─ Depends on 12
-
-Task 15 (pages)      ←── Depends on 10, 11
-
-Task 08 (RSC)        ←── Optional, after testing
+Data Flow:
+  IndexedDB ← useLiveQuery ← Component → UI
+                    ↓
+  User action → Server action → Sync → IndexedDB update → UI reactively updates
 ```
 
-## Verifying Completion
-
-After Phase 2:
+## Quick Test
 
 ```bash
 pnpm build && pnpm start
 ```
 
-1. Sign in and visit all pages (populate IndexedDB)
-2. Go offline (DevTools → Network → Offline)
-3. Reload `/en/overview` → should load from IndexedDB
-4. Click nav links → should navigate (full page reload)
-5. Create a feed log → should save locally
-6. Go online → should sync automatically
+1. Click between Overview/Settings/Logs - should be instant
+2. No loading spinners on navigation
+3. Data appears immediately from IndexedDB
+
+## Files Changed (This Session)
+
+- `src/proxy.ts` - Middleware skips Clerk for dashboard
+- `src/app/[locale]/(auth)/(app)/overview/page.tsx` - Shell only
+- `src/app/[locale]/(auth)/(app)/overview/_components/OverviewContent.tsx` - IndexedDB
+- `src/app/[locale]/(auth)/(app)/settings/page.tsx` - Shell only
+- `src/app/[locale]/(auth)/(app)/settings/SettingsContent.tsx` - IndexedDB
+- `src/app/[locale]/(auth)/(app)/settings/babies/page.tsx` - Shell only
+- `src/app/[locale]/(auth)/(app)/settings/babies/BabiesManagement.tsx` - IndexedDB
+- `src/app/[locale]/(auth)/(app)/settings/babies/[babyId]/page.tsx` - Shell only
+- `src/app/[locale]/(auth)/(app)/settings/babies/[babyId]/EditBabyContent.tsx` - New, IndexedDB
+- `src/components/navigation/AppSidebar.tsx` - IndexedDB instead of server action
+
+## Deferred Task Files
+
+These are saved for future offline work:
+- `08-rsc-offline-handling.md`
+- `09-architecture-offline-first-refactor.md`
+- `10-middleware-unprotect-dashboard.md` (partially done)
+- `11-indexeddb-guard-component.md`
+- `12-outbox-processor.md`
+- `13-sync-scheduler.md`
+- `14-auth-session-persistence.md`
+- `15-convert-remaining-pages.md`

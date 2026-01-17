@@ -1,6 +1,6 @@
 # Task 15: Convert Remaining Pages to Client Components
 
-**Status:** [ ] Not started
+**Status:** ✅ Complete (done in performance fix session)
 
 **Prerequisite:** Tasks 10-14 (infrastructure)
 
@@ -8,7 +8,18 @@
 
 Convert all dashboard pages to read from IndexedDB instead of server.
 
-## Pages to Convert
+## Pages Converted
+
+| Page | Status |
+|------|--------|
+| `overview/page.tsx` | ✅ Shell + `OverviewContent` (IndexedDB) |
+| `settings/page.tsx` | ✅ Shell + `SettingsContent` (IndexedDB) |
+| `settings/babies/page.tsx` | ✅ Shell + `BabiesManagement` (IndexedDB) |
+| `settings/babies/[babyId]/page.tsx` | ✅ Shell + `EditBabyContent` (IndexedDB) |
+| `logs/page.tsx` | ✅ Shell (placeholder) |
+| `insights/page.tsx` | ✅ Shell (placeholder) |
+
+## Original Table (For Reference)
 
 | Page | Current | Target |
 |------|---------|--------|

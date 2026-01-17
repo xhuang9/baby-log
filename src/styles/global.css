@@ -133,3 +133,28 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Sonner toast - close button on right, vertically centered */
+[data-sonner-toast] {
+  position: relative !important;
+  padding-right: 2.5rem !important;
+}
+
+[data-sonner-toast] [data-close-button] {
+  position: absolute !important;
+  top: 50% !important;
+  right: 0.875rem !important;
+  left: auto !important;
+  transform: translateY(-50%) !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+[data-sonner-toast] [data-close-button]:hover {
+  opacity: 1;
+  background: var(--muted) !important;
+}

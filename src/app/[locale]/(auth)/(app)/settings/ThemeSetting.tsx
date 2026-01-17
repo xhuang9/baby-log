@@ -2,6 +2,7 @@
 
 import type { ThemeMode } from '@/lib/local-db/types/entities';
 import { useEffect, useState, useTransition } from 'react';
+import { toast } from 'sonner';
 import {
   Select,
   SelectContent,
@@ -77,9 +78,14 @@ export function ThemeSetting() {
     setTheme(value);
 
     if (user?.localId) {
-      updateUIConfig(user.localId, { theme: value }).catch((error) => {
-        console.error('Failed to update IndexedDB:', error);
-      });
+      updateUIConfig(user.localId, { theme: value })
+        .then(() => {
+          toast.success('Settings updated');
+        })
+        .catch((error) => {
+          console.error('Failed to update IndexedDB:', error);
+          toast.error('Failed to save settings');
+        });
     }
 
     startTransition(async () => {

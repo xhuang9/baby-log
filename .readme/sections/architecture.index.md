@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-10T00:00:00Z
+last_verified_at: 2026-01-17T00:00:00Z
 source_paths:
   - src/app/[locale]/
   - src/lib/
@@ -14,25 +14,30 @@ source_paths:
 # Architecture Overview
 
 ## Purpose
-Describes the route organization, route groups, layout hierarchy, and structural patterns specific to this boilerplate that differ from standard Next.js projects.
+Describes the route organization, route groups, layout hierarchy, client-first page patterns, and structural patterns specific to this boilerplate that differ from standard Next.js projects.
 
 ## Scope
 This boilerplate uses Next.js App Router with a highly structured approach:
 - All routes are locale-prefixed via `[locale]` dynamic segment
 - Route groups organize pages by purpose (marketing vs auth) and layout (centered vs full-width)
+- **Client-first pages**: Dashboard pages render from IndexedDB for instant navigation
 - Centralized library configurations in `src/lib/`
 - Providers extracted to `src/providers/` for infrastructure separation
 - Services layer in `src/services/` for shared business logic
 - Page-specific components colocated in `_components/` folders
 - Strict path aliasing and TypeScript configuration
 
-The architecture emphasizes separation of concerns and developer experience through conventions.
+The architecture emphasizes separation of concerns, performance-first patterns, and developer experience through conventions.
 
 ## Chunks
 
 - `.readme/chunks/architecture.route-structure.md`
   - Content: Detailed route organization including route groups `(marketing)`, `(auth)`, and `(center)`
   - Read when: Creating new pages, understanding nested layouts, or working with route-based organization
+
+- `.readme/chunks/architecture.client-first-pages.md`
+  - Content: Client-first page pattern with minimal server shells and IndexedDB-driven rendering using useLiveQuery, including bootstrap guards and data flow patterns
+  - Read when: Converting pages to instant navigation pattern, understanding the page.tsx + *Content.tsx structure, working with useLiveQuery, or implementing dashboard pages that read from IndexedDB
 
 - `.readme/chunks/architecture.libs-pattern.md`
   - Content: The `src/lib/` centralization pattern for all third-party library configurations

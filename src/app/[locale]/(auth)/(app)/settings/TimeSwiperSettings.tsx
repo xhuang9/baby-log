@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
@@ -13,13 +14,15 @@ type TimeSwiperSettingsState = {
   swipeSpeed: number;
   incrementMinutes: number;
   magneticFeel: boolean;
+  showCurrentTime: boolean;
 };
 
 const DEFAULT_SETTINGS: TimeSwiperSettingsState = {
   use24Hour: false,
-  swipeSpeed: 1.0,
-  incrementMinutes: 60,
+  swipeSpeed: 0.5,
+  incrementMinutes: 30,
   magneticFeel: false,
+  showCurrentTime: true,
 };
 
 const getIncrementLabel = (mins: number): string => {
@@ -33,6 +36,22 @@ export function TimeSwiperSettings() {
   const user = useUserStore(s => s.user);
   const [settings, setSettings] = useState<TimeSwiperSettingsState>(DEFAULT_SETTINGS);
   const [isLoading, setIsLoading] = useState(true);
+  const settingsRef = useRef(settings);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    settingsRef.current = settings;
+  }, [settings]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Load initial values from IndexedDB
   useEffect(() => {
@@ -54,6 +73,7 @@ export function TimeSwiperSettings() {
             swipeSpeed: config.data.timeSwiper.swipeSpeed ?? DEFAULT_SETTINGS.swipeSpeed,
             incrementMinutes: config.data.timeSwiper.incrementMinutes ?? DEFAULT_SETTINGS.incrementMinutes,
             magneticFeel: config.data.timeSwiper.magneticFeel ?? DEFAULT_SETTINGS.magneticFeel,
+            showCurrentTime: config.data.timeSwiper.showCurrentTime ?? DEFAULT_SETTINGS.showCurrentTime,
           });
         }
       } catch (error) {
@@ -72,17 +92,54 @@ export function TimeSwiperSettings() {
     };
   }, [user?.localId]);
 
-  const updateSetting = <K extends keyof TimeSwiperSettingsState>(
+  // Debounced save for slider (saves after user stops dragging)
+  const debouncedSave = useCallback((newSettings: TimeSwiperSettingsState) => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    saveTimeoutRef.current = setTimeout(() => {
+      if (user?.localId) {
+        updateUIConfig(user.localId, { timeSwiper: newSettings })
+          .then(() => {
+            toast.success('Settings updated');
+          })
+          .catch((error) => {
+            console.error('Failed to save time swiper settings:', error);
+            toast.error('Failed to save settings');
+          });
+      }
+    }, 300);
+  }, [user?.localId]);
+
+  // Update local state and debounce save (for slider)
+  const updateSliderSetting = <K extends keyof TimeSwiperSettingsState>(
     key: K,
     value: TimeSwiperSettingsState[K],
   ) => {
-    const newSettings = { ...settings, [key]: value };
+    const newSettings = { ...settingsRef.current, [key]: value };
     setSettings(newSettings);
+    settingsRef.current = newSettings;
+    debouncedSave(newSettings);
+  };
+
+  // Save to IndexedDB and show toast
+  const saveSetting = <K extends keyof TimeSwiperSettingsState>(
+    key: K,
+    value: TimeSwiperSettingsState[K],
+  ) => {
+    const newSettings = { ...settingsRef.current, [key]: value };
+    setSettings(newSettings);
+    settingsRef.current = newSettings;
 
     if (user?.localId) {
-      updateUIConfig(user.localId, { timeSwiper: newSettings }).catch((error) => {
-        console.error('Failed to save time swiper settings:', error);
-      });
+      updateUIConfig(user.localId, { timeSwiper: newSettings })
+        .then(() => {
+          toast.success('Settings updated');
+        })
+        .catch((error) => {
+          console.error('Failed to save time swiper settings:', error);
+          toast.error('Failed to save settings');
+        });
     }
   };
 
@@ -108,7 +165,7 @@ export function TimeSwiperSettings() {
         </div>
         <Switch
           checked={settings.use24Hour}
-          onCheckedChange={checked => updateSetting('use24Hour', checked)}
+          onCheckedChange={checked => saveSetting('use24Hour', checked)}
         />
       </div>
 
@@ -122,7 +179,21 @@ export function TimeSwiperSettings() {
         </div>
         <Switch
           checked={settings.magneticFeel}
-          onCheckedChange={checked => updateSetting('magneticFeel', checked)}
+          onCheckedChange={checked => saveSetting('magneticFeel', checked)}
+        />
+      </div>
+
+      {/* Show Time Markers Toggle */}
+      <div className="flex items-center justify-between">
+        <div className="pr-4">
+          <p className="text-sm font-medium">Show time markers</p>
+          <p className="text-xs text-muted-foreground">
+            Display now, -1hr, +1hr markers
+          </p>
+        </div>
+        <Switch
+          checked={settings.showCurrentTime}
+          onCheckedChange={checked => saveSetting('showCurrentTime', checked)}
         />
       </div>
 
@@ -139,10 +210,10 @@ export function TimeSwiperSettings() {
           value={[settings.swipeSpeed]}
           onValueChange={(value) => {
             const newValue = Array.isArray(value) ? value[0] : value;
-            updateSetting('swipeSpeed', newValue ?? 1);
+            updateSliderSetting('swipeSpeed', newValue ?? 0.5);
           }}
-          min={0.5}
-          max={2}
+          min={0.1}
+          max={3.0}
           step={0.1}
         />
         <div className="flex justify-between text-xs text-muted-foreground">
@@ -156,21 +227,21 @@ export function TimeSwiperSettings() {
         <p className="text-sm font-medium">+/- button increment</p>
         <RadioGroup
           value={settings.incrementMinutes.toString()}
-          onValueChange={val => updateSetting('incrementMinutes', Number.parseInt(String(val)))}
-          className="grid grid-cols-5 gap-1"
+          onValueChange={val => saveSetting('incrementMinutes', Number.parseInt(String(val)))}
+          className="grid grid-cols-6 gap-1"
         >
-          {[15, 30, 60, 120, 180].map(mins => (
+          {[1, 5, 15, 30, 60, 120].map(mins => (
             <label
               key={mins}
               className={cn(
-                'flex cursor-pointer items-center justify-center rounded-lg border px-2 py-2 text-xs transition-colors',
+                'relative flex cursor-pointer items-center justify-center rounded-lg border px-2 py-2 text-xs transition-colors',
                 settings.incrementMinutes === mins
                   ? 'border-primary bg-primary/10'
                   : 'border-border hover:bg-muted/50',
               )}
             >
-              <RadioGroupItem value={mins.toString()} className="sr-only" />
-              {getIncrementLabel(mins)}
+              <RadioGroupItem value={mins.toString()} className="absolute opacity-0" />
+              <span>{getIncrementLabel(mins)}</span>
             </label>
           ))}
         </RadioGroup>

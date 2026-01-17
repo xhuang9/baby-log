@@ -1,9 +1,11 @@
 'use client';
 
 import { UserAvatar, useUser } from '@clerk/nextjs';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { ChevronRight } from 'lucide-react';
-import Link from 'next/link';
+import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import { localDb } from '@/lib/local-db/database';
 import { BabiesList } from './BabiesList';
 import { HandPreferenceSetting } from './HandPreferenceSetting';
 import { ThemeSetting } from './ThemeSetting';
@@ -20,11 +22,53 @@ type BabyInfo = {
 };
 
 export function SettingsContent(props: {
-  babies: BabyInfo[];
   locale: string;
 }) {
-  const { babies, locale } = props;
+  const { locale } = props;
   const { user } = useUser();
+
+  // Read babies from IndexedDB
+  const babies = useLiveQuery(async (): Promise<BabyInfo[]> => {
+    const accessList = await localDb.babyAccess.toArray();
+    const babyIds = accessList.map(a => a.babyId);
+
+    const allBabies = await localDb.babies
+      .where('id')
+      .anyOf(babyIds)
+      .toArray();
+
+    // Filter out archived babies and join with access info
+    return allBabies
+      .filter(b => b.archivedAt === null)
+      .map(baby => {
+        const access = accessList.find(a => a.babyId === baby.id);
+        return {
+          babyId: baby.id,
+          name: baby.name,
+          birthDate: baby.birthDate,
+          gender: baby.gender,
+          accessLevel: access?.accessLevel ?? 'viewer',
+          caregiverLabel: access?.caregiverLabel ?? null,
+          archivedAt: baby.archivedAt,
+        };
+      })
+      // Sort by access level (owners first)
+      .sort((a, b) => {
+        const order = { owner: 0, editor: 1, viewer: 2 };
+        return order[a.accessLevel] - order[b.accessLevel];
+      });
+  }, []);
+
+  // Loading state
+  if (babies === undefined) {
+    return (
+      <div className="mx-auto max-w-xl min-w-80 space-y-6 px-4 pb-20">
+        <div className="h-32 animate-pulse rounded-lg bg-muted" />
+        <div className="h-24 animate-pulse rounded-lg bg-muted" />
+        <div className="h-24 animate-pulse rounded-lg bg-muted" />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-xl min-w-80 space-y-6 px-4 pb-20">
@@ -33,7 +77,7 @@ export function SettingsContent(props: {
         <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
           Children
         </h2>
-        <BabiesList babies={babies} locale={locale} />
+        <BabiesList babies={babies ?? []} locale={locale} />
       </section>
 
       {/* Preferences Section */}

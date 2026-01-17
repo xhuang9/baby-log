@@ -1,5 +1,10 @@
 # Architecture: True Offline-First Refactor
 
+> **Status:** 🔜 DEFERRED - Performance priority achieved. Full offline deferred.
+>
+> **What's Done:** Pages are instant shells reading from IndexedDB.
+> **What's Deferred:** Full offline (Clerk fallback, outbox queue, conflict resolution).
+
 ## Overview
 
 Convert from server-first (Clerk-protected pages reading from Postgres) to offline-first (public pages reading from IndexedDB, Clerk-protected API sync).

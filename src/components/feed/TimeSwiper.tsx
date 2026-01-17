@@ -528,20 +528,20 @@ export function TimeSwiper({
                 value={settings.incrementMinutes.toString()}
                 onValueChange={val =>
                   setSettings(s => ({ ...s, incrementMinutes: Number.parseInt(String(val)) }))}
-                className="grid grid-cols-5 gap-1"
+                className="grid grid-cols-6 gap-1"
               >
-                {[5, 15, 30, 60, 120].map(mins => (
+                {[1, 5, 15, 30, 60, 120].map(mins => (
                   <label
                     key={mins}
                     className={cn(
-                      'flex cursor-pointer items-center justify-center rounded-lg border px-2 py-1.5 text-xs transition-colors',
+                      'relative flex cursor-pointer items-center justify-center rounded-lg border px-2 py-1.5 text-xs transition-colors',
                       settings.incrementMinutes === mins
                         ? 'border-primary bg-primary/10'
                         : 'border-border hover:bg-muted/50',
                     )}
                   >
-                    <RadioGroupItem value={mins.toString()} className="sr-only" />
-                    {getIncrementLabel(mins)}
+                    <RadioGroupItem value={mins.toString()} className="absolute opacity-0" />
+                    <span>{getIncrementLabel(mins)}</span>
                   </label>
                 ))}
               </RadioGroup>

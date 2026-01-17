@@ -4,9 +4,11 @@ import { AppHeader } from '@/components/navigation/AppHeader';
 import { AppSidebar } from '@/components/navigation/AppSidebar';
 import { MobileBottomBar } from '@/components/navigation/MobileBottomBar';
 import { DatabaseHealthCheck } from '@/components/DatabaseHealthCheck';
+import { IndexedDbGuard } from '@/components/guards/IndexedDbGuard';
 import { OfflineBanner } from '@/components/OfflineBanner';
 import { SyncProvider } from '@/components/SyncProvider';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { useAuthSessionSync } from '@/hooks/useAuthSessionSync';
 
 type AppShellProps = {
   children: React.ReactNode;
@@ -15,8 +17,12 @@ type AppShellProps = {
 };
 
 export const AppShell = ({ children, locale, variant = 'default' }: AppShellProps) => {
+  // Sync Clerk auth state to IndexedDB for offline access
+  useAuthSessionSync();
+
   return (
-    <SyncProvider>
+    <IndexedDbGuard locale={locale}>
+      <SyncProvider>
       <SidebarProvider>
         <DatabaseHealthCheck />
         <OfflineBanner />
@@ -40,5 +46,6 @@ export const AppShell = ({ children, locale, variant = 'default' }: AppShellProp
         <MobileBottomBar locale={locale} />
       </SidebarProvider>
     </SyncProvider>
+    </IndexedDbGuard>
   );
 };

@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-14T00:00:00Z
+last_verified_at: 2026-01-17T00:00:00Z
 source_paths:
   - .readme/sections/
 ---
@@ -13,8 +13,8 @@ This project implements a local-first architecture with Dexie (IndexedDB) as the
 ## Documentation Sections
 
 ### `.readme/sections/architecture.index.md`
-**Core architectural patterns and project structure**
-Read when: Understanding route organization, route groups, layout hierarchy, folder structure reorganization, or how the app is structured differently from standard Next.js projects.
+**Core architectural patterns, project structure, and client-first page pattern**
+Read when: Understanding route organization, route groups, layout hierarchy, instant navigation with IndexedDB-driven pages, folder structure reorganization, or how the app is structured differently from standard Next.js projects.
 
 ### `.readme/sections/database.index.md`
 **DrizzleORM setup, migrations, and connection management**
@@ -65,8 +65,8 @@ Read when: Understanding linting rules, commit conventions, type safety patterns
 Read when: Configuring builds, setting up CI/CD, or understanding the custom Next.js configuration.
 
 ### `.readme/sections/performance.index.md`
-**PWA configuration, service worker caching, offline indicators, loading states, and performance optimization**
-Read when: Working with Progressive Web App features, implementing offline indicators, configuring offline support, adding loading states, or optimizing navigation performance.
+**Instant navigation architecture, PWA configuration, service worker caching, offline indicators, and loading states**
+Read when: Understanding performance-first architecture with middleware bypass and IndexedDB-driven rendering, working with Progressive Web App features, implementing offline indicators, configuring offline support, adding loading states, or optimizing navigation performance.
 
 ### `.readme/sections/styling.index.md`
 **Brand guidelines, color system, dark/light mode theming, and activity-specific styling**

@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronRight, Plus } from 'lucide-react';
-import Link from 'next/link';
+import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { getI18nPath } from '@/utils/Helpers';
 
 type BabyInfo = {

@@ -1,6 +1,6 @@
 # Task 14: Auth Session Persistence
 
-**Status:** [ ] Not started
+**Status:** ✅ Complete (exists at `src/hooks/useAuthSessionSync.ts`, used in `AppShell.tsx`)
 
 **Prerequisite:** None (can be done early)
 

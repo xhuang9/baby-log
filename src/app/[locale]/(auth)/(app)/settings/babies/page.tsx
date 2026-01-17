@@ -1,15 +1,5 @@
 import type { Metadata } from 'next';
-import { auth } from '@clerk/nextjs/server';
-import { and, desc, eq, sql } from 'drizzle-orm';
-import { redirect } from 'next/navigation';
 import { PageTitleSetter } from '@/components/navigation/PageTitleSetter';
-import { db } from '@/lib/db';
-import {
-  babiesSchema,
-  babyAccessSchema,
-  userSchema,
-} from '@/models/Schema';
-import { getI18nPath } from '@/utils/Helpers';
 import { BabiesManagement } from './BabiesManagement';
 
 export async function generateMetadata(props: {
@@ -22,48 +12,13 @@ export async function generateMetadata(props: {
   };
 }
 
-export const dynamic = 'force-dynamic';
+// Page is now a simple shell - all data comes from IndexedDB client-side
+// No auth() calls - Clerk middleware doesn't process this route
 
 export default async function ManageBabiesPage(props: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await props.params;
-  const { userId } = await auth();
-
-  if (!userId) {
-    redirect(getI18nPath('/sign-in', locale));
-  }
-
-  const [localUser] = await db
-    .select()
-    .from(userSchema)
-    .where(eq(userSchema.clerkId, userId))
-    .limit(1);
-
-  if (!localUser) {
-    redirect(getI18nPath('/account/bootstrap', locale));
-  }
-
-  // Get all babies the user has access to
-  const babies = await db
-    .select({
-      babyId: babiesSchema.id,
-      name: babiesSchema.name,
-      birthDate: babiesSchema.birthDate,
-      gender: babiesSchema.gender,
-      accessLevel: babyAccessSchema.accessLevel,
-      caregiverLabel: babyAccessSchema.caregiverLabel,
-      archivedAt: babiesSchema.archivedAt,
-    })
-    .from(babyAccessSchema)
-    .innerJoin(babiesSchema, eq(babyAccessSchema.babyId, babiesSchema.id))
-    .where(
-      and(
-        eq(babyAccessSchema.userId, localUser.id),
-        sql`${babiesSchema.archivedAt} IS NULL`,
-      ),
-    )
-    .orderBy(desc(babyAccessSchema.accessLevel));
 
   return (
     <>
@@ -76,11 +31,7 @@ export default async function ManageBabiesPage(props: {
           </p>
         </div>
 
-        <BabiesManagement
-          babies={babies}
-          currentDefaultId={localUser.defaultBabyId}
-          locale={locale}
-        />
+        <BabiesManagement locale={locale} />
       </div>
     </>
   );

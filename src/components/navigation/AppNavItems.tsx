@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { usePathname } from 'next/navigation';
 import { appNavItems } from '@/config/app-nav';
 import { cn } from '@/lib/utils';

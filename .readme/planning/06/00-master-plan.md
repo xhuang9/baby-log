@@ -1,106 +1,119 @@
-# Offline Mode Fix - Master Plan
+# Offline-First Performance Plan
 
-## Overview
+## Priority Shift (Updated)
 
-This plan transitions from server-first to true offline-first architecture. Dashboard pages become public client shells that read from IndexedDB, with Clerk protecting only API routes.
+**Primary Goal:** Performance (instant page transitions)
+**Secondary Goal:** Offline capability (deferred)
 
-**Architecture doc:** `09-architecture-offline-first-refactor.md`
+| Priority | Description | Status |
+|----------|-------------|--------|
+| 1 | Instant page navigation (no server blocking) | ✅ Done |
+| 2 | All data from IndexedDB (client-side reads) | ✅ Done |
+| 3 | Server actions only on user interaction | ✅ Done |
+| 4 | Clerk stays, doesn't block render | ✅ Current |
+| 5 | Full offline support | 🔜 Deferred |
 
-## Session Strategy
+## Current Architecture
 
-Each task file is self-contained. Read only the specific task file for that session.
+```
+Page Load:
+  Server → Render shell (instant, SSG) → Client hydration → IndexedDB read → UI update
 
-## Phase 1: Quick Config Fixes (COMPLETE)
+User Action:
+  Click/Submit → Server action (async) → Update IndexedDB → UI update
+```
 
-| Task | Status | Description |
-|------|--------|-------------|
-| `01-manifest-start-url.md` | ✅ Done | Fix manifest start_url |
-| `02-pwa-env-toggle.md` | ✅ Done | Add env toggle for dev PWA |
-| `03-offline-fallback.md` | ✅ Done | Configure fallback page |
-| `04-pwa-types.md` | ✅ Done | Add missing TypeScript types |
-| `05-import-sw.md` | ✅ Done | Import offline auth SW |
-| `06-indexeddb-version.md` | ✅ Done | Align DB version to 1 |
-| `07-overview-indexeddb.md` | ✅ Done | Convert overview to IndexedDB |
+## Completed Work
 
-## Phase 2: Offline-First Refactor (NEW)
+### Phase 1: Config Fixes
+- ✅ Manifest start_url
+- ✅ PWA env toggle
+- ✅ Offline fallback config
+- ✅ PWA types
+- ✅ Import offline auth SW
+- ✅ IndexedDB version alignment
 
-**Recommended order:**
+### Phase 1.5: Performance Fixes (Server Blocking Removed)
 
-### Session 1: Infrastructure
-| Task | Description | Files |
-|------|-------------|-------|
-| `10-middleware-unprotect-dashboard.md` | Remove Clerk from dashboard routes | `src/proxy.ts` |
-| `11-indexeddb-guard-component.md` | Guard component for DB validation | New components |
-| `14-auth-session-persistence.md` | Persist auth to IndexedDB | New service + hook |
+| Component | Before | After |
+|-----------|--------|-------|
+| `src/proxy.ts` | Ran Clerk for all dashboard routes | Skips Clerk for dashboard |
+| `overview/page.tsx` | `await auth()` + DB query | Shell only |
+| `settings/page.tsx` | `await auth()` + DB query | Shell only |
+| `settings/babies/page.tsx` | `await auth()` + DB query | Shell only |
+| `settings/babies/[babyId]/page.tsx` | `await auth()` + DB query | Shell only |
+| `AppSidebar.tsx` | `getUserBabies()` server action | `useLiveQuery` from IndexedDB |
+| `SettingsContent.tsx` | Received babies as props | `useLiveQuery` from IndexedDB |
+| `BabiesManagement.tsx` | Received babies as props | `useLiveQuery` from IndexedDB |
+| `OverviewContent.tsx` | Received babyId from server | Reads from IndexedDB |
 
-### Session 2: Sync System
-| Task | Description | Files |
-|------|-------------|-------|
-| `12-outbox-processor.md` | Process mutation queue | New service |
-| `13-sync-scheduler.md` | Background sync scheduler | New service + provider |
+### Current Page Architecture
 
-### Session 3+: Page Conversions
-| Task | Description | Files |
-|------|-------------|-------|
-| `15-convert-remaining-pages.md` | Convert logs, settings, etc. | Multiple pages |
+All dashboard pages are now **instant-loading shells**:
 
-### Optional (After Testing)
+```typescript
+// Pattern for all dashboard pages
+export default async function Page(props) {
+  const { locale } = await props.params;  // Only this await (required by Next.js)
+
+  return (
+    <>
+      <PageTitleSetter title="..." />
+      <ClientComponent locale={locale} />  // Reads from IndexedDB
+    </>
+  );
+}
+```
+
+## Remaining Work (Deferred)
+
+### For Full Offline Support (Future)
+
 | Task | Description | Priority |
 |------|-------------|----------|
-| `08-rsc-offline-handling.md` | Handle RSC offline (safety net) | LOW |
+| Clerk offline fallback | Replace Clerk components with local fallback when offline | Low |
+| RSC offline handling | Intercept RSC requests when offline | Low |
+| Sync conflict resolution | Handle merge conflicts when syncing | Low |
 
-## Execution Instructions
+### Clerk Components Still Active
 
-When user says "do task X":
+These use Clerk client hooks but don't block render:
 
-1. Read ONLY `.readme/planning/06/0X-taskname.md`
-2. Follow the exact steps in that file
-3. Mark checklist items as done
-4. Run validation if specified
+| Component | Usage | Impact |
+|-----------|-------|--------|
+| `SettingsContent.tsx` | `useUser()`, `<UserAvatar />` | Shows user info when online |
+| `AppHeader.tsx` | `<UserButton />` | Shows user button when online |
+| `SyncProvider.tsx` | `useAuth()` | Controls background sync |
 
-## Architecture Summary
+**Note:** These are fine for performance - they render progressively after hydration.
 
+## Verification Checklist
+
+Run after changes:
+
+```bash
+pnpm build && pnpm start
 ```
-BEFORE (Server-First):
-Clerk Middleware → Page (Server) → Postgres → Render
 
-AFTER (Offline-First):
-Page (Client) → IndexedDB → Render
-      ↓
-[Background] → API (Clerk) → Postgres
-```
+Test:
+1. Navigate between pages - should be instant
+2. Check Network tab - no blocking requests on navigation
+3. Data loads from IndexedDB (check Application → IndexedDB)
+4. Server actions only fire on user interaction
 
-## Key Files Reference
+## Files Reference
 
-**Config:**
-- `src/proxy.ts` - Middleware (Task 10)
-- `next.config.ts` - PWA config
-
-**New Infrastructure:**
-- `src/lib/local-db/validation.ts` - DB validation (Task 11)
-- `src/components/guards/IndexedDbGuard.tsx` - Guard component (Task 11)
-- `src/lib/auth/session-manager.ts` - Auth persistence (Task 14)
-- `src/lib/sync/outbox-processor.ts` - Outbox processing (Task 12)
-- `src/lib/sync/sync-scheduler.ts` - Background sync (Task 13)
-
-**Pages to Convert:**
+**Pages (all instant-loading shells):**
+- `src/app/[locale]/(auth)/(app)/overview/page.tsx`
 - `src/app/[locale]/(auth)/(app)/logs/page.tsx`
 - `src/app/[locale]/(auth)/(app)/insights/page.tsx`
 - `src/app/[locale]/(auth)/(app)/settings/page.tsx`
 - `src/app/[locale]/(auth)/(app)/settings/babies/page.tsx`
 - `src/app/[locale]/(auth)/(app)/settings/babies/[babyId]/page.tsx`
 
-## Final Validation
-
-After all tasks:
-
-```bash
-pnpm build && pnpm start
-```
-
-Test scenario:
-1. Sign in → visit pages → populate caches
-2. Go offline (DevTools → Network → Offline)
-3. Click navigation links → should work
-4. Create/edit data → should queue locally
-5. Go online → data should sync
+**Client components (IndexedDB reads):**
+- `OverviewContent.tsx` - reads feedLogs, user
+- `SettingsContent.tsx` - reads babies, babyAccess
+- `BabiesManagement.tsx` - reads babies, babyAccess, user
+- `EditBabyContent.tsx` - reads baby by ID
+- `AppSidebar.tsx` - reads babies for switcher

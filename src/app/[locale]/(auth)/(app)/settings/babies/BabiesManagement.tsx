@@ -1,10 +1,12 @@
 'use client';
 
 import { Baby, Check, ChevronRight, Plus } from 'lucide-react';
-import Link from 'next/link';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { setDefaultBaby } from '@/actions/babyActions';
+import { localDb } from '@/lib/local-db/database';
 import { useBabyStore } from '@/stores/useBabyStore';
 import { getI18nPath } from '@/utils/Helpers';
 
@@ -19,11 +21,46 @@ type BabyInfo = {
 };
 
 export function BabiesManagement(props: {
-  babies: BabyInfo[];
-  currentDefaultId: number | null;
   locale: string;
 }) {
-  const { babies, currentDefaultId, locale } = props;
+  const { locale } = props;
+
+  // Read user and babies from IndexedDB
+  const userData = useLiveQuery(async () => {
+    const user = await localDb.users.toCollection().first();
+    return user ?? null;
+  }, []);
+
+  const babies = useLiveQuery(async (): Promise<BabyInfo[]> => {
+    const accessList = await localDb.babyAccess.toArray();
+    const babyIds = accessList.map(a => a.babyId);
+
+    const allBabies = await localDb.babies
+      .where('id')
+      .anyOf(babyIds)
+      .toArray();
+
+    return allBabies
+      .filter(b => b.archivedAt === null)
+      .map(baby => {
+        const access = accessList.find(a => a.babyId === baby.id);
+        return {
+          babyId: baby.id,
+          name: baby.name,
+          birthDate: baby.birthDate,
+          gender: baby.gender,
+          accessLevel: access?.accessLevel ?? 'viewer',
+          caregiverLabel: access?.caregiverLabel ?? null,
+          archivedAt: baby.archivedAt,
+        };
+      })
+      .sort((a, b) => {
+        const order = { owner: 0, editor: 1, viewer: 2 };
+        return order[a.accessLevel] - order[b.accessLevel];
+      });
+  }, []);
+
+  const currentDefaultId = userData?.defaultBabyId ?? null;
   const router = useRouter();
   const setActiveBaby = useBabyStore(state => state.setActiveBaby);
   const [switchingTo, setSwitchingTo] = useState<number | null>(null);
@@ -83,6 +120,16 @@ export function BabiesManagement(props: {
 
     return `${years}y ${remainingMonths}m old`;
   };
+
+  // Loading state
+  if (userData === undefined || babies === undefined) {
+    return (
+      <div className="space-y-4">
+        <div className="h-24 animate-pulse rounded-lg bg-muted" />
+        <div className="h-20 animate-pulse rounded-lg bg-muted" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

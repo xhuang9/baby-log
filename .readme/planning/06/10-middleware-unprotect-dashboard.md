@@ -1,12 +1,15 @@
 # Task 10: Update Middleware to Unprotect Dashboard Routes
 
-**Status:** [ ] Not started
-
-**Prerequisite:** None (can be done first)
+**Status:** ✅ Complete (done in performance fix session)
 
 ## Goal
 
 Remove dashboard page routes from Clerk protection while keeping API routes protected.
+
+## What Was Done
+
+Middleware now completely skips Clerk for dashboard routes (`/overview`, `/settings`, `/logs`, `/insights`).
+Only API routes and auth pages go through Clerk.
 
 ## File to Edit
 

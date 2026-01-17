@@ -1,6 +1,6 @@
 # Task 12: Create Outbox Processor Service
 
-**Status:** [ ] Not started
+**Status:** 🔜 DEFERRED - Performance priority achieved. Outbox pattern for offline mutations deferred.
 
 **Prerequisite:** API routes exist (`/api/sync/push`)
 

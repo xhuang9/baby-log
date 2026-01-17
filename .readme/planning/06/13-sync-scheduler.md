@@ -1,6 +1,8 @@
 # Task 13: Create Sync Scheduler
 
-**Status:** [ ] Not started
+**Status:** 🔜 DEFERRED - Depends on Task 12 (outbox processor).
+
+**Note:** Basic sync exists in `SyncProvider.tsx`. This task is for periodic background sync of mutations.
 
 **Prerequisite:** Task 12 (Outbox Processor)
 
