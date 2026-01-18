@@ -1,15 +1,16 @@
 ---
-last_verified_at: 2026-01-17T00:00:00Z
+last_verified_at: 2026-01-18T12:33:25Z
 source_paths:
   - src/proxy.ts
   - src/app/[locale]/(auth)/(app)/overview/page.tsx
   - src/app/[locale]/(auth)/(app)/overview/_components/OverviewContent.tsx
   - src/app/[locale]/(auth)/(app)/settings/page.tsx
-  - src/app/[locale]/(auth)/(app)/settings/SettingsContent.tsx
+  - src/app/[locale]/(auth)/(app)/settings/_components/SettingsContent.tsx
   - src/app/[locale]/(auth)/(app)/settings/babies/page.tsx
   - src/app/[locale]/(auth)/(app)/settings/babies/BabiesManagement.tsx
   - src/app/[locale]/(auth)/(app)/settings/babies/[babyId]/page.tsx
   - src/app/[locale]/(auth)/(app)/settings/babies/[babyId]/EditBabyContent.tsx
+conversation_context: "Updated instant-navigation docs after moving SettingsContent into _components."
 ---
 
 # Instant Navigation Architecture (Performance-First)
@@ -142,7 +143,7 @@ All dashboard pages converted to instant-loading shell pattern:
 
 ### Settings
 - `src/app/[locale]/(auth)/(app)/settings/page.tsx` - minimal shell
-- `src/app/[locale]/(auth)/(app)/settings/SettingsContent.tsx` - client component
+- `src/app/[locale]/(auth)/(app)/settings/_components/SettingsContent.tsx` - client component
 
 ### Baby Management
 - `src/app/[locale]/(auth)/(app)/settings/babies/page.tsx` - minimal shell

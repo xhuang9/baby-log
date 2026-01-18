@@ -3,13 +3,11 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { createBaby } from '@/actions/babyActions';
-import { useBabyStore } from '@/stores/useBabyStore';
+import { createBaby } from '@/services/operations';
 
 export function NewBabyForm(props: { redirectPath: string }) {
   const { redirectPath } = props;
   const router = useRouter();
-  const setActiveBaby = useBabyStore(state => state.setActiveBaby);
 
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
@@ -47,10 +45,7 @@ export function NewBabyForm(props: { redirectPath: string }) {
         return;
       }
 
-      // Set baby in store
-      setActiveBaby(result.baby);
-
-      // Redirect back to babies management
+      // Operation already updated the store, just redirect
       router.push(redirectPath);
       router.refresh();
     } catch (err) {

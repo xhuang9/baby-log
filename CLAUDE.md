@@ -26,7 +26,7 @@ All detailed documentation lives in `.readme/sections/`. Each section contains c
 | `account-management.index.md` | Bootstrap post-auth flow, account state, store sync | Post-auth flows, offline fallback, baby selection |
 | `baby-management.index.md` | Baby UI, editing, switching | Building baby management features |
 | `feed-logging.index.md` | Feed logging, estimation, server actions | Implementing activity tracking |
-| `local-first.index.md` | Dexie, offline patterns, sync | IndexedDB, offline mutations, sync operations |
+| `local-first.index.md` | Dexie, offline patterns, sync, operations layer | IndexedDB, offline mutations, operations layer, sync operations |
 | `configuration.index.md` | Environment variables, lib configs | Adding env vars, configuring libraries |
 | `testing.index.md` | Vitest, Playwright, test modes | Writing tests, understanding test environments |
 | `build-deploy.index.md` | Next.js config, build patterns | Build configuration, deployment |

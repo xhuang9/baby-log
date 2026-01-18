@@ -3,7 +3,7 @@ import {
   LayoutGrid,
   LineChart,
   List,
-  Sliders,
+  Settings,
 } from 'lucide-react';
 
 export type AppNavKey = 'overview' | 'logs' | 'insights' | 'settings';
@@ -38,6 +38,6 @@ export const appNavItems: AppNavItem[] = [
     key: 'settings',
     label: 'Settings',
     href: '/settings',
-    icon: Sliders,
+    icon: Settings,
   },
 ];

@@ -10,6 +10,8 @@
 import type {
   FeedMethod,
   FeedSide,
+  LocalBaby,
+  LocalBabyAccess,
   LocalFeedLog,
   LocalNappyLog,
   LocalSleepLog,
@@ -23,6 +25,8 @@ import {
   getPendingOutboxEntries,
   getSyncCursor,
   refreshAuthSession,
+  saveBabies,
+  saveBabyAccess,
   saveFeedLogs,
   saveNappyLogs,
   saveSleepLogs,
@@ -131,6 +135,9 @@ async function applyChange(change: SyncChange): Promise<void> {
   const { type, op, id, data } = change;
 
   switch (type) {
+    case 'baby':
+      await applyBabyChange(op, id, data);
+      break;
     case 'feed_log':
       await applyFeedLogChange(op, id, data);
       break;
@@ -142,6 +149,55 @@ async function applyChange(change: SyncChange): Promise<void> {
       break;
     default:
       console.warn(`Unknown entity type: ${type}`);
+  }
+}
+
+async function applyBabyChange(
+  op: string,
+  id: number,
+  data: Record<string, unknown> | null,
+): Promise<void> {
+  // Baby deletion is soft delete (archivedAt), not hard delete
+  if (op === 'delete') {
+    // For soft delete, we need the baby data with archivedAt set
+    if (!data) {
+      console.warn(`Baby delete operation missing data for id ${id}`);
+      return;
+    }
+  }
+
+  if (!data) {
+    return;
+  }
+
+  const baby: LocalBaby = {
+    id: data.id as number,
+    name: data.name as string,
+    birthDate: data.birthDate ? new Date(data.birthDate as string) : null,
+    gender: (data.gender as 'male' | 'female' | 'other' | 'unknown' | null) ?? null,
+    birthWeightG: (data.birthWeightG as number | null) ?? null,
+    archivedAt: data.archivedAt ? new Date(data.archivedAt as string) : null,
+    ownerUserId: data.ownerUserId as number,
+    createdAt: new Date(data.createdAt as string),
+    updatedAt: new Date(data.updatedAt as string),
+  };
+
+  await saveBabies([baby]);
+
+  // If babyAccess data is included, save it too
+  if (data.access && Array.isArray(data.access)) {
+    const accessRecords: LocalBabyAccess[] = (data.access as Array<Record<string, unknown>>).map(
+      (acc) => ({
+        oduserId: acc.oduserId as number,
+        babyId: acc.babyId as number,
+        accessLevel: acc.accessLevel as 'owner' | 'editor' | 'viewer',
+        lastAccessedAt: acc.lastAccessedAt ? new Date(acc.lastAccessedAt as string) : null,
+        defaultBaby: acc.defaultBaby as boolean,
+        createdAt: new Date(acc.createdAt as string),
+        updatedAt: new Date(acc.updatedAt as string),
+      })
+    );
+    await saveBabyAccess(accessRecords);
   }
 }
 
@@ -343,7 +399,37 @@ export async function applyServerData(
   serverData: Record<string, unknown>,
 ): Promise<void> {
   // Determine entity type from the data structure
-  if ('method' in serverData) {
+  if ('name' in serverData && 'ownerUserId' in serverData && !('babyId' in serverData)) {
+    // Baby (has 'name' and 'ownerUserId' but no 'babyId' field)
+    const baby: LocalBaby = {
+      id: serverData.id as number,
+      name: serverData.name as string,
+      birthDate: serverData.birthDate ? new Date(serverData.birthDate as string) : null,
+      gender: (serverData.gender as 'male' | 'female' | 'other' | 'unknown' | null) ?? null,
+      birthWeightG: (serverData.birthWeightG as number | null) ?? null,
+      archivedAt: serverData.archivedAt ? new Date(serverData.archivedAt as string) : null,
+      ownerUserId: serverData.ownerUserId as number,
+      createdAt: new Date(serverData.createdAt as string),
+      updatedAt: new Date(serverData.updatedAt as string),
+    };
+    await saveBabies([baby]);
+
+    // If babyAccess data is included, save it too
+    if (serverData.access && Array.isArray(serverData.access)) {
+      const accessRecords: LocalBabyAccess[] = (serverData.access as Array<Record<string, unknown>>).map(
+        (acc) => ({
+          oduserId: acc.oduserId as number,
+          babyId: acc.babyId as number,
+          accessLevel: acc.accessLevel as 'owner' | 'editor' | 'viewer',
+          lastAccessedAt: acc.lastAccessedAt ? new Date(acc.lastAccessedAt as string) : null,
+          defaultBaby: acc.defaultBaby as boolean,
+          createdAt: new Date(acc.createdAt as string),
+          updatedAt: new Date(acc.updatedAt as string),
+        })
+      );
+      await saveBabyAccess(accessRecords);
+    }
+  } else if ('method' in serverData) {
     // Feed log
     const feedLog: LocalFeedLog = {
       id: serverData.id as string,

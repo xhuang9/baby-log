@@ -1,13 +1,16 @@
 # Architecture: True Offline-First Refactor
 
-> **Status:** 🔜 DEFERRED - Performance priority achieved. Full offline deferred.
+> **Status:** ❌ CANCELLED - Architecture changed to require Clerk auth on all app routes
 >
-> **What's Done:** Pages are instant shells reading from IndexedDB.
-> **What's Deferred:** Full offline (Clerk fallback, outbox queue, conflict resolution).
+> **As of 2026-01-18:** The project uses "local-first with required auth" instead of "offline-first"
+> **What's Done:** Pages read from IndexedDB for instant UI, but require authentication
+> **What Changed:** All app routes now protected by Clerk middleware (see `src/proxy.ts`)
 
-## Overview
+## Overview (Historical - Not Implemented)
 
-Convert from server-first (Clerk-protected pages reading from Postgres) to offline-first (public pages reading from IndexedDB, Clerk-protected API sync).
+This document planned to convert from server-first (Clerk-protected pages reading from Postgres) to offline-first (public pages reading from IndexedDB, Clerk-protected API sync).
+
+**What actually happened:** The architecture moved to "local-first with required auth" - pages read from IndexedDB for speed, but ALL routes require Clerk authentication via middleware.
 
 ## Current vs Target Architecture
 
@@ -78,20 +81,26 @@ UI updates immediately (optimistic)
     │   └─ NO → Keep in queue, retry later
 ```
 
-## Security Model
+## Security Model (Historical - Changed)
+
+**Planned approach (NOT implemented):**
+- Dashboard pages would be public (just UI shells)
+- API routes would require Clerk auth
+
+**Actual current approach (as of 2026-01-18):**
 
 | Resource | Protection | Why |
 |----------|-----------|-----|
-| Dashboard pages | None (public) | Just UI shells, no sensitive data in HTML |
+| Dashboard pages | **Clerk auth required** | All routes under `(auth)` protected in `src/proxy.ts` |
 | API /api/sync/* | Clerk auth required | Actual data access |
 | API /api/bootstrap | Clerk auth required | Initial data population |
 | IndexedDB | Browser origin isolation | Per-device, per-user |
 
-**Why this is secure:**
-- Unauthenticated user visits `/overview` → sees empty UI or redirect
-- No server-side data in page HTML
-- All data comes from IndexedDB (which requires prior auth to populate)
-- Sync APIs verify ownership before returning/accepting data
+**Why this changed:**
+- Server actions on pages require `auth()` from Clerk
+- Simplified security model with consistent auth boundary
+- Service worker can still cache pages for performance
+- IndexedDB provides fast data access, but auth is mandatory
 
 ## Files to Change
 

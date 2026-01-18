@@ -1,7 +1,8 @@
 # Offline Authentication Bypass Plan
 
-> **Status: IMPLEMENTED** - Option A (Service Worker Auth Bypass) has been implemented.
-> See "Implementation Status" section at the bottom for details.
+> **Status: REVERTED** - Option A was implemented but later reverted.
+> **As of 2026-01-18**: All app routes now require Clerk middleware. No offline auth bypass.
+> See "Implementation Status" and "Reversal Status" sections at the bottom for details.
 
 ## Problem Statement
 
@@ -449,3 +450,45 @@ To test the offline auth bypass:
 1. Add option to ask user "Keep data on this device?" on sign out
 2. Encrypt sensitive data in IndexedDB
 3. Add visual indicator for session expiration warning (e.g., "Offline access expires in 2 days")
+
+---
+
+## Reversal Status
+
+**Reverted on:** 2026-01-18
+**Reason:** Architecture changed to require Clerk authentication on all app routes
+
+### What Changed Back
+
+The middleware configuration in `src/proxy.ts` was updated to include all app routes in `isProtectedRoute`:
+- `/overview(.*)`
+- `/logs(.*)`
+- `/insights(.*)`
+- `/settings(.*)`
+- `/account(.*)`
+
+### Why It Was Reverted
+
+1. **Server actions require `auth()`** - Pages use server actions that need valid Clerk session
+2. **Simplified security model** - Consistent auth boundary through Clerk middleware
+3. **IndexedDB still used** - For data caching and sync, just not for auth bypass
+4. **Service worker caching** - Can still cache pages for performance, but auth is required for initial load
+
+### Current Architecture
+
+- **All authenticated routes** run through Clerk middleware
+- **IndexedDB** provides fast data access and caching
+- **No offline auth bypass** - Initial page load requires valid authentication
+- **Service worker** can cache assets and pages, but doesn't bypass auth
+
+### Files Still Relevant
+
+The following files from the original implementation are still used, but for different purposes:
+- `src/lib/local-db/helpers/auth-session.ts` - May be used for session tracking
+- `src/components/OfflineBanner.tsx` - Shows offline status
+- IndexedDB tables and helpers - Used for data caching, not auth
+
+### Files No Longer Used for Auth Bypass
+
+- `public/offline-auth-sw.js` - Offline auth bypass logic (may still exist but not used)
+- `public/offline.html` - Offline fallback page (may be used by service worker but not for auth bypass)

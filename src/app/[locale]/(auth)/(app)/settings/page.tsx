@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { PageTitleSetter } from '@/components/navigation/PageTitleSetter';
-import { SettingsContent } from './SettingsContent';
+import { SettingsContent } from './_components/SettingsContent';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;

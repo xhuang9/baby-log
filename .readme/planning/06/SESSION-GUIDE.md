@@ -51,7 +51,7 @@ pnpm build && pnpm start
 - `src/app/[locale]/(auth)/(app)/overview/page.tsx` - Shell only
 - `src/app/[locale]/(auth)/(app)/overview/_components/OverviewContent.tsx` - IndexedDB
 - `src/app/[locale]/(auth)/(app)/settings/page.tsx` - Shell only
-- `src/app/[locale]/(auth)/(app)/settings/SettingsContent.tsx` - IndexedDB
+- `src/app/[locale]/(auth)/(app)/settings/_components/SettingsContent.tsx` - IndexedDB
 - `src/app/[locale]/(auth)/(app)/settings/babies/page.tsx` - Shell only
 - `src/app/[locale]/(auth)/(app)/settings/babies/BabiesManagement.tsx` - IndexedDB
 - `src/app/[locale]/(auth)/(app)/settings/babies/[babyId]/page.tsx` - Shell only

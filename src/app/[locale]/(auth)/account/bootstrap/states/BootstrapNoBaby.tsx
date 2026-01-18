@@ -3,8 +3,7 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { createBaby } from '@/actions/babyActions';
-import { useBabyStore } from '@/stores/useBabyStore';
+import { createBaby } from '@/services/operations';
 
 type BootstrapNoBabyProps = {
   redirectPath: string;
@@ -13,7 +12,6 @@ type BootstrapNoBabyProps = {
 export function BootstrapNoBaby(props: BootstrapNoBabyProps) {
   const { redirectPath } = props;
   const router = useRouter();
-  const setActiveBaby = useBabyStore(state => state.setActiveBaby);
 
   const [name, setName] = useState('My Baby');
   const [birthDate, setBirthDate] = useState('');
@@ -45,10 +43,7 @@ export function BootstrapNoBaby(props: BootstrapNoBabyProps) {
         return;
       }
 
-      // Set baby in store
-      setActiveBaby(result.baby);
-
-      // Redirect to overview
+      // Operation already updated the store, just redirect
       router.replace(redirectPath);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create baby');

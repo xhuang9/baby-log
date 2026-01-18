@@ -1,10 +1,11 @@
 ---
-last_verified_at: 2026-01-17T09:12:39Z
+last_verified_at: 2026-01-18T00:00:00Z
 source_paths:
   - src/app/[locale]/(auth)/layout.tsx
   - src/app/[locale]/(auth)/(center)/layout.tsx
   - src/app/[locale]/(auth)/account/bootstrap/
   - src/config/app.ts
+  - src/proxy.ts
 ---
 
 # Authentication Overview
@@ -14,11 +15,13 @@ Covers Clerk authentication setup with locale-aware configuration, protected rou
 
 ## Scope
 Authentication is handled by Clerk with extensive custom configuration:
+- **All app routes protected**: Middleware in `src/proxy.ts` requires Clerk authentication for all routes under `(auth)`
 - Locale-specific sign-in/sign-up URLs calculated at layout level
 - ClerkProvider wraps only authenticated routes via `(auth)` route group
 - Centered layout for auth pages via nested `(center)` route group
 - Tailwind CSS v4 compatibility via custom CSS layer configuration
 - Custom bootstrap flow (replaces standard post-auth redirect)
+- **Local-first with required auth**: IndexedDB caches data, but authentication is mandatory for all app pages
 
 The auth setup is deeply integrated with the i18n system for URL generation and includes a sophisticated decision-tree flow for account initialization and baby selection.
 

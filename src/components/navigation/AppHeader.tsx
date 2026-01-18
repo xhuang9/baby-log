@@ -1,7 +1,6 @@
 'use client';
 
-import { UserButton } from '@clerk/nextjs';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { useBreadcrumbStore } from '@/stores/useBreadcrumbStore';
@@ -16,18 +15,13 @@ import {
 } from '../ui/breadcrumb';
 import { Button } from '../ui/button';
 import { SidebarTrigger } from '../ui/sidebar';
+import { BabySwitcher } from './BabySwitcher';
 
-const userProfileProps = {
-  appearance: {
-    elements: {
-      cardBox: 'bg-card',
-      card: 'bg-card',
-      footer: 'bg-card',
-    },
-  },
+type AppHeaderProps = {
+  locale: string;
 };
 
-export const AppHeader = () => {
+export const AppHeader = ({ locale }: AppHeaderProps) => {
   const router = useRouter();
   const breadcrumbs = useBreadcrumbStore(state => state.breadcrumbs);
   const pageTitle = useBreadcrumbStore(state => state.pageTitle);
@@ -48,48 +42,61 @@ export const AppHeader = () => {
   };
 
   return (
-    <header className="flex h-12 shrink-0 items-center gap-2 border-b bg-background transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-      <div className="flex w-full items-center px-4">
-        {/* Mobile Layout: Back Button | Title | User Button */}
-        <div className="flex w-full items-center justify-between md:hidden">
-          {/* Left: Back Button or Spacer */}
-          {hasBreadcrumbs
-            ? (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 shrink-0"
-                  onClick={handleMobileBack}
-                  aria-label="back to previous page"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </Button>
-              )
-            : (
-                <div className="h-8 w-8 shrink-0" />
-              )}
+    <header className="flex h-16 shrink-0 items-center gap-2 border-b bg-background transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-16 md:h-14">
+      <div className="flex w-full items-center px-5">
+        {/* Mobile Layout: Back Button | Title | Settings Button */}
+        <div className="relative flex w-full items-center justify-between md:hidden">
+          {/* Left: Back Button or Baby Dropdown */}
+          <div className="z-10 flex-1">
+            {hasBreadcrumbs
+              ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 shrink-0"
+                    onClick={handleMobileBack}
+                    aria-label="back to previous page"
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </Button>
+                )
+              : (
+                  <div className="shrink-0">
+                    <BabySwitcher locale={locale} />
+                  </div>
+                )}
+          </div>
 
-          {/* Center: Page Title */}
+          {/* Center: Page Title (Absolutely Centered) */}
           {pageTitle && (
-            <h1 className="truncate text-sm font-medium">{pageTitle}</h1>
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <h1 className="truncate whitespace-nowrap text-base font-semibold">{pageTitle}</h1>
+            </div>
           )}
 
-          {/* Right: User Button */}
-          <div className="flex shrink-0 items-center gap-2">
-            <UserButton
-              userProfileProps={userProfileProps}
-            />
+          {/* Right: Settings Button */}
+          <div className="z-10 flex flex-1 shrink-0 items-center justify-end gap-2">
+            <Link href="/settings">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 shrink-0"
+                aria-label="Go to settings"
+              >
+                <Settings className="size-6" />
+              </Button>
+            </Link>
           </div>
         </div>
 
-        {/* Desktop Layout: Breadcrumb | User Button */}
+        {/* Desktop Layout: Breadcrumb | Settings Button */}
         <div className="hidden w-full items-center justify-between md:flex">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <SidebarTrigger />
             {hasBreadcrumbs
               ? (
                   <Breadcrumb>
-                    <BreadcrumbList>
+                    <BreadcrumbList className="text-[15px]">
                       {breadcrumbs.map((item, index) => {
                         const isLast = index === breadcrumbs.length - 1;
                         const breadcrumbKey = item.href ? `${item.href}-${item.label}` : item.label;
@@ -123,17 +130,23 @@ export const AppHeader = () => {
                 )
               : pageTitle
                 ? (
-                    <h1 className="text-sm font-medium">{pageTitle}</h1>
+                    <h1 className="text-[15px] font-medium">{pageTitle}</h1>
                   )
                 : null}
           </div>
 
-          {/* Right: Theme Toggle + User Button */}
+          {/* Right: Theme Toggle + Settings Button */}
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <UserButton
-              userProfileProps={userProfileProps}
-            />
+            <Link href="/settings">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Go to settings"
+              >
+                <Settings className="size-5" />
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

@@ -1,12 +1,13 @@
 'use client';
 
-import type { FeedMethod } from '@/actions/feedLogActions';
+import type { FeedMethod } from '@/lib/local-db';
 import { ArrowLeftRightIcon, ChevronLeftIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { createFeedLog } from '@/actions/feedLogActions';
 import { BaseButton } from '@/components/base/BaseButton';
+import { createFeedLog } from '@/services/operations';
 import { AmountSlider } from '@/components/feed/AmountSlider';
 import { TimeSwiper } from '@/components/feed/TimeSwiper';
+import { FormFooter } from '@/components/input-controls/FormFooter';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Label } from '@/components/ui/label';
@@ -281,21 +282,15 @@ export function AddFeedModal({
           )}
         </div>
 
-        <SheetFooter className={`mx-auto w-full max-w-[600px] flex-row gap-4 border-t px-4 pt-4 ${handMode === 'left' ? 'justify-start' : 'justify-end'}`}>
-          <BaseButton
-            variant="secondary"
-            onClick={() => handleOpenChange(false)}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </BaseButton>
-          <BaseButton
-            variant="primary"
-            onClick={handleSubmit}
-            loading={isSubmitting}
-          >
-            Save
-          </BaseButton>
+        <SheetFooter className={`mx-auto w-full max-w-[600px] border-t px-4 pt-4 ${handMode === 'left' ? 'justify-start' : 'justify-end'}`}>
+          <FormFooter
+            onPrimary={handleSubmit}
+            primaryLabel="Save"
+            onSecondary={() => handleOpenChange(false)}
+            secondaryLabel="Cancel"
+            isLoading={isSubmitting}
+            handMode={handMode}
+          />
         </SheetFooter>
       </SheetContent>
     </Sheet>

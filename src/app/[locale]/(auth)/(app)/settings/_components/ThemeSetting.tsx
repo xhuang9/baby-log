@@ -10,7 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { getUIConfig, updateUIConfig } from '@/lib/local-db/helpers/ui-config';
+import { getUIConfig } from '@/lib/local-db/helpers/ui-config';
+import { updateTheme } from '@/services/operations';
 import { useUserStore } from '@/stores/useUserStore';
 
 export function ThemeSetting() {
@@ -77,19 +78,14 @@ export function ThemeSetting() {
 
     setTheme(value);
 
-    if (user?.localId) {
-      updateUIConfig(user.localId, { theme: value })
-        .then(() => {
-          toast.success('Settings updated');
-        })
-        .catch((error) => {
-          console.error('Failed to update IndexedDB:', error);
-          toast.error('Failed to save settings');
-        });
-    }
-
     startTransition(async () => {
-      // Future: enqueue sync mutation to outbox
+      const result = await updateTheme({ theme: value });
+      if (result.success) {
+        toast.success('Settings updated');
+      } else {
+        console.error('Failed to update theme:', result.error);
+        toast.error('Failed to save settings');
+      }
     });
   };
 

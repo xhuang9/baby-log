@@ -44,5 +44,9 @@ This is NOT standard Clerk behavior - it's a custom implementation designed for 
 ### Settings UI
 
 - `.readme/chunks/account.settings-page-ui.md`
-  - Content: Client-first settings page layout and local-first preferences UI
+  - Content: Client-first settings page layout, accordion pattern, and local-first preferences UI
   - Read when: Updating settings layout, adding preference sections, or troubleshooting IndexedDB-backed settings
+
+- `.readme/chunks/account.widget-settings-architecture.md`
+  - Content: Reusable hook pattern for widget-specific settings (TimeSwiper, AmountSlider), debounced vs immediate saves
+  - Read when: Adding new widget settings, refactoring settings components, understanding the shared settings hook pattern, or implementing debounced/immediate save strategies

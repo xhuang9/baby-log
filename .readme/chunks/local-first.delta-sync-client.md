@@ -1,8 +1,9 @@
 ---
-last_verified_at: 2026-01-12T00:00:00Z
+last_verified_at: 2026-01-18T12:33:25Z
 source_paths:
   - src/services/sync-service.ts
   - src/hooks/useSyncScheduler.ts
+conversation_context: "Updated client sync docs after adding baby entity handling in sync-service."
 ---
 
 # Delta Sync Client Service and Hooks
@@ -33,7 +34,7 @@ type SyncResult = {
 **Process**:
 1. Read local cursor: `await getSyncCursor(babyId)`
 2. Fetch from API: `GET /api/sync/pull?babyId=${babyId}&since=${cursor}`
-3. Apply each change: `await applyChange(change)`
+3. Apply each change: `await applyChange(change)` (handles `baby`, `feed_log`, `sleep_log`, `nappy_log`)
 4. Update cursor: `await updateSyncCursor(babyId, data.nextCursor)`
 5. If `hasMore = true`, recursively fetch next batch
 
@@ -90,6 +91,7 @@ async function applyServerData(serverData: Record<string, unknown>): Promise<voi
 
 **Behavior**:
 - Detects entity type from data structure (e.g., `method` field → feed_log)
+- **Baby payloads**: `name` + `ownerUserId` (and no `babyId`) → upsert `babies`; optional `access` array updates `babyAccess`
 - Converts dates from ISO strings to Date objects
 - Upserts to Dexie (overwrites local data)
 
@@ -100,6 +102,8 @@ if (result.status === 'conflict') {
   await applyServerData(result.serverData); // Server wins
 }
 ```
+
+**Note**: Baby sync events currently serialize the baby row only; `baby_access` updates arrive via bootstrap/initial sync, not pull changes.
 
 ### performFullSync(babyIds)
 

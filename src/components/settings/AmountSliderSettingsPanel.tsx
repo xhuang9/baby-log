@@ -3,10 +3,9 @@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { useWidgetSettings } from '@/hooks/useWidgetSettings';
 import { cn } from '@/lib/utils';
 
-type AmountSliderSettingsState = {
+export type AmountSliderSettingsState = {
   minAmount: number;
   defaultAmount: number;
   maxAmount: number;
@@ -15,7 +14,7 @@ type AmountSliderSettingsState = {
   startOnLeft: boolean;
 };
 
-const DEFAULT_SETTINGS: AmountSliderSettingsState = {
+export const DEFAULT_AMOUNT_SLIDER_SETTINGS: AmountSliderSettingsState = {
   minAmount: 0,
   defaultAmount: 120,
   maxAmount: 350,
@@ -24,22 +23,22 @@ const DEFAULT_SETTINGS: AmountSliderSettingsState = {
   startOnLeft: false,
 };
 
-export function AmountSliderSettings() {
-  const { settings, isLoading, updateSetting, saveSetting } = useWidgetSettings<AmountSliderSettingsState>(
-    'amountSlider',
-    DEFAULT_SETTINGS,
-  );
+type AmountSliderSettingsPanelProps = {
+  settings: AmountSliderSettingsState;
+  /** For slider interactions (debounced save) */
+  updateSetting: <K extends keyof AmountSliderSettingsState>(key: K, value: AmountSliderSettingsState[K]) => void;
+  /** For toggle/radio interactions (immediate save) */
+  saveSetting: <K extends keyof AmountSliderSettingsState>(key: K, value: AmountSliderSettingsState[K]) => void;
+  /** Compact mode for popover (no descriptions) */
+  compact?: boolean;
+};
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="h-6 w-32 animate-pulse rounded bg-muted" />
-        <div className="h-10 w-full animate-pulse rounded bg-muted" />
-        <div className="h-10 w-full animate-pulse rounded bg-muted" />
-      </div>
-    );
-  }
-
+export function AmountSliderSettingsPanel({
+  settings,
+  updateSetting,
+  saveSetting,
+  compact = false,
+}: AmountSliderSettingsPanelProps) {
   return (
     <div className="space-y-5">
       {/* Min Amount Slider */}
@@ -62,10 +61,12 @@ export function AmountSliderSettings() {
           max={100}
           step={5}
         />
-        <div className="flex justify-between text-xs text-muted-foreground">
-          <span>0 ml</span>
-          <span>100 ml</span>
-        </div>
+        {!compact && (
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>0 ml</span>
+            <span>100 ml</span>
+          </div>
+        )}
       </div>
 
       {/* Default Amount Slider */}
@@ -88,10 +89,12 @@ export function AmountSliderSettings() {
           max={300}
           step={10}
         />
-        <div className="flex justify-between text-xs text-muted-foreground">
-          <span>50 ml</span>
-          <span>300 ml</span>
-        </div>
+        {!compact && (
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>50 ml</span>
+            <span>300 ml</span>
+          </div>
+        )}
       </div>
 
       {/* Max Amount Slider */}
@@ -114,10 +117,12 @@ export function AmountSliderSettings() {
           max={500}
           step={10}
         />
-        <div className="flex justify-between text-xs text-muted-foreground">
-          <span>200 ml</span>
-          <span>500 ml</span>
-        </div>
+        {!compact && (
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>200 ml</span>
+            <span>500 ml</span>
+          </div>
+        )}
       </div>
 
       {/* Button Increment Radio */}
@@ -182,9 +187,11 @@ export function AmountSliderSettings() {
       <div className="flex items-center justify-between">
         <div className="pr-4">
           <p className="text-sm font-medium">Flip slider direction</p>
-          <p className="text-xs text-muted-foreground">
-            Right hand only: min on right, drag left to increase
-          </p>
+          {!compact && (
+            <p className="text-xs text-muted-foreground">
+              Right hand only: min on right, drag left to increase
+            </p>
+          )}
         </div>
         <Switch
           checked={settings.startOnLeft}

@@ -3,10 +3,9 @@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { useWidgetSettings } from '@/hooks/useWidgetSettings';
 import { cn } from '@/lib/utils';
 
-type TimeSwiperSettingsState = {
+export type TimeSwiperSettingsState = {
   use24Hour: boolean;
   swipeSpeed: number;
   incrementMinutes: number;
@@ -14,7 +13,7 @@ type TimeSwiperSettingsState = {
   showCurrentTime: boolean;
 };
 
-const DEFAULT_SETTINGS: TimeSwiperSettingsState = {
+export const DEFAULT_TIME_SWIPER_SETTINGS: TimeSwiperSettingsState = {
   use24Hour: false,
   swipeSpeed: 0.5,
   incrementMinutes: 30,
@@ -29,31 +28,33 @@ const getIncrementLabel = (mins: number): string => {
   return `${mins / 60}h`;
 };
 
-export function TimeSwiperSettings() {
-  const { settings, isLoading, updateSetting, saveSetting } = useWidgetSettings<TimeSwiperSettingsState>(
-    'timeSwiper',
-    DEFAULT_SETTINGS,
-  );
+type TimeSwiperSettingsPanelProps = {
+  settings: TimeSwiperSettingsState;
+  /** For slider interactions (debounced save) */
+  updateSetting: <K extends keyof TimeSwiperSettingsState>(key: K, value: TimeSwiperSettingsState[K]) => void;
+  /** For toggle/radio interactions (immediate save) */
+  saveSetting: <K extends keyof TimeSwiperSettingsState>(key: K, value: TimeSwiperSettingsState[K]) => void;
+  /** Compact mode for popover (no descriptions) */
+  compact?: boolean;
+};
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="h-6 w-32 animate-pulse rounded bg-muted" />
-        <div className="h-10 w-full animate-pulse rounded bg-muted" />
-        <div className="h-10 w-full animate-pulse rounded bg-muted" />
-      </div>
-    );
-  }
-
+export function TimeSwiperSettingsPanel({
+  settings,
+  updateSetting,
+  saveSetting,
+  compact = false,
+}: TimeSwiperSettingsPanelProps) {
   return (
     <div className="space-y-5">
       {/* 24 Hour Toggle */}
       <div className="flex items-center justify-between">
         <div className="pr-4">
           <p className="text-sm font-medium">24-hour format</p>
-          <p className="text-xs text-muted-foreground">
-            Use 24-hour time display
-          </p>
+          {!compact && (
+            <p className="text-xs text-muted-foreground">
+              Use 24-hour time display
+            </p>
+          )}
         </div>
         <Switch
           checked={settings.use24Hour}
@@ -65,9 +66,11 @@ export function TimeSwiperSettings() {
       <div className="flex items-center justify-between">
         <div className="pr-4">
           <p className="text-sm font-medium">Magnetic feel</p>
-          <p className="text-xs text-muted-foreground">
-            Snappier swipe animation
-          </p>
+          {!compact && (
+            <p className="text-xs text-muted-foreground">
+              Snappier swipe animation
+            </p>
+          )}
         </div>
         <Switch
           checked={settings.magneticFeel}
@@ -79,9 +82,11 @@ export function TimeSwiperSettings() {
       <div className="flex items-center justify-between">
         <div className="pr-4">
           <p className="text-sm font-medium">Show time markers</p>
-          <p className="text-xs text-muted-foreground">
-            Display now, -1hr, +1hr markers
-          </p>
+          {!compact && (
+            <p className="text-xs text-muted-foreground">
+              Display now, -1hr, +1hr markers
+            </p>
+          )}
         </div>
         <Switch
           checked={settings.showCurrentTime}

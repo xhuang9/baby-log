@@ -90,7 +90,7 @@ export function EditBabyContent({ babyId, locale }: EditBabyContentProps) {
   const { baby, access } = babyData;
 
   return (
-    <div className="mx-auto w-fit space-y-6 px-4 pb-20">
+    <div className="mx-auto w-fit max-w-xl min-w-80 space-y-6 px-4 pb-20">
       <EditBabyForm
         babyId={baby.id}
         initialData={{

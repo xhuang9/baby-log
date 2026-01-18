@@ -9,7 +9,15 @@ import { routing } from './lib/i18n-routing';
 const handleI18nRouting = createMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher([
-  // Bootstrap flow - requires auth to get initial data
+  // All app routes require auth for server actions
+  '/overview(.*)',
+  '/:locale/overview(.*)',
+  '/logs(.*)',
+  '/:locale/logs(.*)',
+  '/insights(.*)',
+  '/:locale/insights(.*)',
+  '/settings(.*)',
+  '/:locale/settings(.*)',
   '/account(.*)',
   '/:locale/account(.*)',
 
@@ -19,10 +27,6 @@ const isProtectedRoute = createRouteMatcher([
   '/api/sync(.*)',
   '/:locale/api/sync(.*)',
 ]);
-
-// Dashboard routes - NO Clerk middleware at all
-// These pages render client-side from IndexedDB, no server auth needed
-// Removed from Clerk processing to enable offline support
 
 const isAuthPage = createRouteMatcher([
   '/sign-in(.*)',
@@ -60,8 +64,7 @@ export default async function proxy(
   }
 
   // Clerk keyless mode doesn't work with i18n, this is why we need to run the middleware conditionally
-  // Run Clerk ONLY for: auth pages and protected routes (API, bootstrap)
-  // Dashboard pages skip Clerk entirely to enable offline support
+  // Run Clerk for: auth pages and all protected app routes
   if (isAuthPage(request) || isProtectedRoute(request)) {
     return clerkMiddleware(async (auth, req) => {
       // Protect API and bootstrap routes

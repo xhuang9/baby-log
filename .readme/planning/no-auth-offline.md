@@ -1,10 +1,20 @@
 # No-Auth Offline Mode (Local-Only Access)
 
-## Goal
+**Status:** ❌ NOT IMPLEMENTED - Architecture Went Different Direction
+
+## Goal (Historical)
 Allow users to open the app and interact with data already stored in IndexedDB without logging in. Sync with the server should only happen when the user is online and authenticated.
 
-## TL;DR
-This is doable, but it requires changing routing/auth assumptions and moving key pages to client-side data reads (Dexie). The core idea is: public app shell + local data hydration + auth-gated sync.
+## What Actually Happened
+
+This approach was **NOT PURSUED**. As of 2026-01-18, the project uses a "local-first with required auth" architecture:
+- All app routes require Clerk middleware authentication (see `src/proxy.ts`)
+- IndexedDB is used for data caching, not auth bypass
+- Server actions on pages need `auth()` from Clerk
+- Service worker caching provides performance benefits, but authentication is still required
+
+## Original TL;DR (For Historical Context)
+This would have been doable, but required changing routing/auth assumptions and moving key pages to client-side data reads (Dexie). The core idea was: public app shell + local data hydration + auth-gated sync.
 
 ---
 

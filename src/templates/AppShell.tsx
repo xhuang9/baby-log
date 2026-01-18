@@ -28,7 +28,7 @@ export const AppShell = ({ children, locale, variant = 'default' }: AppShellProp
           <OfflineBanner />
           <AppSidebar locale={locale} />
           <SidebarInset>
-            <AppHeader />
+            <AppHeader locale={locale} />
 
             <main className="flex flex-1 flex-col gap-4 overflow-auto bg-background p-4 md:pb-4">
               {variant === 'unwrapped'

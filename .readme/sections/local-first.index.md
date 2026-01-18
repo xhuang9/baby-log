@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-17T13:44:08Z
+last_verified_at: 2026-01-18T12:33:25Z
 source_paths:
   - src/lib/local-db/
   - src/lib/query-keys.ts
@@ -22,23 +22,24 @@ source_paths:
   - src/components/OfflineBanner.tsx
   - src/components/SyncProvider.tsx
   - src/templates/AppShell.tsx
-  - public/offline-auth-sw.js
-  - public/offline.html
+  - src/proxy.ts
 ---
 
 # Local-First Architecture
 
 ## Purpose
-Documents the local-first architecture foundation using Dexie (IndexedDB) as the immediate read model and TanStack Query as an ephemeral network scheduler. This architecture enables offline-first PWA functionality and prepares for future iOS app development.
+Documents the local-first architecture foundation using Dexie (IndexedDB) as the immediate read model and TanStack Query as an ephemeral network scheduler. This architecture enables instant UI updates and prepares for future iOS app development.
 
 ## Scope
 The local-first architecture addresses three key concerns:
 
 1. **Instant UI Updates**: IndexedDB serves as the immediate read model, eliminating server round-trip delays
-2. **Offline Support**: Mutations are stored in an outbox and replayed when connectivity returns
+2. **Data Caching**: Mutations are cached locally and synchronized with server
 3. **Conflict Resolution**: Last-Write-Wins (LWW) strategy avoids complex merge logic
 
-**Critical Principle**: Server (Postgres) remains the canonical truth. Client IndexedDB is a synchronized cache, not the source of truth.
+**Critical Principles**:
+- Server (Postgres) remains the canonical truth. Client IndexedDB is a synchronized cache, not the source of truth.
+- **Authentication required**: All app routes require Clerk middleware (see `src/proxy.ts`). IndexedDB is for caching, not auth bypass.
 
 ## Key Architectural Decisions
 
@@ -95,6 +96,10 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
   - Content: Client-side sync service and React hooks (useSyncScheduler, useMultiBabySync) for automatic polling and outbox flushing
   - Read when: Implementing sync UI, adding automatic sync to pages, or understanding client sync patterns
 
+- `.readme/chunks/local-first.operations-layer.md`
+  - Content: Operations layer for local-first mutations (IndexedDB write + outbox enqueue + store updates)
+  - Read when: Moving UI writes into services, adding new mutation flows, or debugging outbox-backed operations
+
 - `.readme/chunks/local-first.ui-config-storage.md`
   - Content: Persistent storage system for user UI preferences (theme, hand mode, TimeSwiper settings) with per-key timestamp tracking for LWW merge
   - Read when: Implementing settings UI, working with user preferences, understanding TimeSwiper persistence, or debugging "settings not loading" bug
@@ -122,8 +127,8 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
 ### Offline & Conflict Handling
 
 - `.readme/chunks/local-first.offline-auth-bypass.md`
-  - Content: Session marker in IndexedDB for offline authentication bypass, service worker navigation interception, and OfflineBanner UI component
-  - Read when: Understanding offline auth flow, implementing session management, or working with offline UI indicators
+  - Content: **DEPRECATED** - Historical documentation of offline auth bypass pattern (no longer in use)
+  - Read when: Understanding architectural history or why offline auth bypass was removed
 
 - `.readme/chunks/local-first.outbox-pattern.md`
   - Content: Outbox table for offline mutation replay with idempotent server writes

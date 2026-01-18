@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-17T09:12:39Z
+last_verified_at: 2026-01-18T00:00:00Z
 source_paths:
   - .readme/sections/
 ---
@@ -8,7 +8,7 @@ source_paths:
 
 This boilerplate is a production-ready Next.js 16+ starter with App Router, TypeScript, Tailwind CSS 4, DrizzleORM, Clerk authentication, and comprehensive testing. It emphasizes developer experience with strict type safety, automated code quality, and integrated monitoring.
 
-This project implements a local-first architecture with Dexie (IndexedDB) as the immediate read model and TanStack Query as an ephemeral network scheduler, enabling offline-first PWA functionality.
+This project implements a local-first architecture with Dexie (IndexedDB) as the immediate read model and TanStack Query as an ephemeral network scheduler. **All authenticated routes require Clerk middleware** - IndexedDB provides fast cached data access, but authentication is mandatory for all app pages.
 
 ## Documentation Sections
 
@@ -25,8 +25,8 @@ Read when: Working with database schema, migrations, DrizzleORM queries, or data
 Read when: Adding translations, working with locale-aware routes, or integrating i18n with authentication.
 
 ### `.readme/sections/authentication.index.md`
-**Clerk authentication with locale-aware configuration and custom account resolution**
-Read when: Working with Clerk authentication setup, protected routes, or understanding auth-to-account flow integration.
+**Clerk authentication with locale-aware configuration and required auth for all app routes**
+Read when: Working with Clerk authentication setup, protected routes (all routes under `(auth)` are protected via `src/proxy.ts`), or understanding auth-to-account flow integration.
 
 ### `.readme/sections/account-management.index.md`
 **Unified bootstrap post-auth flow, baby multi-tenancy, and sharing system**
@@ -41,8 +41,8 @@ Read when: Building or modifying the baby list interface, implementing baby edit
 Read when: Implementing or modifying feed tracking, working with breast/bottle feeds, understanding amount estimation, or adding new activity types.
 
 ### `.readme/sections/local-first.index.md`
-**Local-first architecture with Dexie, TanStack Query, delta sync, and offline-first patterns**
-Read when: Working with IndexedDB, implementing offline features, understanding cursor-based delta sync, working with sync endpoints (pull/push), using sync hooks (useSyncScheduler), adding new log types, debugging sync status, setting up outbox pattern, or preparing for PWA/iOS development.
+**Local-first architecture with Dexie, TanStack Query, delta sync, and required authentication**
+Read when: Working with IndexedDB data caching, understanding cursor-based delta sync, working with sync endpoints (pull/push), using sync hooks (useSyncScheduler), adding new log types, debugging sync status, setting up outbox pattern, or preparing for PWA/iOS development. **Note:** All app routes require Clerk authentication - IndexedDB is for caching, not auth bypass.
 
 ### `.readme/sections/configuration.index.md`
 **Centralized library configs and environment variables**

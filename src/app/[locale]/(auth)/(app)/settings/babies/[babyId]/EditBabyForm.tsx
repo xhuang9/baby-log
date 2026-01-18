@@ -4,9 +4,9 @@ import type { HandMode } from '@/lib/local-db/types/entities';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { updateBaby } from '@/actions/babyActions';
+import { FormFooter } from '@/components/input-controls/FormFooter';
 import { getUIConfig } from '@/lib/local-db/helpers/ui-config';
-import { cn } from '@/lib/utils';
+import { updateBabyProfile } from '@/services/operations';
 import { useUserStore } from '@/stores/useUserStore';
 
 export function EditBabyForm(props: {
@@ -95,7 +95,7 @@ export function EditBabyForm(props: {
     }
 
     try {
-      const result = await updateBaby(babyId, {
+      const result = await updateBabyProfile(babyId, {
         name: name.trim(),
         birthDate: birthDate ? new Date(birthDate) : null,
         gender: gender === 'unknown' ? null : gender,
@@ -109,7 +109,7 @@ export function EditBabyForm(props: {
         return;
       }
 
-      // Redirect back to settings
+      // Operation already updated IndexedDB and stores, just redirect
       router.push(redirectPath);
       router.refresh();
     } catch (err) {
@@ -136,7 +136,7 @@ export function EditBabyForm(props: {
           type="text"
           value={name}
           onChange={e => setName(e.target.value)}
-          className="mt-1.5 w-80 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+          className="mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
           placeholder="Enter baby's name"
           required
         />
@@ -216,7 +216,7 @@ export function EditBabyForm(props: {
                 className="mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
                 placeholder="e.g., Mom, Dad, Parent"
               />
-              <p className="mt-1 text-xs text-wrap text-muted-foreground">
+              <p className="mt-1 w-full text-xs text-wrap text-muted-foreground">
                 This label will be used when sharing the baby with others
               </p>
             </div>
@@ -224,27 +224,14 @@ export function EditBabyForm(props: {
         )}
       </div>
 
-      <div className={cn(
-        'flex gap-3',
-        handMode === 'left' ? 'flex-row justify-start' : 'flex-row-reverse justify-start',
-      )}
-      >
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded-md bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
-        >
-          {isSubmitting ? 'Saving...' : 'Save Changes'}
-        </button>
-        <button
-          type="button"
-          onClick={() => router.push(redirectPath)}
-          disabled={isSubmitting}
-          className="rounded-md border border-input bg-background px-6 py-2.5 text-sm font-medium ring-offset-background transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
-        >
-          Back
-        </button>
-      </div>
+      <FormFooter
+        primaryType="submit"
+        primaryLabel={isSubmitting ? 'Saving...' : 'Save Changes'}
+        onSecondary={() => router.push(redirectPath)}
+        secondaryLabel="Back"
+        isLoading={isSubmitting}
+        handMode={handMode}
+      />
     </form>
   );
 }

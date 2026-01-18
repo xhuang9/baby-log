@@ -4,10 +4,9 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Baby, Check, ChevronRight, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { setDefaultBaby } from '@/actions/babyActions';
 import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { localDb } from '@/lib/local-db/database';
-import { useBabyStore } from '@/stores/useBabyStore';
+import { setDefaultBaby } from '@/services/operations';
 import { getI18nPath } from '@/utils/Helpers';
 
 type BabyInfo = {
@@ -62,7 +61,6 @@ export function BabiesManagement(props: {
 
   const currentDefaultId = userData?.defaultBabyId ?? null;
   const router = useRouter();
-  const setActiveBaby = useBabyStore(state => state.setActiveBaby);
   const [switchingTo, setSwitchingTo] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -79,10 +77,7 @@ export function BabiesManagement(props: {
         return;
       }
 
-      // Set baby in store
-      setActiveBaby(result.baby);
-
-      // Refresh the page
+      // Operation already updated the store, just refresh
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to switch baby');

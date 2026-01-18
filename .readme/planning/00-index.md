@@ -15,6 +15,7 @@ This folder contains implementation plans for future features. Each document is 
 | 01 | [State Management & Sync](./01-state-management-sync.md) | High | None |
 | 02 | [Offline-First Architecture](./02-offline-first-architecture.md) | High | 01 |
 | 03 | [Sync API Endpoints](./03-sync-api-endpoints.md) | High | 01 |
+| 12 | [Operations Layer (Service-First Mutations)](./12-operations-layer.md) | Medium | 01, 02, 03 |
 
 ### Core Features
 
@@ -56,6 +57,7 @@ This folder contains implementation plans for future features. Each document is 
 ### Medium Priority
 - **05-ui-config-sync.md** - UI settings storage, merge, sync, and settings layout
 - **07-insights-dashboard.md** - Charts with shadcn/ui
+- **12-operations-layer.md** - Service-first operations layer for UI mutations
 
 ### Low Priority
 - **10-ios-api.md** - Non-localized API for mobile app

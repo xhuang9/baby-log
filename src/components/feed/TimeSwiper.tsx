@@ -1,17 +1,14 @@
 'use client';
 
-import { MinusIcon, PlusIcon, Settings2Icon, XIcon } from 'lucide-react';
+import type { TimeSwiperSettingsState } from '@/components/settings';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { ButtonStack } from '@/components/input-controls/ButtonStack';
+import { SettingsPopoverWrapper } from '@/components/input-controls/SettingsPopoverWrapper';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Slider } from '@/components/ui/slider';
-import { Switch } from '@/components/ui/switch';
+  DEFAULT_TIME_SWIPER_SETTINGS,
+  TimeSwiperSettingsPanel,
+
+} from '@/components/settings';
 import { getUIConfig, updateUIConfig } from '@/lib/local-db/helpers/ui-config';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores/useUserStore';
@@ -26,23 +23,6 @@ type TimeSwiperProps = {
 // Timeline constants
 const HOUR_WIDTH = 100; // pixels per hour
 const TOTAL_WIDTH = HOUR_WIDTH * 24;
-
-// Default settings
-type TimeSwiperSettings = {
-  use24Hour: boolean;
-  swipeSpeed: number; // 0.1 to 3.0, default 0.5
-  incrementMinutes: number; // 5, 15, 30, 60, 120
-  magneticFeel: boolean;
-  showCurrentTime: boolean;
-};
-
-const DEFAULT_SETTINGS: TimeSwiperSettings = {
-  use24Hour: false,
-  swipeSpeed: 0.5,
-  incrementMinutes: 30,
-  magneticFeel: false,
-  showCurrentTime: true,
-};
 
 // Physics constants
 const MAX_ANIMATION_DURATION = 3000; // 3 seconds max
@@ -73,8 +53,8 @@ export function TimeSwiper({
   // State for rendering
   const [offset, setOffset] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
-  const [settings, setSettings] = useState<TimeSwiperSettings>(DEFAULT_SETTINGS);
-  const [savedSettings, setSavedSettings] = useState<TimeSwiperSettings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<TimeSwiperSettingsState>(DEFAULT_TIME_SWIPER_SETTINGS);
+  const [savedSettings, setSavedSettings] = useState<TimeSwiperSettingsState>(DEFAULT_TIME_SWIPER_SETTINGS);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -97,11 +77,11 @@ export function TimeSwiper({
 
         if (mounted) {
           const loadedSettings = {
-            use24Hour: config.data.timeSwiper?.use24Hour ?? DEFAULT_SETTINGS.use24Hour,
-            swipeSpeed: config.data.timeSwiper?.swipeSpeed ?? DEFAULT_SETTINGS.swipeSpeed,
-            incrementMinutes: config.data.timeSwiper?.incrementMinutes ?? DEFAULT_SETTINGS.incrementMinutes,
-            magneticFeel: config.data.timeSwiper?.magneticFeel ?? DEFAULT_SETTINGS.magneticFeel,
-            showCurrentTime: config.data.timeSwiper?.showCurrentTime ?? DEFAULT_SETTINGS.showCurrentTime,
+            use24Hour: config.data.timeSwiper?.use24Hour ?? DEFAULT_TIME_SWIPER_SETTINGS.use24Hour,
+            swipeSpeed: config.data.timeSwiper?.swipeSpeed ?? DEFAULT_TIME_SWIPER_SETTINGS.swipeSpeed,
+            incrementMinutes: config.data.timeSwiper?.incrementMinutes ?? DEFAULT_TIME_SWIPER_SETTINGS.incrementMinutes,
+            magneticFeel: config.data.timeSwiper?.magneticFeel ?? DEFAULT_TIME_SWIPER_SETTINGS.magneticFeel,
+            showCurrentTime: config.data.timeSwiper?.showCurrentTime ?? DEFAULT_TIME_SWIPER_SETTINGS.showCurrentTime,
           };
           setSettings(loadedSettings);
           setSavedSettings(loadedSettings);
@@ -143,6 +123,15 @@ export function TimeSwiper({
 
   // Check if settings have changed
   const isDirty = JSON.stringify(settings) !== JSON.stringify(savedSettings);
+
+  // Settings handlers for the panel
+  const updateSetting = useCallback(<K extends keyof TimeSwiperSettingsState>(key: K, value: TimeSwiperSettingsState[K]) => {
+    setSettings(s => ({ ...s, [key]: value }));
+  }, []);
+
+  const saveSetting = useCallback(<K extends keyof TimeSwiperSettingsState>(key: K, value: TimeSwiperSettingsState[K]) => {
+    setSettings(s => ({ ...s, [key]: value }));
+  }, []);
 
   // Save settings to IndexedDB (or just close if no changes)
   const handleSave = useCallback(async () => {
@@ -426,178 +415,44 @@ export function TimeSwiper({
   // Calculate current time position for "now" indicator
   const nowOffset = dateToOffset(currentTime);
 
-  // Increment label for display
-  const getIncrementLabel = (mins: number): string => {
-    if (mins < 60) {
-      return `${mins}m`;
-    }
-    return `${mins / 60}h`;
-  };
-
-  // Button stack JSX (not a component to avoid remounting on state changes)
-  const buttonStack = (
-    <div className="flex flex-col gap-1">
-      <Popover open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <PopoverTrigger
-          render={(
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-10 w-10 rounded-xl border-border/50 bg-muted/30 text-foreground hover:bg-muted/50"
-            >
-              <Settings2Icon className="h-4 w-4" />
-            </Button>
-          )}
-        />
-        <PopoverContent className="w-80 p-5" side={buttonsOnLeft ? 'right' : 'left'}>
-          <div className="space-y-5">
-            <div className="flex items-center justify-between">
-              <h4 className="font-semibold text-foreground">Time Picker Settings</h4>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                onClick={() => setSettingsOpen(false)}
-              >
-                <XIcon className="h-4 w-4" />
-              </Button>
-            </div>
-
-            {/* 24 Hour Toggle */}
-            <div className="flex items-center justify-between">
-              <Label htmlFor="use24hour" className="text-sm text-muted-foreground">24-hour format</Label>
-              <Switch
-                id="use24hour"
-                checked={settings.use24Hour}
-                onCheckedChange={checked =>
-                  setSettings(s => ({ ...s, use24Hour: checked }))}
-              />
-            </div>
-
-            {/* Magnetic Feel Toggle */}
-            <div className="flex items-center justify-between">
-              <Label htmlFor="magnetic" className="text-sm text-muted-foreground">Magnetic feel</Label>
-              <Switch
-                id="magnetic"
-                checked={settings.magneticFeel}
-                onCheckedChange={checked =>
-                  setSettings(s => ({ ...s, magneticFeel: checked }))}
-              />
-            </div>
-
-            {/* Show Current Time Toggle */}
-            <div className="flex items-center justify-between">
-              <Label htmlFor="showCurrentTime" className="text-sm text-muted-foreground">Show time markers</Label>
-              <Switch
-                id="showCurrentTime"
-                checked={settings.showCurrentTime}
-                onCheckedChange={checked =>
-                  setSettings(s => ({ ...s, showCurrentTime: checked }))}
-              />
-            </div>
-
-            {/* Swipe Speed */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label className="text-sm text-muted-foreground">Swipe speed</Label>
-                <span className="text-xs text-muted-foreground/70">
-                  {settings.swipeSpeed.toFixed(1)}
-                  x
-                </span>
-              </div>
-              <Slider
-                value={[settings.swipeSpeed]}
-                onValueChange={(value) => {
-                  const newValue = Array.isArray(value) ? value[0] : value;
-                  setSettings(s => ({ ...s, swipeSpeed: newValue ?? 0.5 }));
-                }}
-                min={0.1}
-                max={3.0}
-                step={0.1}
-              />
-              <div className="flex justify-between text-xs text-muted-foreground/60">
-                <span>Slower</span>
-                <span>Faster</span>
-              </div>
-            </div>
-
-            {/* Increment Options */}
-            <div className="space-y-2">
-              <Label className="text-sm text-muted-foreground">+/- button increment</Label>
-              <RadioGroup
-                value={settings.incrementMinutes.toString()}
-                onValueChange={val =>
-                  setSettings(s => ({ ...s, incrementMinutes: Number.parseInt(String(val)) }))}
-                className="grid grid-cols-6 gap-1"
-              >
-                {[1, 5, 15, 30, 60, 120].map(mins => (
-                  <label
-                    key={mins}
-                    className={cn(
-                      'relative flex cursor-pointer items-center justify-center rounded-lg border px-2 py-1.5 text-xs transition-colors',
-                      settings.incrementMinutes === mins
-                        ? 'border-primary bg-primary/10'
-                        : 'border-border hover:bg-muted/50',
-                    )}
-                  >
-                    <RadioGroupItem value={mins.toString()} className="absolute opacity-0" />
-                    <span>{getIncrementLabel(mins)}</span>
-                  </label>
-                ))}
-              </RadioGroup>
-            </div>
-
-            {/* Save/Cancel Buttons */}
-            <div className="flex gap-2 pt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCancel}
-                disabled={isSaving}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-              <Button
-                size="sm"
-                onClick={handleSave}
-                disabled={isSaving}
-                className="flex-1"
-              >
-                {isSaving ? 'Saving...' : 'Save'}
-              </Button>
-            </div>
-          </div>
-        </PopoverContent>
-      </Popover>
-      <Button
-        variant="outline"
-        size="icon"
-        className="h-10 w-10 rounded-xl border-border/50 bg-muted/30 text-foreground hover:bg-muted/50"
-        onClick={() => adjustTime(1)}
-      >
-        <PlusIcon className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="outline"
-        size="icon"
-        className="h-10 w-10 rounded-xl border-border/50 bg-muted/30 text-foreground hover:bg-muted/50"
-        onClick={() => adjustTime(-1)}
-      >
-        <MinusIcon className="h-4 w-4" />
-      </Button>
-    </div>
-  );
-
   // Calculate height to match 3 stacked buttons (3 * 40px + 2 * 4px gap = 128px)
   const swiperHeight = 128;
+
+  // Settings popover content
+  const settingsPopoverContent = (
+    <SettingsPopoverWrapper
+      title="Time Picker Settings"
+      onClose={() => setSettingsOpen(false)}
+      onSave={handleSave}
+      onCancel={handleCancel}
+      isDirty={isDirty}
+      isSaving={isSaving}
+      handMode={handMode}
+    >
+      <TimeSwiperSettingsPanel
+        settings={settings}
+        updateSetting={updateSetting}
+        saveSetting={saveSetting}
+        compact
+      />
+    </SettingsPopoverWrapper>
+  );
 
   return (
     <div className={cn('select-none', className)}>
       {/* Main Layout */}
       <div className="flex items-stretch gap-2">
         {/* Buttons - Left side */}
-        {buttonsOnLeft && buttonStack}
+        {buttonsOnLeft && (
+          <ButtonStack
+            onIncrement={() => adjustTime(1)}
+            onDecrement={() => adjustTime(-1)}
+            position="left"
+            settingsContent={settingsPopoverContent}
+            settingsOpen={settingsOpen}
+            onSettingsOpenChange={setSettingsOpen}
+          />
+        )}
 
         {/* Timeline Swiper Container */}
         <div className="relative flex-1 overflow-visible pb-3">
@@ -754,7 +609,16 @@ export function TimeSwiper({
         </div>
 
         {/* Buttons - Right side */}
-        {!buttonsOnLeft && buttonStack}
+        {!buttonsOnLeft && (
+          <ButtonStack
+            onIncrement={() => adjustTime(1)}
+            onDecrement={() => adjustTime(-1)}
+            position="right"
+            settingsContent={settingsPopoverContent}
+            settingsOpen={settingsOpen}
+            onSettingsOpenChange={setSettingsOpen}
+          />
+        )}
       </div>
     </div>
   );

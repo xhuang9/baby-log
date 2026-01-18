@@ -78,5 +78,5 @@ case 'SYNC_SUCCESS': {
 ## Related Systems
 
 - `.readme/chunks/local-first.ui-config-storage.md` - UI config persistence returned by bootstrap.
-- `.readme/chunks/local-first.offline-auth-bypass.md` - Offline auth session marker saved during bootstrap.
 - `.readme/chunks/performance.instant-navigation.md` - Client-first rendering after bootstrap.
+- `src/proxy.ts` - Middleware configuration protecting `/account/bootstrap` route with Clerk auth.

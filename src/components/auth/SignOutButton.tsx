@@ -1,32 +1,16 @@
 'use client';
 
 import { SignOutButton as ClerkSignOutButton } from '@clerk/nextjs';
-import { useBabyStore } from '@/stores/useBabyStore';
-import { useUserStore } from '@/stores/useUserStore';
+import { signOutCleanup } from '@/services/operations';
 
 export function SignOutButton(props: {
   children?: React.ReactNode;
 }) {
-  const clearUser = useUserStore(state => state.clearUser);
-  const clearActiveBaby = useBabyStore(state => state.clearActiveBaby);
-
   const handleSignOut = async () => {
-    // Clear Zustand stores (which also clear sessionStorage)
-    clearUser();
-    clearActiveBaby();
-
-    // Clear any other sessionStorage keys
-    if (typeof window !== 'undefined') {
-      sessionStorage.removeItem('baby-log:init-step');
-    }
-
-    // Clear auth session marker for offline access
-    // This prevents offline access after explicit sign out
-    try {
-      const { clearAuthSession } = await import('@/lib/local-db');
-      await clearAuthSession();
-    } catch (error) {
-      console.error('Failed to clear auth session:', error);
+    // Use centralized cleanup operation
+    const result = await signOutCleanup();
+    if (!result.success) {
+      console.error('Failed to cleanup on sign out:', result.error);
     }
   };
 

@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-16T00:00:00Z
+last_verified_at: 2026-01-18T12:33:25Z
 source_paths:
   - src/lib/local-db/types/entities.ts
   - src/lib/local-db/helpers/ui-config.ts
@@ -10,6 +10,13 @@ source_paths:
   - src/components/feed/AmountSlider.tsx
   - src/components/SyncProvider.tsx
   - src/stores/useUserStore.ts
+  - src/hooks/useWidgetSettings.ts
+  - src/app/[locale]/(auth)/(app)/settings/_components/TimeSwiperSettings.tsx
+  - src/app/[locale]/(auth)/(app)/settings/_components/AmountSliderSettings.tsx
+  - src/app/[locale]/(auth)/(app)/settings/_components/ThemeSetting.tsx
+  - src/app/[locale]/(auth)/(app)/settings/_components/HandPreferenceSetting.tsx
+  - src/services/operations/ui-config.ts
+conversation_context: "Updated UI config storage docs after settings component refactor and operations-layer adoption for theme/hand."
 ---
 
 # UI Config Storage & Sync
@@ -272,11 +279,16 @@ useEffect(() => {
 ```typescript
 // Immediate local update (local-first)
 const handleChange = async (newValue: HandMode) => {
-  await updateUIConfig(userId, { handMode: newValue });
-
-  // TODO: Enqueue outbox mutation for server sync
+  const result = await updateHandMode({ handMode: newValue });
+  if (!result.success) {
+    console.error(result.error);
+  }
 };
 ```
+
+**Current usage split**:
+- Theme/hand selectors call operations (`updateTheme`, `updateHandMode`).
+- Widget settings (`useWidgetSettings`, `TimeSwiper`, `AmountSlider`) still call `updateUIConfig` directly.
 
 ## Sync Flow (Future)
 
@@ -291,9 +303,9 @@ When sync API is implemented:
 ## Integration Points
 
 ### Settings Page
-- `src/app/[locale]/(auth)/(app)/settings/HandPreferenceSetting.tsx`: Hand mode selector (reads/writes UI config)
-- `src/app/[locale]/(auth)/(app)/settings/ThemeSetting.tsx`: Theme selector (planned)
-- `src/app/[locale]/(auth)/(app)/settings/SettingsContent.tsx`: Layout with all settings
+- `src/app/[locale]/(auth)/(app)/settings/_components/HandPreferenceSetting.tsx`: Hand mode selector (uses `updateHandMode`)
+- `src/app/[locale]/(auth)/(app)/settings/_components/ThemeSetting.tsx`: Theme selector (uses `updateTheme`)
+- `src/app/[locale]/(auth)/(app)/settings/_components/SettingsContent.tsx`: Layout with all settings
 
 ### Dev Palette Page
 - `src/app/[locale]/dev/page.tsx`: Development-only page for previewing activity color palette and tiles
@@ -391,10 +403,12 @@ const handleChange = async (newValue: boolean) => {
 
 ### Examples in Codebase
 
-- **timeSwiper**: Time picker settings (use24Hour, swipeSpeed, incrementMinutes, magneticFeel, showCurrentTime) - see `src/components/feed/TimeSwiper.tsx`
-- **amountSlider**: Bottle amount slider settings (minAmount, maxAmount, increment, dragStep, startOnLeft) - see `src/components/feed/AmountSlider.tsx`
+- **timeSwiper**: Time picker settings (use24Hour, swipeSpeed, incrementMinutes, magneticFeel, showCurrentTime) - managed by `TimeSwiperSettings` component using `useWidgetSettings` hook
+- **amountSlider**: Bottle amount slider settings (minAmount, defaultAmount, maxAmount, increment, dragStep, startOnLeft) - managed by `AmountSliderSettings` component using `useWidgetSettings` hook
 - **useMetric**: Global unit preference (ml vs oz) - shared by AmountSlider and future measurement components
 - **handMode**: Global hand preference (left/right) - affects layout of TimeSwiper, AmountSlider, and AddFeedModal footer
+
+**Widget Settings Architecture**: All widget settings now use the shared `useWidgetSettings` hook pattern. See `.readme/chunks/account.widget-settings-architecture.md` for implementation details.
 
 ### Global vs Scoped Settings
 
@@ -405,6 +419,7 @@ Choose global for settings that impact the entire app, scoped for feature-specif
 
 ## Related
 
+- `.readme/chunks/account.widget-settings-architecture.md` - Shared hook pattern for widget settings (NEW - implements useWidgetSettings for TimeSwiper/AmountSlider)
 - `.readme/chunks/local-first.store-hydration-pattern.md` - Store hydration flow (required for UI config to work)
 - `.readme/chunks/local-first.outbox-pattern.md` - For future server sync
 - `.readme/planning/05-ui-config-sync.md` - Implementation plan with phases

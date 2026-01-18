@@ -1,15 +1,16 @@
 ---
-last_verified_at: 2026-01-17T09:12:39Z
+last_verified_at: 2026-01-18T12:33:25Z
 source_paths:
   - src/models/Schema.ts
   - src/app/[locale]/api/sync/pull/route.ts
   - src/app/[locale]/api/sync/push/route.ts
+conversation_context: "Updated delta sync architecture docs after adding baby entity support to sync push."
 ---
 
 # Delta Sync Architecture
 
 > Status: active
-> Last updated: 2026-01-17
+> Last updated: 2026-01-18
 > Owner: Core
 
 ## Purpose
@@ -51,11 +52,13 @@ const changes = await db
 | `since` | `0` | Cursor for pull requests; uses `sync_events.id`.
 | `limit` | `100` | Pull batch size (max `500`).
 | `sync_op_enum` | `create/update/delete` | Allowed ops recorded in `sync_events`.
+| `entityType` | `baby/feed_log/sleep_log/nappy_log` | Entity types emitted into `sync_events` and accepted by push.
 
 ## Gotchas / Constraints
 
 - **Access enforcement**: Pull and push endpoints both verify baby access before processing.
 - **Payload format**: `sync_events.payload` stores JSON strings; consumers must `JSON.parse`.
+- **Baby access not included**: Baby sync events serialize the baby row only; `baby_access` rows are created server-side but not emitted in the payload.
 
 ## Testing Notes
 

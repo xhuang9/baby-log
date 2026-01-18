@@ -1,15 +1,23 @@
 # Task 10: Update Middleware to Unprotect Dashboard Routes
 
-**Status:** ✅ Complete (done in performance fix session)
+**Status:** ❌ REVERTED - Architecture Changed
 
-## Goal
+## Goal (Historical)
 
 Remove dashboard page routes from Clerk protection while keeping API routes protected.
 
-## What Was Done
+## What Changed
 
-Middleware now completely skips Clerk for dashboard routes (`/overview`, `/settings`, `/logs`, `/insights`).
-Only API routes and auth pages go through Clerk.
+This approach was **REVERTED**. As of 2026-01-18, all app routes now require Clerk middleware authentication.
+
+See `src/proxy.ts` - all dashboard routes are back in the `isProtectedRoute` matcher:
+- `/overview(.*)`
+- `/logs(.*)`
+- `/insights(.*)`
+- `/settings(.*)`
+- `/account(.*)`
+
+The project shifted from "offline-first with auth bypass" to "local-first with required auth".
 
 ## File to Edit
 
@@ -52,12 +60,13 @@ const isProtectedRoute = createRouteMatcher([
 - [ ] Keep API routes and `/account` protected
 - [ ] Verify `/api/sync/*` routes are still listed
 
-## Why This Is Safe
+## Why This Was Reverted
 
-1. Dashboard pages will only show data from IndexedDB
-2. IndexedDB can only be populated through authenticated API calls
-3. No server-side data fetching in page components
-4. API routes remain fully protected
+The original offline-first approach had complications:
+1. Server actions on pages require `auth()` from Clerk
+2. Simplified security model - consistent auth boundary
+3. Service worker can still cache pages for performance
+4. IndexedDB remains for data caching, just not auth bypass
 
 ## Validation
 

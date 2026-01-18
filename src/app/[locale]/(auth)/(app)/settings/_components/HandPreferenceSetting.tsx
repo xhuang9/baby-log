@@ -10,8 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { getUIConfig, updateUIConfig } from '@/lib/local-db/helpers/ui-config';
+import { getUIConfig } from '@/lib/local-db/helpers/ui-config';
 import { cn } from '@/lib/utils';
+import { updateHandMode } from '@/services/operations';
 import { useUserStore } from '@/stores/useUserStore';
 
 type HandPreferenceSettingProps = {
@@ -68,22 +69,14 @@ export function HandPreferenceSetting({ isCompact = false }: HandPreferenceSetti
 
     setHandMode(value);
 
-    // Update IndexedDB immediately for local-first experience
-    if (user?.localId) {
-      updateUIConfig(user.localId, { handMode: value })
-        .then(() => {
-          toast.success('Settings updated');
-        })
-        .catch((error) => {
-          console.error('Failed to update IndexedDB:', error);
-          toast.error('Failed to save settings');
-        });
-    }
-
-    // TODO: Sync to server via outbox when API is ready
-    // For now, we just update locally
     startTransition(async () => {
-      // Future: enqueue sync mutation to outbox
+      const result = await updateHandMode({ handMode: value });
+      if (result.success) {
+        toast.success('Settings updated');
+      } else {
+        console.error('Failed to update hand mode:', result.error);
+        toast.error('Failed to save settings');
+      }
     });
   };
 

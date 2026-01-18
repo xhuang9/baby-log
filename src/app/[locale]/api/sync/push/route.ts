@@ -20,6 +20,7 @@ import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import {
+  babiesSchema,
   babyAccessSchema,
   feedLogSchema,
   nappyLogSchema,
@@ -31,7 +32,7 @@ import {
 export const dynamic = 'force-dynamic';
 
 type MutationOp = 'create' | 'update' | 'delete';
-type EntityType = 'feed_log' | 'sleep_log' | 'nappy_log';
+type EntityType = 'baby' | 'feed_log' | 'sleep_log' | 'nappy_log';
 
 type Mutation = {
   mutationId: string;
@@ -161,10 +162,29 @@ async function processMutation(
   const { mutationId, entityType, entityId, op, payload } = mutation;
 
   try {
-    const babyId = payload.babyId as number | undefined;
+    // Baby entities use entityId as the baby ID
+    const babyId = entityType === 'baby'
+      ? Number.parseInt(entityId, 10)
+      : (payload.babyId as number | undefined);
 
-    // Verify user has edit access to this baby
-    if (babyId && !editableBabyIds.has(babyId)) {
+    // Verify user has edit access
+    if (entityType === 'baby') {
+      // For baby mutations, check if user owns the baby or has editor access
+      if (op !== 'create' && babyId && !editableBabyIds.has(babyId)) {
+        console.error('[SYNC] Baby mutation access denied:', {
+          babyId,
+          op,
+          userId,
+          editableBabyIds: Array.from(editableBabyIds),
+        });
+        return {
+          mutationId,
+          status: 'error',
+          error: 'Access denied to this baby',
+        };
+      }
+    } else if (babyId && !editableBabyIds.has(babyId)) {
+      // For other entities, verify access to the baby
       return {
         mutationId,
         status: 'error',
@@ -173,6 +193,9 @@ async function processMutation(
     }
 
     switch (entityType) {
+      case 'baby':
+        console.log('[SYNC] Processing baby mutation:', { mutationId, entityId, op, userId });
+        return await processBabyMutation(mutationId, entityId, op, payload, userId);
       case 'feed_log':
         return await processFeedLogMutation(mutationId, entityId, op, payload, userId, babyId);
       case 'sleep_log':
@@ -194,6 +217,138 @@ async function processMutation(
       error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
+}
+
+async function processBabyMutation(
+  mutationId: string,
+  entityId: string,
+  op: MutationOp,
+  payload: Record<string, unknown>,
+  userId: number,
+): Promise<MutationResult> {
+  const numericId = Number.parseInt(entityId, 10);
+
+  if (op === 'create') {
+    const [inserted] = await db
+      .insert(babiesSchema)
+      .values({
+        name: payload.name as string,
+        birthDate: payload.birthDate ? new Date(payload.birthDate as string) : null,
+        gender: payload.gender as 'male' | 'female' | 'other' | 'unknown' | null,
+        birthWeightG: payload.birthWeightG as number | null,
+        ownerUserId: userId,
+      })
+      .returning();
+
+    // Create owner access record
+    await db.insert(babyAccessSchema).values({
+      userId,
+      babyId: inserted!.id,
+      accessLevel: 'owner',
+      defaultBaby: true,
+      lastAccessedAt: new Date(),
+    });
+
+    // Record sync event
+    await db.insert(syncEventsSchema).values({
+      babyId: inserted!.id,
+      entityType: 'baby',
+      entityId: inserted!.id,
+      op: 'create',
+      payload: JSON.stringify(serializeBaby(inserted!)),
+    });
+
+    return { mutationId, status: 'success' };
+  }
+
+  if (op === 'update') {
+    // Check for conflict (LWW - server data wins if newer)
+    const [existing] = await db
+      .select()
+      .from(babiesSchema)
+      .where(eq(babiesSchema.id, numericId))
+      .limit(1);
+
+    if (!existing) {
+      return { mutationId, status: 'error', error: 'Baby not found' };
+    }
+
+    const clientUpdatedAt = payload.updatedAt ? new Date(payload.updatedAt as string) : null;
+    const serverUpdatedAt = existing.updatedAt;
+
+    // If server has newer data, return conflict
+    if (serverUpdatedAt && clientUpdatedAt && serverUpdatedAt > clientUpdatedAt) {
+      return {
+        mutationId,
+        status: 'conflict',
+        serverData: serializeBaby(existing),
+      };
+    }
+
+    // Apply update
+    console.log('[SYNC] Applying baby update to DB:', { numericId, name: payload.name });
+    const [updated] = await db
+      .update(babiesSchema)
+      .set({
+        name: payload.name as string,
+        birthDate: payload.birthDate ? new Date(payload.birthDate as string) : null,
+        gender: payload.gender as 'male' | 'female' | 'other' | 'unknown' | null,
+        birthWeightG: payload.birthWeightG as number | null,
+        archivedAt: payload.archivedAt ? new Date(payload.archivedAt as string) : null,
+        updatedAt: new Date(),
+      })
+      .where(eq(babiesSchema.id, numericId))
+      .returning();
+
+    console.log('[SYNC] Baby updated successfully:', { id: updated?.id, name: updated?.name });
+
+    // Record sync event
+    await db.insert(syncEventsSchema).values({
+      babyId: numericId,
+      entityType: 'baby',
+      entityId: numericId,
+      op: 'update',
+      payload: JSON.stringify(serializeBaby(updated!)),
+    });
+
+    return { mutationId, status: 'success' };
+  }
+
+  if (op === 'delete') {
+    // Soft delete: set archivedAt
+    const [existing] = await db
+      .select()
+      .from(babiesSchema)
+      .where(eq(babiesSchema.id, numericId))
+      .limit(1);
+
+    if (!existing) {
+      // Already deleted, consider success
+      return { mutationId, status: 'success' };
+    }
+
+    const [archived] = await db
+      .update(babiesSchema)
+      .set({
+        archivedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(babiesSchema.id, numericId))
+      .returning();
+
+    // Record sync event
+    await db.insert(syncEventsSchema).values({
+      babyId: numericId,
+      entityType: 'baby',
+      entityId: numericId,
+      op: 'delete',
+      payload: JSON.stringify(serializeBaby(archived!)),
+    });
+
+    return { mutationId, status: 'success' };
+  }
+
+  return { mutationId, status: 'error', error: `Unknown operation: ${op}` };
 }
 
 async function processFeedLogMutation(
@@ -536,6 +691,20 @@ async function processNappyLogMutation(
 }
 
 // Serialization helpers
+function serializeBaby(baby: typeof babiesSchema.$inferSelect): Record<string, unknown> {
+  return {
+    id: baby.id,
+    name: baby.name,
+    birthDate: baby.birthDate?.toISOString() ?? null,
+    gender: baby.gender,
+    birthWeightG: baby.birthWeightG,
+    archivedAt: baby.archivedAt?.toISOString() ?? null,
+    ownerUserId: baby.ownerUserId,
+    createdAt: baby.createdAt.toISOString(),
+    updatedAt: baby.updatedAt?.toISOString() ?? baby.createdAt.toISOString(),
+  };
+}
+
 function serializeFeedLog(log: typeof feedLogSchema.$inferSelect): Record<string, unknown> {
   return {
     id: String(log.id),
