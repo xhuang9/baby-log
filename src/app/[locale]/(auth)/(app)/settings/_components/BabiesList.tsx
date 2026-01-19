@@ -86,13 +86,13 @@ export function BabiesList(props: {
         ))}
       </div>
 
-      {/* Add Child Button */}
+      {/* Add Baby Button */}
       <Link
         href={getI18nPath('/settings/babies/new', locale)}
         className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed bg-background py-4 text-center transition-colors hover:bg-muted/50"
       >
         <Plus className="size-4 text-primary" />
-        <span className="text-sm font-medium text-primary">Add Child</span>
+        <span className="text-sm font-medium text-primary">Add Baby</span>
       </Link>
     </div>
   );

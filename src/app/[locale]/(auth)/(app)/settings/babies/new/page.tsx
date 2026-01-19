@@ -26,14 +26,7 @@ export default async function NewBabyPage(props: {
           { label: 'Add Baby' },
         ]}
       />
-      <div className="mr-auto max-w-2xl space-y-6">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold">Add a Baby</h1>
-          <p className="text-sm text-muted-foreground">
-            Add another baby to track
-          </p>
-        </div>
-
+      <div className="mx-auto w-fit max-w-xl min-w-80 space-y-6 px-4 pb-20">
         <NewBabyForm
           redirectPath={getI18nPath('/settings', locale)}
         />

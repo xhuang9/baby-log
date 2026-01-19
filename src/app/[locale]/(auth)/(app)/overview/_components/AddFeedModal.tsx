@@ -1,11 +1,11 @@
 'use client';
 
 import type { FeedMethod } from '@/lib/local-db';
-import { ArrowLeftRightIcon, ChevronLeftIcon } from 'lucide-react';
+import { ChevronLeftIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { BaseButton } from '@/components/base/BaseButton';
-import { createFeedLog } from '@/services/operations';
 import { AmountSlider } from '@/components/feed/AmountSlider';
+import { TimerWidget } from '@/components/feed/TimerWidget';
 import { TimeSwiper } from '@/components/feed/TimeSwiper';
 import { FormFooter } from '@/components/input-controls/FormFooter';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,8 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { getUIConfig } from '@/lib/local-db/helpers/ui-config';
+import { createFeedLog } from '@/services/operations';
+import { useTimerStore } from '@/stores/useTimerStore';
 import { useUserStore } from '@/stores/useUserStore';
 
 type AddFeedModalProps = {
@@ -38,7 +40,7 @@ export function AddFeedModal({
   onSuccess,
 }: AddFeedModalProps) {
   const user = useUserStore(s => s.user);
-  const [inputMode, setInputMode] = useState<InputMode>('manual');
+  const [inputMode, setInputMode] = useState<InputMode>('timer');
   const [method, setMethod] = useState<FeedMethod>('bottle');
   const [startTime, setStartTime] = useState(() => new Date());
   const [amountMl, setAmountMl] = useState(120);
@@ -51,6 +53,25 @@ export function AddFeedModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [handMode, setHandMode] = useState<'left' | 'right'>('right');
+
+  // Timer store - subscribe to all timers and extract the one we need
+  const timerKey = `feed-${babyId}`;
+  const timers = useTimerStore(state => state.timers);
+  const timerState = timers[timerKey];
+
+  const {
+    getTotalElapsed,
+    getActualStartTime,
+    hydrate: hydrateTimer,
+    isHydrated: isTimerHydrated,
+  } = useTimerStore();
+
+  // Hydrate timer store when user is available
+  useEffect(() => {
+    if (user?.localId && !isTimerHydrated) {
+      hydrateTimer(user.localId);
+    }
+  }, [user?.localId, isTimerHydrated, hydrateTimer]);
 
   // When method changes to breast feeding, set start time to 20 minutes ago
   useEffect(() => {
@@ -85,7 +106,7 @@ export function AddFeedModal({
   }, [user?.localId]);
 
   const resetForm = () => {
-    setInputMode('manual');
+    setInputMode('timer');
     setMethod('bottle');
     setStartTime(new Date());
     setAmountMl(120);
@@ -96,26 +117,59 @@ export function AddFeedModal({
     setError(null);
   };
 
+  const formatTimerDisplay = (seconds: number): string => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setError(null);
 
     try {
-      // Calculate duration in minutes from start and end times
-      const durationMs = endTime.getTime() - startTime.getTime();
-      const durationMinutes = Math.round(durationMs / (1000 * 60));
+      let durationMinutes: number;
+      let feedStartTime: Date;
 
-      // Validate duration
-      if (method === 'breast' && durationMinutes <= 0) {
-        setError('End time must be after start time');
-        setIsSubmitting(false);
-        return;
+      if (inputMode === 'timer') {
+        // Use timer state
+        const totalElapsedSeconds = getTotalElapsed(timerKey);
+        const actualStartTime = getActualStartTime(timerKey);
+
+        if (!actualStartTime || totalElapsedSeconds === 0) {
+          setError('Please start the timer before saving');
+          setIsSubmitting(false);
+          return;
+        }
+
+        durationMinutes = Math.round(totalElapsedSeconds / 60);
+        feedStartTime = actualStartTime;
+
+        // Validate timer duration
+        if (method === 'breast' && durationMinutes <= 0) {
+          setError('Please start the timer before saving');
+          setIsSubmitting(false);
+          return;
+        }
+      } else {
+        // Manual mode: Calculate duration from start and end times
+        const durationMs = endTime.getTime() - startTime.getTime();
+        durationMinutes = Math.round(durationMs / (1000 * 60));
+        feedStartTime = startTime;
+
+        // Validate duration
+        if (method === 'breast' && durationMinutes <= 0) {
+          setError('End time must be after start time');
+          setIsSubmitting(false);
+          return;
+        }
       }
 
       const result = await createFeedLog({
         babyId,
         method,
-        startedAt: startTime,
+        startedAt: feedStartTime,
         ...(method === 'bottle' ? { amountMl } : { durationMinutes, endSide }),
       });
 
@@ -143,8 +197,8 @@ export function AddFeedModal({
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetContent side="bottom" className="inset-0 h-full w-full rounded-none" showCloseButton={false}>
-        <SheetHeader className="relative mx-auto w-full max-w-[600px] flex-row items-center space-y-0 border-b px-4 pb-4">
+      <SheetContent side="bottom" className="inset-0 flex h-full w-full flex-col gap-0 rounded-none p-0" showCloseButton={false}>
+        <SheetHeader className="relative mx-auto w-full max-w-[600px] flex-shrink-0 flex-row items-center space-y-0 border-b px-4 pt-4 pb-4">
           <SheetClose
             render={<Button variant="ghost" size="icon-sm" className="text-muted-foreground" />}
           >
@@ -155,19 +209,9 @@ export function AddFeedModal({
           <SheetTitle className="absolute left-1/2 -translate-x-1/2">
             Feed
           </SheetTitle>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setInputMode(inputMode === 'manual' ? 'timer' : 'manual')}
-            className="ml-auto text-primary"
-          >
-            <ArrowLeftRightIcon className="h-4 w-4" />
-            {inputMode === 'manual' ? 'Timer' : 'Manual'}
-          </Button>
         </SheetHeader>
 
-        <div className="mx-auto w-full max-w-[600px] space-y-6 px-4 py-6">
+        <div className="mx-auto w-full max-w-[600px] flex-1 space-y-6 overflow-y-auto px-4 pt-6 pb-6" style={{ minHeight: 0 }}>
           {/* Feed Method Toggle - Breast/Bottle (Feed-specific) */}
           <ButtonGroup className="w-full">
             <Button
@@ -188,10 +232,43 @@ export function AddFeedModal({
             </Button>
           </ButtonGroup>
 
-          {/* Timer Mode - Placeholder */}
+          {/* Timer Mode */}
           {inputMode === 'timer' && (
-            <div className="flex flex-1 items-center justify-center py-12">
-              <p className="text-muted-foreground">Timer widget coming soon</p>
+            <div className="space-y-6">
+              {/* Timer Widget */}
+              <TimerWidget babyId={babyId} logType="feed" />
+
+              {/* Additional fields based on feed method */}
+              {method === 'bottle' && (
+                <div className="space-y-3">
+                  <Label className="text-muted-foreground">Amount</Label>
+                  <AmountSlider
+                    value={amountMl}
+                    onChange={setAmountMl}
+                    handMode={handMode}
+                  />
+                </div>
+              )}
+
+              {method === 'breast' && (
+                <div className={`${handMode === 'left' ? 'space-y-3' : 'flex items-center justify-between'}`}>
+                  <Label className="text-muted-foreground">End on</Label>
+                  <div className={`flex gap-3 ${handMode === 'left' ? '' : 'ml-auto'}`}>
+                    <BaseButton
+                      variant={endSide === 'left' ? 'primary' : 'secondary'}
+                      onClick={() => setEndSide('left')}
+                    >
+                      Left
+                    </BaseButton>
+                    <BaseButton
+                      variant={endSide === 'right' ? 'primary' : 'secondary'}
+                      onClick={() => setEndSide('right')}
+                    >
+                      Right
+                    </BaseButton>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -277,12 +354,23 @@ export function AddFeedModal({
             </>
           )}
 
+          {/* Mode Switch */}
+          <div className="flex justify-center pt-4">
+            <button
+              type="button"
+              onClick={() => setInputMode(inputMode === 'manual' ? 'timer' : 'manual')}
+              className="text-sm text-primary underline hover:opacity-80"
+            >
+              {inputMode === 'manual' ? 'Use a timer' : 'Manual entry'}
+            </button>
+          </div>
+
           {error && (
             <p className="text-center text-sm text-destructive">{error}</p>
           )}
         </div>
 
-        <SheetFooter className={`mx-auto w-full max-w-[600px] border-t px-4 pt-4 ${handMode === 'left' ? 'justify-start' : 'justify-end'}`}>
+        <SheetFooter className={`mx-auto w-full max-w-[600px] flex-shrink-0 flex-row border-t px-4 pt-4 pb-4 ${handMode === 'left' ? 'justify-start' : 'justify-end'}`}>
           <FormFooter
             onPrimary={handleSubmit}
             primaryLabel="Save"

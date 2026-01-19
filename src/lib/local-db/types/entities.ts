@@ -57,6 +57,13 @@ export type DefaultLogView = 'all' | 'feed' | 'sleep';
  * Shape of the UI config data object.
  * This is the flexible JSON structure stored in both Dexie and Postgres.
  */
+export type TimerState = {
+  elapsedSeconds: number; // Accumulated elapsed time in seconds
+  lastStartTime: string | null; // ISO timestamp of when current session started (null if paused)
+  babyId: number;
+  logType: 'feed' | 'sleep' | 'nappy';
+};
+
 export type UIConfigData = {
   theme?: ThemeMode;
   handMode?: HandMode;
@@ -85,6 +92,7 @@ export type UIConfigData = {
     dragStep?: number;
     startOnLeft?: boolean;
   };
+  timers?: Record<string, TimerState>; // Persistent timer state per activity
   // Allow additional keys for future extensibility
   [key: string]: unknown;
 };

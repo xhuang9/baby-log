@@ -1,11 +1,12 @@
 ---
-last_verified_at: 2026-01-17T09:12:39Z
+last_verified_at: 2026-01-20T00:00:00Z
 source_paths:
   - src/app/[locale]/
   - src/lib/
   - src/providers/
   - src/services/
   - src/stores/
+  - src/hooks/
   - src/components/navigation/
   - src/templates/
   - tsconfig.json
@@ -58,3 +59,7 @@ The architecture emphasizes separation of concerns, performance-first patterns, 
 - `.readme/chunks/architecture.mobile-back-button.md`
   - Content: Intelligent mobile back button navigation using breadcrumb hierarchy
   - Read when: Working with mobile navigation, understanding the back button logic, or debugging mobile header behavior
+
+- `.readme/chunks/ui-patterns.hold-action-hook.md`
+  - Content: Reusable press-and-hold interaction hook with automatic repeat, cross-platform support (mouse/touch), and configurable delay/interval
+  - Read when: Implementing hold-to-adjust interactions, numeric steppers, scroll buttons, or any UI requiring press-and-hold behavior
