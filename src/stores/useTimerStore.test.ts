@@ -4,8 +4,8 @@
  * Unit tests for timer state management and persistence
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { TimerState } from './useTimerStore';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useTimerStore } from './useTimerStore';
 
 // Mock dependencies
@@ -40,10 +40,17 @@ describe('useTimerStore', () => {
     const { useUserStore } = await import('./useUserStore');
     vi.mocked(useUserStore.getState).mockReturnValue({
       user: {
+        id: 'user_123',
         localId: 1,
-        clerkUserId: 'user_123',
+        firstName: null,
         email: 'test@example.com',
+        imageUrl: '',
       },
+      isHydrated: true,
+      setUser: vi.fn(),
+      clearUser: vi.fn(),
+      hydrate: vi.fn(),
+      hydrateFromIndexedDB: vi.fn(),
     });
   });
 
@@ -67,6 +74,7 @@ describe('useTimerStore', () => {
       await useTimerStore.getState().hydrate(1);
 
       const state = useTimerStore.getState();
+
       expect(state.timers).toEqual(mockTimers);
       expect(state.isHydrated).toBe(true);
     });
@@ -81,6 +89,7 @@ describe('useTimerStore', () => {
       await useTimerStore.getState().hydrate(1);
 
       const state = useTimerStore.getState();
+
       expect(state.timers).toEqual({});
       expect(state.isHydrated).toBe(true);
     });
@@ -93,6 +102,7 @@ describe('useTimerStore', () => {
       await useTimerStore.getState().hydrate(1);
 
       const state = useTimerStore.getState();
+
       expect(state.isHydrated).toBe(true);
     });
   });
@@ -226,6 +236,7 @@ describe('useTimerStore', () => {
       await useTimerStore.getState().resetTimer('feed-1');
 
       const state = useTimerStore.getState();
+
       expect(state.timers['feed-1']).toBeUndefined();
       expect(updateUIConfig).toHaveBeenCalledWith(1, { timers: {} });
     });
@@ -258,6 +269,7 @@ describe('useTimerStore', () => {
       await useTimerStore.getState().adjustTimer('feed-1', 10);
 
       const state = useTimerStore.getState();
+
       expect(state.timers['feed-1']?.elapsedSeconds).toBe(70);
       expect(updateUIConfig).toHaveBeenCalled();
     });
@@ -280,6 +292,7 @@ describe('useTimerStore', () => {
       await useTimerStore.getState().adjustTimer('feed-1', -20);
 
       const state = useTimerStore.getState();
+
       expect(state.timers['feed-1']?.elapsedSeconds).toBe(0);
       expect(updateUIConfig).toHaveBeenCalled();
     });
@@ -308,11 +321,13 @@ describe('useTimerStore', () => {
       });
 
       const timer = useTimerStore.getState().getTimer('feed-1');
+
       expect(timer).toEqual(mockTimer);
     });
 
     it('should return undefined for non-existent timer', () => {
       const timer = useTimerStore.getState().getTimer('feed-999');
+
       expect(timer).toBeUndefined();
     });
   });
@@ -332,6 +347,7 @@ describe('useTimerStore', () => {
       });
 
       const elapsed = useTimerStore.getState().getTotalElapsed('feed-1');
+
       expect(elapsed).toBe(120);
     });
 
@@ -351,11 +367,13 @@ describe('useTimerStore', () => {
       });
 
       const elapsed = useTimerStore.getState().getTotalElapsed('feed-1');
+
       expect(elapsed).toBeGreaterThanOrEqual(15); // 10 + ~5
     });
 
     it('should return 0 for non-existent timer', () => {
       const elapsed = useTimerStore.getState().getTotalElapsed('feed-999');
+
       expect(elapsed).toBe(0);
     });
   });
@@ -375,10 +393,12 @@ describe('useTimerStore', () => {
       });
 
       const startTime = useTimerStore.getState().getActualStartTime('feed-1');
+
       expect(startTime).toBeInstanceOf(Date);
 
       if (startTime) {
         const expectedTime = Date.now() - (120 * 1000);
+
         expect(Math.abs(startTime.getTime() - expectedTime)).toBeLessThan(100); // Within 100ms
       }
     });
@@ -397,11 +417,13 @@ describe('useTimerStore', () => {
       });
 
       const startTime = useTimerStore.getState().getActualStartTime('feed-1');
+
       expect(startTime).toBeNull();
     });
 
     it('should return null for non-existent timer', () => {
       const startTime = useTimerStore.getState().getActualStartTime('feed-999');
+
       expect(startTime).toBeNull();
     });
   });

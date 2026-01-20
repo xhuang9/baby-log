@@ -22,11 +22,13 @@ export type LocalBaby = {
 };
 
 export type LocalBabyAccess = {
-  oduserId: number; // User ID (compound key with babyId)
-  babyId: number; // Baby ID (compound key with oduserId)
+  userId: number; // User ID (compound key with babyId)
+  babyId: number; // Baby ID (compound key with userId)
   accessLevel: 'owner' | 'editor' | 'viewer';
   caregiverLabel: string | null;
   lastAccessedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 // ============================================================================

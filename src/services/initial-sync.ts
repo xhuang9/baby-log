@@ -79,11 +79,13 @@ type ServerInitialSyncResponse = {
     updatedAt: string;
   }>;
   babyAccess: Array<{
-    oduserId: number;
+    userId: number;
     babyId: number;
     accessLevel: 'owner' | 'editor' | 'viewer';
     caregiverLabel: string | null;
     lastAccessedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
   }>;
   recentFeedLogs: Array<{
     id: string;
@@ -160,11 +162,13 @@ function transformServerData(serverData: ServerInitialSyncResponse): InitialSync
       updatedAt: new Date(baby.updatedAt),
     })),
     babyAccess: serverData.babyAccess.map(access => ({
-      oduserId: access.oduserId,
+      userId: access.userId,
       babyId: access.babyId,
       accessLevel: access.accessLevel,
       caregiverLabel: access.caregiverLabel,
       lastAccessedAt: parseDate(access.lastAccessedAt),
+      createdAt: new Date(access.createdAt),
+      updatedAt: new Date(access.updatedAt),
     })),
     recentFeedLogs: serverData.recentFeedLogs.map(log => ({
       id: log.id,

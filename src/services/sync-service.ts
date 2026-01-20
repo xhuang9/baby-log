@@ -188,11 +188,11 @@ async function applyBabyChange(
   if (data.access && Array.isArray(data.access)) {
     const accessRecords: LocalBabyAccess[] = (data.access as Array<Record<string, unknown>>).map(
       (acc) => ({
-        oduserId: acc.oduserId as number,
+        userId: acc.userId as number,
         babyId: acc.babyId as number,
         accessLevel: acc.accessLevel as 'owner' | 'editor' | 'viewer',
+        caregiverLabel: acc.caregiverLabel as string | null,
         lastAccessedAt: acc.lastAccessedAt ? new Date(acc.lastAccessedAt as string) : null,
-        defaultBaby: acc.defaultBaby as boolean,
         createdAt: new Date(acc.createdAt as string),
         updatedAt: new Date(acc.updatedAt as string),
       })
@@ -418,11 +418,11 @@ export async function applyServerData(
     if (serverData.access && Array.isArray(serverData.access)) {
       const accessRecords: LocalBabyAccess[] = (serverData.access as Array<Record<string, unknown>>).map(
         (acc) => ({
-          oduserId: acc.oduserId as number,
+          userId: acc.userId as number,
           babyId: acc.babyId as number,
           accessLevel: acc.accessLevel as 'owner' | 'editor' | 'viewer',
+          caregiverLabel: acc.caregiverLabel as string | null,
           lastAccessedAt: acc.lastAccessedAt ? new Date(acc.lastAccessedAt as string) : null,
-          defaultBaby: acc.defaultBaby as boolean,
           createdAt: new Date(acc.createdAt as string),
           updatedAt: new Date(acc.updatedAt as string),
         })

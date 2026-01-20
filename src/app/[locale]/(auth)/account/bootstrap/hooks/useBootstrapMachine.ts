@@ -186,11 +186,13 @@ export function useBootstrapMachine(
       // Store baby access
       if (response.syncData.babyAccess.length > 0) {
         await saveBabyAccess(response.syncData.babyAccess.map(access => ({
-          oduserId: access.oduserId,
+          userId: access.userId,
           babyId: access.babyId,
           accessLevel: access.accessLevel,
           caregiverLabel: access.caregiverLabel,
           lastAccessedAt: access.lastAccessedAt ? new Date(access.lastAccessedAt) : null,
+          createdAt: new Date(access.createdAt),
+          updatedAt: new Date(access.updatedAt),
         })));
       }
 

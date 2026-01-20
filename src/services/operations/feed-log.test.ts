@@ -46,12 +46,11 @@ vi.stubGlobal('crypto', {
 
 describe('Feed Log Operations', () => {
   const mockAccess: LocalBabyAccess = {
-    oduserId: 1,
+    userId: 1,
     babyId: 1,
     accessLevel: 'owner',
     caregiverLabel: 'Parent',
     lastAccessedAt: new Date(),
-    defaultBaby: true,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
   };
@@ -63,10 +62,17 @@ describe('Feed Log Operations', () => {
     const { useUserStore } = await import('@/stores/useUserStore');
     vi.mocked(useUserStore.getState).mockReturnValue({
       user: {
+        id: 'user_123',
         localId: 1,
-        clerkUserId: 'user_123',
+        firstName: null,
         email: 'test@example.com',
+        imageUrl: '',
       },
+      isHydrated: true,
+      setUser: vi.fn(),
+      clearUser: vi.fn(),
+      hydrate: vi.fn(),
+      hydrateFromIndexedDB: vi.fn(),
     });
   });
 
@@ -258,6 +264,11 @@ describe('Feed Log Operations', () => {
       const { useUserStore } = await import('@/stores/useUserStore');
       vi.mocked(useUserStore.getState).mockReturnValue({
         user: null,
+        isHydrated: true,
+        setUser: vi.fn(),
+        clearUser: vi.fn(),
+        hydrate: vi.fn(),
+        hydrateFromIndexedDB: vi.fn(),
       });
 
       const result = await createFeedLog({

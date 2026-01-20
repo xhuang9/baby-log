@@ -46,6 +46,15 @@ export {
   createFeedLog,
 } from './feed-log';
 
+// Sleep log operations
+export type {
+  CreateSleepLogInput,
+} from './sleep-log';
+
+export {
+  createSleepLog,
+} from './sleep-log';
+
 // UI config operations
 export type {
   UpdateThemeInput,

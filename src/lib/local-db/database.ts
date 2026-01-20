@@ -34,7 +34,7 @@ class BabyLogDatabase extends Dexie {
 
   // Entity tables
   babies!: EntityTable<LocalBaby, 'id'>;
-  babyAccess!: EntityTable<LocalBabyAccess, 'oduserId'>;
+  babyAccess!: EntityTable<LocalBabyAccess, 'userId'>;
   users!: EntityTable<LocalUser, 'id'>;
   uiConfig!: EntityTable<LocalUIConfig, 'userId'>;
 
@@ -64,7 +64,7 @@ class BabyLogDatabase extends Dexie {
       nappyLogs: 'id, babyId, startedAt, [babyId+startedAt]',
       // Entity tables
       babies: 'id, ownerUserId',
-      babyAccess: '[oduserId+babyId], oduserId, babyId',
+      babyAccess: '[userId+babyId], userId, babyId',
       users: 'id, clerkId',
       uiConfig: 'userId',
       // Sync management

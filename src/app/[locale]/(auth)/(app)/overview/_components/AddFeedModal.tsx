@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/sheet';
 import { getUIConfig } from '@/lib/local-db/helpers/ui-config';
 import { createFeedLog } from '@/services/operations';
+import { useTimerSave } from '@/hooks/useTimerSave';
 import { useTimerStore } from '@/stores/useTimerStore';
 import { useUserStore } from '@/stores/useUserStore';
 
@@ -40,8 +41,8 @@ export function AddFeedModal({
   onSuccess,
 }: AddFeedModalProps) {
   const user = useUserStore(s => s.user);
-  const [inputMode, setInputMode] = useState<InputMode>('timer');
   const [method, setMethod] = useState<FeedMethod>('bottle');
+  const [inputMode, setInputMode] = useState<InputMode>('manual'); // Bottle default is manual
   const [startTime, setStartTime] = useState(() => new Date());
   const [amountMl, setAmountMl] = useState(120);
   const [endTime, setEndTime] = useState(() => {
@@ -54,14 +55,14 @@ export function AddFeedModal({
   const [error, setError] = useState<string | null>(null);
   const [handMode, setHandMode] = useState<'left' | 'right'>('right');
 
-  // Timer store - subscribe to all timers and extract the one we need
-  const timerKey = `feed-${babyId}`;
-  const timers = useTimerStore(state => state.timers);
-  const timerState = timers[timerKey];
-
+  // Timer hook for save flow
   const {
-    getTotalElapsed,
-    getActualStartTime,
+    prepareTimerSave,
+    completeTimerSave,
+  } = useTimerSave({ babyId, logType: 'feed' });
+
+  // Still need hydration from store
+  const {
     hydrate: hydrateTimer,
     isHydrated: isTimerHydrated,
   } = useTimerStore();
@@ -73,9 +74,12 @@ export function AddFeedModal({
     }
   }, [user?.localId, isTimerHydrated, hydrateTimer]);
 
-  // When method changes to breast feeding, set start time to 20 minutes ago
+  // When method changes, adjust input mode and times
   useEffect(() => {
     if (method === 'breast') {
+      // Breast feeding: use timer by default
+      setInputMode('timer');
+
       const twentyMinutesAgo = new Date();
       twentyMinutesAgo.setMinutes(twentyMinutesAgo.getMinutes() - 20);
       setStartTime(twentyMinutesAgo);
@@ -84,7 +88,8 @@ export function AddFeedModal({
       const now = new Date();
       setEndTime(now);
     } else {
-      // Bottle feeding: reset to now
+      // Bottle feeding: always use manual entry
+      setInputMode('manual');
       setStartTime(new Date());
     }
   }, [method]);
@@ -106,8 +111,8 @@ export function AddFeedModal({
   }, [user?.localId]);
 
   const resetForm = () => {
-    setInputMode('timer');
     setMethod('bottle');
+    setInputMode('manual'); // Bottle default is manual
     setStartTime(new Date());
     setAmountMl(120);
     const end = new Date();
@@ -115,13 +120,6 @@ export function AddFeedModal({
     setEndTime(end);
     setEndSide('left');
     setError(null);
-  };
-
-  const formatTimerDisplay = (seconds: number): string => {
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   const handleSubmit = async () => {
@@ -133,18 +131,17 @@ export function AddFeedModal({
       let feedStartTime: Date;
 
       if (inputMode === 'timer') {
-        // Use timer state
-        const totalElapsedSeconds = getTotalElapsed(timerKey);
-        const actualStartTime = getActualStartTime(timerKey);
+        // Use timer hook to handle pause, confirmation, and get timer data
+        const timerData = await prepareTimerSave();
 
-        if (!actualStartTime || totalElapsedSeconds === 0) {
+        if (!timerData) {
           setError('Please start the timer before saving');
           setIsSubmitting(false);
           return;
         }
 
-        durationMinutes = Math.round(totalElapsedSeconds / 60);
-        feedStartTime = actualStartTime;
+        durationMinutes = timerData.durationMinutes;
+        feedStartTime = timerData.startTime;
 
         // Validate timer duration
         if (method === 'breast' && durationMinutes <= 0) {
@@ -176,6 +173,11 @@ export function AddFeedModal({
       if (!result.success) {
         setError(result.error);
         return;
+      }
+
+      // Reset the timer after successful save (only in timer mode)
+      if (inputMode === 'timer') {
+        await completeTimerSave();
       }
 
       resetForm();
@@ -232,43 +234,30 @@ export function AddFeedModal({
             </Button>
           </ButtonGroup>
 
-          {/* Timer Mode */}
-          {inputMode === 'timer' && (
+          {/* Timer Mode - Only for breast feeding */}
+          {inputMode === 'timer' && method === 'breast' && (
             <div className="space-y-6">
               {/* Timer Widget */}
               <TimerWidget babyId={babyId} logType="feed" />
 
-              {/* Additional fields based on feed method */}
-              {method === 'bottle' && (
-                <div className="space-y-3">
-                  <Label className="text-muted-foreground">Amount</Label>
-                  <AmountSlider
-                    value={amountMl}
-                    onChange={setAmountMl}
-                    handMode={handMode}
-                  />
+              {/* End Side for breast feeding */}
+              <div className={`${handMode === 'left' ? 'space-y-3' : 'flex items-center justify-between'}`}>
+                <Label className="text-muted-foreground">End on</Label>
+                <div className={`flex gap-3 ${handMode === 'left' ? '' : 'ml-auto'}`}>
+                  <BaseButton
+                    variant={endSide === 'left' ? 'primary' : 'secondary'}
+                    onClick={() => setEndSide('left')}
+                  >
+                    Left
+                  </BaseButton>
+                  <BaseButton
+                    variant={endSide === 'right' ? 'primary' : 'secondary'}
+                    onClick={() => setEndSide('right')}
+                  >
+                    Right
+                  </BaseButton>
                 </div>
-              )}
-
-              {method === 'breast' && (
-                <div className={`${handMode === 'left' ? 'space-y-3' : 'flex items-center justify-between'}`}>
-                  <Label className="text-muted-foreground">End on</Label>
-                  <div className={`flex gap-3 ${handMode === 'left' ? '' : 'ml-auto'}`}>
-                    <BaseButton
-                      variant={endSide === 'left' ? 'primary' : 'secondary'}
-                      onClick={() => setEndSide('left')}
-                    >
-                      Left
-                    </BaseButton>
-                    <BaseButton
-                      variant={endSide === 'right' ? 'primary' : 'secondary'}
-                      onClick={() => setEndSide('right')}
-                    >
-                      Right
-                    </BaseButton>
-                  </div>
-                </div>
-              )}
+              </div>
             </div>
           )}
 
@@ -354,16 +343,18 @@ export function AddFeedModal({
             </>
           )}
 
-          {/* Mode Switch */}
-          <div className="flex justify-center pt-4">
-            <button
-              type="button"
-              onClick={() => setInputMode(inputMode === 'manual' ? 'timer' : 'manual')}
-              className="text-sm text-primary underline hover:opacity-80"
-            >
-              {inputMode === 'manual' ? 'Use a timer' : 'Manual entry'}
-            </button>
-          </div>
+          {/* Mode Switch - Only for breast feeding */}
+          {method === 'breast' && (
+            <div className="flex justify-center pt-4">
+              <button
+                type="button"
+                onClick={() => setInputMode(inputMode === 'manual' ? 'timer' : 'manual')}
+                className="text-sm text-primary underline hover:opacity-80"
+              >
+                {inputMode === 'manual' ? 'Use a timer' : 'Manual entry'}
+              </button>
+            </div>
+          )}
 
           {error && (
             <p className="text-center text-sm text-destructive">{error}</p>

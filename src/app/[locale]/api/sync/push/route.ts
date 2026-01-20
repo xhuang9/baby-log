@@ -229,7 +229,7 @@ async function processBabyMutation(
   const numericId = Number.parseInt(entityId, 10);
 
   if (op === 'create') {
-    const [inserted] = await db
+    const insertedArray = await db
       .insert(babiesSchema)
       .values({
         name: payload.name as string,
@@ -238,24 +238,25 @@ async function processBabyMutation(
         birthWeightG: payload.birthWeightG as number | null,
         ownerUserId: userId,
       })
-      .returning();
+      .returning() as unknown[];
+
+    const inserted = insertedArray[0] as typeof babiesSchema.$inferSelect;
 
     // Create owner access record
     await db.insert(babyAccessSchema).values({
       userId,
-      babyId: inserted!.id,
+      babyId: inserted.id,
       accessLevel: 'owner',
-      defaultBaby: true,
       lastAccessedAt: new Date(),
     });
 
     // Record sync event
     await db.insert(syncEventsSchema).values({
-      babyId: inserted!.id,
+      babyId: inserted.id,
       entityType: 'baby',
-      entityId: inserted!.id,
+      entityId: inserted.id,
       op: 'create',
-      payload: JSON.stringify(serializeBaby(inserted!)),
+      payload: JSON.stringify(serializeBaby(inserted)),
     });
 
     return { mutationId, status: 'success' };

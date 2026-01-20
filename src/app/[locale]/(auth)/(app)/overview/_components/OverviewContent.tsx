@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { localDb } from '@/lib/local-db/database';
 import { ActivityTile } from './ActivityTile';
 import { FeedTile } from './FeedTile';
+import { SleepTile } from './SleepTile';
 
 type OverviewContentProps = {
   locale: string;
@@ -84,8 +85,37 @@ export function OverviewContent({ locale }: OverviewContentProps) {
     return transformedFeed;
   }, [babyId]);
 
+  // Read latest sleep from IndexedDB with caregiver info
+  const latestSleepData = useLiveQuery(async () => {
+    if (!babyId) {
+      return null;
+    }
+    const sleeps = await localDb.sleepLogs
+      .where('babyId')
+      .equals(babyId)
+      .reverse()
+      .sortBy('startedAt');
+
+    if (sleeps.length === 0 || !sleeps[0]) {
+      return null;
+    }
+
+    const latestSleep = sleeps[0];
+
+    // Get caregiver label from babyAccess
+    const access = await localDb.babyAccess
+      .where('[oduserId+babyId]')
+      .equals([latestSleep.loggedByUserId, babyId])
+      .first();
+
+    return {
+      ...latestSleep,
+      caregiverLabel: access?.caregiverLabel ?? null,
+    };
+  }, [babyId]);
+
   // Loading state while Dexie initializes
-  if (userData === undefined || latestFeedData === undefined) {
+  if (userData === undefined || latestFeedData === undefined || latestSleepData === undefined) {
     return <OverviewSkeleton />;
   }
 
@@ -116,7 +146,7 @@ export function OverviewContent({ locale }: OverviewContentProps) {
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
       <FeedTile babyId={babyId} latestFeed={latestFeedData} />
-      <ActivityTile title="Sleep" subtitle="Coming soon" activity="sleep" disabled />
+      <SleepTile babyId={babyId} latestSleep={latestSleepData} />
       <ActivityTile title="Nappy" subtitle="Coming soon" activity="nappy" disabled />
       <ActivityTile title="Solids" subtitle="Coming soon" activity="solids" disabled />
       <ActivityTile title="Bath" subtitle="Coming soon" activity="bath" disabled />

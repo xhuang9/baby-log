@@ -8,7 +8,9 @@
  * 4. Trigger non-blocking server sync
  */
 
+import type { OperationResult } from './types';
 import type { LocalBaby, LocalBabyAccess } from '@/lib/local-db';
+import type { ActiveBaby } from '@/stores/useBabyStore';
 import {
   addToOutbox,
   getAllLocalBabies,
@@ -18,15 +20,15 @@ import {
   saveBabyAccess,
 } from '@/lib/local-db';
 import { flushOutbox } from '@/services/sync-service';
-import { useBabyStore, type ActiveBaby } from '@/stores/useBabyStore';
-import { useUserStore } from '@/stores/useUserStore';
+import { useBabyStore } from '@/stores/useBabyStore';
 
+import { useUserStore } from '@/stores/useUserStore';
 import {
   failure,
   generateMutationId,
   isClientSide,
+
   success,
-  type OperationResult,
 } from './types';
 
 // ============================================================================
@@ -96,12 +98,11 @@ export async function createBaby(
     };
 
     const babyAccess: LocalBabyAccess = {
-      oduserId: user.localId,
+      userId: user.localId,
       babyId: tempId,
       accessLevel: 'owner',
       caregiverLabel: input.caregiverLabel ?? null,
       lastAccessedAt: now,
-      defaultBaby: true,
       createdAt: now,
       updatedAt: now,
     };
@@ -123,11 +124,11 @@ export async function createBaby(
     const babyStore = useBabyStore.getState();
     const currentBabies = await getAllLocalBabies();
     const currentAccess = await localDb.babyAccess
-      .where('oduserId')
+      .where('userId')
       .equals(user.localId)
       .toArray();
 
-    const allBabies: ActiveBaby[] = currentAccess.map(access => {
+    const allBabies: ActiveBaby[] = currentAccess.map((access) => {
       const babyData = currentBabies.find(b => b.id === access.babyId);
       return {
         babyId: access.babyId,
@@ -198,7 +199,7 @@ export async function updateBabyProfile(
 
     // Check access
     const access = await localDb.babyAccess
-      .where('[oduserId+babyId]')
+      .where('[userId+babyId]')
       .equals([user.localId, babyId])
       .first();
 
@@ -229,7 +230,7 @@ export async function updateBabyProfile(
       // Update caregiverLabel in babyAccess if provided
       if (updates.caregiverLabel !== undefined) {
         const existingAccess = await localDb.babyAccess
-          .where('[oduserId+babyId]')
+          .where('[userId+babyId]')
           .equals([user.localId, babyId])
           .first();
 
@@ -262,7 +263,7 @@ export async function updateBabyProfile(
             name: updatedBaby.name,
             ...(updates.caregiverLabel !== undefined && { caregiverLabel: updates.caregiverLabel }),
           }
-        : b
+        : b,
     );
     babyStore.setAllBabies(updatedAllBabies);
 
@@ -321,7 +322,7 @@ export async function setDefaultBaby(
     }
 
     const access = await localDb.babyAccess
-      .where('[oduserId+babyId]')
+      .where('[userId+babyId]')
       .equals([user.localId, babyId])
       .first();
 
@@ -334,7 +335,6 @@ export async function setDefaultBaby(
     const updatedAccess: LocalBabyAccess = {
       ...access,
       lastAccessedAt: now,
-      defaultBaby: true,
       updatedAt: now,
     };
 
@@ -386,7 +386,7 @@ export async function deleteBaby(
 
     // Check access (only owner can delete)
     const access = await localDb.babyAccess
-      .where('[oduserId+babyId]')
+      .where('[userId+babyId]')
       .equals([user.localId, babyId])
       .first();
 

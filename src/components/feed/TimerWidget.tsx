@@ -1,7 +1,7 @@
 'use client';
 
 import { PauseIcon, PlayIcon } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHoldAction } from '@/hooks/useHoldAction';
 import { useTimerStore } from '@/stores/useTimerStore';
 
@@ -39,43 +39,39 @@ export function TimerWidget({
   // Store elapsed time in state to avoid calling Date.now() during render
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
-  // Memoized function to calculate elapsed time from current timer state
-  const calculateElapsed = useCallback((): number => {
-    if (!timerState) {
-      return 0;
-    }
-
-    if (!timerState.lastStartTime) {
-      // Timer is paused, use accumulated elapsed time
-      return timerState.elapsedSeconds;
-    }
-
-    // Timer is running, add current session time
-    const lastStart = new Date(timerState.lastStartTime).getTime();
-    const now = Date.now();
-    const sessionElapsed = Math.floor((now - lastStart) / 1000);
-    return timerState.elapsedSeconds + sessionElapsed;
-  }, [timerState]);
-
   // Update elapsed time periodically while timer is running
   useEffect(() => {
-    // Calculate and set initial value
-    const updateElapsed = () => {
-      setElapsedSeconds(calculateElapsed());
+    // Calculate elapsed time (this runs in effect, not during render)
+    const calculateElapsed = (): number => {
+      if (!timerState) {
+        return 0;
+      }
+
+      if (!timerState.lastStartTime) {
+        // Timer is paused, use accumulated elapsed time
+        return timerState.elapsedSeconds;
+      }
+
+      // Timer is running, add current session time
+      const lastStart = new Date(timerState.lastStartTime).getTime();
+      const now = Date.now();
+      const sessionElapsed = Math.floor((now - lastStart) / 1000);
+      return timerState.elapsedSeconds + sessionElapsed;
     };
 
-    // Update immediately - this is intentional to sync with external time source (Date.now)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    updateElapsed();
+    // Update elapsed time
+    setElapsedSeconds(calculateElapsed());
 
     // Set up interval only if timer is running
     if (!timerState?.lastStartTime) {
       return;
     }
 
-    const interval = setInterval(updateElapsed, 100);
+    const interval = setInterval(() => {
+      setElapsedSeconds(calculateElapsed());
+    }, 100);
     return () => clearInterval(interval);
-  }, [calculateElapsed, timerState?.lastStartTime]);
+  }, [timerState]);
 
   const handleStartPause = async () => {
     if (timerState?.lastStartTime) {

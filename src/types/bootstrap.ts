@@ -41,11 +41,13 @@ export type BootstrapBaby = {
 };
 
 export type BootstrapBabyAccess = {
-  oduserId: number;
+  userId: number;
   babyId: number;
   accessLevel: 'owner' | 'editor' | 'viewer';
   caregiverLabel: string | null;
   lastAccessedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type BootstrapInvite = {

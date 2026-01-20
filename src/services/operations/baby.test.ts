@@ -11,7 +11,7 @@ import { createBaby, updateBabyProfile, setDefaultBaby, deleteBaby } from './bab
 // Mock dependencies
 vi.mock('@/lib/local-db', () => ({
   localDb: {
-    transaction: vi.fn((mode: string, tables: unknown[], callback: () => Promise<void>) => callback()),
+    transaction: vi.fn((_mode: string, _tables: unknown[], callback: () => Promise<void>) => callback()),
     babies: {
       get: vi.fn(),
       bulkPut: vi.fn(),
@@ -52,9 +52,11 @@ vi.mock('@/stores/useUserStore', () => ({
   useUserStore: {
     getState: vi.fn(() => ({
       user: {
+        id: 'user_123',
         localId: 1,
-        clerkUserId: 'user_123',
+        firstName: null,
         email: 'test@example.com',
+        imageUrl: '',
       },
     })),
   },
@@ -73,10 +75,17 @@ describe('Baby Operations', () => {
     const { useUserStore } = await import('@/stores/useUserStore');
     vi.mocked(useUserStore.getState).mockReturnValue({
       user: {
+        id: 'user_123',
         localId: 1,
-        clerkUserId: 'user_123',
+        firstName: null,
         email: 'test@example.com',
+        imageUrl: '',
       },
+      isHydrated: true,
+      setUser: vi.fn(),
+      clearUser: vi.fn(),
+      hydrate: vi.fn(),
+      hydrateFromIndexedDB: vi.fn(),
     });
   });
 
@@ -99,6 +108,9 @@ describe('Baby Operations', () => {
       const mockBabyStore = {
         activeBaby: null,
         allBabies: [],
+        isHydrated: true,
+        hydrate: vi.fn(),
+        hydrateFromIndexedDB: vi.fn(),
         setActiveBaby: vi.fn(),
         setAllBabies: vi.fn(),
         clearActiveBaby: vi.fn(),
@@ -136,8 +148,7 @@ describe('Baby Operations', () => {
           expect.objectContaining({
             accessLevel: 'owner',
             caregiverLabel: 'Mom',
-            defaultBaby: true,
-          }),
+                }),
         ])
       );
 
@@ -176,6 +187,11 @@ describe('Baby Operations', () => {
       const { useUserStore } = await import('@/stores/useUserStore');
       vi.mocked(useUserStore.getState).mockReturnValue({
         user: null,
+        isHydrated: true,
+        setUser: vi.fn(),
+        clearUser: vi.fn(),
+        hydrate: vi.fn(),
+        hydrateFromIndexedDB: vi.fn(),
       });
 
       const result = await createBaby({
@@ -203,12 +219,11 @@ describe('Baby Operations', () => {
     };
 
     const mockAccess: LocalBabyAccess = {
-      oduserId: 1,
+      userId: 1,
       babyId: 1,
       accessLevel: 'owner',
       caregiverLabel: 'Parent',
       lastAccessedAt: new Date(),
-      defaultBaby: true,
       createdAt: new Date('2024-01-01'),
       updatedAt: new Date('2024-01-01'),
     };
@@ -335,12 +350,11 @@ describe('Baby Operations', () => {
     };
 
     const mockAccess: LocalBabyAccess = {
-      oduserId: 1,
+      userId: 1,
       babyId: 1,
       accessLevel: 'owner',
       caregiverLabel: 'Parent',
       lastAccessedAt: new Date(),
-      defaultBaby: false,
       createdAt: new Date('2024-01-01'),
       updatedAt: new Date('2024-01-01'),
     };
@@ -360,6 +374,9 @@ describe('Baby Operations', () => {
       const mockBabyStore = {
         activeBaby: null,
         allBabies: [],
+        isHydrated: true,
+        hydrate: vi.fn(),
+        hydrateFromIndexedDB: vi.fn(),
         setActiveBaby: vi.fn(),
         setAllBabies: vi.fn(),
         clearActiveBaby: vi.fn(),
@@ -375,8 +392,7 @@ describe('Baby Operations', () => {
         expect.arrayContaining([
           expect.objectContaining({
             babyId: 1,
-            defaultBaby: true,
-          }),
+                }),
         ])
       );
 
@@ -434,12 +450,11 @@ describe('Baby Operations', () => {
     };
 
     const mockAccess: LocalBabyAccess = {
-      oduserId: 1,
+      userId: 1,
       babyId: 1,
       accessLevel: 'owner',
       caregiverLabel: 'Parent',
       lastAccessedAt: new Date(),
-      defaultBaby: true,
       createdAt: new Date('2024-01-01'),
       updatedAt: new Date('2024-01-01'),
     };
@@ -460,6 +475,9 @@ describe('Baby Operations', () => {
       const mockBabyStore = {
         activeBaby: { babyId: 1, name: 'Test Baby', accessLevel: 'owner' as const, caregiverLabel: null },
         allBabies: [{ babyId: 1, name: 'Test Baby', accessLevel: 'owner' as const, caregiverLabel: null }],
+        isHydrated: true,
+        hydrate: vi.fn(),
+        hydrateFromIndexedDB: vi.fn(),
         setActiveBaby: vi.fn(),
         setAllBabies: vi.fn(),
         clearActiveBaby: vi.fn(),

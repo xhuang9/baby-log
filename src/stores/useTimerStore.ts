@@ -16,7 +16,7 @@ export type TimerState = {
   logType: 'feed' | 'sleep' | 'nappy';
 };
 
-type TimerStore = {
+export type TimerStore = {
   timers: Record<string, TimerState>; // key format: "feed-123" or "sleep-456"
   isHydrated: boolean;
 
