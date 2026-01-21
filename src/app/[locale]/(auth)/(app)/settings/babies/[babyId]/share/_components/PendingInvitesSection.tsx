@@ -1,7 +1,7 @@
 'use client';
 
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Clock, Copy, Mail, QrCode, RefreshCw, Trash2 } from 'lucide-react';
+import { Clock, Mail, QrCode, RefreshCw, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { regenerateInvite, revokeInvite } from '@/actions/babyActions';
@@ -16,7 +16,6 @@ type PendingInvitesSectionProps = {
 export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
   const [revokingId, setRevokingId] = useState<number | null>(null);
   const [regeneratingId, setRegeneratingId] = useState<number | null>(null);
-  const [copyingId, setCopyingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showRegenerateModal, setShowRegenerateModal] = useState<{
     inviteType: 'passkey' | 'email';
@@ -37,25 +36,6 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
     return invites.filter(invite => new Date(invite.expiresAt) > now);
   }, [babyId]);
 
-  const handleCopyEmailLink = async (invite: { token: string; id: number }) => {
-    setCopyingId(invite.id);
-    setError(null);
-
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
-      const inviteLink = `${baseUrl}/account/bootstrap?invite=${invite.token}`;
-
-      await navigator.clipboard.writeText(inviteLink);
-      toast.success('Invite link copied to clipboard');
-    }
-    catch (err) {
-      console.error('Failed to copy link:', err);
-      toast.error('Failed to copy link to clipboard');
-    }
-    finally {
-      setCopyingId(null);
-    }
-  };
 
   const handleRegenerateInvite = async (inviteId: number) => {
     setRegeneratingId(inviteId);
@@ -68,6 +48,20 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
         setError(result.error);
         toast.error(result.error);
         return;
+      }
+
+      // Update IndexedDB with new expiry
+      if (result.inviteType === 'passkey') {
+        await localDb.babyInvites.update(inviteId, {
+          expiresAt: result.expiresAt.toISOString(),
+          tokenPrefix: result.code ? result.code.substring(0, 3) + '...' : undefined,
+          updatedAt: new Date().toISOString(),
+        });
+      } else {
+        await localDb.babyInvites.update(inviteId, {
+          expiresAt: result.expiresAt.toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
       }
 
       // Show modal with new code/link
@@ -114,6 +108,8 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
         toast.error(result.error);
       }
       else {
+        // Remove from IndexedDB for immediate update
+        await localDb.babyInvites.delete(inviteId);
         toast.success('Invite revoked');
       }
     }
@@ -212,30 +208,11 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
 
             {/* Action Buttons */}
             <div className="flex items-center gap-1">
-              {/* Copy Button (email only) */}
-              {invite.inviteType === 'email' && (
-                <button
-                  type="button"
-                  onClick={() => handleCopyEmailLink(invite)}
-                  disabled={
-                    copyingId === invite.id ||
-                    regeneratingId === invite.id ||
-                    revokingId === invite.id
-                  }
-                  className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
-                  aria-label="Copy invite link"
-                  title="Copy invite link"
-                >
-                  <Copy className="h-4 w-4" />
-                </button>
-              )}
-
               {/* Regenerate Button (both types) */}
               <button
                 type="button"
                 onClick={() => handleRegenerateInvite(invite.id)}
                 disabled={
-                  copyingId === invite.id ||
                   regeneratingId === invite.id ||
                   revokingId === invite.id
                 }
@@ -252,7 +229,6 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
                 type="button"
                 onClick={() => handleRevoke(invite.id)}
                 disabled={
-                  copyingId === invite.id ||
                   regeneratingId === invite.id ||
                   revokingId === invite.id
                 }

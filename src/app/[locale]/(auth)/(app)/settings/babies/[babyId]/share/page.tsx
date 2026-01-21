@@ -14,7 +14,7 @@ export async function generateMetadata(props: {
 export default async function BabySharingPage(props: {
   params: Promise<{ locale: string; babyId: string }>;
 }) {
-  const { locale, babyId } = await props.params;
+  const { babyId } = await props.params;
 
-  return <BabySharingContent babyId={babyId} locale={locale} />;
+  return <BabySharingContent babyId={babyId} />;
 }

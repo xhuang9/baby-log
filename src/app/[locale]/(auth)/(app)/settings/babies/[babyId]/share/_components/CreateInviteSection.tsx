@@ -1,8 +1,9 @@
 'use client';
 
-import { Mail, QrCode } from 'lucide-react';
+import { QrCode } from 'lucide-react';
 import { useState } from 'react';
 import { createEmailInvite, createPasskeyInvite } from '@/actions/babyActions';
+import { localDb } from '@/lib/local-db/database';
 import { EmailInviteLinkModal } from './EmailInviteLinkModal';
 import { PasskeyCodeModal } from './PasskeyCodeModal';
 
@@ -34,6 +35,26 @@ export function CreateInviteSection({ babyId, babyName }: CreateInviteSectionPro
         return;
       }
 
+      // Store invite in IndexedDB for immediate display
+      await localDb.babyInvites.add({
+        id: result.inviteId,
+        babyId,
+        inviterUserId: 0, // will be populated on next sync
+        invitedEmail: null,
+        invitedUserId: null,
+        accessLevel: 'editor',
+        status: 'pending',
+        inviteType: 'passkey',
+        tokenPrefix: result.code.substring(0, 3) + '...',
+        expiresAt: result.expiresAt.toISOString(),
+        acceptedAt: null,
+        revokedAt: null,
+        maxUses: 1,
+        usesCount: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+
       setGeneratedCode(result.code);
       setExpiresAt(result.expiresAt);
       setShowPasskeyModal(true);
@@ -59,6 +80,26 @@ export function CreateInviteSection({ babyId, babyName }: CreateInviteSectionPro
         setIsGenerating(false);
         return;
       }
+
+      // Store invite in IndexedDB for immediate display
+      await localDb.babyInvites.add({
+        id: result.inviteId,
+        babyId,
+        inviterUserId: 0, // will be populated on next sync
+        invitedEmail: email,
+        invitedUserId: null,
+        accessLevel: 'editor',
+        status: 'pending',
+        inviteType: 'email',
+        tokenPrefix: null,
+        expiresAt: result.expiresAt.toISOString(),
+        acceptedAt: null,
+        revokedAt: null,
+        maxUses: 1,
+        usesCount: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
 
       setGeneratedLink(result.inviteLink);
       setExpiresAt(result.expiresAt);
@@ -104,49 +145,26 @@ export function CreateInviteSection({ babyId, babyName }: CreateInviteSectionPro
         </div>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {/* Passkey Option */}
-        <button
-          type="button"
-          onClick={handleGeneratePasskey}
-          disabled={isGenerating}
-          className="group flex flex-col items-start gap-3 rounded-lg border bg-background p-4 text-left transition-colors hover:bg-muted/50 disabled:pointer-events-none disabled:opacity-50"
-        >
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-primary/10 p-2">
-              <QrCode className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-medium">6-Digit Code</h3>
-              <p className="text-xs text-muted-foreground">Quick & simple</p>
-            </div>
+      {/* Passkey Option */}
+      <button
+        type="button"
+        onClick={handleGeneratePasskey}
+        disabled={isGenerating}
+        className="group flex w-full flex-col items-start gap-3 rounded-lg border bg-background p-4 text-left transition-colors hover:bg-muted/50 disabled:pointer-events-none disabled:opacity-50"
+      >
+        <div className="flex items-center gap-3">
+          <div className="rounded-full bg-primary/10 p-2">
+            <QrCode className="h-5 w-5 text-primary" />
           </div>
-          <p className="text-xs text-muted-foreground">
-            Generate a temporary code that expires in 1 hour. Perfect for in-person sharing.
-          </p>
-        </button>
-
-        {/* Email Option */}
-        <button
-          type="button"
-          onClick={() => setShowEmailModal(true)}
-          disabled={isGenerating}
-          className="group flex flex-col items-start gap-3 rounded-lg border bg-background p-4 text-left transition-colors hover:bg-muted/50 disabled:pointer-events-none disabled:opacity-50"
-        >
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-primary/10 p-2">
-              <Mail className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-medium">Email Invite</h3>
-              <p className="text-xs text-muted-foreground">Secure link</p>
-            </div>
+          <div>
+            <h3 className="font-medium">Generate 6-Digit Code</h3>
+            <p className="text-xs text-muted-foreground">Quick & simple sharing</p>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Send a personalized invite link that expires in 24 hours.
-          </p>
-        </button>
-      </div>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Generate a temporary code that expires in 1 hour. Perfect for in-person sharing.
+        </p>
+      </button>
 
       {/* Passkey Modal */}
       {showPasskeyModal && generatedCode && expiresAt && (
