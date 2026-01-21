@@ -25,6 +25,7 @@ All detailed documentation lives in `.readme/sections/`. Each section contains c
 | `authentication.index.md` | Clerk setup, protected routes, layouts | Working with auth, adding protected pages |
 | `account-management.index.md` | Bootstrap post-auth flow, account state, store sync | Post-auth flows, offline fallback, baby selection |
 | `baby-management.index.md` | Baby UI, editing, switching | Building baby management features |
+| `baby-sharing.index.md` | Invites, access requests, revocation detection | Implementing sharing features, managing caregivers |
 | `feed-logging.index.md` | Feed logging, estimation, server actions | Implementing activity tracking |
 | `local-first.index.md` | Dexie, offline patterns, sync, operations layer | IndexedDB, offline mutations, operations layer, sync operations |
 | `configuration.index.md` | Environment variables, lib configs | Adding env vars, configuring libraries |

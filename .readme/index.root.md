@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-18T00:00:00Z
+last_verified_at: 2026-01-22T00:00:00Z
 source_paths:
   - .readme/sections/
 ---
@@ -35,6 +35,10 @@ Read when: Working with post-auth flows, understanding the unified bootstrap API
 ### `.readme/sections/baby-management.index.md`
 **Baby management UI, editing, and multi-baby switching**
 Read when: Building or modifying the baby list interface, implementing baby edit forms, understanding the flattened UI pattern, or working with inline switch actions.
+
+### `.readme/sections/baby-sharing.index.md`
+**Complete baby sharing system with invites, access requests, and revocation detection**
+Read when: Implementing invite generation (passkey/email), working with access requests, managing caregivers, understanding access revocation detection, debugging sharing features, or working with sharing-related IndexedDB patterns.
 
 ### `.readme/sections/feed-logging.index.md`
 **Feed logging system with dual methods, automatic estimation, and caregiver attribution**
