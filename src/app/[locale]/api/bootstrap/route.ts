@@ -57,7 +57,7 @@ type BootstrapBaby = {
 };
 
 type BootstrapBabyAccess = {
-  oduserId: number;
+  userId: number;
   babyId: number;
   accessLevel: 'owner' | 'editor' | 'viewer';
   caregiverLabel: string | null;
@@ -95,6 +95,24 @@ type BootstrapResponse = {
   syncData: {
     babies: BootstrapBaby[];
     babyAccess: BootstrapBabyAccess[];
+    babyInvites?: Array<{
+      id: number;
+      babyId: number;
+      inviterUserId: number;
+      invitedEmail: string | null;
+      invitedUserId: number | null;
+      accessLevel: 'owner' | 'editor' | 'viewer';
+      status: 'pending' | 'accepted' | 'revoked' | 'expired';
+      inviteType: 'passkey' | 'email';
+      tokenPrefix: string | null;
+      expiresAt: string;
+      acceptedAt: string | null;
+      revokedAt: string | null;
+      maxUses: number;
+      usesCount: number;
+      createdAt: string;
+      updatedAt: string;
+    }>;
     recentFeedLogs: Array<{
       id: string;
       babyId: number;
@@ -223,11 +241,13 @@ export async function GET() {
     // Get all babies user has access to
     const babyAccessRecords = await db
       .select({
-        oduserId: babyAccessSchema.userId,
+        userId: babyAccessSchema.userId,
         babyId: babyAccessSchema.babyId,
         accessLevel: babyAccessSchema.accessLevel,
         caregiverLabel: babyAccessSchema.caregiverLabel,
         lastAccessedAt: babyAccessSchema.lastAccessedAt,
+        createdAt: babyAccessSchema.createdAt,
+        updatedAt: babyAccessSchema.updatedAt,
         babyName: babiesSchema.name,
         babyArchivedAt: babiesSchema.archivedAt,
       })
@@ -474,6 +494,24 @@ export async function GET() {
         }
       : null;
 
+    // Get pending invites for babies user owns
+    const ownedBabyIds = babyAccessRecords
+      .filter(r => r.accessLevel === 'owner')
+      .map(r => r.babyId);
+
+    const babyInvitesRecords = ownedBabyIds.length > 0
+      ? await db
+          .select()
+          .from(babyInvitesSchema)
+          .where(
+            and(
+              sql`${babyInvitesSchema.babyId} IN (${sql.join(ownedBabyIds.map(id => sql`${id}`), sql`, `)})`,
+              eq(babyInvitesSchema.status, 'pending'),
+              sql`${babyInvitesSchema.expiresAt} > NOW()`,
+            ),
+          )
+      : [];
+
     // Build sync data
     const syncData: BootstrapResponse['syncData'] = {
       babies: babies.map(baby => ({
@@ -488,11 +526,31 @@ export async function GET() {
         updatedAt: baby.updatedAt?.toISOString() ?? baby.createdAt.toISOString(),
       })),
       babyAccess: babyAccessRecords.map(access => ({
-        oduserId: access.oduserId!,
+        userId: access.userId!,
         babyId: access.babyId!,
         accessLevel: access.accessLevel,
         caregiverLabel: access.caregiverLabel,
         lastAccessedAt: access.lastAccessedAt?.toISOString() ?? null,
+        createdAt: access.createdAt.toISOString(),
+        updatedAt: access.updatedAt?.toISOString() ?? access.createdAt.toISOString(),
+      })),
+      babyInvites: babyInvitesRecords.map(invite => ({
+        id: invite.id,
+        babyId: invite.babyId,
+        inviterUserId: invite.inviterUserId,
+        invitedEmail: invite.invitedEmail,
+        invitedUserId: invite.invitedUserId,
+        accessLevel: invite.accessLevel,
+        status: invite.status,
+        inviteType: invite.inviteType!,
+        tokenPrefix: invite.tokenPrefix,
+        expiresAt: invite.expiresAt.toISOString(),
+        acceptedAt: invite.acceptedAt?.toISOString() ?? null,
+        revokedAt: invite.revokedAt?.toISOString() ?? null,
+        maxUses: invite.maxUses!,
+        usesCount: invite.usesCount!,
+        createdAt: invite.createdAt.toISOString(),
+        updatedAt: invite.updatedAt?.toISOString() ?? invite.createdAt.toISOString(),
       })),
       recentFeedLogs: recentFeedLogs.map(log => ({
         id: String(log.id),

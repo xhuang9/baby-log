@@ -1,6 +1,8 @@
 'use client';
 
 import { useLiveQuery } from 'dexie-react-hooks';
+import { ChevronRight, Users } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { localDb } from '@/lib/local-db/database';
@@ -40,7 +42,7 @@ export function EditBabyContent({ babyId, locale }: EditBabyContentProps) {
     }
 
     const access = await localDb.babyAccess
-      .where('[oduserId+babyId]')
+      .where('[userId+babyId]')
       .equals([user.id, numericBabyId])
       .first();
 
@@ -91,6 +93,27 @@ export function EditBabyContent({ babyId, locale }: EditBabyContentProps) {
 
   return (
     <div className="mx-auto w-fit max-w-xl min-w-80 space-y-6 px-4 pb-20">
+      {/* Sharing & Access Link (Owner Only) */}
+      {access.accessLevel === 'owner' && (
+        <Link
+          href={getI18nPath(`/settings/babies/${baby.id}/share`, locale)}
+          className="group flex items-center justify-between rounded-lg border bg-card p-4 transition-colors hover:bg-muted/50"
+        >
+          <div className="flex items-center gap-3">
+            <div className="rounded-full bg-primary/10 p-2">
+              <Users className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-medium">Sharing & Access</p>
+              <p className="text-xs text-muted-foreground">
+                Manage caregivers and invites
+              </p>
+            </div>
+          </div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
+        </Link>
+      )}
+
       <EditBabyForm
         babyId={baby.id}
         initialData={{

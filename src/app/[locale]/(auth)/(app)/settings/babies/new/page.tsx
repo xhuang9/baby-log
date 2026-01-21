@@ -29,6 +29,7 @@ export default async function NewBabyPage(props: {
       <div className="mx-auto w-fit max-w-xl min-w-80 space-y-6 px-4 pb-20">
         <NewBabyForm
           redirectPath={getI18nPath('/settings', locale)}
+          bootstrapPath={getI18nPath('/account/bootstrap', locale)}
         />
       </div>
     </>

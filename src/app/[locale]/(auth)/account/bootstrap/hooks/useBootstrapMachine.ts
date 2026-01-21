@@ -149,6 +149,7 @@ export function useBootstrapMachine(
         saveLocalUser,
         saveBabies,
         saveBabyAccess,
+        saveBabyInvites,
         saveFeedLogs,
         saveSleepLogs,
         saveNappyLogs,
@@ -193,6 +194,28 @@ export function useBootstrapMachine(
           lastAccessedAt: access.lastAccessedAt ? new Date(access.lastAccessedAt) : null,
           createdAt: new Date(access.createdAt),
           updatedAt: new Date(access.updatedAt),
+        })));
+      }
+
+      // Store baby invites (for owners to view pending invites)
+      if (response.syncData.babyInvites && response.syncData.babyInvites.length > 0) {
+        await saveBabyInvites(response.syncData.babyInvites.map(invite => ({
+          id: invite.id,
+          babyId: invite.babyId,
+          inviterUserId: invite.inviterUserId,
+          invitedEmail: invite.invitedEmail,
+          invitedUserId: invite.invitedUserId,
+          accessLevel: invite.accessLevel,
+          status: invite.status,
+          inviteType: invite.inviteType,
+          tokenPrefix: invite.tokenPrefix,
+          expiresAt: invite.expiresAt,
+          acceptedAt: invite.acceptedAt,
+          revokedAt: invite.revokedAt,
+          maxUses: invite.maxUses,
+          usesCount: invite.usesCount,
+          createdAt: invite.createdAt,
+          updatedAt: invite.updatedAt,
         })));
       }
 

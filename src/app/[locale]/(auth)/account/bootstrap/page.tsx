@@ -16,8 +16,11 @@
  * @see .readme/planning/02-offline-first-architecture.md
  */
 
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { acceptInviteByToken } from '@/actions/babyActions';
+import { useBabyStore } from '@/stores/useBabyStore';
 import { getI18nPath } from '@/utils/Helpers';
 import { useBootstrapMachine } from './hooks/useBootstrapMachine';
 import { BootstrapInit } from './states/BootstrapInit';
@@ -33,7 +36,12 @@ import { BootstrapSyncing } from './states/BootstrapSyncing';
 export default function BootstrapPage() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const locale = (params?.locale as string) ?? 'en';
+  const { setActiveBaby } = useBabyStore();
+
+  const [inviteError, setInviteError] = useState<string | null>(null);
+  const [processingInvite, setProcessingInvite] = useState(false);
 
   const { state, retry, selectBaby } = useBootstrapMachine({
     locale,
@@ -58,6 +66,55 @@ export default function BootstrapPage() {
       router.replace(getI18nPath('/sign-in', locale));
     }
   }, [state.status, router, locale]);
+
+  // Handle invite token from URL or cookie
+  useEffect(() => {
+    // Only process once when component mounts
+    if (processingInvite) return;
+
+    // Get token from URL or cookie
+    const urlToken = searchParams.get('invite');
+    const cookieToken = Cookies.get('pending_invite');
+    const token = urlToken || cookieToken;
+
+    if (!token) return;
+
+    // If no session yet, store token in cookie and wait for auth
+    if (state.status === 'init' || state.status === 'no_session') {
+      // Store in cookie for 24 hours
+      Cookies.set('pending_invite', token, {
+        expires: 1, // 1 day
+        secure: true,
+        sameSite: 'Lax',
+      });
+      return;
+    }
+
+    // If authenticated (any status other than init/no_session), process the invite
+    setProcessingInvite(true);
+
+    acceptInviteByToken({ token })
+      .then((result) => {
+        // Clear cookie after attempt
+        Cookies.remove('pending_invite');
+
+        if (result.success) {
+          // Update store with new baby
+          setActiveBaby(result.baby);
+          // Trigger machine retry to refresh state
+          retry();
+        } else {
+          setInviteError(result.error);
+        }
+      })
+      .catch((err) => {
+        Cookies.remove('pending_invite');
+        setInviteError(err instanceof Error ? err.message : 'Failed to accept invite');
+      })
+      .finally(() => {
+        setProcessingInvite(false);
+      });
+  }, [state.status, searchParams, processingInvite, retry, setActiveBaby]);
 
   // Render state-specific UI
   const renderState = () => {
@@ -132,6 +189,12 @@ export default function BootstrapPage() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center p-4">
       <div className="w-full max-w-2xl">
+        {inviteError && (
+          <div className="mb-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <p className="font-medium">Invite Error</p>
+            <p>{inviteError}</p>
+          </div>
+        )}
         {renderState()}
       </div>
     </div>

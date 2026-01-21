@@ -16,7 +16,7 @@
  */
 
 import type { EntityTable } from 'dexie';
-import type { LocalBaby, LocalBabyAccess, LocalUIConfig, LocalUser } from './types/entities';
+import type { LocalBaby, LocalBabyAccess, LocalBabyInvite, LocalUIConfig, LocalUser } from './types/entities';
 import type { LocalFeedLog, LocalNappyLog, LocalSleepLog } from './types/logs';
 import type { OutboxEntry } from './types/outbox';
 import type { AuthSession, LocalSyncStatus, SyncMeta } from './types/sync';
@@ -35,6 +35,7 @@ class BabyLogDatabase extends Dexie {
   // Entity tables
   babies!: EntityTable<LocalBaby, 'id'>;
   babyAccess!: EntityTable<LocalBabyAccess, 'userId'>;
+  babyInvites!: EntityTable<LocalBabyInvite, 'id'>;
   users!: EntityTable<LocalUser, 'id'>;
   uiConfig!: EntityTable<LocalUIConfig, 'userId'>;
 
@@ -65,6 +66,7 @@ class BabyLogDatabase extends Dexie {
       // Entity tables
       babies: 'id, ownerUserId',
       babyAccess: '[userId+babyId], userId, babyId',
+      babyInvites: 'id, babyId, status, inviteType, [babyId+status]',
       users: 'id, clerkId',
       uiConfig: 'userId',
       // Sync management

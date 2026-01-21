@@ -31,6 +31,25 @@ export type LocalBabyAccess = {
   updatedAt: Date;
 };
 
+export type LocalBabyInvite = {
+  id: number;
+  babyId: number;
+  inviterUserId: number;
+  invitedEmail: string | null;
+  invitedUserId: number | null;
+  accessLevel: 'owner' | 'editor' | 'viewer';
+  status: 'pending' | 'accepted' | 'revoked' | 'expired';
+  inviteType: 'passkey' | 'email';
+  tokenPrefix: string | null;
+  expiresAt: string;
+  acceptedAt: string | null;
+  revokedAt: string | null;
+  maxUses: number;
+  usesCount: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
 // ============================================================================
 // User Types
 // ============================================================================

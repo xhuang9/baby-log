@@ -14,7 +14,7 @@ Provide owner UI to create invites and manage caregiver access.
    - Create email invite (form -> returns copyable link).
    - List invites with status and expiry, allow revoke.
    - List caregivers with role, allow removal and role change (optional).
-   - Label `editor` as "Collaborator" in UI copy.
+   - Label `editor` as "Editor" in UI copy.
 4. Permissions:
    - Only owners can create/revoke invites or change access.
 5. After mutations:
@@ -22,4 +22,4 @@ Provide owner UI to create invites and manage caregiver access.
    - Sync local stores if needed.
 
 ## Defaults
-- Invite access level defaults to Collaborator (DB: `editor`).
+- Invite access level defaults to `editor`.

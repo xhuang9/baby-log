@@ -28,7 +28,8 @@
       "Bash(pnpm run lint:*)",
       "Bash(pnpm run build:*)",
       "Bash(tree:*)",
-      "Bash(npm run test:*)"
+      "Bash(npm run test:*)",
+      "Bash(cat:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -86,7 +86,7 @@ export async function createFeedLog(
 
     // Check access to baby
     const access = await localDb.babyAccess
-      .where('[oduserId+babyId]')
+      .where('[userId+babyId]')
       .equals([user.localId, input.babyId])
       .first();
 

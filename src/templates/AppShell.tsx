@@ -1,5 +1,6 @@
 'use client';
 
+import { AccessRevokedModal } from '@/components/AccessRevokedModal';
 import { DatabaseHealthCheck } from '@/components/DatabaseHealthCheck';
 import { IndexedDbGuard } from '@/components/guards/IndexedDbGuard';
 import { AppHeader } from '@/components/navigation/AppHeader';
@@ -8,6 +9,7 @@ import { MobileBottomBar } from '@/components/navigation/MobileBottomBar';
 import { OfflineBanner } from '@/components/OfflineBanner';
 import { SyncProvider } from '@/components/SyncProvider';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { useAccessRevocationDetection } from '@/hooks/useAccessRevocationDetection';
 import { useAuthSessionSync } from '@/hooks/useAuthSessionSync';
 
 type AppShellProps = {
@@ -19,6 +21,9 @@ type AppShellProps = {
 export const AppShell = ({ children, locale, variant = 'default' }: AppShellProps) => {
   // Sync Clerk auth state to IndexedDB for offline access
   useAuthSessionSync();
+
+  // Monitor for access revocation
+  const { revokedBaby, handleClose } = useAccessRevocationDetection(locale);
 
   return (
     <IndexedDbGuard locale={locale}>
@@ -45,6 +50,15 @@ export const AppShell = ({ children, locale, variant = 'default' }: AppShellProp
 
           <MobileBottomBar locale={locale} />
         </SidebarProvider>
+
+        {/* Show modal when access is revoked */}
+        {revokedBaby && (
+          <AccessRevokedModal
+            babyName={revokedBaby.babyName}
+            reason={revokedBaby.reason}
+            onClose={handleClose}
+          />
+        )}
       </SyncProvider>
     </IndexedDbGuard>
   );

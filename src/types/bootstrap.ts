@@ -59,6 +59,25 @@ export type BootstrapInvite = {
   expiresAt: string;
 };
 
+export type BootstrapBabyInvite = {
+  id: number;
+  babyId: number;
+  inviterUserId: number;
+  invitedEmail: string | null;
+  invitedUserId: number | null;
+  accessLevel: 'owner' | 'editor' | 'viewer';
+  status: 'pending' | 'accepted' | 'revoked' | 'expired';
+  inviteType: 'passkey' | 'email';
+  tokenPrefix: string | null;
+  expiresAt: string;
+  acceptedAt: string | null;
+  revokedAt: string | null;
+  maxUses: number;
+  usesCount: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type BootstrapPendingRequest = {
   id: number;
   targetEmail: string;
@@ -128,6 +147,7 @@ export type AccountState
 export type BootstrapSyncData = {
   babies: BootstrapBaby[];
   babyAccess: BootstrapBabyAccess[];
+  babyInvites?: BootstrapBabyInvite[];
   recentFeedLogs: BootstrapFeedLog[];
   recentSleepLogs: BootstrapSleepLog[];
   recentNappyLogs: BootstrapNappyLog[];

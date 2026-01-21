@@ -15,4 +15,4 @@ Expose access request creation for invitees and approval for owners.
    - Set `defaultBabyId` if this is their first access.
 4. Guard rails:
    - Prevent requests to self.
-   - Allow cancel of outgoing requests.
+   - Allow cancel of outgoing requests. (Should be done in Baby Edit Page)

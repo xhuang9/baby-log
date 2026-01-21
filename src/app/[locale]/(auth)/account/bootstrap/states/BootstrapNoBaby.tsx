@@ -3,6 +3,8 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { JoinWithCodeSection } from '@/components/baby-access/JoinWithCodeSection';
+import { RequestAccessSection } from '@/components/baby-access/RequestAccessSection';
 import { createBaby } from '@/services/operations';
 
 type BootstrapNoBabyProps = {
@@ -189,8 +191,23 @@ export function BootstrapNoBaby(props: BootstrapNoBabyProps) {
         >
           {isSubmitting ? 'Creating...' : 'Continue to Overview'}
         </button>
-
       </form>
+
+      {/* OR Divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">OR</span>
+        </div>
+      </div>
+
+      {/* Join with Code Section */}
+      <JoinWithCodeSection redirectPath={redirectPath} />
+
+      {/* Request Access Section */}
+      <RequestAccessSection redirectPath={redirectPath} />
     </div>
   );
 }

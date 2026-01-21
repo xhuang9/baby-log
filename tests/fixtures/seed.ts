@@ -17,7 +17,7 @@ export type TestBaby = {
 };
 
 export type TestBabyAccess = {
-  oduserId: number;
+  userId: number;
   babyId: number;
   accessLevel: 'owner' | 'caregiver' | 'viewer';
   caregiverLabel: string | null;
@@ -65,7 +65,7 @@ export async function seedTestBaby(
 export async function seedBabyAccess(
   page: Page,
   data: {
-    oduserId: number;
+    userId: number;
     babyId: number;
     accessLevel: 'owner' | 'caregiver' | 'viewer';
     caregiverLabel?: string;

@@ -4,7 +4,7 @@
  * Functions for managing baby and baby access data in IndexedDB.
  */
 
-import type { LocalBaby, LocalBabyAccess } from '../types/entities';
+import type { LocalBaby, LocalBabyAccess, LocalBabyInvite } from '../types/entities';
 import { localDb } from '../database';
 
 /**
@@ -39,7 +39,7 @@ export async function saveBabyAccess(accessRecords: LocalBabyAccess[]): Promise<
  * Get baby access for a user
  */
 export async function getBabyAccessForUser(userId: number): Promise<LocalBabyAccess[]> {
-  return localDb.babyAccess.where('oduserId').equals(userId).toArray();
+  return localDb.babyAccess.where('userId').equals(userId).toArray();
 }
 
 /**
@@ -47,4 +47,27 @@ export async function getBabyAccessForUser(userId: number): Promise<LocalBabyAcc
  */
 export async function getBabyAccessForBaby(babyId: number): Promise<LocalBabyAccess[]> {
   return localDb.babyAccess.where('babyId').equals(babyId).toArray();
+}
+
+/**
+ * Save baby invites to local database
+ */
+export async function saveBabyInvites(invites: LocalBabyInvite[]): Promise<void> {
+  if (invites.length > 0) {
+    await localDb.babyInvites.bulkPut(invites);
+  }
+}
+
+/**
+ * Get all baby invites from local database
+ */
+export async function getAllLocalBabyInvites(): Promise<LocalBabyInvite[]> {
+  return localDb.babyInvites.toArray();
+}
+
+/**
+ * Get baby invites for a specific baby
+ */
+export async function getBabyInvitesForBaby(babyId: number): Promise<LocalBabyInvite[]> {
+  return localDb.babyInvites.where('babyId').equals(babyId).toArray();
 }

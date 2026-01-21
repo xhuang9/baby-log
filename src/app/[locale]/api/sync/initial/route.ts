@@ -52,11 +52,13 @@ export async function GET() {
     // Get all babies user has access to
     const babyAccessRecords = await db
       .select({
-        oduserId: babyAccessSchema.userId,
+        userId: babyAccessSchema.userId,
         babyId: babyAccessSchema.babyId,
         accessLevel: babyAccessSchema.accessLevel,
         caregiverLabel: babyAccessSchema.caregiverLabel,
         lastAccessedAt: babyAccessSchema.lastAccessedAt,
+        createdAt: babyAccessSchema.createdAt,
+        updatedAt: babyAccessSchema.updatedAt,
       })
       .from(babyAccessSchema)
       .where(eq(babyAccessSchema.userId, localUser.id));
@@ -141,11 +143,13 @@ export async function GET() {
         updatedAt: baby.updatedAt.toISOString(),
       })),
       babyAccess: babyAccessRecords.map(access => ({
-        oduserId: access.oduserId,
+        userId: access.userId,
         babyId: access.babyId,
         accessLevel: access.accessLevel,
         caregiverLabel: access.caregiverLabel,
         lastAccessedAt: access.lastAccessedAt?.toISOString() ?? null,
+        createdAt: access.createdAt.toISOString(),
+        updatedAt: access.updatedAt?.toISOString() ?? access.createdAt.toISOString(),
       })),
       recentFeedLogs: recentFeedLogs.map(log => ({
         id: String(log.id),

@@ -96,7 +96,7 @@ export const useBabyStore = create<BabyStore>((set, get) => ({
 
       // Get baby access records for this user
       const accessRecords = await localDb.babyAccess
-        .where('oduserId')
+        .where('userId')
         .equals(userId)
         .toArray();
 

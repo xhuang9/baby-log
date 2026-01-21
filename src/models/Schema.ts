@@ -57,6 +57,11 @@ export const accessRequestStatusEnum = pgEnum('access_request_status_enum', [
   'canceled',
 ]);
 
+export const inviteTypeEnum = pgEnum('invite_type_enum', [
+  'passkey',
+  'email',
+]);
+
 export const nappyTypeEnum = pgEnum('nappy_type_enum', [
   'wee',
   'poo',
@@ -167,15 +172,24 @@ export const babyInvitesSchema = pgTable('baby_invites', {
   id: serial('id').primaryKey(),
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
   inviterUserId: integer('inviter_user_id').references(() => userSchema.id).notNull(),
-  invitedEmail: text('invited_email').notNull(),
+  invitedEmail: text('invited_email'), // nullable for passkey invites
   invitedUserId: integer('invited_user_id').references(() => userSchema.id),
-  accessLevel: accessLevelEnum('access_level').notNull().default('viewer'),
+  accessLevel: accessLevelEnum('access_level').notNull().default('editor'),
   status: inviteStatusEnum('status').notNull().default('pending'),
-  token: text('token').notNull().unique(),
+  inviteType: inviteTypeEnum('invite_type').notNull().default('email'),
+  token: text('token').notNull().unique(), // kept for backwards compatibility
+  tokenHash: text('token_hash').unique(), // SHA-256 hash for secure storage
+  tokenPrefix: text('token_prefix'), // display prefix (e.g., "123...")
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  acceptedAt: timestamp('accepted_at', { withTimezone: true }),
+  revokedAt: timestamp('revoked_at', { withTimezone: true }),
+  maxUses: integer('max_uses').notNull().default(1),
+  usesCount: integer('uses_count').notNull().default(0),
   ...timestamps,
 }, t => [
   index('baby_invites_token_idx').on(t.token),
+  index('baby_invites_token_hash_idx').on(t.tokenHash),
+  index('baby_invites_baby_id_status_idx').on(t.babyId, t.status),
   index('baby_invites_invited_email_idx').on(t.invitedEmail),
   index('baby_invites_invited_user_id_idx').on(t.invitedUserId),
 ]);

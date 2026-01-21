@@ -4,10 +4,11 @@
  * Unit tests for the timer widget component
  */
 
+import type { TimerStore } from '@/stores/useTimerStore';
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 import { page, userEvent } from 'vitest/browser';
-import type { TimerStore } from '@/stores/useTimerStore';
 import { useTimerStore } from '@/stores/useTimerStore';
 import { TimerWidget } from './TimerWidget';
 

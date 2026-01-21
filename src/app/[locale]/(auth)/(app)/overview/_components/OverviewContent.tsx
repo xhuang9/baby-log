@@ -59,7 +59,7 @@ export function OverviewContent({ locale }: OverviewContentProps) {
 
     // Get caregiver label from babyAccess
     const access = await localDb.babyAccess
-      .where('[oduserId+babyId]')
+      .where('[userId+babyId]')
       .equals([latestFeed.loggedByUserId, babyId])
       .first();
 
@@ -104,7 +104,7 @@ export function OverviewContent({ locale }: OverviewContentProps) {
 
     // Get caregiver label from babyAccess
     const access = await localDb.babyAccess
-      .where('[oduserId+babyId]')
+      .where('[userId+babyId]')
       .equals([latestSleep.loggedByUserId, babyId])
       .first();
 

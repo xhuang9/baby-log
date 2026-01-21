@@ -4,7 +4,7 @@ This is the single entry point for baby sharing work. Sub-plans in this folder
 provide the detailed execution steps.
 
 ## Product Decisions (Confirmed)
-- Default invite access level: **Collaborator** (maps to `editor` in DB).
+- Default invite access level: **editor**.
 - Passkey format: **6-digit numeric**, **1 hour** expiry, single-use.
 - Email invite: **JWT link**, **24 hours** expiry.
 - Invite token persistence: **temporary cookie** across sign-in.
@@ -17,7 +17,7 @@ provide the detailed execution steps.
 
 ## Access Levels (DB)
 - owner: full control (edit baby, manage sharing, archive).
-- editor: edit logs + baby details (UI label: Collaborator).
+- editor: edit logs + baby details.
 - viewer: read-only.
 
 ## Baseline (Already in Code)
@@ -43,12 +43,12 @@ provide the detailed execution steps.
 4. 04-email-invite-token-flow.md
 5. 05-sharing-ui-and-caregiver-management.md
 6. 06-access-requests-ui-and-approval.md
-7. 07-tests-and-validation.md
-8. 90-review-scope.md
-9. 99-docs-architect-tasks.md
+7. 08-review-scope.md
+8. 09-docs-architect-tasks.md
+9. 10-tests-and-validation.md
 
 ## Definition of Done
-- Owners can create passkey + email invites (default Collaborator access).
+- Owners can create passkey + email invites (default editor access).
 - Invitees can accept passkey during bootstrap and email link after sign-in.
 - Owners can revoke invites and remove caregiver access.
 - Access requests work end-to-end with approve/reject + cancel.

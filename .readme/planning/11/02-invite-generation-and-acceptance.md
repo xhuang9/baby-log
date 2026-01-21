@@ -5,7 +5,7 @@ Create server actions for invite lifecycle with Postgres-backed acceptance.
 
 ## Steps
 1. Add invite helpers (new module):
-   - Passkey generation (8-10 digits or base32).
+   - Passkey generation (6-digit numeric).
    - Token hashing (sha256 or similar).
    - JWT signing for email invites.
 2. Create server actions (new file or extend `src/actions/babyActions.ts`):
@@ -19,7 +19,6 @@ Create server actions for invite lifecycle with Postgres-backed acceptance.
    - Invite must be `pending`, not expired, and within `maxUses`.
    - Email invites require logged-in email match.
    - Guard against duplicate access.
-   - UI label "Collaborator" maps to `editor`.
 4. Use a DB transaction for acceptance:
    - Re-check invite status/expiry.
    - Insert `baby_access`.
