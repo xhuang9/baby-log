@@ -81,6 +81,13 @@ This section documents the feed logging implementation including:
 - **Content**: Dual input modes (timer vs. manual) in AddFeedModal, timer-to-feed-log conversion, actual start time reconstruction, and validation logic
 - **Read when**: Working with AddFeedModal, understanding timer/manual mode switching, debugging timer submission, or implementing similar dual-mode input patterns
 
+### UI Patterns
+
+#### `chunks/ui-patterns.activity-modals.md`
+
+- **Content**: Shared modal architecture, modular component pattern, hook responsibilities, testing approach, and guide for adding new activity modals
+- **Read when**: Building new activity modals (nappy, meal, medication), refactoring existing modals, understanding the modular architecture, or writing tests for modal hooks
+
 ## Related Sections
 
 - `.readme/sections/account-management.index.md` - Baby access control and multi-tenancy

@@ -1,6 +1,6 @@
 import type { User } from '@clerk/nextjs/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { acceptInvite, createBaby, resolveAccountContext, setDefaultBaby } from './babyActions';
+import { acceptInvite, createBaby, resolveAccountContext, setDefaultBaby } from './baby';
 
 // Mock Clerk auth
 vi.mock('@clerk/nextjs/server', () => ({

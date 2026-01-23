@@ -52,7 +52,7 @@ Key architectural decisions:
 ---
 
 ### `baby-sharing.access-revocation.md`
-**Content:** Access revocation detection mechanism with automatic data cleanup
+**Content:** Access revocation detection mechanism with automatic data cleanup (legacy hook-based approach)
 
 **Key patterns:**
 - Outbox monitoring for "Access denied" errors
@@ -62,12 +62,13 @@ Key architectural decisions:
 - Modal notification with bootstrap redirect
 - Ref-based deduplication prevents multiple checks
 
+**Note:** This chunk describes the older hook-based approach. For the current 403-based sync service implementation, see `local-first.access-revocation-handling.md`.
+
 **Read when:**
+- Understanding historical access revocation patterns
 - Implementing access control features
 - Working with access revocation or removal
-- Understanding outbox error handling
 - Debugging sync failures related to access
-- Adding access-related validation
 
 ---
 
@@ -135,4 +136,5 @@ Key architectural decisions:
 - `.readme/sections/account-management.index.md` - Bootstrap flow and invite acceptance entry points
 - `.readme/sections/baby-management.index.md` - Baby editing and access control
 - `.readme/sections/local-first.index.md` - IndexedDB patterns and sync architecture
+- `.readme/chunks/local-first.access-revocation-handling.md` - Current 403-based access revocation implementation
 - `.readme/sections/database.index.md` - Schema for baby_invites and access_requests tables

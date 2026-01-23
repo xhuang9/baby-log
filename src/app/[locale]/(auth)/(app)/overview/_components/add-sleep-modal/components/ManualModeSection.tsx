@@ -1,0 +1,35 @@
+import { TimeSwiper } from '@/components/feed/TimeSwiper';
+import { Label } from '@/components/ui/label';
+import { DurationDisplay } from '@/components/activity-modals';
+
+type ManualModeSectionProps = {
+  startTime: Date;
+  onStartTimeChange: (time: Date) => void;
+  endTime: Date;
+  onEndTimeChange: (time: Date) => void;
+  handMode: 'left' | 'right';
+};
+
+export function ManualModeSection({
+  startTime,
+  onStartTimeChange,
+  endTime,
+  onEndTimeChange,
+  handMode,
+}: ManualModeSectionProps) {
+  return (
+    <>
+      <div className="space-y-3">
+        <Label className="text-muted-foreground">Start time</Label>
+        <TimeSwiper value={startTime} onChange={onStartTimeChange} handMode={handMode} />
+      </div>
+
+      <div className="space-y-3">
+        <Label className="text-muted-foreground">End time</Label>
+        <TimeSwiper value={endTime} onChange={onEndTimeChange} handMode={handMode} />
+      </div>
+
+      <DurationDisplay startTime={startTime} endTime={endTime} />
+    </>
+  );
+}

@@ -3,7 +3,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Crown, RefreshCw, Trash2, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { getCaregivers, removeCaregiver } from '@/actions/babyActions';
+import { getCaregivers, removeCaregiver } from '@/actions/baby';
 import { localDb } from '@/lib/local-db/database';
 
 type CaregiversSectionProps = {
@@ -39,11 +39,9 @@ export function CaregiversSection({ babyId }: CaregiversSectionProps) {
       } else {
         setError(result.error);
       }
-    }
-    catch (err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch caregivers');
-    }
-    finally {
+    } finally {
       setIsRefreshing(false);
     }
   };
@@ -56,7 +54,9 @@ export function CaregiversSection({ babyId }: CaregiversSectionProps) {
   // Fetch caregivers from IndexedDB (fallback)
   const caregivers = useLiveQuery(async () => {
     const currentUser = await localDb.users.toCollection().first();
-    if (!currentUser) return [];
+    if (!currentUser) {
+      return [];
+    }
 
     const accesses = await localDb.babyAccess
       .where('babyId')
@@ -97,8 +97,12 @@ export function CaregiversSection({ babyId }: CaregiversSectionProps) {
 
     // Sort: owners first, then by last accessed
     return caregiversWithDetails.sort((a, b) => {
-      if (a.accessLevel === 'owner' && b.accessLevel !== 'owner') return -1;
-      if (a.accessLevel !== 'owner' && b.accessLevel === 'owner') return 1;
+      if (a.accessLevel === 'owner' && b.accessLevel !== 'owner') {
+        return -1;
+      }
+      if (a.accessLevel !== 'owner' && b.accessLevel === 'owner') {
+        return 1;
+      }
 
       const aTime = a.lastAccessedAt ? new Date(a.lastAccessedAt).getTime() : 0;
       const bTime = b.lastAccessedAt ? new Date(b.lastAccessedAt).getTime() : 0;
@@ -123,27 +127,35 @@ export function CaregiversSection({ babyId }: CaregiversSectionProps) {
         // Refresh caregivers list from server
         await fetchFromServer();
       }
-    }
-    catch (err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to remove caregiver');
-    }
-    finally {
+    } finally {
       setRemovingId(null);
     }
   };
 
   const formatLastAccessed = (lastAccessedAt: string | null) => {
-    if (!lastAccessedAt) return 'Never';
+    if (!lastAccessedAt) {
+      return 'Never';
+    }
 
     const date = new Date(lastAccessedAt);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    if (days === 0) return 'Today';
-    if (days === 1) return 'Yesterday';
-    if (days < 7) return `${days} days ago`;
-    if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
+    if (days === 0) {
+      return 'Today';
+    }
+    if (days === 1) {
+      return 'Yesterday';
+    }
+    if (days < 7) {
+      return `${days} days ago`;
+    }
+    if (days < 30) {
+      return `${Math.floor(days / 7)} weeks ago`;
+    }
     return date.toLocaleDateString();
   };
 
@@ -178,7 +190,11 @@ export function CaregiversSection({ babyId }: CaregiversSectionProps) {
         <div>
           <h2 className="text-lg font-semibold">Caregivers</h2>
           <p className="text-sm text-muted-foreground">
-            {displayCaregivers.length} {displayCaregivers.length === 1 ? 'person has' : 'people have'} access
+            {displayCaregivers.length}
+            {' '}
+            {displayCaregivers.length === 1 ? 'person has' : 'people have'}
+            {' '}
+            access
           </p>
         </div>
         <button
@@ -208,11 +224,13 @@ export function CaregiversSection({ babyId }: CaregiversSectionProps) {
             <div className="flex items-center gap-3">
               {/* Avatar */}
               <div className="rounded-full bg-primary/10 p-2">
-                {caregiver.accessLevel === 'owner' ? (
-                  <Crown className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                ) : (
-                  <User className="h-4 w-4 text-muted-foreground" />
-                )}
+                {caregiver.accessLevel === 'owner'
+                  ? (
+                      <Crown className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                    )
+                  : (
+                      <User className="h-4 w-4 text-muted-foreground" />
+                    )}
               </div>
 
               {/* Info */}
@@ -232,7 +250,9 @@ export function CaregiversSection({ babyId }: CaregiversSectionProps) {
                   {caregiver.email || `User #${caregiver.userId}`}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Last active: {formatLastAccessed(caregiver.lastAccessedAt)}
+                  Last active:
+                  {' '}
+                  {formatLastAccessed(caregiver.lastAccessedAt)}
                 </p>
               </div>
             </div>

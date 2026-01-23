@@ -50,7 +50,7 @@ export async function clearRevokedBabyData(babyId: number, userId: number): Prom
 
     // Delete all pending mutations for this baby
     const deletedMutations = await localDb.outbox
-      .filter(m => {
+      .filter((m) => {
         if (m.entityType === 'baby' && m.entityId === String(babyId)) {
           return true;
         }
@@ -80,7 +80,7 @@ export async function getAccessDeniedMutations(babyId: number): Promise<{
   const failedMutations = await localDb.outbox
     .where('status')
     .equals('failed')
-    .filter(m => {
+    .filter((m) => {
       // Check if error is "Access denied"
       if (!m.errorMessage?.includes('Access denied')) {
         return false;

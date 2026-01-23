@@ -8,9 +8,9 @@
 /**
  * Standard result type for all operations
  */
-export type OperationResult<T> =
-  | { success: true; data: T }
-  | { success: false; error: string };
+export type OperationResult<T>
+  = | { success: true; data: T }
+    | { success: false; error: string };
 
 /**
  * Helper to create a success result
@@ -30,7 +30,7 @@ export function failure<T>(error: string): OperationResult<T> {
  * Type guard to check if operation succeeded
  */
 export function isSuccess<T>(
-  result: OperationResult<T>
+  result: OperationResult<T>,
 ): result is { success: true; data: T } {
   return result.success === true;
 }
@@ -39,7 +39,7 @@ export function isSuccess<T>(
  * Type guard to check if operation failed
  */
 export function isFailure<T>(
-  result: OperationResult<T>
+  result: OperationResult<T>,
 ): result is { success: false; error: string } {
   return result.success === false;
 }
@@ -47,11 +47,11 @@ export function isFailure<T>(
 /**
  * User context required for most operations
  */
-export interface UserContext {
+export type UserContext = {
   localId: string;
   clerkUserId: string;
   email?: string;
-}
+};
 
 /**
  * Check if we're running in client-side context

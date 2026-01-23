@@ -19,7 +19,7 @@
 import Cookies from 'js-cookie';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { acceptInviteByToken } from '@/actions/babyActions';
+import { acceptInviteByToken } from '@/actions/baby';
 import { useBabyStore } from '@/stores/useBabyStore';
 import { getI18nPath } from '@/utils/Helpers';
 import { useBootstrapMachine } from './hooks/useBootstrapMachine';
@@ -70,14 +70,18 @@ export default function BootstrapPage() {
   // Handle invite token from URL or cookie
   useEffect(() => {
     // Only process once when component mounts
-    if (processingInvite) return;
+    if (processingInvite) {
+      return;
+    }
 
     // Get token from URL or cookie
     const urlToken = searchParams.get('invite');
     const cookieToken = Cookies.get('pending_invite');
     const token = urlToken || cookieToken;
 
-    if (!token) return;
+    if (!token) {
+      return;
+    }
 
     // If no session yet, store token in cookie and wait for auth
     if (state.status === 'init' || state.status === 'no_session') {

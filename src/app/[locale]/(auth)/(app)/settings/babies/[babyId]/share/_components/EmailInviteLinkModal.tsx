@@ -17,8 +17,7 @@ export function EmailInviteLinkModal({ inviteLink, expiresAt, onClose }: EmailIn
       await navigator.clipboard.writeText(inviteLink);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Failed to copy:', err);
     }
   };
@@ -41,13 +40,16 @@ export function EmailInviteLinkModal({ inviteLink, expiresAt, onClose }: EmailIn
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Email Invite Generated</h3>
           <p className="text-sm text-muted-foreground">
-            Share this link with the caregiver. It expires in {formatExpiryTime(expiresAt)}.
+            Share this link with the caregiver. It expires in
+            {' '}
+            {formatExpiryTime(expiresAt)}
+            .
           </p>
         </div>
 
         <div className="space-y-2">
           <div className="overflow-hidden rounded-lg border bg-muted p-3">
-            <p className="break-all text-xs font-mono">{inviteLink}</p>
+            <p className="font-mono text-xs break-all">{inviteLink}</p>
           </div>
 
           <button
@@ -55,17 +57,19 @@ export function EmailInviteLinkModal({ inviteLink, expiresAt, onClose }: EmailIn
             onClick={handleCopy}
             className="flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            {copied ? (
-              <>
-                <Check className="h-4 w-4" />
-                Copied!
-              </>
-            ) : (
-              <>
-                <Copy className="h-4 w-4" />
-                Copy Link
-              </>
-            )}
+            {copied
+              ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Copied!
+                  </>
+                )
+              : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    Copy Link
+                  </>
+                )}
           </button>
         </div>
 

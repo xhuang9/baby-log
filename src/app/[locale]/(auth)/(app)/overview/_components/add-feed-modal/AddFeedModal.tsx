@@ -1,0 +1,170 @@
+'use client';
+
+import { ChevronLeftIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { FormFooter } from '@/components/input-controls/FormFooter';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import { useTimerSave } from '@/hooks/useTimerSave';
+import { useTimerStore } from '@/stores/useTimerStore';
+import {
+  FeedMethodToggle,
+  ManualModeSection,
+  ModeSwitch,
+  TimerModeSection,
+} from './components';
+import {
+  useFeedFormState,
+  useFeedFormSubmit,
+  useInitializeFeedForm,
+} from './hooks';
+import type { AddFeedModalProps } from './types';
+
+export function AddFeedModal({
+  babyId,
+  open,
+  onOpenChange,
+  onSuccess,
+}: AddFeedModalProps) {
+  // 1. State management
+  const { state, actions } = useFeedFormState();
+
+  // 2. Timer integration
+  const { isHydrated } = useTimerStore();
+  const { prepareTimerSave, completeTimerSave } = useTimerSave({
+    babyId,
+    logType: 'feed',
+  });
+
+  // 3. Initialization effects
+  useInitializeFeedForm({
+    method: state.method,
+    isTimerHydrated: isHydrated,
+    setInputMode: actions.setInputMode,
+    setStartTime: actions.setStartTime,
+    setEndTime: actions.setEndTime,
+    setHandMode: actions.setHandMode,
+  });
+
+  // 4. Submit logic
+  const { handleSubmit, isSubmitting, error } = useFeedFormSubmit({
+    babyId,
+    method: state.method,
+    inputMode: state.inputMode,
+    startTime: state.startTime,
+    endTime: state.endTime,
+    amountMl: state.amountMl,
+    endSide: state.endSide,
+    prepareTimerSave,
+    completeTimerSave,
+    resetForm: actions.resetForm,
+    onSuccess,
+    onClose: () => onOpenChange(false),
+  });
+
+  // 5. Open change handler
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      actions.resetForm();
+    }
+    onOpenChange(newOpen);
+  };
+
+  // 6. Render
+  return (
+    <Sheet open={open} onOpenChange={handleOpenChange}>
+      <SheetContent
+        side="bottom"
+        className="inset-0 flex h-full w-full flex-col gap-0 rounded-none p-0"
+        showCloseButton={false}
+      >
+        <SheetHeader className="relative mx-auto w-full max-w-[600px] flex-shrink-0 flex-row items-center space-y-0 border-b px-4 pt-4 pb-4">
+          <SheetClose
+            render={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="text-muted-foreground"
+              />
+            }
+          >
+            <ChevronLeftIcon className="h-5 w-5" />
+            <span className="sr-only">Close</span>
+          </SheetClose>
+
+          <SheetTitle className="absolute left-1/2 -translate-x-1/2">
+            Feed
+          </SheetTitle>
+        </SheetHeader>
+
+        <div
+          className="mx-auto w-full max-w-[600px] flex-1 space-y-6 overflow-y-auto px-4 pt-6 pb-6"
+          style={{ minHeight: 0 }}
+        >
+          {/* Feed Method Toggle - Breast/Bottle */}
+          <FeedMethodToggle
+            method={state.method}
+            onMethodChange={actions.setMethod}
+          />
+
+          {/* Timer Mode - Only for breast feeding */}
+          {state.inputMode === 'timer' && state.method === 'breast' && (
+            <TimerModeSection
+              babyId={babyId}
+              endSide={state.endSide}
+              onEndSideChange={actions.setEndSide}
+              handMode={state.handMode}
+            />
+          )}
+
+          {/* Manual Mode - Form Fields */}
+          {state.inputMode === 'manual' && (
+            <ManualModeSection
+              method={state.method}
+              startTime={state.startTime}
+              onStartTimeChange={actions.setStartTime}
+              endTime={state.endTime}
+              onEndTimeChange={actions.setEndTime}
+              amountMl={state.amountMl}
+              onAmountChange={actions.setAmountMl}
+              endSide={state.endSide}
+              onEndSideChange={actions.setEndSide}
+              handMode={state.handMode}
+            />
+          )}
+
+          {/* Mode Switch - Only for breast feeding */}
+          {state.method === 'breast' && (
+            <ModeSwitch
+              inputMode={state.inputMode}
+              onModeChange={actions.setInputMode}
+            />
+          )}
+
+          {error && (
+            <p className="text-center text-sm text-destructive">{error}</p>
+          )}
+        </div>
+
+        <SheetFooter
+          className={`mx-auto w-full max-w-[600px] flex-shrink-0 flex-row border-t px-4 pt-4 pb-4 ${state.handMode === 'left' ? 'justify-start' : 'justify-end'}`}
+        >
+          <FormFooter
+            onPrimary={handleSubmit}
+            primaryLabel="Save"
+            onSecondary={() => handleOpenChange(false)}
+            secondaryLabel="Cancel"
+            isLoading={isSubmitting}
+            handMode={state.handMode}
+          />
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
+}

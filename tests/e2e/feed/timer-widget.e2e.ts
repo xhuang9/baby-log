@@ -27,6 +27,7 @@ test.describe('Timer Widget', () => {
 
       // Should show play button
       const playButton = page.locator('button:has-text("▶"), button[aria-label*="play"]').first();
+
       await expect(playButton).toBeVisible();
 
       // Should show timer controls
@@ -52,6 +53,7 @@ test.describe('Timer Widget', () => {
       // Timer should now show non-zero seconds
       // Note: Exact timing may vary, so we just check it's running
       const timerDisplay = page.locator('text=/00:00:0[1-9]|00:00:1[0-9]/');
+
       await expect(timerDisplay).toBeVisible({ timeout: 3000 });
     });
 
@@ -74,13 +76,13 @@ test.describe('Timer Widget', () => {
       await pauseButton.click();
 
       // Get current time display
-      const timeText = await page.locator('[class*="text-5xl"]').first().textContent();
+      const timeText = page.locator('[class*="text-5xl"]').first();
 
       // Wait a moment and verify time hasn't changed
       await page.waitForTimeout(1000);
       const newTimeText = await page.locator('[class*="text-5xl"]').first().textContent();
 
-      expect(timeText).toBe(newTimeText);
+      await expect(timeText).toHaveText(newTimeText);
     });
 
     test.skip('should resume timer after pause', async ({ page }) => {
@@ -108,6 +110,7 @@ test.describe('Timer Widget', () => {
 
       // Should show time greater than initial pause time
       const timerDisplay = page.locator('text=/00:00:0[2-9]|00:00:[1-9][0-9]/');
+
       await expect(timerDisplay).toBeVisible({ timeout: 3000 });
     });
   });
@@ -161,6 +164,7 @@ test.describe('Timer Widget', () => {
 
       // Should still show 00:00:00
       const zeroDisplay = page.locator('text=/^00$/');
+
       await expect(zeroDisplay).toHaveCount(3); // hours, minutes, seconds
     });
 
@@ -184,6 +188,7 @@ test.describe('Timer Widget', () => {
       // Should have added multiple increments
       // After 2s: initial + delay(1.5s) + ~5 intervals = 60-80s
       const timerDisplay = page.locator('text=/00:0[1-9]:[0-9]{2}|00:01:[0-9]{2}/');
+
       await expect(timerDisplay).toBeVisible();
     });
   });
@@ -203,6 +208,7 @@ test.describe('Timer Widget', () => {
       // Setup dialog handler
       page.on('dialog', async (dialog) => {
         expect(dialog.message()).toContain('reset');
+
         await dialog.accept();
       });
 
@@ -211,6 +217,7 @@ test.describe('Timer Widget', () => {
 
       // Should return to 00:00:00
       const zeroDisplay = page.locator('text=/^00$/');
+
       await expect(zeroDisplay).toHaveCount(3);
     });
 
@@ -282,6 +289,7 @@ test.describe('Timer Widget', () => {
 
       // Timer should still show running time
       const timerDisplay = page.locator('text=/00:00:0[2-9]|00:00:[1-9][0-9]/');
+
       await expect(timerDisplay).toBeVisible();
     });
 

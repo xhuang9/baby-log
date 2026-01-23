@@ -38,7 +38,7 @@ describe('sync-service', () => {
         updateSyncCursor,
         saveFeedLogs,
       } = await import('@/lib/local-db');
-      const { pullChanges } = await import('./sync-service');
+      const { pullChanges } = await import('./sync');
 
       vi.mocked(getSyncCursor).mockResolvedValue(0);
       mockFetch.mockResolvedValue({
@@ -82,7 +82,7 @@ describe('sync-service', () => {
 
     it('should handle delete operations', async () => {
       const { getSyncCursor, deleteFeedLog } = await import('@/lib/local-db');
-      const { pullChanges } = await import('./sync-service');
+      const { pullChanges } = await import('./sync');
 
       vi.mocked(getSyncCursor).mockResolvedValue(0);
       mockFetch.mockResolvedValue({
@@ -110,7 +110,7 @@ describe('sync-service', () => {
 
     it('should recursively pull when hasMore is true', async () => {
       const { getSyncCursor } = await import('@/lib/local-db');
-      const { pullChanges } = await import('./sync-service');
+      const { pullChanges } = await import('./sync');
 
       vi.mocked(getSyncCursor).mockResolvedValue(0);
 
@@ -146,7 +146,7 @@ describe('sync-service', () => {
 
     it('should return error on fetch failure', async () => {
       const { getSyncCursor } = await import('@/lib/local-db');
-      const { pullChanges } = await import('./sync-service');
+      const { pullChanges } = await import('./sync');
 
       vi.mocked(getSyncCursor).mockResolvedValue(0);
       mockFetch.mockResolvedValue({
@@ -162,7 +162,7 @@ describe('sync-service', () => {
 
     it('should handle network errors', async () => {
       const { getSyncCursor } = await import('@/lib/local-db');
-      const { pullChanges } = await import('./sync-service');
+      const { pullChanges } = await import('./sync');
 
       vi.mocked(getSyncCursor).mockResolvedValue(0);
       mockFetch.mockRejectedValue(new Error('Network error'));
@@ -175,7 +175,7 @@ describe('sync-service', () => {
 
     it('should apply sleep_log changes', async () => {
       const { getSyncCursor, saveSleepLogs } = await import('@/lib/local-db');
-      const { pullChanges } = await import('./sync-service');
+      const { pullChanges } = await import('./sync');
 
       vi.mocked(getSyncCursor).mockResolvedValue(0);
       mockFetch.mockResolvedValue({
@@ -213,7 +213,7 @@ describe('sync-service', () => {
 
     it('should apply nappy_log changes', async () => {
       const { getSyncCursor, saveNappyLogs } = await import('@/lib/local-db');
-      const { pullChanges } = await import('./sync-service');
+      const { pullChanges } = await import('./sync');
 
       vi.mocked(getSyncCursor).mockResolvedValue(0);
       mockFetch.mockResolvedValue({
@@ -252,7 +252,7 @@ describe('sync-service', () => {
   describe('flushOutbox', () => {
     it('should return success with 0 changes when outbox is empty', async () => {
       const { getPendingOutboxEntries } = await import('@/lib/local-db');
-      const { flushOutbox } = await import('./sync-service');
+      const { flushOutbox } = await import('./sync');
 
       vi.mocked(getPendingOutboxEntries).mockResolvedValue([]);
 
@@ -269,7 +269,7 @@ describe('sync-service', () => {
         updateOutboxStatus,
         clearSyncedOutboxEntries,
       } = await import('@/lib/local-db');
-      const { flushOutbox } = await import('./sync-service');
+      const { flushOutbox } = await import('./sync');
 
       vi.mocked(getPendingOutboxEntries).mockResolvedValue([
         {
@@ -308,7 +308,7 @@ describe('sync-service', () => {
         updateOutboxStatus,
         saveFeedLogs,
       } = await import('@/lib/local-db');
-      const { flushOutbox } = await import('./sync-service');
+      const { flushOutbox } = await import('./sync');
 
       vi.mocked(getPendingOutboxEntries).mockResolvedValue([
         {
@@ -360,7 +360,7 @@ describe('sync-service', () => {
 
     it('should mark failed mutations appropriately', async () => {
       const { getPendingOutboxEntries, updateOutboxStatus } = await import('@/lib/local-db');
-      const { flushOutbox } = await import('./sync-service');
+      const { flushOutbox } = await import('./sync');
 
       vi.mocked(getPendingOutboxEntries).mockResolvedValue([
         {
@@ -400,7 +400,7 @@ describe('sync-service', () => {
 
     it('should revert to pending on network failure', async () => {
       const { getPendingOutboxEntries, updateOutboxStatus } = await import('@/lib/local-db');
-      const { flushOutbox } = await import('./sync-service');
+      const { flushOutbox } = await import('./sync');
 
       vi.mocked(getPendingOutboxEntries).mockResolvedValue([
         {
@@ -430,7 +430,7 @@ describe('sync-service', () => {
 
     it('should process multiple mutations', async () => {
       const { getPendingOutboxEntries } = await import('@/lib/local-db');
-      const { flushOutbox } = await import('./sync-service');
+      const { flushOutbox } = await import('./sync');
 
       vi.mocked(getPendingOutboxEntries).mockResolvedValue([
         {
@@ -478,7 +478,7 @@ describe('sync-service', () => {
   describe('performFullSync', () => {
     it('should flush outbox and pull changes for all babies', async () => {
       const { getSyncCursor, getPendingOutboxEntries } = await import('@/lib/local-db');
-      const { performFullSync } = await import('./sync-service');
+      const { performFullSync } = await import('./sync');
 
       vi.mocked(getPendingOutboxEntries).mockResolvedValue([]);
       vi.mocked(getSyncCursor).mockResolvedValue(0);
@@ -501,7 +501,7 @@ describe('sync-service', () => {
 
     it('should continue pull even if flush fails', async () => {
       const { getSyncCursor, getPendingOutboxEntries } = await import('@/lib/local-db');
-      const { performFullSync } = await import('./sync-service');
+      const { performFullSync } = await import('./sync');
 
       vi.mocked(getPendingOutboxEntries).mockResolvedValue([
         {
@@ -545,7 +545,7 @@ describe('sync-service', () => {
   describe('applyServerData', () => {
     it('should apply feed_log server data', async () => {
       const { saveFeedLogs } = await import('@/lib/local-db');
-      const { applyServerData } = await import('./sync-service');
+      const { applyServerData } = await import('./sync');
 
       await applyServerData({
         id: '101',
@@ -568,7 +568,7 @@ describe('sync-service', () => {
 
     it('should apply sleep_log server data', async () => {
       const { saveSleepLogs } = await import('@/lib/local-db');
-      const { applyServerData } = await import('./sync-service');
+      const { applyServerData } = await import('./sync');
 
       await applyServerData({
         id: '201',
@@ -587,7 +587,7 @@ describe('sync-service', () => {
 
     it('should apply nappy_log server data', async () => {
       const { saveNappyLogs } = await import('@/lib/local-db');
-      const { applyServerData } = await import('./sync-service');
+      const { applyServerData } = await import('./sync');
 
       await applyServerData({
         id: '301',

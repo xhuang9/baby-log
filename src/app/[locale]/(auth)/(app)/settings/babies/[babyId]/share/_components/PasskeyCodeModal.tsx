@@ -17,8 +17,7 @@ export function PasskeyCodeModal({ code, expiresAt, onClose }: PasskeyCodeModalP
       await navigator.clipboard.writeText(code);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Failed to copy:', err);
     }
   };
@@ -41,13 +40,16 @@ export function PasskeyCodeModal({ code, expiresAt, onClose }: PasskeyCodeModalP
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">6-Digit Code Generated</h3>
           <p className="text-sm text-muted-foreground">
-            Share this code with the caregiver. It expires in {formatExpiryTime(expiresAt)}.
+            Share this code with the caregiver. It expires in
+            {' '}
+            {formatExpiryTime(expiresAt)}
+            .
           </p>
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-center gap-2 rounded-lg bg-muted p-6">
-            <span className="text-4xl font-mono font-bold tracking-[0.5em]">
+            <span className="font-mono text-4xl font-bold tracking-[0.5em]">
               {code}
             </span>
           </div>
@@ -57,17 +59,19 @@ export function PasskeyCodeModal({ code, expiresAt, onClose }: PasskeyCodeModalP
             onClick={handleCopy}
             className="flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            {copied ? (
-              <>
-                <Check className="h-4 w-4" />
-                Copied!
-              </>
-            ) : (
-              <>
-                <Copy className="h-4 w-4" />
-                Copy Code
-              </>
-            )}
+            {copied
+              ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Copied!
+                  </>
+                )
+              : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    Copy Code
+                  </>
+                )}
           </button>
         </div>
 

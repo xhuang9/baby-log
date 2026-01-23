@@ -11,9 +11,11 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { getSyncCursor } from '@/lib/local-db';
 import { queryKeys } from '@/lib/query-keys';
-import { flushOutbox, pullChanges } from '@/services/sync-service';
+import { flushOutbox, pullChanges } from '@/services/sync';
+import { useBabyStore } from '@/stores/useBabyStore';
 import { useOnlineStatus, useOnlineStatusChange } from './useOnlineStatus';
 
 // ============================================================================
@@ -60,6 +62,9 @@ export function useSyncScheduler({
   const [lastSyncChanges, setLastSyncChanges] = useState(0);
   const [lastError, setLastError] = useState<string | null>(null);
 
+  // Get baby store for access revocation handling
+  const { activeBaby, allBabies, setActiveBaby, setAllBabies } = useBabyStore();
+
   // Fetch cursor to use in query key
   const { data: cursor = 0 } = useQuery({
     queryKey: queryKeys.sync.version(babyId),
@@ -88,6 +93,29 @@ export function useSyncScheduler({
         queryClient.invalidateQueries({
           queryKey: queryKeys.feedLogs.list(babyId),
         });
+      } else if (result.errorType === 'access_revoked') {
+        // Handle access revocation
+        setLastError(result.error ?? 'Access revoked');
+
+        // Remove the revoked baby from allBabies
+        const updatedBabies = allBabies.filter(b => b.babyId !== result.revokedBabyId);
+        setAllBabies(updatedBabies);
+
+        // If the active baby was revoked, switch to another baby
+        if (activeBaby?.babyId === result.revokedBabyId) {
+          const nextBaby = updatedBabies[0] ?? null;
+          if (nextBaby) {
+            setActiveBaby(nextBaby);
+          }
+        }
+
+        // Show toast notification
+        toast.error('Access Revoked', {
+          description: 'Your access to this baby has been removed by the owner.',
+        });
+
+        // Invalidate queries to refresh UI
+        queryClient.invalidateQueries();
       } else {
         setLastError(result.error ?? 'Unknown error');
       }
@@ -182,13 +210,33 @@ export function useMultiBabySync({
   const [isSyncing, setIsSyncing] = useState(false);
   const isSyncingRef = useRef(false);
 
+  // Get baby store for access revocation handling
+  const { activeBaby, allBabies, setActiveBaby, setAllBabies } = useBabyStore();
+
   // Flush outbox when coming online
   useOnlineStatusChange(
     useCallback(async () => {
       if (enabled) {
-        await flushOutbox();
+        const result = await flushOutbox();
+
+        // Handle access revocation from outbox flush
+        if (result.errorType === 'access_revoked' && result.revokedBabyId) {
+          const updatedBabies = allBabies.filter(b => b.babyId !== result.revokedBabyId);
+          setAllBabies(updatedBabies);
+
+          if (activeBaby?.babyId === result.revokedBabyId) {
+            const nextBaby = updatedBabies[0] ?? null;
+            if (nextBaby) {
+              setActiveBaby(nextBaby);
+            }
+          }
+
+          toast.error('Access Revoked', {
+            description: 'Your access to this baby has been removed by the owner.',
+          });
+        }
       }
-    }, [enabled]),
+    }, [enabled, allBabies, activeBaby, setAllBabies, setActiveBaby]),
   );
 
   const triggerSync = useCallback(async () => {
@@ -201,11 +249,47 @@ export function useMultiBabySync({
 
     try {
       // Flush outbox first
-      await flushOutbox();
+      const flushResult = await flushOutbox();
+
+      // Handle access revocation from outbox flush
+      if (flushResult.errorType === 'access_revoked' && flushResult.revokedBabyId) {
+        const updatedBabies = allBabies.filter(b => b.babyId !== flushResult.revokedBabyId);
+        setAllBabies(updatedBabies);
+
+        if (activeBaby?.babyId === flushResult.revokedBabyId) {
+          const nextBaby = updatedBabies[0] ?? null;
+          if (nextBaby) {
+            setActiveBaby(nextBaby);
+          }
+        }
+
+        toast.error('Access Revoked', {
+          description: 'Your access to this baby has been removed by the owner.',
+        });
+      }
 
       // Pull changes for each baby
       for (const babyId of babyIds) {
-        await pullChanges(babyId);
+        const result = await pullChanges(babyId);
+
+        // Handle access revocation
+        if (result.errorType === 'access_revoked' && result.revokedBabyId) {
+          const currentBabies = useBabyStore.getState().allBabies;
+          const updatedBabies = currentBabies.filter(b => b.babyId !== result.revokedBabyId);
+          setAllBabies(updatedBabies);
+
+          const currentActive = useBabyStore.getState().activeBaby;
+          if (currentActive?.babyId === result.revokedBabyId) {
+            const nextBaby = updatedBabies[0] ?? null;
+            if (nextBaby) {
+              setActiveBaby(nextBaby);
+            }
+          }
+
+          toast.error('Access Revoked', {
+            description: 'Your access to this baby has been removed by the owner.',
+          });
+        }
       }
 
       // Invalidate queries
@@ -219,7 +303,7 @@ export function useMultiBabySync({
       isSyncingRef.current = false;
       setIsSyncing(false);
     }
-  }, [isOnline, babyIds, queryClient]);
+  }, [isOnline, babyIds, queryClient, allBabies, activeBaby, setAllBabies, setActiveBaby]);
 
   return {
     triggerSync,

@@ -9,33 +9,23 @@
  * 4. Trigger non-blocking server sync
  */
 
-// Core types
-export type {
-  OperationResult,
-  UserContext,
-} from './types';
-
+// Auth operations
 export {
-  success,
-  failure,
-  isSuccess,
-  isFailure,
-  isClientSide,
-  generateMutationId,
-} from './types';
+  signOutCleanup,
+} from './auth';
 
 // Baby operations
 export type {
   CreateBabyInput,
   UpdateBabyInput,
-} from './baby';
+} from './baby/index';
 
 export {
   createBaby,
-  updateBabyProfile,
-  setDefaultBaby,
   deleteBaby,
-} from './baby';
+  setDefaultBaby,
+  updateBabyProfile,
+} from './baby/index';
 
 // Feed log operations
 export type {
@@ -46,6 +36,15 @@ export {
   createFeedLog,
 } from './feed-log';
 
+// Nappy log operations
+export type {
+  CreateNappyLogInput,
+} from './nappy-log';
+
+export {
+  createNappyLog,
+} from './nappy-log';
+
 // Sleep log operations
 export type {
   CreateSleepLogInput,
@@ -55,21 +54,31 @@ export {
   createSleepLog,
 } from './sleep-log';
 
+// Core types
+export type {
+  OperationResult,
+  UserContext,
+} from './types';
+
+export {
+  failure,
+  generateMutationId,
+  isClientSide,
+  isFailure,
+  isSuccess,
+  success,
+} from './types';
+
 // UI config operations
 export type {
-  UpdateThemeInput,
   UpdateHandModeInput,
+  UpdateThemeInput,
   UpdateWidgetSettingsInput,
 } from './ui-config';
 
 export {
-  updateTheme,
   updateHandMode,
-  updateWidgetSettings,
+  updateTheme,
   updateUIConfigByKey,
+  updateWidgetSettings,
 } from './ui-config';
-
-// Auth operations
-export {
-  signOutCleanup,
-} from './auth';

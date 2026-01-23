@@ -2,7 +2,7 @@
 
 import { QrCode } from 'lucide-react';
 import { useState } from 'react';
-import { createEmailInvite, createPasskeyInvite } from '@/actions/babyActions';
+import { createEmailInvite, createPasskeyInvite } from '@/actions/baby';
 import { localDb } from '@/lib/local-db/database';
 import { EmailInviteLinkModal } from './EmailInviteLinkModal';
 import { PasskeyCodeModal } from './PasskeyCodeModal';
@@ -45,7 +45,7 @@ export function CreateInviteSection({ babyId, babyName }: CreateInviteSectionPro
         accessLevel: 'editor',
         status: 'pending',
         inviteType: 'passkey',
-        tokenPrefix: result.code.substring(0, 3) + '...',
+        tokenPrefix: `${result.code.substring(0, 3)}...`,
         expiresAt: result.expiresAt.toISOString(),
         acceptedAt: null,
         revokedAt: null,
@@ -58,11 +58,9 @@ export function CreateInviteSection({ babyId, babyName }: CreateInviteSectionPro
       setGeneratedCode(result.code);
       setExpiresAt(result.expiresAt);
       setShowPasskeyModal(true);
-    }
-    catch (err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate code');
-    }
-    finally {
+    } finally {
       setIsGenerating(false);
     }
   };
@@ -105,11 +103,9 @@ export function CreateInviteSection({ babyId, babyName }: CreateInviteSectionPro
       setExpiresAt(result.expiresAt);
       setEmail('');
       setShowEmailModal(false);
-    }
-    catch (err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate invite link');
-    }
-    finally {
+    } finally {
       setIsGenerating(false);
     }
   };
@@ -135,7 +131,11 @@ export function CreateInviteSection({ babyId, babyName }: CreateInviteSectionPro
       <div>
         <h2 className="text-lg font-semibold">Create Invite</h2>
         <p className="text-sm text-muted-foreground">
-          Share access to {babyName} with caregivers
+          Share access to
+          {' '}
+          {babyName}
+          {' '}
+          with caregivers
         </p>
       </div>
 

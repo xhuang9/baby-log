@@ -4,7 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Clock, Mail, QrCode, RefreshCw, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { regenerateInvite, revokeInvite } from '@/actions/babyActions';
+import { regenerateInvite, revokeInvite } from '@/actions/baby';
 import { localDb } from '@/lib/local-db/database';
 import { EmailInviteLinkModal } from './EmailInviteLinkModal';
 import { PasskeyCodeModal } from './PasskeyCodeModal';
@@ -36,7 +36,6 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
     return invites.filter(invite => new Date(invite.expiresAt) > now);
   }, [babyId]);
 
-
   const handleRegenerateInvite = async (inviteId: number) => {
     setRegeneratingId(inviteId);
     setError(null);
@@ -54,7 +53,7 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
       if (result.inviteType === 'passkey') {
         await localDb.babyInvites.update(inviteId, {
           expiresAt: result.expiresAt.toISOString(),
-          tokenPrefix: result.code ? result.code.substring(0, 3) + '...' : undefined,
+          tokenPrefix: result.code ? `${result.code.substring(0, 3)}...` : undefined,
           updatedAt: new Date().toISOString(),
         });
       } else {
@@ -72,8 +71,7 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
           expiresAt: result.expiresAt,
         });
         toast.success('New code generated');
-      }
-      else {
+      } else {
         setShowRegenerateModal({
           inviteType: 'email',
           link: result.inviteLink,
@@ -81,13 +79,11 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
         });
         toast.success('New invite link generated');
       }
-    }
-    catch (err) {
+    } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to regenerate invite';
       setError(errorMsg);
       toast.error(errorMsg);
-    }
-    finally {
+    } finally {
       setRegeneratingId(null);
     }
   };
@@ -106,19 +102,16 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
       if (!result.success) {
         setError(result.error);
         toast.error(result.error);
-      }
-      else {
+      } else {
         // Remove from IndexedDB for immediate update
         await localDb.babyInvites.delete(inviteId);
         toast.success('Invite revoked');
       }
-    }
-    catch (err) {
+    } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to revoke invite';
       setError(errorMsg);
       toast.error(errorMsg);
-    }
-    finally {
+    } finally {
       setRevokingId(null);
     }
   };
@@ -177,17 +170,19 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
             <div className="flex items-center gap-3">
               {/* Icon */}
               <div className="rounded-full bg-muted p-2">
-                {invite.inviteType === 'passkey' ? (
-                  <QrCode className="h-4 w-4 text-muted-foreground" />
-                ) : (
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                )}
+                {invite.inviteType === 'passkey'
+                  ? (
+                      <QrCode className="h-4 w-4 text-muted-foreground" />
+                    )
+                  : (
+                      <Mail className="h-4 w-4 text-muted-foreground" />
+                    )}
               </div>
 
               {/* Info */}
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                     {invite.inviteType === 'passkey' ? 'Code' : 'Email'}
                   </span>
                   <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
@@ -201,7 +196,10 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
                 </p>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Clock className="h-3 w-3" />
-                  <span>Expires in {formatTimeRemaining(invite.expiresAt)}</span>
+                  <span>
+                    Expires in
+                    {formatTimeRemaining(invite.expiresAt)}
+                  </span>
                 </div>
               </div>
             </div>
@@ -213,8 +211,8 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
                 type="button"
                 onClick={() => handleRegenerateInvite(invite.id)}
                 disabled={
-                  regeneratingId === invite.id ||
-                  revokingId === invite.id
+                  regeneratingId === invite.id
+                  || revokingId === invite.id
                 }
                 className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
                 aria-label="Generate new code/link"
@@ -229,8 +227,8 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
                 type="button"
                 onClick={() => handleRevoke(invite.id)}
                 disabled={
-                  regeneratingId === invite.id ||
-                  revokingId === invite.id
+                  regeneratingId === invite.id
+                  || revokingId === invite.id
                 }
                 className="rounded-md p-2 text-destructive transition-colors hover:bg-destructive/10 disabled:pointer-events-none disabled:opacity-50"
                 aria-label="Revoke invite"

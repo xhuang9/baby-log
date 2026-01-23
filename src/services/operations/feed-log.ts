@@ -11,7 +11,7 @@
 import type { OperationResult } from './types';
 import type { FeedMethod, FeedSide, LocalFeedLog } from '@/lib/local-db';
 import { addToOutbox, localDb, saveFeedLogs } from '@/lib/local-db';
-import { flushOutbox } from '@/services/sync-service';
+import { flushOutbox } from '@/services/sync';
 import { useUserStore } from '@/stores/useUserStore';
 
 import {

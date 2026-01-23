@@ -4,8 +4,8 @@
  * Unit tests for feed log creation operations
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import type { LocalBabyAccess } from '@/lib/local-db';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createFeedLog } from './feed-log';
 
 // Mock dependencies
@@ -23,7 +23,7 @@ vi.mock('@/lib/local-db', () => ({
   saveFeedLogs: vi.fn(),
 }));
 
-vi.mock('@/services/sync-service', () => ({
+vi.mock('@/services/sync', () => ({
   flushOutbox: vi.fn(),
 }));
 
@@ -79,7 +79,7 @@ describe('Feed Log Operations', () => {
   describe('createFeedLog', () => {
     it('should create a bottle feed log successfully', async () => {
       const { localDb, saveFeedLogs, addToOutbox } = await import('@/lib/local-db');
-      const { flushOutbox } = await import('@/services/sync-service');
+      const { flushOutbox } = await import('@/services/sync');
 
       vi.mocked(localDb.babyAccess.where).mockReturnValue({
         equals: vi.fn(() => ({
@@ -96,6 +96,7 @@ describe('Feed Log Operations', () => {
       });
 
       expect(result.success).toBe(true);
+
       if (result.success) {
         expect(result.data.method).toBe('bottle');
         expect(result.data.amountMl).toBe(120);
@@ -114,7 +115,7 @@ describe('Feed Log Operations', () => {
             isEstimated: false,
             loggedByUserId: 1,
           }),
-        ])
+        ]),
       );
 
       // Verify outbox enqueue
@@ -128,7 +129,7 @@ describe('Feed Log Operations', () => {
             method: 'bottle',
             amountMl: 120,
           }),
-        })
+        }),
       );
 
       // Verify sync trigger
@@ -154,6 +155,7 @@ describe('Feed Log Operations', () => {
       });
 
       expect(result.success).toBe(true);
+
       if (result.success) {
         expect(result.data.method).toBe('breast');
         expect(result.data.durationMinutes).toBe(20);
@@ -161,6 +163,7 @@ describe('Feed Log Operations', () => {
 
         // Verify endedAt is calculated correctly (startTime + 20 minutes)
         const expectedEndTime = new Date(startTime.getTime() + 20 * 60 * 1000);
+
         expect(result.data.endedAt).toEqual(expectedEndTime);
       }
 
@@ -172,7 +175,7 @@ describe('Feed Log Operations', () => {
             durationMinutes: 20,
             endSide: 'left',
           }),
-        ])
+        ]),
       );
     });
 
@@ -185,6 +188,7 @@ describe('Feed Log Operations', () => {
       });
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Baby ID is required');
       }
@@ -199,6 +203,7 @@ describe('Feed Log Operations', () => {
       });
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Feed method is required');
       }
@@ -213,6 +218,7 @@ describe('Feed Log Operations', () => {
       });
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Start time is required');
       }
@@ -234,6 +240,7 @@ describe('Feed Log Operations', () => {
       });
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Amount is required for bottle feeds');
       }
@@ -255,6 +262,7 @@ describe('Feed Log Operations', () => {
       });
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Duration is required for breast feeds');
       }
@@ -279,6 +287,7 @@ describe('Feed Log Operations', () => {
       });
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Not authenticated');
       }
@@ -300,6 +309,7 @@ describe('Feed Log Operations', () => {
       });
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Access denied');
       }
@@ -324,6 +334,7 @@ describe('Feed Log Operations', () => {
       });
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Access denied');
       }
@@ -346,6 +357,7 @@ describe('Feed Log Operations', () => {
       });
 
       expect(result.success).toBe(true);
+
       if (result.success) {
         expect(result.data.notes).toBe('Baby seemed hungry');
       }
@@ -355,7 +367,7 @@ describe('Feed Log Operations', () => {
           expect.objectContaining({
             notes: 'Baby seemed hungry',
           }),
-        ])
+        ]),
       );
     });
   });

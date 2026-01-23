@@ -207,21 +207,21 @@ export function NewBabyForm(props: {
         />
       </form>
 
-    {/* OR Divider */}
-    <div className="relative">
-      <div className="absolute inset-0 flex items-center">
-        <div className="w-full border-t" />
+      {/* OR Divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">OR</span>
+        </div>
       </div>
-      <div className="relative flex justify-center text-xs uppercase">
-        <span className="bg-background px-2 text-muted-foreground">OR</span>
-      </div>
+
+      {/* Join with Code Section - redirect to bootstrap to sync data */}
+      <JoinWithCodeSection redirectPath={bootstrapPath ?? redirectPath} />
+
+      {/* Request Access Section */}
+      <RequestAccessSection redirectPath={redirectPath} />
     </div>
-
-    {/* Join with Code Section - redirect to bootstrap to sync data */}
-    <JoinWithCodeSection redirectPath={bootstrapPath ?? redirectPath} />
-
-    {/* Request Access Section */}
-    <RequestAccessSection redirectPath={redirectPath} />
-  </div>
   );
 }

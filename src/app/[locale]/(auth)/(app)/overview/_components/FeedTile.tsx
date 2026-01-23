@@ -3,7 +3,7 @@
 import type { FeedLogWithCaregiver } from '@/actions/feedLogActions';
 import { useState } from 'react';
 import { ActivityTile } from './ActivityTile';
-import { AddFeedModal } from './AddFeedModal';
+import { AddFeedModal } from './add-feed-modal';
 
 type FeedTileProps = {
   babyId: number;

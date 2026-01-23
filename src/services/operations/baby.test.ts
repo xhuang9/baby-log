@@ -4,9 +4,9 @@
  * Unit tests for baby CRUD operations
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import type { LocalBaby, LocalBabyAccess } from '@/lib/local-db';
-import { createBaby, updateBabyProfile, setDefaultBaby, deleteBaby } from './baby';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createBaby, deleteBaby, setDefaultBaby, updateBabyProfile } from './baby';
 
 // Mock dependencies
 vi.mock('@/lib/local-db', () => ({
@@ -32,7 +32,7 @@ vi.mock('@/lib/local-db', () => ({
   saveBabyAccess: vi.fn(),
 }));
 
-vi.mock('@/services/sync-service', () => ({
+vi.mock('@/services/sync', () => ({
   flushOutbox: vi.fn(),
 }));
 
@@ -92,7 +92,7 @@ describe('Baby Operations', () => {
   describe('createBaby', () => {
     it('should create a baby successfully', async () => {
       const { addToOutbox, saveBabies, saveBabyAccess, getAllLocalBabies, localDb } = await import('@/lib/local-db');
-      const { flushOutbox } = await import('@/services/sync-service');
+      const { flushOutbox } = await import('@/services/sync');
       const { useBabyStore } = await import('@/stores/useBabyStore');
 
       vi.mocked(getAllLocalBabies).mockResolvedValue([]);
@@ -126,6 +126,7 @@ describe('Baby Operations', () => {
       });
 
       expect(result.success).toBe(true);
+
       if (result.success) {
         expect(result.data.name).toBe('Test Baby');
         expect(result.data.gender).toBe('female');
@@ -140,7 +141,7 @@ describe('Baby Operations', () => {
             gender: 'female',
             birthWeightG: 3500,
           }),
-        ])
+        ]),
       );
 
       expect(saveBabyAccess).toHaveBeenCalledWith(
@@ -148,8 +149,8 @@ describe('Baby Operations', () => {
           expect.objectContaining({
             accessLevel: 'owner',
             caregiverLabel: 'Mom',
-                }),
-        ])
+          }),
+        ]),
       );
 
       // Verify outbox enqueue
@@ -161,7 +162,7 @@ describe('Baby Operations', () => {
           payload: expect.objectContaining({
             name: 'Test Baby',
           }),
-        })
+        }),
       );
 
       // Verify sync trigger
@@ -178,6 +179,7 @@ describe('Baby Operations', () => {
       });
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Baby name is required');
       }
@@ -199,6 +201,7 @@ describe('Baby Operations', () => {
       });
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Not authenticated');
       }
@@ -230,7 +233,7 @@ describe('Baby Operations', () => {
 
     it('should update baby profile successfully', async () => {
       const { getLocalBaby, localDb, saveBabies, addToOutbox } = await import('@/lib/local-db');
-      const { flushOutbox } = await import('@/services/sync-service');
+      const { flushOutbox } = await import('@/services/sync');
 
       vi.mocked(getLocalBaby).mockResolvedValue(mockBaby);
       vi.mocked(localDb.babyAccess.where).mockReturnValue({
@@ -246,6 +249,7 @@ describe('Baby Operations', () => {
       });
 
       expect(result.success).toBe(true);
+
       if (result.success) {
         expect(result.data.name).toBe('New Name');
         expect(result.data.birthDate).toEqual(new Date('2024-01-15'));
@@ -259,7 +263,7 @@ describe('Baby Operations', () => {
             name: 'New Name',
             birthDate: new Date('2024-01-15'),
           }),
-        ])
+        ]),
       );
 
       // Verify outbox enqueue
@@ -271,7 +275,7 @@ describe('Baby Operations', () => {
           payload: expect.objectContaining({
             name: 'New Name',
           }),
-        })
+        }),
       );
 
       // Verify sync trigger
@@ -287,6 +291,7 @@ describe('Baby Operations', () => {
       });
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Baby not found');
       }
@@ -310,6 +315,7 @@ describe('Baby Operations', () => {
       });
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Access denied');
       }
@@ -330,6 +336,7 @@ describe('Baby Operations', () => {
       });
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Baby name is required');
       }
@@ -392,8 +399,8 @@ describe('Baby Operations', () => {
         expect.arrayContaining([
           expect.objectContaining({
             babyId: 1,
-                }),
-        ])
+          }),
+        ]),
       );
 
       // Verify store update
@@ -401,7 +408,7 @@ describe('Baby Operations', () => {
         expect.objectContaining({
           babyId: 1,
           name: 'Test Baby',
-        })
+        }),
       );
     });
 
@@ -412,6 +419,7 @@ describe('Baby Operations', () => {
       const result = await setDefaultBaby(999);
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Baby not found');
       }
@@ -430,6 +438,7 @@ describe('Baby Operations', () => {
       const result = await setDefaultBaby(1);
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Access denied');
       }
@@ -461,7 +470,7 @@ describe('Baby Operations', () => {
 
     it('should delete baby successfully (soft delete)', async () => {
       const { getLocalBaby, localDb, saveBabies, addToOutbox } = await import('@/lib/local-db');
-      const { flushOutbox } = await import('@/services/sync-service');
+      const { flushOutbox } = await import('@/services/sync');
       const { useBabyStore } = await import('@/stores/useBabyStore');
 
       vi.mocked(getLocalBaby).mockResolvedValue(mockBaby);
@@ -495,7 +504,7 @@ describe('Baby Operations', () => {
             id: 1,
             archivedAt: expect.any(Date),
           }),
-        ])
+        ]),
       );
 
       // Verify outbox enqueue
@@ -507,7 +516,7 @@ describe('Baby Operations', () => {
           payload: expect.objectContaining({
             archivedAt: expect.any(String),
           }),
-        })
+        }),
       );
 
       // Verify sync trigger
@@ -534,6 +543,7 @@ describe('Baby Operations', () => {
       const result = await deleteBaby(1);
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toContain('Only the owner can delete');
       }

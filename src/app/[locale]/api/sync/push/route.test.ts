@@ -421,7 +421,9 @@ describe('POST /api/sync/push', () => {
     } as never);
 
     vi.mocked(db.insert).mockReturnValue({
-      values: vi.fn().mockResolvedValue(undefined),
+      values: vi.fn().mockReturnValue({
+        returning: vi.fn().mockResolvedValue([{ id: 10 }]),
+      }),
     } as never);
 
     const { POST } = await import('./route');

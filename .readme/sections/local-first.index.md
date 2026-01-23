@@ -1,12 +1,15 @@
 ---
-last_verified_at: 2026-01-18T12:33:25Z
+last_verified_at: 2026-01-22T00:00:00Z
 source_paths:
   - src/lib/local-db/
+  - src/lib/db/helpers/sync-events.ts
   - src/lib/query-keys.ts
   - src/providers/QueryProvider.tsx
   - src/services/initial-sync.ts
   - src/services/sync-service.ts
   - src/services/sync-worker-manager.ts
+  - src/services/operations/
+  - src/services/operations/baby.ts
   - src/workers/sync-worker.ts
   - src/stores/useSyncStore.ts
   - src/stores/useUserStore.ts
@@ -18,6 +21,7 @@ source_paths:
   - src/app/[locale]/api/sync/pull/route.test.ts
   - src/app/[locale]/api/sync/push/route.test.ts
   - src/services/sync-service.test.ts
+  - src/actions/babyActions.ts
   - src/models/Schema.ts
   - src/components/OfflineBanner.tsx
   - src/components/SyncProvider.tsx
@@ -96,9 +100,21 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
   - Content: Client-side sync service and React hooks (useSyncScheduler, useMultiBabySync) for automatic polling and outbox flushing
   - Read when: Implementing sync UI, adding automatic sync to pages, or understanding client sync patterns
 
+- `.readme/chunks/local-first.sync-event-helper.md`
+  - Content: Centralized writeSyncEvent() helper for recording mutations in server actions and API routes, plus getLatestSyncCursor() for initializing new caregivers
+  - Read when: Implementing server-side mutations that need to sync to other users, working with invite acceptance, or understanding how sync events are created
+
+- `.readme/chunks/local-first.access-revocation-handling.md`
+  - Content: Automatic 403 detection and cleanup when caregiver access is revoked (clearRevokedBabyData flow, store updates, UI notifications)
+  - Read when: Implementing access control features, debugging sync failures related to revoked access, or understanding revocation user experience
+
 - `.readme/chunks/local-first.operations-layer.md`
   - Content: Operations layer for local-first mutations (IndexedDB write + outbox enqueue + store updates)
   - Read when: Moving UI writes into services, adding new mutation flows, or debugging outbox-backed operations
+
+- `.readme/chunks/local-first.operations-layer-pattern.md`
+  - Content: Detailed operations layer pattern with standard 6-step flow, using nappy-log as reference implementation (validation, access control, IndexedDB write, outbox enqueue, background sync)
+  - Read when: Creating new operations for activity types, understanding the full operations pattern, or refactoring UI mutations into operations layer
 
 - `.readme/chunks/local-first.ui-config-storage.md`
   - Content: Persistent storage system for user UI preferences (theme, hand mode, TimeSwiper settings) with per-key timestamp tracking for LWW merge
@@ -107,6 +123,14 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
 - `.readme/chunks/local-first.store-hydration-pattern.md`
   - Content: Local-first store hydration flow with SyncProvider, dual persistence (sessionStorage + IndexedDB), and wait-for-hydration pattern
   - Read when: Working with Zustand stores, implementing components that read user/baby data, debugging "settings not loading" issues, or understanding app initialization flow
+
+- `.readme/chunks/local-first.indexeddb-zustand-consistency.md`
+  - Content: Pattern for atomic updates to IndexedDB and Zustand stores together, preventing state drift between persistence and UI layers
+  - Read when: Implementing operations that modify user preferences, baby selection, or any state stored in both IndexedDB and Zustand
+
+- `.readme/chunks/local-first.background-sync-pull.md`
+  - Content: Background polling architecture via BackgroundSyncScheduler and useSyncScheduler hook for pulling changes from other caregivers
+  - Read when: Understanding multi-user sync, debugging why changes aren't appearing, or implementing sync-related features
 
 - `.readme/chunks/local-first.initial-sync-service.md`
   - Content: Initial data sync on login (user, babies, recent 7-day logs) with API contract

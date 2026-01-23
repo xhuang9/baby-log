@@ -3,7 +3,7 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { acceptInviteByCode } from '@/actions/babyActions';
+import { acceptInviteByCode } from '@/actions/baby';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { useBabyStore } from '@/stores/useBabyStore';
 
@@ -80,7 +80,7 @@ export function JoinWithCodeSection({ redirectPath, onSuccess }: JoinWithCodeSec
             )}
 
             <div>
-              <label htmlFor="joinCode" className="block text-sm font-medium mb-3">
+              <label htmlFor="joinCode" className="mb-3 block text-sm font-medium">
                 6-Digit Code
               </label>
               <div className="flex justify-center">
@@ -100,7 +100,7 @@ export function JoinWithCodeSection({ redirectPath, onSuccess }: JoinWithCodeSec
                   </InputOTPGroup>
                 </InputOTP>
               </div>
-              <p className="mt-3 text-xs text-muted-foreground text-center">
+              <p className="mt-3 text-center text-xs text-muted-foreground">
                 Enter the 6-digit code shared by the baby's caregiver
               </p>
             </div>

@@ -3,6 +3,7 @@ last_verified_at: 2026-01-17T09:12:39Z
 source_paths:
   - src/app/[locale]/(auth)/(app)/settings/babies/
   - src/actions/babyActions.ts
+  - src/services/operations/baby.ts
 ---
 
 # Baby Management Overview
@@ -70,3 +71,7 @@ Key architectural decisions:
 - `.readme/sections/account-management.index.md` - Multi-baby selection and default baby resolution
 - `.readme/sections/database.index.md` - Baby schema and access patterns
 - `.readme/sections/architecture.index.md` - Route structure and component patterns
+- `.readme/sections/local-first.index.md` - Local-first patterns for baby operations
+
+## Related Chunks
+- `.readme/chunks/local-first.indexeddb-zustand-consistency.md` - Critical pattern for baby switching: atomic updates to IndexedDB and Zustand prevent state drift

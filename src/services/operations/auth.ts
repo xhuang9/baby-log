@@ -5,15 +5,16 @@
  * These are client-side cleanup operations that don't sync to server.
  */
 
+import type { OperationResult } from './types';
 import { clearAuthSession } from '@/lib/local-db';
 import { useBabyStore } from '@/stores/useBabyStore';
-import { useUserStore } from '@/stores/useUserStore';
 
+import { useUserStore } from '@/stores/useUserStore';
 import {
   failure,
   isClientSide,
+
   success,
-  type OperationResult,
 } from './types';
 
 // ============================================================================

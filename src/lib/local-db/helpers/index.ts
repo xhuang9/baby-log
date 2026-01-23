@@ -4,6 +4,7 @@
  * Re-exports all helper functions from the helpers directory.
  */
 
+export * from './access-revoked';
 export * from './auth-session';
 export * from './baby';
 export * from './feed-logs';

@@ -1,9 +1,9 @@
 'use client';
 
+import type { AccessRequest } from '@/actions/accessRequestActions';
 import { Check, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { approveAccessRequest, listIncomingRequests, rejectAccessRequest } from '@/actions/accessRequestActions';
-import type { AccessRequest } from '@/actions/accessRequestActions';
 
 type IncomingRequestsSectionProps = {
   babyId: number;
@@ -25,15 +25,12 @@ export function IncomingRequestsSection({ babyId }: IncomingRequestsSectionProps
       const result = await listIncomingRequests();
       if (result.success) {
         setRequests(result.requests);
-      }
-      else {
+      } else {
         setError(result.error);
       }
-    }
-    catch (err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load requests');
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -52,15 +49,12 @@ export function IncomingRequestsSection({ babyId }: IncomingRequestsSectionProps
       if (result.success) {
         // Remove from list
         setRequests(prev => prev.filter(r => r.id !== requestId));
-      }
-      else {
+      } else {
         setError(result.error);
       }
-    }
-    catch (err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to approve request');
-    }
-    finally {
+    } finally {
       setProcessingId(null);
     }
   };
@@ -79,15 +73,12 @@ export function IncomingRequestsSection({ babyId }: IncomingRequestsSectionProps
       if (result.success) {
         // Remove from list
         setRequests(prev => prev.filter(r => r.id !== requestId));
-      }
-      else {
+      } else {
         setError(result.error);
       }
-    }
-    catch (err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to reject request');
-    }
-    finally {
+    } finally {
       setProcessingId(null);
     }
   };
@@ -97,9 +88,15 @@ export function IncomingRequestsSection({ babyId }: IncomingRequestsSectionProps
     const diff = now.getTime() - date.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    if (days === 0) return 'Today';
-    if (days === 1) return 'Yesterday';
-    if (days < 7) return `${days} days ago`;
+    if (days === 0) {
+      return 'Today';
+    }
+    if (days === 1) {
+      return 'Yesterday';
+    }
+    if (days < 7) {
+      return `${days} days ago`;
+    }
     return date.toLocaleDateString();
   };
 
@@ -135,7 +132,7 @@ export function IncomingRequestsSection({ babyId }: IncomingRequestsSectionProps
         {requests.map(request => (
           <div
             key={request.id}
-            className="rounded-lg border bg-background p-4 space-y-3"
+            className="space-y-3 rounded-lg border bg-background p-4"
           >
             <div className="flex items-start justify-between">
               <div>
@@ -157,7 +154,9 @@ export function IncomingRequestsSection({ babyId }: IncomingRequestsSectionProps
             {request.message && (
               <div className="rounded-md bg-muted p-3">
                 <p className="text-sm text-muted-foreground italic">
-                  "{request.message}"
+                  "
+                  {request.message}
+                  "
                 </p>
               </div>
             )}

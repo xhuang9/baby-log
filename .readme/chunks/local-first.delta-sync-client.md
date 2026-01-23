@@ -1,9 +1,14 @@
 ---
-last_verified_at: 2026-01-18T12:33:25Z
+last_verified_at: 2026-01-22T00:00:00Z
 source_paths:
-  - src/services/sync-service.ts
+  - src/services/sync/pull.ts
+  - src/services/sync/push.ts
+  - src/services/sync/full-sync.ts
+  - src/services/sync/conflict.ts
+  - src/services/sync/apply/index.ts
+  - src/services/sync/index.ts
   - src/hooks/useSyncScheduler.ts
-conversation_context: "Updated client sync docs after adding baby entity handling in sync-service."
+conversation_context: "Updated after refactoring sync-service.ts into modular sync/ folder structure."
 ---
 
 # Delta Sync Client Service and Hooks
@@ -11,7 +16,7 @@ conversation_context: "Updated client sync docs after adding baby entity handlin
 ## Purpose
 Documents the client-side sync service and React hooks for bidirectional delta synchronization. Handles automatic polling, outbox flushing, and conflict resolution.
 
-## Sync Service (src/services/sync-service.ts)
+## Sync Service (src/services/sync/)
 
 ### Purpose
 Low-level service for pull/push operations. Used by hooks and manual sync triggers.
@@ -40,7 +45,7 @@ type SyncResult = {
 
 **Example usage**:
 ```typescript
-import { pullChanges } from '@/services/sync-service';
+import { pullChanges } from '@/services/sync';
 
 const result = await pullChanges(1);
 if (result.success) {
@@ -72,7 +77,7 @@ async function flushOutbox(): Promise<SyncResult>
 
 **Example usage**:
 ```typescript
-import { flushOutbox } from '@/services/sync-service';
+import { flushOutbox } from '@/services/sync';
 
 const result = await flushOutbox();
 if (result.success) {
@@ -121,7 +126,7 @@ async function performFullSync(babyIds: number[]): Promise<SyncResult>
 
 **Example usage**:
 ```typescript
-import { performFullSync } from '@/services/sync-service';
+import { performFullSync } from '@/services/sync';
 
 // Sync all accessible babies
 const result = await performFullSync([1, 2, 3]);

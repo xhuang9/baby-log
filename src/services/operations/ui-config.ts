@@ -9,15 +9,16 @@
  * 3. No server sync (purely client-side preferences)
  */
 
+import type { OperationResult } from './types';
 import type { HandMode, ThemeMode } from '@/lib/local-db';
 import { updateUIConfig, updateUIConfigKey } from '@/lib/local-db';
-import { useUserStore } from '@/stores/useUserStore';
 
+import { useUserStore } from '@/stores/useUserStore';
 import {
   failure,
   isClientSide,
+
   success,
-  type OperationResult,
 } from './types';
 
 // ============================================================================

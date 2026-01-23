@@ -4,7 +4,7 @@ import type { BootstrapInvite } from '@/types/bootstrap';
 import { Check, Mail, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { acceptInvite } from '@/actions/babyActions';
+import { acceptInvite } from '@/actions/baby';
 import { useBabyStore } from '@/stores/useBabyStore';
 
 type BootstrapInvitesProps = {

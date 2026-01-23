@@ -491,7 +491,7 @@ export function useBootstrapMachine(
   const selectBaby = useCallback(async (baby: ActiveBaby) => {
     try {
       // Update server
-      const { setDefaultBaby } = await import('@/actions/babyActions');
+      const { setDefaultBaby } = await import('@/actions/baby');
       const result = await setDefaultBaby(baby.babyId);
 
       if (result.success) {

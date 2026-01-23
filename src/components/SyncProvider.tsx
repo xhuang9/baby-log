@@ -14,6 +14,7 @@
 
 import { useAuth } from '@clerk/nextjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSyncScheduler } from '@/hooks/useSyncScheduler';
 import { useBabyStore } from '@/stores/useBabyStore';
 import { useUserStore } from '@/stores/useUserStore';
 
@@ -59,13 +60,8 @@ export function SyncProvider({ children }: SyncProviderProps) {
         // App is ready to use with local data
         setState({ isReady: true, isLoading: false, error: null });
 
-        // Step 2: Background sync with server (non-blocking, only if online)
-        if (navigator.onLine) {
-          // Background sync happens asynchronously, doesn't block UI
-          backgroundSync(clerkId).catch((err) => {
-            console.warn('[SyncProvider] Background sync failed (non-blocking):', err);
-          });
-        }
+        // Step 2: Background sync is handled by BackgroundSyncScheduler component
+        // which uses useSyncScheduler hook for polling
       } else {
         // No local data - need initial sync from server
         if (!navigator.onLine) {
@@ -135,8 +131,29 @@ export function SyncProvider({ children }: SyncProviderProps) {
     );
   }
 
-  // Ready - render children
-  return <>{children}</>;
+  // Ready - render children with background sync
+  return (
+    <>
+      {children}
+      <BackgroundSyncScheduler />
+    </>
+  );
+}
+
+/**
+ * Background sync scheduler component
+ * Uses useSyncScheduler to poll for changes from other caregivers
+ */
+function BackgroundSyncScheduler() {
+  const activeBaby = useBabyStore(state => state.activeBaby);
+
+  // Only sync if we have an active baby
+  useSyncScheduler({
+    babyId: activeBaby?.babyId ?? 0,
+    enabled: !!activeBaby?.babyId,
+  });
+
+  return null;
 }
 
 /**
@@ -190,14 +207,4 @@ async function performInitialSyncAndHydrate(
       error: error instanceof Error ? error.message : 'Sync failed',
     };
   }
-}
-
-/**
- * Background sync with server (non-blocking)
- * Called after local data is loaded to fetch any updates
- */
-async function backgroundSync(_clerkId: string): Promise<void> {
-  // TODO: Implement incremental sync
-  // Future: Check for server updates and merge with local data
-  // This should use the sync worker for non-blocking background sync
 }

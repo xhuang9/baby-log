@@ -5,8 +5,8 @@
  * Note: Full behavioral testing is covered through TimerWidget component tests
  */
 
-import { render } from 'vitest-browser-react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { render } from 'vitest-browser-react';
 import { page } from 'vitest/browser';
 import { useHoldAction } from './useHoldAction';
 
@@ -50,6 +50,7 @@ describe('useHoldAction', () => {
     render(<TestButton onAction={onAction} intervalMs={50} />);
 
     const button = page.getByTestId('test-button');
+
     expect(button).toBeTruthy();
   });
 
@@ -59,6 +60,7 @@ describe('useHoldAction', () => {
     render(<TestButton onAction={onAction} delayMs={500} />);
 
     const button = page.getByTestId('test-button');
+
     expect(button).toBeTruthy();
   });
 
@@ -68,6 +70,7 @@ describe('useHoldAction', () => {
     render(<TestButton onAction={onAction} />);
 
     const button = page.getByTestId('test-button');
+
     expect(button).toBeTruthy();
   });
 });

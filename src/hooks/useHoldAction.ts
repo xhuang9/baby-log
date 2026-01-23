@@ -1,6 +1,6 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-interface UseHoldActionOptions {
+type UseHoldActionOptions = {
   /**
    * Callback function to execute on hold
    */
@@ -15,15 +15,15 @@ interface UseHoldActionOptions {
    * @default 1500 (1.5 seconds)
    */
   delayMs?: number;
-}
+};
 
-interface HoldActionHandlers {
+type HoldActionHandlers = {
   onMouseDown: () => void;
   onMouseUp: () => void;
   onMouseLeave: () => void;
   onTouchStart: () => void;
   onTouchEnd: () => void;
-}
+};
 
 /**
  * Custom hook for handling press-and-hold actions

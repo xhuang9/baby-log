@@ -69,8 +69,8 @@ export const AppHeader = ({ locale }: AppHeaderProps) => {
 
           {/* Center: Page Title (Absolutely Centered) */}
           {pageTitle && (
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-              <h1 className="truncate whitespace-nowrap text-base font-semibold">{pageTitle}</h1>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <h1 className="truncate text-base font-semibold whitespace-nowrap">{pageTitle}</h1>
             </div>
           )}
 

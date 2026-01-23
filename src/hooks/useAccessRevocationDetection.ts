@@ -10,9 +10,9 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { verifyBabyAccess } from '@/actions/babyActions';
-import { clearRevokedBabyData } from '@/lib/local-db/helpers/access-revoked';
+import { verifyBabyAccess } from '@/actions/baby';
 import { localDb } from '@/lib/local-db/database';
+import { clearRevokedBabyData } from '@/lib/local-db/helpers/access-revoked';
 import { useBabyStore } from '@/stores/useBabyStore';
 import { useUserStore } from '@/stores/useUserStore';
 import { getI18nPath } from '@/utils/Helpers';
@@ -92,11 +92,9 @@ export function useAccessRevocationDetection(locale: string = 'en') {
       } else {
         console.log(`[Access Revocation] Access confirmed for baby ${babyId}`);
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error('[Access Revocation] Error checking access:', error);
-    }
-    finally {
+    } finally {
       setIsChecking(false);
     }
   }, [user, activeBaby, allBabies, clearActiveBaby, setAllBabies, isChecking]);

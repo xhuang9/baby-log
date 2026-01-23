@@ -3,7 +3,7 @@
 import type { LocalSleepLog } from '@/lib/local-db';
 import { useState } from 'react';
 import { ActivityTile } from './ActivityTile';
-import { AddSleepModal } from './AddSleepModal';
+import { AddSleepModal } from './add-sleep-modal';
 
 type SleepLogWithCaregiver = LocalSleepLog & {
   caregiverLabel: string | null;

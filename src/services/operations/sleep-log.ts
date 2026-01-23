@@ -11,7 +11,7 @@
 import type { OperationResult } from './types';
 import type { LocalSleepLog } from '@/lib/local-db';
 import { addToOutbox, localDb, saveSleepLogs } from '@/lib/local-db';
-import { flushOutbox } from '@/services/sync-service';
+import { flushOutbox } from '@/services/sync';
 import { useUserStore } from '@/stores/useUserStore';
 
 import {
@@ -120,7 +120,7 @@ export async function createSleepLog(
     });
 
     // Trigger background sync (non-blocking)
-    flushOutbox().catch(err => {
+    flushOutbox().catch((err) => {
       console.warn('Background sync failed:', err);
     });
 

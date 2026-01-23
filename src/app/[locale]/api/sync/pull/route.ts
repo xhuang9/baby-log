@@ -141,6 +141,8 @@ export async function GET(request: NextRequest) {
       hasMore,
     };
 
+    console.log('[SYNC PULL] Returning', response.changes.length, 'changes for baby', babyId, 'since cursor', sinceCursor, '-> new cursor', nextCursor);
+
     return NextResponse.json(response);
   } catch (error) {
     console.error('Delta sync pull error:', error);
