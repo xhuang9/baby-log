@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, beforeEach, vi } from 'vitest';
+// @ts-expect-error - TODO: Implement test cases
 import { acceptInviteByCode } from './accept-by-code';
 
 // Mocks at module level
