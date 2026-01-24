@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-17T09:12:39Z
+last_verified_at: 2026-01-24T00:00:00Z
 source_paths:
   - src/app/[locale]/(auth)/account/
   - src/app/[locale]/api/bootstrap/
@@ -8,6 +8,7 @@ source_paths:
   - src/stores/useUserStore.ts
   - src/app/[locale]/(auth)/account/bootstrap/hooks/useBootstrapMachine.ts
   - src/types/bootstrap.ts
+  - src/lib/local-db/helpers/session-validation.ts
 ---
 
 # Account Management Overview
@@ -18,6 +19,7 @@ Covers the unified bootstrap post-authentication flow, baby multi-tenancy system
 ## Scope
 This project implements a sophisticated post-authentication flow that goes beyond standard Clerk integration:
 - **Unified bootstrap endpoint** that returns account state + sync data in one API call
+- **User switch detection** - validates cached session against current Clerk user and clears stale data
 - State machine-driven UI that handles all account states (locked, no_baby, pending_request, has_invites, select_baby, ready)
 - Offline fallback using IndexedDB cache
 - Multi-baby management system with default baby selection
@@ -32,8 +34,8 @@ This is NOT standard Clerk behavior - it's a custom implementation designed for 
 ### Bootstrap System (NEW - Replaces Old Resolution Flow)
 
 - `.readme/chunks/account.bootstrap-unified-flow.md`
-  - Content: Unified bootstrap API endpoint, state machine, and post-login flow architecture
-  - Read when: Understanding post-auth flow, adding new account states, debugging redirect loops, or implementing offline-first features
+  - Content: Unified bootstrap API endpoint, state machine, post-login flow architecture, and user switch detection
+  - Read when: Understanding post-auth flow, adding new account states, debugging redirect loops, understanding user data isolation, or implementing offline-first features
 
 ### Multi-Baby Management
 

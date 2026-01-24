@@ -6,7 +6,7 @@
  */
 
 import type { OperationResult } from './types';
-import { clearAuthSession } from '@/lib/local-db';
+import { clearAllLocalData } from '@/lib/local-db';
 import { useBabyStore } from '@/stores/useBabyStore';
 
 import { useUserStore } from '@/stores/useUserStore';
@@ -23,9 +23,9 @@ import {
 
 /**
  * Sign out cleanup
+ * - Clears all IndexedDB data (11 tables)
  * - Clears Zustand stores (which also clear sessionStorage)
  * - Clears additional sessionStorage keys
- * - Clears auth session in IndexedDB
  */
 export async function signOutCleanup(): Promise<OperationResult<void>> {
   if (!isClientSide()) {
@@ -33,22 +33,29 @@ export async function signOutCleanup(): Promise<OperationResult<void>> {
   }
 
   try {
-    // Clear Zustand stores (which also clear sessionStorage)
+    // 1. Clear all IndexedDB data (11 tables)
+    try {
+      await clearAllLocalData();
+      console.log('[Logout] Successfully cleared all IndexedDB data');
+    } catch (error) {
+      // Log but continue - session invalidation is primary security
+      console.error('[Logout] Failed to clear IndexedDB:', error);
+    }
+
+    // 2. Clear Zustand stores (also clears sessionStorage)
     const userStore = useUserStore.getState();
     const babyStore = useBabyStore.getState();
 
     userStore.clearUser();
     babyStore.clearActiveBaby();
 
-    // Clear additional sessionStorage keys
+    // 3. Clear additional sessionStorage keys
     sessionStorage.removeItem('baby-log:init-step');
 
-    // Clear auth session marker for offline access
-    // This prevents offline access after explicit sign out
-    await clearAuthSession();
-
+    console.log('[Logout] Cleanup complete');
     return success(undefined);
   } catch (error) {
+    console.error('[Logout] Cleanup failed:', error);
     return failure(
       error instanceof Error ? error.message : 'Failed to cleanup on sign out',
     );

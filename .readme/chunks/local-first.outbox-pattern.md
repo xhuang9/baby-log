@@ -66,3 +66,4 @@ const response = await fetch('/api/sync/push', { method: 'POST', body: JSON.stri
 
 - `.readme/chunks/local-first.delta-sync-architecture.md` - Push endpoint contract.
 - `.readme/chunks/local-first.sync-status-tracking.md` - Sync status in IndexedDB.
+- `.readme/chunks/auth.logout-confirmation-system.md` - Logout flow checks outbox for pending changes before allowing signout.

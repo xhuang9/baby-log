@@ -3,7 +3,9 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { setRequestLocale } from 'next-intl/server';
 import { AppConfig, ClerkLocalizations } from '@/config/app';
 import { clerkAppearance } from '@/lib/clerk-theme';
-import { routing } from '@/lib/i18n-routing';
+import { routing } from '@/lib/i18n/routing';
+import { AuthLayoutContent } from './auth-layout-content';
+import { LogoutProvider } from '@/contexts/LogoutContext';
 
 export const metadata: Metadata = {
   title: `${AppConfig.name} | Account`,
@@ -49,7 +51,9 @@ export default async function AuthLayout(props: {
       signUpFallbackRedirectUrl={accountBootstrapUrl}
       afterSignOutUrl={afterSignOutUrl}
     >
-      {props.children}
+      <LogoutProvider>
+        <AuthLayoutContent>{props.children}</AuthLayoutContent>
+      </LogoutProvider>
     </ClerkProvider>
   );
 }

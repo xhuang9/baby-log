@@ -65,7 +65,7 @@ Stored in: `localDb.babies` table
 
 ```typescript
 await saveBabyAccess(response.syncData.babyAccess.map(access => ({
-  oduserId: access.oduserId,
+  userId: access.userId,
   babyId: access.babyId,
   accessLevel: access.accessLevel,
   caregiverLabel: access.caregiverLabel,

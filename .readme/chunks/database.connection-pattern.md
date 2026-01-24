@@ -1,7 +1,7 @@
 ---
 last_verified_at: 2026-01-08T22:30:00Z
 source_paths:
-  - src/lib/db.ts
+  - src/lib/db/index.ts
   - src/utils/DBConnection.ts
 ---
 
@@ -16,7 +16,7 @@ Implements a global singleton connection to prevent multiple database connection
 - Connection created lazily on first import
 - Production creates new connection per deployment (no global caching)
 
-## Implementation: `src/lib/db.ts`
+## Implementation: `src/lib/db/index.ts`
 
 ```typescript
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';

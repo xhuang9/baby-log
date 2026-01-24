@@ -3,7 +3,7 @@
 import * as Sentry from '@sentry/nextjs';
 import NextError from 'next/error';
 import { useEffect } from 'react';
-import { routing } from '@/lib/i18n-routing';
+import { routing } from '@/lib/i18n/routing';
 
 export default function GlobalError(props: {
   error: Error & { digest?: string };

@@ -152,7 +152,7 @@ class BabyLogDatabase extends Dexie {
       // User & config
       users: 'id, clerkId',
       babies: 'id, ownerUserId',
-      babyAccess: '[oduserId+babyId], oduserId, babyId',
+      babyAccess: '[userId+babyId], userId, babyId',
       uiConfig: 'userId',
 
       // Sync management

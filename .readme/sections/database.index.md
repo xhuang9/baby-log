@@ -2,7 +2,7 @@
 last_verified_at: 2026-01-10T00:00:00Z
 source_paths:
   - src/models/Schema.ts
-  - src/lib/db.ts
+  - src/lib/db/index.ts
   - drizzle.config.ts
   - migrations/
 ---

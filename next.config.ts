@@ -22,7 +22,7 @@ const baseConfig: NextConfig = {
 };
 
 // Initialize the Next-Intl plugin
-let configWithPlugins = createNextIntlPlugin('./src/lib/i18n.ts')(baseConfig);
+let configWithPlugins = createNextIntlPlugin('./src/lib/i18n/index.ts')(baseConfig);
 
 // Configure PWA
 // Note: Some options like fallbacks and workboxOptions.importScripts are valid at runtime

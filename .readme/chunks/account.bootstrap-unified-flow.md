@@ -1,17 +1,18 @@
 ---
-last_verified_at: 2026-01-17T09:09:26Z
+last_verified_at: 2026-01-24T00:00:00Z
 source_paths:
   - src/app/[locale]/api/bootstrap/route.ts
   - src/app/[locale]/(auth)/account/bootstrap/page.tsx
   - src/app/[locale]/(auth)/account/bootstrap/hooks/useBootstrapMachine.ts
   - src/types/bootstrap.ts
   - src/app/[locale]/(auth)/layout.tsx
+  - src/lib/local-db/helpers/session-validation.ts
 ---
 
 # Bootstrap Unified Post-Login Flow
 
 > Status: active
-> Last updated: 2026-01-17
+> Last updated: 2026-01-24
 > Owner: Core
 
 ## Purpose
@@ -20,6 +21,7 @@ Provide a single post-login entry point that resolves account state and hydrates
 ## Key Deviations from Standard
 
 - **Single bootstrap endpoint**: `/api/bootstrap` returns account state + sync payload instead of multiple post-auth pages.
+- **User switch detection**: Validates cached session against current Clerk user before bootstrap to prevent data conflicts.
 - **Client state machine**: `useBootstrapMachine` drives UI states and redirects instead of server-side routing logic.
 - **Offline fallback**: Bootstrap checks IndexedDB and can render cached state when offline.
 
@@ -35,10 +37,13 @@ Provide a single post-login entry point that resolves account state and hydrates
 ### Data Flow
 1. Clerk sign-in/up redirects to `/account/bootstrap` via auth layout fallback URLs.
 2. `BootstrapPage` calls `useBootstrapMachine` and renders state components.
-3. Hook fetches `/api/bootstrap` (locale-aware) when online.
-4. API upserts `user`, resolves `accountState`, and returns recent logs + UI config.
-5. Hook stores data in IndexedDB, hydrates Zustand stores, and dispatches `SYNC_SUCCESS`.
-6. Page renders `locked | no_baby | pending_request | has_invites | select_baby | ready` and redirects on `ready`.
+3. **User Switch Detection**: Hook validates cached session matches current Clerk user.
+   - If mismatch detected: Clears all IndexedDB data + sessionStorage keys.
+   - Continues with fresh bootstrap.
+4. Hook fetches `/api/bootstrap` (locale-aware) when online.
+5. API upserts `user`, resolves `accountState`, and returns recent logs + UI config.
+6. Hook stores data in IndexedDB, hydrates Zustand stores, and dispatches `SYNC_SUCCESS`.
+7. Page renders `locked | no_baby | pending_request | has_invites | select_baby | ready` and redirects on `ready`.
 
 ### Code Pattern
 ```ts
@@ -66,6 +71,8 @@ case 'SYNC_SUCCESS': {
 
 ## Gotchas / Constraints
 
+- **User switch validation**: Non-fatal - validation errors don't block bootstrap (security vs availability tradeoff).
+- **Session storage cleared**: On user switch, 4 sessionStorage keys are cleared to prevent stale Zustand state.
 - **Default baby repair**: API updates `user.defaultBabyId` if missing and bumps `lastAccessedAt`.
 - **Offline bootstrap**: Requires prior cached data; otherwise shows sync error message.
 - **UI config optional**: `syncData.uiConfig` can be `null` when user has no config row.
@@ -77,6 +84,7 @@ case 'SYNC_SUCCESS': {
 
 ## Related Systems
 
+- `.readme/chunks/auth.user-switch-detection.md` - Detailed user switch detection and session validation logic.
 - `.readme/chunks/local-first.ui-config-storage.md` - UI config persistence returned by bootstrap.
 - `.readme/chunks/performance.instant-navigation.md` - Client-first rendering after bootstrap.
 - `src/proxy.ts` - Middleware configuration protecting `/account/bootstrap` route with Clerk auth.

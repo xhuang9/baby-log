@@ -34,7 +34,7 @@ Compose Next.js plugins (next-intl, PWA, bundle analyzer, Sentry) with environme
 
 ### Code Pattern
 ```ts
-let configWithPlugins = createNextIntlPlugin('./src/lib/i18n.ts')(baseConfig);
+let configWithPlugins = createNextIntlPlugin('./src/lib/i18n/index.ts')(baseConfig);
 configWithPlugins = withPWA({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development'

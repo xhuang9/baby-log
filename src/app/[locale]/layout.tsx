@@ -3,7 +3,7 @@ import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Toaster } from '@/components/ui/sonner';
-import { routing } from '@/lib/i18n-routing';
+import { routing } from '@/lib/i18n/routing';
 import { PostHogProvider } from '@/providers/PostHogProvider';
 import { QueryProvider } from '@/providers/QueryProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';

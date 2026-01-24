@@ -169,13 +169,44 @@
 │   │   └── use-mobile.tsx
 │   ├── lib
 │   │   ├── arcjet.ts
+│   │   ├── auth
+│   │   │   └── session-manager.ts
 │   │   ├── clerk-theme.ts
-│   │   ├── db.ts
+│   │   ├── db
+│   │   │   ├── helpers
+│   │   │   │   └── sync-events.ts
+│   │   │   └── index.ts
 │   │   ├── env.ts
-│   │   ├── i18n-navigation.ts
-│   │   ├── i18n-routing.ts
-│   │   ├── i18n.ts
+│   │   ├── i18n
+│   │   │   ├── index.ts
+│   │   │   ├── navigation.ts
+│   │   │   └── routing.ts
+│   │   ├── invites
+│   │   │   └── invite-helpers.ts
+│   │   ├── local-db
+│   │   │   ├── database.ts
+│   │   │   ├── helpers
+│   │   │   │   ├── access-revoked.ts
+│   │   │   │   ├── auth-session.ts
+│   │   │   │   ├── baby.ts
+│   │   │   │   ├── feed-logs.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── nappy-logs.ts
+│   │   │   │   ├── outbox.ts
+│   │   │   │   ├── sleep-logs.ts
+│   │   │   │   ├── sync-status.ts
+│   │   │   │   ├── ui-config.ts
+│   │   │   │   └── user.ts
+│   │   │   ├── index.ts
+│   │   │   ├── types
+│   │   │   │   ├── entities.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── logs.ts
+│   │   │   │   ├── outbox.ts
+│   │   │   │   └── sync.ts
+│   │   │   └── validation.ts
 │   │   ├── logger.ts
+│   │   ├── query-keys.ts
 │   │   └── utils.ts
 │   ├── locales
 │   │   └── en.json

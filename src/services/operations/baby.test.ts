@@ -24,6 +24,9 @@ vi.mock('@/lib/local-db', () => ({
         })),
       })),
     },
+    users: {
+      update: vi.fn().mockResolvedValue(undefined),
+    },
   },
   addToOutbox: vi.fn(),
   getAllLocalBabies: vi.fn(),

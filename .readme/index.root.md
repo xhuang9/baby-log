@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-22T00:00:00Z
+last_verified_at: 2026-01-24T00:00:00Z
 source_paths:
   - .readme/sections/
 ---
@@ -25,8 +25,8 @@ Read when: Working with database schema, migrations, DrizzleORM queries, or data
 Read when: Adding translations, working with locale-aware routes, or integrating i18n with authentication.
 
 ### `.readme/sections/authentication.index.md`
-**Clerk authentication with locale-aware configuration and required auth for all app routes**
-Read when: Working with Clerk authentication setup, protected routes (all routes under `(auth)` are protected via `src/proxy.ts`), or understanding auth-to-account flow integration.
+**Clerk authentication with locale-aware configuration, user data isolation, and logout safety**
+Read when: Working with Clerk authentication setup, protected routes (all routes under `(auth)` are protected via `src/proxy.ts`), understanding user switch detection and session validation, implementing logout confirmation flows, or understanding auth-to-account flow integration.
 
 ### `.readme/sections/account-management.index.md`
 **Unified bootstrap post-auth flow, baby multi-tenancy, and sharing system**

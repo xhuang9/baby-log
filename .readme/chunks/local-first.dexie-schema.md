@@ -35,7 +35,7 @@ Define the local-first IndexedDB schema used as the UI read model for offline an
 ```ts
 this.version(1).stores({
   feedLogs: 'id, babyId, startedAt, [babyId+startedAt]',
-  babyAccess: '[oduserId+babyId], oduserId, babyId',
+  babyAccess: '[userId+babyId], userId, babyId',
   outbox: 'mutationId, status, createdAt, entityType',
 });
 ```
@@ -45,7 +45,7 @@ this.version(1).stores({
 | Setting | Default | Description |
 |---------|---------|-------------|
 | `feedLogs` | `id, babyId, startedAt, [babyId+startedAt]` | Feed log indexes for per-baby time queries.
-| `babyAccess` | `[oduserId+babyId], oduserId, babyId` | Compound index for access lookup.
+| `babyAccess` | `[userId+babyId], userId, babyId` | Compound index for access lookup.
 | `syncStatus` | `entityType` | Tracks per-entity sync state.
 | `authSession` | `id` | Singleton record for offline auth session.
 
@@ -56,7 +56,7 @@ this.version(1).stores({
 
 ## Testing Notes
 
-- Validate that `babyAccess` queries use the compound `[oduserId+babyId]` index.
+- Validate that `babyAccess` queries use the compound `[userId+babyId]` index.
 - Insert logs and confirm queries by `babyId` + `startedAt` are efficient.
 
 ## Related Systems

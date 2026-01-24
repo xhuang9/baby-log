@@ -22,7 +22,7 @@ All detailed documentation lives in `.readme/sections/`. Each section contains c
 | `architecture.index.md` | Route structure, libs pattern, folders, TypeScript | Creating pages, understanding project structure, working with layouts |
 | `database.index.md` | DrizzleORM, schema, migrations, Neon | Adding tables, running migrations, database setup |
 | `internationalization.index.md` | next-intl, locale routing, translations | Adding translations, working with i18n |
-| `authentication.index.md` | Clerk setup, protected routes, layouts | Working with auth, adding protected pages |
+| `authentication.index.md` | Clerk setup, protected routes, user isolation, logout safety | Working with auth, adding protected pages, user switch detection, logout flows |
 | `account-management.index.md` | Bootstrap post-auth flow, account state, store sync | Post-auth flows, offline fallback, baby selection |
 | `baby-management.index.md` | Baby UI, editing, switching | Building baby management features |
 | `baby-sharing.index.md` | Invites, access requests, revocation detection | Implementing sharing features, managing caregivers |

@@ -62,7 +62,7 @@ Grants a user access to a baby.
 **Parameters:**
 ```typescript
 {
-  oduserId: number;          // User's ODUS ID (not Clerk ID)
+  userId: number;          // User's ODUS ID (not Clerk ID)
   babyId: number;            // Baby's database ID
   accessLevel: 'owner' | 'caregiver' | 'viewer';
   caregiverLabel?: string;   // Optional label for caregivers
@@ -74,7 +74,7 @@ Grants a user access to a baby.
 import { seedBabyAccess } from '@/tests/fixtures';
 
 await seedBabyAccess(page, {
-  oduserId: 1,
+  userId: 1,
   babyId: baby.id,
   accessLevel: 'caregiver',
   caregiverLabel: 'Grandma',
@@ -174,7 +174,7 @@ test('user with one baby', async ({ page, authenticateAs }) => {
   });
 
   await seedBabyAccess(page, {
-    oduserId: 1, // Matches TEST_USERS.singleBabyUser.id
+    userId: 1, // Matches TEST_USERS.singleBabyUser.id
     babyId: baby.id,
     accessLevel: 'owner',
   });
@@ -222,7 +222,7 @@ export async function setupUserWithBaby(page: Page, user: TestUser) {
   });
 
   await seedBabyAccess(page, {
-    oduserId: parseInt(user.id.replace('test-', '')),
+    userId: parseInt(user.id.replace('test-', '')),
     babyId: baby.id,
     accessLevel: 'owner',
   });

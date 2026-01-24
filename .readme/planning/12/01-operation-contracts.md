@@ -74,7 +74,7 @@ export async function updateBabyProfile(input): Promise<OperationResult<ActiveBa
   await localDb.transaction('rw', [localDb.babies, localDb.babyAccess, localDb.outbox], async () => {
     await localDb.babies.update(input.babyId, payload);
     await localDb.babyAccess
-      .where('[oduserId+babyId]')
+      .where('[userId+babyId]')
       .equals([user.localId, input.babyId])
       .modify({ caregiverLabel: input.caregiverLabel });
     await addToOutbox({

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { routing } from '@/lib/i18n-routing';
+import { routing } from '@/lib/i18n/routing';
 import { getI18nPath } from './Helpers';
 
 describe('Helpers', () => {

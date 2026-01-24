@@ -18,7 +18,7 @@ import type {
   BootstrapMachineState,
   BootstrapResponse,
 } from '@/types/bootstrap';
-import { useAuth } from '@clerk/nextjs';
+import { useAuth, useUser } from '@clerk/nextjs';
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 import { useBabyStore } from '@/stores/useBabyStore';
 import { useUserStore } from '@/stores/useUserStore';
@@ -112,6 +112,7 @@ export function useBootstrapMachine(
 
   const [state, dispatch] = useReducer(bootstrapReducer, { status: 'init' });
   const { isLoaded, isSignedIn } = useAuth();
+  const { user: clerkUser } = useUser();
 
   const setUser = useUserStore(s => s.setUser);
   const setAllBabies = useBabyStore(s => s.setAllBabies);
@@ -369,6 +370,31 @@ export function useBootstrapMachine(
       return;
     }
 
+    // Validate cached session matches current Clerk user
+    if (clerkUser?.id) {
+      try {
+        const { validateSessionForUser, clearAllLocalData } = await import('@/lib/local-db');
+        const valid = await validateSessionForUser(clerkUser.id);
+
+        if (!valid) {
+          console.log('[Bootstrap] User switch detected - clearing cached data');
+          console.log('[Bootstrap] New user:', clerkUser.id);
+
+          // Clear all IndexedDB data from previous user
+          await clearAllLocalData();
+
+          // Clear sessionStorage to prevent stale Zustand state
+          sessionStorage.removeItem('baby-log:user');
+          sessionStorage.removeItem('baby-log:active-baby');
+          sessionStorage.removeItem('baby-log:all-babies');
+          sessionStorage.removeItem('baby-log:init-step');
+        }
+      } catch (error) {
+        console.error('[Bootstrap] Session validation error:', error);
+        // Non-fatal: continue with bootstrap even if validation fails
+      }
+    }
+
     dispatch({ type: 'START_SYNC' });
 
     // Check if online
@@ -465,6 +491,7 @@ export function useBootstrapMachine(
     }
   }, [
     isSignedIn,
+    clerkUser,
     onReady,
     onNoSession,
     checkLocalData,

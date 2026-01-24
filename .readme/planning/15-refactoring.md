@@ -249,6 +249,48 @@ add-sleep-modal/
     └── ManualModeSection.tsx     (~60 LOC)
 ```
 
+**Test Coverage:**
+```
+add-sleep-modal/hooks/
+├── useSleepFormState.test.tsx          # 6 tests - state management
+├── useInitializeSleepForm.test.tsx     # 5 tests - initialization & hydration
+└── useSleepFormSubmit.test.tsx         # 9 tests - timer/manual modes, validation, errors
+```
+
+**Test Details:**
+- **useSleepFormState.test.tsx** (6 tests)
+  - Initial state validation (timer mode, default duration, hand mode)
+  - State update actions (input mode, start/end times, hand mode)
+  - Form reset behavior
+
+- **useInitializeSleepForm.test.tsx** (5 tests)
+  - Timer hydration when user is available
+  - Hand mode loading from IndexedDB with default fallback
+  - Error handling for config load failures
+  - User availability checks
+
+- **useSleepFormSubmit.test.tsx** (9 tests)
+  - Timer mode: validation, submission, timer data handling
+  - Manual mode: duration calculation, time validation
+  - Error handling: service errors, network failures
+  - Callback execution: onSuccess, onClose
+  - State management: isSubmitting tracking
+
+**Test Results:**
+- 20 tests total, all passing
+- Uses vitest-browser-react (project standard)
+- Proper mocking: Zustand stores, IndexedDB helpers, operations layer
+- Test duration: ~600ms
+
+**Documentation:**
+- Created `.readme/chunks/ui-patterns.activity-modals.md`
+  - Comprehensive pattern documentation (647 LOC)
+  - Architecture overview with code examples
+  - Hook responsibilities and testing strategies
+  - Step-by-step guide for adding new activity modals
+  - Common gotchas and troubleshooting
+- Updated `.readme/sections/feed-logging.index.md` to reference new pattern chunk
+
 **Results:**
 - 268 LOC monolithic component → 8 focused modules + 3 shared components
 - Each module <100 LOC (main component ~130 LOC)
@@ -257,3 +299,5 @@ add-sleep-modal/
 - Consistent architecture across all activity modals
 - 30% simpler than AddFeedModal refactoring (fewer states and variants)
 - Maintains exact same functionality and behavior
+- **Complete test coverage for all sleep modal hooks** (20 tests)
+- Documentation serves as blueprint for future modal implementations

@@ -1,11 +1,11 @@
 ---
 last_verified_at: 2026-01-08T22:30:00Z
 source_paths:
-  - src/lib/db.ts
+  - src/lib/db/index.ts
   - src/lib/env.ts
-  - src/lib/i18n.ts
-  - src/lib/i18n-navigation.ts
-  - src/lib/i18n-routing.ts
+  - src/lib/i18n/index.ts
+  - src/lib/i18n/navigation.ts
+  - src/lib/i18n/routing.ts
   - src/lib/logger.ts
   - src/lib/arcjet.ts
   - src/lib/clerk-theme.ts
@@ -36,7 +36,7 @@ import { Env } from '@/lib/env';
 // Env.DATABASE_URL is typed and validated
 ```
 
-### `src/lib/db.ts`
+### `src/lib/db/index.ts`
 - DrizzleORM database client configuration
 - Implements global singleton pattern for dev hot-reload
 - Export: `db` - pre-configured Drizzle instance
@@ -58,17 +58,17 @@ import { logger } from '@/lib/logger';
 logger.info('Message');
 ```
 
-### `src/lib/i18n.ts`
+### `src/lib/i18n/index.ts`
 - next-intl request configuration
 - Loads locale messages dynamically
 - Used by Next.js via plugin in `next.config.ts`
 
-### `src/lib/i18n-navigation.ts` & `i18n-routing.ts`
+### `src/lib/i18n/navigation.ts` & `src/lib/i18n/routing.ts`
 - Locale-aware navigation helpers
 - Export typed `Link`, `redirect`, `usePathname`, etc.
 
 ```typescript
-import { Link } from '@/lib/i18n-navigation';
+import { Link } from '@/lib/i18n/navigation';
 // Link is locale-aware automatically
 ```
 
