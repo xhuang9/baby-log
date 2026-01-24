@@ -30,10 +30,13 @@ export {
 // Feed log operations
 export type {
   CreateFeedLogInput,
+  UpdateFeedLogInput,
 } from './feed-log';
 
 export {
   createFeedLog,
+  updateFeedLog,
+  deleteFeedLog,
 } from './feed-log';
 
 // Nappy log operations
@@ -48,10 +51,13 @@ export {
 // Sleep log operations
 export type {
   CreateSleepLogInput,
+  UpdateSleepLogInput,
 } from './sleep-log';
 
 export {
   createSleepLog,
+  updateSleepLog,
+  deleteSleepLog,
 } from './sleep-log';
 
 // Core types

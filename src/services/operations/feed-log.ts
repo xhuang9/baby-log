@@ -38,6 +38,17 @@ export type CreateFeedLogInput = {
   notes?: string | null;
 };
 
+export type UpdateFeedLogInput = {
+  id: string;
+  method?: FeedMethod;
+  startedAt?: Date;
+  amountMl?: number | null;
+  isEstimated?: boolean;
+  durationMinutes?: number | null;
+  endSide?: FeedSide | null;
+  notes?: string | null;
+};
+
 // ============================================================================
 // Feed Log Operations
 // ============================================================================
@@ -153,6 +164,166 @@ export async function createFeedLog(
   } catch (error) {
     return failure(
       error instanceof Error ? error.message : 'Failed to create feed log',
+    );
+  }
+}
+
+/**
+ * Update an existing feed log entry
+ * - Updates feed log in IndexedDB
+ * - Enqueues to outbox for sync
+ * - UI updates via useLiveQuery automatically
+ */
+export async function updateFeedLog(
+  input: UpdateFeedLogInput,
+): Promise<OperationResult<LocalFeedLog>> {
+  if (!isClientSide()) {
+    return failure('Client-only operation');
+  }
+
+  try {
+    // Get existing log
+    const existing = await localDb.feedLogs.get(input.id);
+    if (!existing) {
+      return failure('Feed log not found');
+    }
+
+    // Get user context
+    const user = useUserStore.getState().user;
+    if (!user?.localId) {
+      return failure('Not authenticated');
+    }
+
+    // Check access to baby
+    const access = await localDb.babyAccess
+      .where('[userId+babyId]')
+      .equals([user.localId, existing.babyId])
+      .first();
+
+    if (!access || (access.accessLevel !== 'owner' && access.accessLevel !== 'editor')) {
+      return failure('Access denied to this baby');
+    }
+
+    // Merge updates
+    const method = input.method ?? existing.method;
+    const startedAt = input.startedAt ?? existing.startedAt;
+    const durationMinutes = input.durationMinutes !== undefined ? input.durationMinutes : existing.durationMinutes;
+    const amountMl = input.amountMl !== undefined ? input.amountMl : existing.amountMl;
+    const isEstimated = input.isEstimated !== undefined ? input.isEstimated : existing.isEstimated;
+    const endSide = input.endSide !== undefined ? input.endSide : existing.endSide;
+    const notes = input.notes !== undefined ? input.notes : existing.notes;
+
+    // Calculate endedAt based on method and duration
+    let endedAt: Date | null = null;
+    if (method === 'breast' && durationMinutes) {
+      endedAt = new Date(startedAt.getTime() + durationMinutes * 60 * 1000);
+    }
+
+    const updated: LocalFeedLog = {
+      ...existing,
+      method,
+      startedAt,
+      endedAt,
+      durationMinutes,
+      amountMl,
+      isEstimated,
+      endSide,
+      notes,
+      updatedAt: new Date(),
+    };
+
+    // Write to IndexedDB
+    await saveFeedLogs([updated]);
+
+    // Enqueue to outbox
+    await addToOutbox({
+      mutationId: generateMutationId(),
+      entityType: 'feed_log',
+      entityId: input.id,
+      op: 'update',
+      payload: {
+        id: updated.id,
+        babyId: updated.babyId,
+        loggedByUserId: updated.loggedByUserId,
+        method: updated.method,
+        startedAt: updated.startedAt.toISOString(),
+        endedAt: updated.endedAt?.toISOString() ?? null,
+        durationMinutes: updated.durationMinutes,
+        amountMl: updated.amountMl,
+        isEstimated: updated.isEstimated,
+        endSide: updated.endSide,
+        notes: updated.notes,
+        createdAt: updated.createdAt.toISOString(),
+        updatedAt: updated.updatedAt.toISOString(),
+      },
+    });
+
+    // Trigger background sync
+    void flushOutbox();
+
+    return success(updated);
+  } catch (error) {
+    return failure(
+      error instanceof Error ? error.message : 'Failed to update feed log',
+    );
+  }
+}
+
+/**
+ * Delete a feed log entry
+ * - Removes feed log from IndexedDB
+ * - Enqueues delete to outbox for sync
+ * - UI updates via useLiveQuery automatically
+ */
+export async function deleteFeedLog(
+  id: string,
+): Promise<OperationResult<void>> {
+  if (!isClientSide()) {
+    return failure('Client-only operation');
+  }
+
+  try {
+    // Get existing log
+    const existing = await localDb.feedLogs.get(id);
+    if (!existing) {
+      return failure('Feed log not found');
+    }
+
+    // Get user context
+    const user = useUserStore.getState().user;
+    if (!user?.localId) {
+      return failure('Not authenticated');
+    }
+
+    // Check access to baby
+    const access = await localDb.babyAccess
+      .where('[userId+babyId]')
+      .equals([user.localId, existing.babyId])
+      .first();
+
+    if (!access || (access.accessLevel !== 'owner' && access.accessLevel !== 'editor')) {
+      return failure('Access denied to this baby');
+    }
+
+    // Delete from IndexedDB
+    await localDb.feedLogs.delete(id);
+
+    // Enqueue to outbox
+    await addToOutbox({
+      mutationId: generateMutationId(),
+      entityType: 'feed_log',
+      entityId: id,
+      op: 'delete',
+      payload: null,
+    });
+
+    // Trigger background sync
+    void flushOutbox();
+
+    return success(undefined);
+  } catch (error) {
+    return failure(
+      error instanceof Error ? error.message : 'Failed to delete feed log',
     );
   }
 }

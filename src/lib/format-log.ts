@@ -1,0 +1,217 @@
+'use client';
+
+import type { LocalFeedLog, LocalSleepLog } from '@/lib/local-db';
+
+// Re-export from activity-modals for convenience
+export { formatDuration as formatDurationFromMinutes } from '@/components/activity-modals/utils';
+
+/**
+ * Format time difference from past date to now (e.g., "2h 15m ago")
+ */
+export function formatTimeAgo(date: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffDays > 0) {
+    const remainingHours = diffHours % 24;
+    return remainingHours > 0 ? `${diffDays}d ${remainingHours}h ago` : `${diffDays}d ago`;
+  }
+
+  if (diffHours > 0) {
+    const remainingMinutes = diffMinutes % 60;
+    return remainingMinutes > 0 ? `${diffHours}h ${remainingMinutes}m ago` : `${diffHours}h ago`;
+  }
+
+  if (diffMinutes > 0) {
+    return `${diffMinutes}m ago`;
+  }
+
+  return 'Just now';
+}
+
+/**
+ * Format minutes to readable duration (e.g., "1h 30m")
+ */
+export function formatDuration(durationMinutes: number | null | undefined): string {
+  if (!durationMinutes || durationMinutes < 0) {
+    return '0m';
+  }
+
+  if (durationMinutes < 60) {
+    return `${durationMinutes}m`;
+  }
+
+  const hours = Math.floor(durationMinutes / 60);
+  const mins = durationMinutes % 60;
+  return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+}
+
+/**
+ * Type for unified log representation
+ */
+export type UnifiedLog = {
+  id: string;
+  type: 'feed' | 'sleep';
+  babyId: number;
+  startedAt: Date;
+  caregiverLabel: string | null;
+  data: LocalFeedLog | LocalSleepLog;
+};
+
+/**
+ * Format time as HH:MM or HH:MM AM/PM based on user preference
+ * Currently uses 24-hour format (can be made dynamic based on user settings)
+ */
+function formatTime(date: Date): string {
+  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+/**
+ * Format date as relative dates (today, yesterday, X days ago, etc.)
+ */
+function formatDate(date: Date): string {
+  const now = new Date();
+  const logDate = new Date(date);
+
+  const todayStart = new Date(now);
+  todayStart.setHours(0, 0, 0, 0);
+
+  const logDateStart = new Date(logDate);
+  logDateStart.setHours(0, 0, 0, 0);
+
+  const dayDiff = Math.floor(
+    (todayStart.getTime() - logDateStart.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  if (dayDiff === 0) return 'today';
+  if (dayDiff === 1) return 'yesterday';
+  if (dayDiff >= 2) return `${dayDiff} days ago`;
+
+  return 'today';
+}
+
+/**
+ * Format log subtitle for display - structured format for easy scanning
+ * Returns JSON to be parsed by LogItem for proper layout with aligned columns
+ * Bottle: "Bottle · 155 ml" (left)     "today · 18:42" (right)
+ * Breast: "Breast · 20m · Right" (left) "today · 18:42" (right)
+ * Sleep:  "Sleep · 2h12m" (left)       "today · 18:42" (right)
+ */
+export function formatLogSubtitle(log: UnifiedLog): string {
+  const time = formatTime(log.startedAt);
+  const date = formatDate(log.startedAt);
+  const rightPart = `${date} · ${time}`;
+
+  if (log.type === 'feed') {
+    const feed = log.data as LocalFeedLog;
+    if (feed.method === 'bottle') {
+      const amount = feed.amountMl ? `${feed.amountMl} ml` : 'unknown';
+      const leftPart = `Bottle · ${amount}`;
+      return JSON.stringify({ left: leftPart, right: rightPart });
+    } else {
+      const duration = formatDuration(feed.durationMinutes);
+      const side = feed.endSide ? ` · ${feed.endSide.charAt(0).toUpperCase() + feed.endSide.slice(1)}` : '';
+      const leftPart = `Breast · ${duration}${side}`;
+      return JSON.stringify({ left: leftPart, right: rightPart });
+    }
+  }
+
+  if (log.type === 'sleep') {
+    const sleep = log.data as LocalSleepLog;
+    const duration = formatDuration(sleep.durationMinutes);
+    const leftPart = `Sleep · ${duration}`;
+    return JSON.stringify({ left: leftPart, right: rightPart });
+  }
+
+  return '';
+}
+
+/**
+ * Format log for expanded view (overview tile style)
+ * Matches overview page format: "1d 2h 33m ago - 30m breast feed (end on right) - by father"
+ */
+export function formatLogSubtitleExpanded(log: UnifiedLog): string {
+  const timeAgo = formatTimeAgo(log.startedAt);
+  const caregiver = log.caregiverLabel ? ` - by ${log.caregiverLabel}` : '';
+
+  if (log.type === 'feed') {
+    const feed = log.data as LocalFeedLog;
+    if (feed.method === 'bottle') {
+      const amount = feed.amountMl ? `${feed.amountMl}ml formula` : 'formula';
+      return `${timeAgo} - ${amount}${caregiver}`;
+    } else {
+      const duration = formatDuration(feed.durationMinutes);
+      const side = feed.endSide ? ` (end on ${feed.endSide})` : '';
+      return `${timeAgo} - ${duration} breast feed${side}${caregiver}`;
+    }
+  }
+
+  if (log.type === 'sleep') {
+    const sleep = log.data as LocalSleepLog;
+    const duration = formatDuration(sleep.durationMinutes);
+    return `${timeAgo} - duration ${duration}${caregiver}`;
+  }
+
+  return timeAgo;
+}
+
+/**
+ * Group logs by date (Today, Yesterday, specific dates)
+ */
+export type LogGroup = {
+  label: string;
+  logs: UnifiedLog[];
+  sortKey: number; // For sorting groups (newer first)
+};
+
+export function groupLogsByDate(logs: UnifiedLog[]): LogGroup[] {
+  const groups = new Map<string, { logs: UnifiedLog[]; sortKey: number }>();
+  const now = new Date();
+  const todayStart = new Date(now);
+  todayStart.setHours(0, 0, 0, 0);
+
+  for (const log of logs) {
+    const logDate = new Date(log.startedAt);
+    const logDateStart = new Date(logDate);
+    logDateStart.setHours(0, 0, 0, 0);
+
+    let label: string;
+    let sortKey: number;
+
+    const dayDiff = Math.floor(
+      (todayStart.getTime() - logDateStart.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    if (dayDiff === 0) {
+      label = 'Today';
+      sortKey = 0;
+    } else if (dayDiff === 1) {
+      label = 'Yesterday';
+      sortKey = 1;
+    } else {
+      // Format as "MMM d, yyyy"
+      label = logDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+      sortKey = dayDiff;
+    }
+
+    if (!groups.has(label)) {
+      groups.set(label, { logs: [], sortKey });
+    }
+    groups.get(label)!.logs.push(log);
+  }
+
+  return Array.from(groups.entries())
+    .map(([label, { logs, sortKey }]) => ({
+      label,
+      logs,
+      sortKey,
+    }))
+    .sort((a, b) => a.sortKey - b.sortKey);
+}

@@ -41,8 +41,8 @@ Read when: Building or modifying the baby list interface, implementing baby edit
 Read when: Implementing invite generation (passkey/email), working with access requests, managing caregivers, understanding access revocation detection, debugging sharing features, or working with sharing-related IndexedDB patterns.
 
 ### `.readme/sections/feed-logging.index.md`
-**Feed logging system with dual methods, automatic estimation, and caregiver attribution**
-Read when: Implementing or modifying feed tracking, working with breast/bottle feeds, understanding amount estimation, or adding new activity types.
+**Feed logging system with dual methods, automatic estimation, caregiver attribution, and activity logs page**
+Read when: Implementing or modifying feed tracking, working with breast/bottle feeds, understanding amount estimation, building the activity logs page with filtering and view modes, implementing edit/delete operations, or adding new activity types.
 
 ### `.readme/sections/local-first.index.md`
 **Local-first architecture with Dexie, TanStack Query, delta sync, and required authentication**

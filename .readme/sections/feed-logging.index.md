@@ -25,6 +25,9 @@ This section documents the feed logging implementation including:
 - Timer-based duration tracking with persistent state
 - Automatic estimation logic for breast feed amounts
 - Activity tile pattern for overview display
+- Activity logs page with filtering, view modes, and editing
+- Edit/delete operations with local-first sync
+- Log formatting and display utilities
 
 ## Key Features
 
@@ -80,6 +83,23 @@ This section documents the feed logging implementation including:
 
 - **Content**: Dual input modes (timer vs. manual) in AddFeedModal, timer-to-feed-log conversion, actual start time reconstruction, and validation logic
 - **Read when**: Working with AddFeedModal, understanding timer/manual mode switching, debugging timer submission, or implementing similar dual-mode input patterns
+
+### Activity Logs Page
+
+#### `chunks/feed-logging.activity-logs-page.md`
+
+- **Content**: Complete logs page implementation with filtering, view modes, unified log querying, date grouping, and edit/delete modal integration
+- **Read when**: Building the logs feature, implementing filter state with URL sync, understanding date grouping and view modes, or working with edit modals
+
+#### `chunks/feed-logging.edit-delete-operations.md`
+
+- **Content**: Edit/delete operations layer for feed and sleep logs with local-first sync pattern, access control, and error handling
+- **Read when**: Implementing edit/delete flows, understanding operations pattern, working with outbox sync, or handling edit/delete in modal components
+
+#### `chunks/feed-logging.log-formatting.md`
+
+- **Content**: Formatting utilities for dates (relative), durations, times, and structured log display with left/right columns for efficient scanning
+- **Read when**: Working with log display, implementing formatting logic, understanding LogItem parsing, or extending formatting for new activity types
 
 ### UI Patterns
 

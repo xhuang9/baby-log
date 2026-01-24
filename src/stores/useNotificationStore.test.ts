@@ -10,10 +10,7 @@
 import type { LocalNotification } from '@/lib/local-db/types/notifications';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  useHasUnreadNotifications,
-  useNotificationsByCategory,
   useNotificationStore,
-  useUnreadNotifications,
 } from './useNotificationStore';
 
 // Stub window for Node environment (store checks typeof window !== 'undefined')
@@ -405,7 +402,7 @@ describe('useNotificationStore', () => {
         createMockNotification({ id: 'n2' }),
       ];
 
-      vi.mocked(pruneOldNotifications).mockResolvedValue(undefined);
+      vi.mocked(pruneOldNotifications).mockResolvedValue(0);
       vi.mocked(getNotifications).mockResolvedValue(mockNotifications);
       vi.mocked(getUnreadCount).mockResolvedValue(2);
 
@@ -433,7 +430,7 @@ describe('useNotificationStore', () => {
         resolveGetNotifications = resolve;
       });
 
-      vi.mocked(pruneOldNotifications).mockResolvedValue(undefined);
+      vi.mocked(pruneOldNotifications).mockResolvedValue(0);
       vi.mocked(getNotifications).mockReturnValue(getNotificationsPromise);
       vi.mocked(getUnreadCount).mockResolvedValue(0);
 

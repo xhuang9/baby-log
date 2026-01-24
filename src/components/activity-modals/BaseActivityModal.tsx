@@ -1,0 +1,135 @@
+'use client';
+
+import { ReactNode } from 'react';
+import { ChevronLeftIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import type { HandMode } from '@/lib/local-db/types/entities';
+
+export interface BaseActivityModalProps {
+  title: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  children: ReactNode;
+  onPrimary: () => void | Promise<void>;
+  primaryLabel?: string;
+  onSecondary?: () => void;
+  secondaryLabel?: string;
+  onDelete?: () => void | Promise<void>;
+  isLoading?: boolean;
+  error?: string | null;
+  handMode?: HandMode;
+}
+
+/**
+ * Reusable base modal component for activity logs (edit, update, delete)
+ * Provides consistent shell, header, footer, and action layout
+ */
+export function BaseActivityModal({
+  title,
+  open,
+  onOpenChange,
+  children,
+  onPrimary,
+  primaryLabel = 'Save',
+  onSecondary,
+  secondaryLabel = 'Cancel',
+  onDelete,
+  isLoading = false,
+  error,
+  handMode = 'right',
+}: BaseActivityModalProps) {
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen && onSecondary) {
+      onSecondary();
+    }
+    onOpenChange(newOpen);
+  };
+
+  return (
+    <Sheet open={open} onOpenChange={handleOpenChange}>
+      <SheetContent
+        side="bottom"
+        className="inset-0 flex h-full w-full flex-col gap-0 rounded-none p-0"
+        showCloseButton={false}
+      >
+        {/* Header */}
+        <SheetHeader className="relative mx-auto w-full max-w-[600px] flex-shrink-0 flex-row items-center space-y-0 border-b px-4 pt-4 pb-4">
+          <SheetClose
+            render={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="text-muted-foreground"
+              />
+            }
+          >
+            <ChevronLeftIcon className="h-5 w-5" />
+            <span className="sr-only">Close</span>
+          </SheetClose>
+
+          <SheetTitle className="absolute left-1/2 -translate-x-1/2">
+            {title}
+          </SheetTitle>
+        </SheetHeader>
+
+        {/* Body */}
+        <div
+          className="mx-auto w-full max-w-[600px] flex-1 space-y-6 overflow-y-auto px-4 pt-6 pb-6"
+          style={{ minHeight: 0 }}
+        >
+          {children}
+
+          {error && (
+            <p className="text-center text-sm text-destructive">{error}</p>
+          )}
+        </div>
+
+        {/* Footer */}
+        <SheetFooter
+          className={`mx-auto w-full max-w-[600px] flex-shrink-0 flex-row border-t px-4 pt-4 pb-4 ${
+            handMode === 'left' ? 'justify-start' : 'justify-end'
+          }`}
+        >
+          {/* Delete button aligned left */}
+          {onDelete && (
+            <Button
+              variant="destructive"
+              onClick={onDelete}
+              disabled={isLoading}
+              className="mr-auto"
+            >
+              Delete
+            </Button>
+          )}
+
+          {/* Primary/Secondary buttons aligned right */}
+          <div className="flex gap-2">
+            {onSecondary && (
+              <Button
+                variant="outline"
+                onClick={() => handleOpenChange(false)}
+                disabled={isLoading}
+              >
+                {secondaryLabel}
+              </Button>
+            )}
+            <Button
+              onClick={onPrimary}
+              disabled={isLoading}
+            >
+              {primaryLabel}
+            </Button>
+          </div>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
+}

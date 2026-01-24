@@ -44,6 +44,7 @@ export function useSleepLogsForBaby(
 
 /**
  * Get sleep logs for a baby within a date range
+ * If startDate and endDate are both null, returns all logs
  */
 export function useSleepLogsByDateRange(
   babyId: number | null | undefined,
@@ -52,7 +53,21 @@ export function useSleepLogsByDateRange(
 ): LocalSleepLog[] | undefined {
   return useLiveQuery(
     async () => {
-      if (!babyId || !startDate || !endDate) {
+      if (!babyId) {
+        return [];
+      }
+
+      // If no date range specified (all history), return all logs
+      if (startDate === null && endDate === null) {
+        return localDb.sleepLogs
+          .where('babyId')
+          .equals(babyId)
+          .reverse()
+          .sortBy('startedAt');
+      }
+
+      // If dates are provided, filter by date range
+      if (!startDate || !endDate) {
         return [];
       }
 

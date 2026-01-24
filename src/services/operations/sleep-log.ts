@@ -32,6 +32,13 @@ export type CreateSleepLogInput = {
   notes?: string | null;
 };
 
+export type UpdateSleepLogInput = {
+  id: string;
+  startedAt?: Date;
+  durationMinutes?: number | null;
+  notes?: string | null;
+};
+
 // ============================================================================
 // Sleep Log Operations
 // ============================================================================
@@ -128,5 +135,150 @@ export async function createSleepLog(
   } catch (err) {
     console.error('Failed to create sleep log:', err);
     return failure(err instanceof Error ? err.message : 'Failed to create sleep log');
+  }
+}
+
+/**
+ * Update an existing sleep log entry
+ * - Updates sleep log in IndexedDB
+ * - Enqueues to outbox for sync
+ * - UI updates via useLiveQuery automatically
+ */
+export async function updateSleepLog(
+  input: UpdateSleepLogInput,
+): Promise<OperationResult<LocalSleepLog>> {
+  if (!isClientSide()) {
+    return failure('Client-only operation');
+  }
+
+  try {
+    // Get existing log
+    const existing = await localDb.sleepLogs.get(input.id);
+    if (!existing) {
+      return failure('Sleep log not found');
+    }
+
+    // Get user context
+    const user = useUserStore.getState().user;
+    if (!user?.localId) {
+      return failure('Not authenticated');
+    }
+
+    // Check access to baby
+    const access = await localDb.babyAccess
+      .where('[userId+babyId]')
+      .equals([user.localId, existing.babyId])
+      .first();
+
+    if (!access || (access.accessLevel !== 'owner' && access.accessLevel !== 'editor')) {
+      return failure('Access denied to this baby');
+    }
+
+    // Merge updates
+    const startedAt = input.startedAt ?? existing.startedAt;
+    const durationMinutes = input.durationMinutes !== undefined ? input.durationMinutes : existing.durationMinutes;
+    const notes = input.notes !== undefined ? input.notes : existing.notes;
+
+    // Calculate endedAt from duration if provided
+    const endedAt = durationMinutes
+      ? new Date(startedAt.getTime() + durationMinutes * 60 * 1000)
+      : null;
+
+    const updated: LocalSleepLog = {
+      ...existing,
+      startedAt,
+      endedAt,
+      durationMinutes,
+      notes,
+      updatedAt: new Date(),
+    };
+
+    // Write to IndexedDB
+    await saveSleepLogs([updated]);
+
+    // Enqueue to outbox
+    await addToOutbox({
+      mutationId: generateMutationId(),
+      entityType: 'sleep_log',
+      entityId: input.id,
+      op: 'update',
+      payload: {
+        id: updated.id,
+        babyId: updated.babyId,
+        loggedByUserId: updated.loggedByUserId,
+        startedAt: updated.startedAt.toISOString(),
+        endedAt: updated.endedAt?.toISOString() ?? null,
+        durationMinutes: updated.durationMinutes,
+        notes: updated.notes,
+        createdAt: updated.createdAt.toISOString(),
+        updatedAt: updated.updatedAt.toISOString(),
+      },
+    });
+
+    // Trigger background sync
+    void flushOutbox();
+
+    return success(updated);
+  } catch (err) {
+    console.error('Failed to update sleep log:', err);
+    return failure(err instanceof Error ? err.message : 'Failed to update sleep log');
+  }
+}
+
+/**
+ * Delete a sleep log entry
+ * - Removes sleep log from IndexedDB
+ * - Enqueues delete to outbox for sync
+ * - UI updates via useLiveQuery automatically
+ */
+export async function deleteSleepLog(
+  id: string,
+): Promise<OperationResult<void>> {
+  if (!isClientSide()) {
+    return failure('Client-only operation');
+  }
+
+  try {
+    // Get existing log
+    const existing = await localDb.sleepLogs.get(id);
+    if (!existing) {
+      return failure('Sleep log not found');
+    }
+
+    // Get user context
+    const user = useUserStore.getState().user;
+    if (!user?.localId) {
+      return failure('Not authenticated');
+    }
+
+    // Check access to baby
+    const access = await localDb.babyAccess
+      .where('[userId+babyId]')
+      .equals([user.localId, existing.babyId])
+      .first();
+
+    if (!access || (access.accessLevel !== 'owner' && access.accessLevel !== 'editor')) {
+      return failure('Access denied to this baby');
+    }
+
+    // Delete from IndexedDB
+    await localDb.sleepLogs.delete(id);
+
+    // Enqueue to outbox
+    await addToOutbox({
+      mutationId: generateMutationId(),
+      entityType: 'sleep_log',
+      entityId: id,
+      op: 'delete',
+      payload: null,
+    });
+
+    // Trigger background sync
+    void flushOutbox();
+
+    return success(undefined);
+  } catch (err) {
+    console.error('Failed to delete sleep log:', err);
+    return failure(err instanceof Error ? err.message : 'Failed to delete sleep log');
   }
 }

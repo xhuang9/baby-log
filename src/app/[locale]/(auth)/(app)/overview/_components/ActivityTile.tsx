@@ -28,6 +28,8 @@ export type ActivityTileProps = {
   onClick?: () => void;
   rightContent?: ReactNode;
   className?: string;
+  multiline?: boolean;
+  layout?: 'row' | 'column';
 };
 
 export function ActivityTile({
@@ -38,6 +40,8 @@ export function ActivityTile({
   onClick,
   rightContent,
   className,
+  multiline = false,
+  layout = 'row',
 }: ActivityTileProps) {
   return (
     <button
@@ -47,15 +51,16 @@ export function ActivityTile({
       className={cn(
         'activity-tile',
         activityClasses[activity],
+        layout === 'column' && 'flex-col items-start justify-start gap-2',
         className,
       )}
     >
       <div className="min-w-0 flex-1">
         <h3 className="activity-tile-title">{title}</h3>
-        <p className="activity-tile-label truncate">{subtitle}</p>
+        <p className={cn('activity-tile-label', !multiline && 'truncate')}>{subtitle}</p>
       </div>
       {rightContent && (
-        <div className="ml-4 shrink-0">
+        <div className={cn(layout === 'column' ? 'mt-2' : 'ml-4', 'shrink-0')}>
           {rightContent}
         </div>
       )}
