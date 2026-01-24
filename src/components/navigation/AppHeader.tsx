@@ -16,6 +16,7 @@ import {
 import { Button } from '../ui/button';
 import { SidebarTrigger } from '../ui/sidebar';
 import { BabySwitcher } from './BabySwitcher';
+import { NotificationBell } from './NotificationBell';
 
 type AppHeaderProps = {
   locale: string;
@@ -135,8 +136,9 @@ export const AppHeader = ({ locale }: AppHeaderProps) => {
                 : null}
           </div>
 
-          {/* Right: Theme Toggle + Settings Button */}
+          {/* Right: Bell + Theme Toggle + Settings Button */}
           <div className="flex items-center gap-2">
+            <NotificationBell />
             <ThemeToggle />
             <Link href="/settings">
               <Button

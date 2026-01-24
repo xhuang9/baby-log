@@ -1,6 +1,7 @@
 import type { FeedMethod } from '@/lib/local-db';
 import { useState } from 'react';
 import { createFeedLog } from '@/services/operations';
+import { notifyToast } from '@/lib/notify';
 import type { InputMode } from '../types';
 import { calculateDuration } from '../utils';
 
@@ -75,7 +76,9 @@ export function useFeedFormSubmit({
 
         // Validate duration
         if (method === 'breast' && durationMinutes <= 0) {
-          setError('End time must be after start time');
+          const errorMsg = 'End time must be after start time';
+          setError(errorMsg);
+          notifyToast.error(errorMsg);
           setIsSubmitting(false);
           return;
         }
@@ -89,7 +92,9 @@ export function useFeedFormSubmit({
       });
 
       if (!result.success) {
-        setError(result.error);
+        const errorMsg = result.error || 'Failed to save feed';
+        setError(errorMsg);
+        notifyToast.error(errorMsg);
         return;
       }
 
@@ -99,10 +104,13 @@ export function useFeedFormSubmit({
       }
 
       resetForm();
+      notifyToast.success('Feed logged successfully');
       onClose();
       onSuccess?.();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save');
+      const errorMsg = err instanceof Error ? err.message : 'Failed to save';
+      setError(errorMsg);
+      notifyToast.error(errorMsg);
     } finally {
       setIsSubmitting(false);
     }

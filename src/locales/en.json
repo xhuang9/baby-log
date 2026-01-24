@@ -2,5 +2,27 @@
   "Example": {
     "title": "Example title",
     "description": "Example description"
+  },
+  "Notifications": {
+    "title": "Notifications",
+    "empty": {
+      "title": "No notifications",
+      "description": "You're all caught up! We'll notify you when something happens."
+    },
+    "unreadCount": "{count} unread notification",
+    "unreadCountPlural": "{count} unread notifications",
+    "markAllRead": "Mark all read",
+    "categories": {
+      "sync": "Sync",
+      "access": "Access",
+      "system": "System",
+      "error": "Error"
+    },
+    "timeAgo": {
+      "justNow": "Just now",
+      "minutes": "{count}m ago",
+      "hours": "{count}h ago",
+      "days": "{count}d ago"
+    }
   }
 }

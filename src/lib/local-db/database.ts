@@ -18,6 +18,7 @@
 import type { EntityTable } from 'dexie';
 import type { LocalBaby, LocalBabyAccess, LocalBabyInvite, LocalUIConfig, LocalUser } from './types/entities';
 import type { LocalFeedLog, LocalNappyLog, LocalSleepLog } from './types/logs';
+import type { LocalNotification } from './types/notifications';
 import type { OutboxEntry } from './types/outbox';
 import type { AuthSession, LocalSyncStatus, SyncMeta } from './types/sync';
 import Dexie from 'dexie';
@@ -47,6 +48,9 @@ class BabyLogDatabase extends Dexie {
   // Auth session for offline access
   authSession!: EntityTable<AuthSession, 'id'>;
 
+  // Notifications
+  notifications!: EntityTable<LocalNotification, 'id'>;
+
   constructor() {
     super('baby-log');
 
@@ -75,6 +79,8 @@ class BabyLogDatabase extends Dexie {
       outbox: 'mutationId, status, createdAt, entityType',
       // Auth session
       authSession: 'id',
+      // Notifications
+      notifications: 'id, userId, createdAt, readAt, category, severity, babyId, dedupeKey',
     });
   }
 }

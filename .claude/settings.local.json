@@ -33,7 +33,8 @@
       "Bash(wc:*)",
       "Bash(npm run lint:fix:*)",
       "Bash(npm run typecheck:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npx eslint:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

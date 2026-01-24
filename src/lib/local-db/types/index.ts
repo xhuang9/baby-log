@@ -6,5 +6,6 @@
 
 export * from './entities';
 export * from './logs';
+export * from './notifications';
 export * from './outbox';
 export * from './sync';

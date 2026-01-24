@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { ToastHost } from '@/components/ToastHost';
 import { Toaster } from '@/components/ui/sonner';
 import { routing } from '@/lib/i18n/routing';
 import { PostHogProvider } from '@/providers/PostHogProvider';
@@ -84,6 +85,7 @@ export default async function RootLayout(props: {
             </PostHogProvider>
           </NextIntlClientProvider>
           <Toaster />
+          <ToastHost />
         </ThemeProvider>
       </body>
     </html>

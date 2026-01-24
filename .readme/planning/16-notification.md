@@ -437,13 +437,86 @@ This keeps today’s architecture intact while leaving a clear path for push.
 ---
 
 ## Resolved Decisions
+
+### Original Decisions
+
 - System notifications are **per user**, with optional `babyId` for context and filters.
 - Access revocation shows: modal + warning toast + logged notification.
 - No "Retry sync" action for now.
 - Retention default: **60 days** (configurable constant).
 
+### Decisions Finalized (January 2026)
+
+| Decision                       | Answer                                                          |
+| ------------------------------ | --------------------------------------------------------------- |
+| Bell icon position (desktop) | Bell → ThemeToggle → Settings (bell leftmost in right section) |
+| Toast duration | 3s success, 5s error (update from 1.5s) |
+| Background sync feedback | Log only (remove current toasts) |
+| Toast API pattern | Zustand store + ToastHost |
+| Dexie migration | version(2) for notifications table |
+
 ---
 
-## Open Questions
+## Dexie Version Migration Strategy
+
+The notifications table requires a Dexie schema version upgrade.
+
+Add to `database.ts`:
+```typescript
+this.version(2).stores({
+  // ... existing tables unchanged ...
+  notifications: 'id, userId, createdAt, readAt, category, severity, babyId, dedupeKey',
+}).upgrade(tx => {
+  // No data migration needed - new table
+});
+```
+
+---
+
+## Files to Modify for Background → Log Migration
+
+| File                              | Current Behavior                   | New Behavior                  |
+| --------------------------------- | ---------------------------------- | ----------------------------- |
+| `useSyncScheduler.ts` | toast.error for sync failures | notifySystem() log entry |
+| `useAccessRevocationDetection.ts` | toast.error | Keep toast + add log entry |
+| `LogoutContext.tsx` | toast.success/error on logout sync | Keep as-is (user-initiated) |
+
+---
+
+## Configuration Updates Needed
+
+### Toast Duration (Sonner)
+
+- Current: 1.5s default in `src/components/ui/sonner.tsx`
+- New: 3s success, 5s error
+
+### clearAllLocalData Update
+
+Add `localDb.notifications` to the transaction in `src/lib/local-db/helpers/user.ts`.
+
+---
+
+## Implementation Breakdown
+
+Detailed breakdown files are located in `.readme/planning/16/`:
+
+| Phase | File                            | Description                 |
+| ----- | ------------------------------- | --------------------------- |
+| 1a | `01-dexie-schema.md` | Dexie schema + types |
+| 1b | `02-notification-helpers.md` | IndexedDB helper functions |
+| 1c | `03-notification-store.md` | Zustand store |
+| 2a | `04-toast-api.md` | Toast wrapper + ToastHost |
+| 2b | `05-system-notify-api.md` | notifySystem() helper |
+| 3a | `06-bell-icon.md` | NotificationBell component |
+| 3b | `07-notifications-page.md` | Notifications list page |
+| 4 | `08-integration.md` | Wire up existing code |
+| 5 | `09-tests.md` | Unit + E2E tests |
+
+See `00-master-plan.md` for execution order and definition of done.
+
+---
+
+## Open Questions (Deferred)
+
 - Should notifications be grouped by baby in the UI (tabs) or filtered only?
 - Do we want an export/share button for support in the future?

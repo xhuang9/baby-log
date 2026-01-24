@@ -13,6 +13,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { verifyBabyAccess } from '@/actions/baby';
 import { localDb } from '@/lib/local-db/database';
 import { clearRevokedBabyData } from '@/lib/local-db/helpers/access-revoked';
+import { notifySystem } from '@/lib/notify';
 import { useBabyStore } from '@/stores/useBabyStore';
 import { useUserStore } from '@/stores/useUserStore';
 import { getI18nPath } from '@/utils/Helpers';
@@ -88,6 +89,15 @@ export function useAccessRevocationDetection(locale: string = 'en') {
           babyId,
           babyName,
           reason: result.reason,
+        });
+
+        // Log to notification system
+        void notifySystem.access('error', {
+          userId: user.localId,
+          title: 'Access Revoked',
+          message: `Your access to ${babyName} has been removed.`,
+          babyId,
+          dedupeKey: `access-revoked-${babyId}`,
         });
       } else {
         console.log(`[Access Revocation] Access confirmed for baby ${babyId}`);

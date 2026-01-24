@@ -14,7 +14,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       className="toaster group"
       position="top-center"
       closeButton
-      duration={1500}
+      duration={3000}
       icons={{
         success: (
           <CircleCheckIcon className="size-4" />

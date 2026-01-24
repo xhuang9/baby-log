@@ -13,9 +13,11 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { getSyncCursor } from '@/lib/local-db';
+import { notifySystem } from '@/lib/notify';
 import { queryKeys } from '@/lib/query-keys';
 import { flushOutbox, pullChanges } from '@/services/sync';
 import { useBabyStore } from '@/stores/useBabyStore';
+import { useUserStore } from '@/stores/useUserStore';
 import { useOnlineStatus, useOnlineStatusChange } from './useOnlineStatus';
 
 // ============================================================================
@@ -64,6 +66,7 @@ export function useSyncScheduler({
 
   // Get baby store for access revocation handling
   const { activeBaby, allBabies, setActiveBaby, setAllBabies } = useBabyStore();
+  const user = useUserStore(s => s.user);
 
   // Fetch cursor to use in query key
   const { data: cursor = 0 } = useQuery({
@@ -113,6 +116,17 @@ export function useSyncScheduler({
         toast.error('Access Revoked', {
           description: 'Your access to this baby has been removed by the owner.',
         });
+
+        // Log to notification system
+        if (user?.localId) {
+          void notifySystem.access('error', {
+            userId: user.localId,
+            title: 'Access Revoked',
+            message: 'Your access to this baby has been removed by the owner.',
+            babyId: result.revokedBabyId,
+            dedupeKey: `access-revoked-${result.revokedBabyId}`,
+          });
+        }
 
         // Invalidate queries to refresh UI
         queryClient.invalidateQueries();
@@ -212,6 +226,7 @@ export function useMultiBabySync({
 
   // Get baby store for access revocation handling
   const { activeBaby, allBabies, setActiveBaby, setAllBabies } = useBabyStore();
+  const user = useUserStore(s => s.user);
 
   // Flush outbox when coming online
   useOnlineStatusChange(
@@ -234,6 +249,18 @@ export function useMultiBabySync({
           toast.error('Access Revoked', {
             description: 'Your access to this baby has been removed by the owner.',
           });
+
+          // Log to notification system
+          const currentUser = useUserStore.getState().user;
+          if (currentUser?.localId) {
+            void notifySystem.access('error', {
+              userId: currentUser.localId,
+              title: 'Access Revoked',
+              message: 'Your access to this baby has been removed by the owner.',
+              babyId: result.revokedBabyId,
+              dedupeKey: `access-revoked-${result.revokedBabyId}`,
+            });
+          }
         }
       }
     }, [enabled, allBabies, activeBaby, setAllBabies, setActiveBaby]),
@@ -266,6 +293,17 @@ export function useMultiBabySync({
         toast.error('Access Revoked', {
           description: 'Your access to this baby has been removed by the owner.',
         });
+
+        // Log to notification system
+        if (user?.localId) {
+          void notifySystem.access('error', {
+            userId: user.localId,
+            title: 'Access Revoked',
+            message: 'Your access to this baby has been removed by the owner.',
+            babyId: flushResult.revokedBabyId,
+            dedupeKey: `access-revoked-${flushResult.revokedBabyId}`,
+          });
+        }
       }
 
       // Pull changes for each baby
@@ -289,6 +327,17 @@ export function useMultiBabySync({
           toast.error('Access Revoked', {
             description: 'Your access to this baby has been removed by the owner.',
           });
+
+          // Log to notification system
+          if (user?.localId) {
+            void notifySystem.access('error', {
+              userId: user.localId,
+              title: 'Access Revoked',
+              message: 'Your access to this baby has been removed by the owner.',
+              babyId: result.revokedBabyId,
+              dedupeKey: `access-revoked-${result.revokedBabyId}`,
+            });
+          }
         }
       }
 
@@ -303,7 +352,7 @@ export function useMultiBabySync({
       isSyncingRef.current = false;
       setIsSyncing(false);
     }
-  }, [isOnline, babyIds, queryClient, allBabies, activeBaby, setAllBabies, setActiveBaby]);
+  }, [isOnline, babyIds, queryClient, allBabies, activeBaby, setAllBabies, setActiveBaby, user]);
 
   return {
     triggerSync,
