@@ -27,7 +27,7 @@ export async function getSleepLogsForBaby(babyId: number, limit?: number): Promi
     query = query.limit(limit);
   }
 
-  return query.sortBy('startedAt');
+  return query.toArray();
 }
 
 /**
@@ -38,11 +38,14 @@ export async function getSleepLogsByDateRange(
   startDate: Date,
   endDate: Date,
 ): Promise<LocalSleepLog[]> {
-  return localDb.sleepLogs
+  const logs = await localDb.sleepLogs
     .where('babyId')
     .equals(babyId)
     .and(log => log.startedAt >= startDate && log.startedAt <= endDate)
     .toArray();
+
+  // Sort descending by startedAt (newest first)
+  return logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
 }
 
 /**

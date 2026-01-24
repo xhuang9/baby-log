@@ -35,7 +35,7 @@ export function useSleepLogsForBaby(
         query = query.limit(limit);
       }
 
-      return query.sortBy('startedAt');
+      return query.toArray();
     },
     [babyId, limit],
     undefined,
@@ -63,7 +63,7 @@ export function useSleepLogsByDateRange(
           .where('babyId')
           .equals(babyId)
           .reverse()
-          .sortBy('startedAt');
+          .toArray();
       }
 
       // If dates are provided, filter by date range
@@ -71,12 +71,14 @@ export function useSleepLogsByDateRange(
         return [];
       }
 
-      return localDb.sleepLogs
+      const logs = await localDb.sleepLogs
         .where('babyId')
         .equals(babyId)
         .and(log => log.startedAt >= startDate && log.startedAt <= endDate)
-        .reverse()
-        .sortBy('startedAt');
+        .toArray();
+
+      // Sort descending by startedAt (newest first)
+      return logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
     },
     [babyId, startDate?.getTime(), endDate?.getTime()],
     undefined,

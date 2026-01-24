@@ -4,11 +4,13 @@ import { auth } from '@clerk/nextjs/server';
 import { and, desc, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
+import { writeSyncEvent } from '@/lib/db/helpers/sync-events';
 import { babyAccessSchema, feedLogSchema } from '@/models/Schema';
 import {
   assertUserCanAccessBaby,
   assertUserCanLogForBaby,
 } from '@/services/baby-access';
+import { serializeFeedLog } from '@/app/[locale]/api/sync/push/serializers/feed-log';
 
 export type FeedMethod = 'breast' | 'bottle';
 export type EndSide = 'left' | 'right';
@@ -102,6 +104,15 @@ export async function createFeedLog(data: CreateFeedLogData): Promise<CreateFeed
     if (!feedLog) {
       return { success: false, error: 'Failed to create feed log' };
     }
+
+    // Write sync event for other caregivers to pull
+    await writeSyncEvent({
+      babyId: data.babyId,
+      entityType: 'feed_log',
+      entityId: feedLog.id,
+      op: 'create',
+      payload: serializeFeedLog(feedLog),
+    });
 
     revalidatePath('/overview');
     revalidatePath('/logs');

@@ -135,7 +135,7 @@ export function formatLogSubtitle(log: UnifiedLog): string {
  */
 export function formatLogSubtitleExpanded(log: UnifiedLog): string {
   const timeAgo = formatTimeAgo(log.startedAt);
-  const caregiver = log.caregiverLabel ? ` - by ${log.caregiverLabel}` : '';
+  const caregiver = ` - by ${log.caregiverLabel || 'Parent'}`;
 
   if (log.type === 'feed') {
     const feed = log.data as LocalFeedLog;

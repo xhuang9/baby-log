@@ -38,11 +38,14 @@ export async function getFeedLogsByDateRange(
   startDate: Date,
   endDate: Date,
 ): Promise<LocalFeedLog[]> {
-  return localDb.feedLogs
+  const logs = await localDb.feedLogs
     .where('babyId')
     .equals(babyId)
     .and(log => log.startedAt >= startDate && log.startedAt <= endDate)
     .toArray();
+
+  // Sort descending by startedAt (newest first)
+  return logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
 }
 
 /**
