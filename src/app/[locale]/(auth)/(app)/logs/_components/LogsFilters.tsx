@@ -1,7 +1,7 @@
 'use client';
 
 import type { ActivityType, TimeRange } from '@/hooks/useLogsFilters';
-import { ChevronDownIcon, Minus, Plus } from 'lucide-react';
+import { ChevronDownIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -14,84 +14,60 @@ import {
   TIME_RANGE_OPTIONS,
 } from '@/hooks/useLogsFilters';
 
-export type ViewMode = 'simplified' | 'expanded';
-
 export type LogsFiltersProps = {
   activeTypes: ActivityType[];
   setActiveTypes: (types: ActivityType[]) => void;
   timeRange: TimeRange;
   setTimeRange: (range: TimeRange) => void;
-  viewMode: ViewMode;
-  setViewMode: (mode: ViewMode) => void;
 };
 
 /**
  * Filter controls for activity logs
- * Allows filtering by activity type (Feed, Sleep) and time range
+ * Allows filtering by activity type (Feed, Sleep) with pills and time range dropdown
  */
 export function LogsFilters({
   activeTypes,
   setActiveTypes,
   timeRange,
   setTimeRange,
-  viewMode,
-  setViewMode,
 }: LogsFiltersProps) {
-  const handleActivityTypeChange = (value: string) => {
-    if (value === 'all') {
-      setActiveTypes(['feed', 'sleep']);
-    } else if (value === 'feed') {
-      setActiveTypes(['feed']);
-    } else if (value === 'sleep') {
-      setActiveTypes(['sleep']);
-    }
+  const isAllSelected = activeTypes.length === ACTIVITY_TYPES.length;
+
+  const handleAllClick = () => {
+    // Select all types
+    setActiveTypes(ACTIVITY_TYPES.map(t => t.value));
   };
 
-  // Determine current dropdown value
-  const currentActivityValue
-    = activeTypes.length === 2 ? 'all' : (activeTypes[0] || '');
-
-  // Get label for current activity type
-  const activityTypeLabel
-    = currentActivityValue === 'all'
-      ? 'All Activities'
-      : ACTIVITY_TYPES.find(opt => opt.value === currentActivityValue)?.label
-        || currentActivityValue;
+  const handleTypeClick = (type: ActivityType) => {
+    if (isAllSelected) {
+      // If "All" was selected, now select only this type
+      setActiveTypes([type]);
+    } else if (activeTypes.includes(type)) {
+      // Deselect this type (but keep at least one selected)
+      const newTypes = activeTypes.filter(t => t !== type);
+      if (newTypes.length === 0) {
+        // If deselecting would leave none, select all instead
+        setActiveTypes(ACTIVITY_TYPES.map(t => t.value));
+      } else {
+        setActiveTypes(newTypes);
+      }
+    } else {
+      // Add this type to selection
+      setActiveTypes([...activeTypes, type]);
+    }
+  };
 
   // Get label for current time range
   const timeRangeLabel = TIME_RANGE_OPTIONS.find(opt => opt.value === timeRange)?.label || timeRange;
 
   return (
-    <div className="flex flex-row items-center gap-3">
-      {/* Activity Type Filter - Dropdown Menu */}
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button variant="default" size="sm" className="w-fit">
-            {activityTypeLabel}
-            <ChevronDownIcon className="ml-2 h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
-          <DropdownMenuItem onClick={() => handleActivityTypeChange('all')}>
-            All Activities
-          </DropdownMenuItem>
-          {ACTIVITY_TYPES.map(({ value, label }) => (
-            <DropdownMenuItem
-              key={value}
-              onClick={() => handleActivityTypeChange(value)}
-            >
-              {label}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      {/* Time Range Filter - Dropdown Menu */}
+    <div className="flex flex-row flex-wrap items-center gap-2">
+      {/* Time Range Filter - Dropdown Menu (first) */}
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Button variant="default" size="sm" className="w-fit">
             {timeRangeLabel}
-            <ChevronDownIcon className="ml-2 h-4 w-4" />
+            <ChevronDownIcon className="ml-1 h-3.5 w-3.5" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
@@ -106,29 +82,27 @@ export function LogsFilters({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* View Mode Toggle */}
+      {/* Activity Type Pills */}
       <Button
-        variant="outline"
+        variant={isAllSelected ? 'default' : 'outline'}
         size="sm"
-        onClick={() => setViewMode(viewMode === 'simplified' ? 'expanded' : 'simplified')}
-        className="ml-auto w-fit"
+        onClick={handleAllClick}
       >
-        {viewMode === 'simplified'
-          ? (
-              <>
-                Expanded
-                {' '}
-                <Plus className="ml-1 h-4 w-4" />
-              </>
-            )
-          : (
-              <>
-                Simplified
-                {' '}
-                <Minus className="ml-1 h-4 w-4" />
-              </>
-            )}
+        All
       </Button>
+      {ACTIVITY_TYPES.map(({ value, label }) => {
+        const isSelected = !isAllSelected && activeTypes.includes(value);
+        return (
+          <Button
+            key={value}
+            variant={isSelected ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => handleTypeClick(value)}
+          >
+            {label}
+          </Button>
+        );
+      })}
     </div>
   );
 }

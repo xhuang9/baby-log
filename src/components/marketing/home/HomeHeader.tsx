@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { buttonVariants } from '@/components/ui/button';
 
 export function HomeHeader() {
@@ -10,7 +13,8 @@ export function HomeHeader() {
             Babylog
           </span>
         </Link>
-        <nav>
+        <nav className="flex items-center gap-2">
+          <ThemeToggle />
           <Link
             href="/sign-in/"
             className={buttonVariants({ variant: 'outline', size: 'sm' })}

@@ -198,8 +198,9 @@ export function groupLogsByDate(logs: UnifiedLog[]): LogGroup[] {
       label = 'Yesterday';
       sortKey = 1;
     } else {
-      // Format as "MMM d, yyyy"
+      // Format as "Mon, Jan 24, 2025"
       label = logDate.toLocaleDateString('en-US', {
+        weekday: 'short',
         month: 'short',
         day: 'numeric',
         year: 'numeric',

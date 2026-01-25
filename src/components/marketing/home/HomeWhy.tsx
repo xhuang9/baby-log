@@ -25,10 +25,16 @@ export function HomeWhy() {
         <h2 className="text-center text-2xl font-bold tracking-tight text-foreground md:text-3xl">
           Why Babylog
         </h2>
-        <div className="mt-12 grid gap-8 md:grid-cols-3">
+        <p className="mt-3 text-center text-sm text-muted-foreground md:text-base">
+          Calm, focused, and built for the moments you&apos;re holding your baby.
+        </p>
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
           {features.map(feature => (
-            <div key={feature.title} className="flex flex-col gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+            <div
+              key={feature.title}
+              className="group flex h-full flex-col gap-4 rounded-2xl border border-border/60 bg-background/70 p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-border"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 transition group-hover:bg-primary/15">
                 <feature.icon className="h-6 w-6 text-primary" />
               </div>
               <h3 className="text-lg font-semibold text-foreground">

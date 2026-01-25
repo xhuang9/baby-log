@@ -1,10 +1,9 @@
 'use client';
 
-import type { ViewMode } from './LogsFilters';
 import type { UnifiedLog } from '@/lib/format-log';
 import { useCallback, useRef, useState } from 'react';
 import { ActivityTile } from '@/app/[locale]/(auth)/(app)/overview/_components/ActivityTile';
-import { formatLogSubtitle, formatLogSubtitleExpanded } from '@/lib/format-log';
+import { formatLogSubtitle } from '@/lib/format-log';
 import { notifyToast } from '@/lib/notify';
 import { cn } from '@/lib/utils';
 import { deleteFeedLog } from '@/services/operations';
@@ -12,17 +11,15 @@ import { deleteFeedLog } from '@/services/operations';
 export type LogItemProps = {
   log: UnifiedLog;
   onClick?: (log: UnifiedLog) => void;
-  viewMode?: ViewMode;
 };
 
 /**
  * Log item tile for activity logs page
  * Displays a single activity log using ActivityTile component
  * Supports swipe-to-delete on mobile: swipe left to fully reveal and delete
- * Simplified mode: One-line compact format with left/right columns
- * Expanded mode: Multi-line format matching overview tile layout
+ * Uses compact one-line format with left/right columns
  */
-export function LogItem({ log, onClick, viewMode = 'simplified' }: LogItemProps) {
+export function LogItem({ log, onClick }: LogItemProps) {
   const [swipeTranslate, setSwipeTranslate] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const touchStartX = useRef(0);
@@ -45,16 +42,6 @@ export function LogItem({ log, onClick, viewMode = 'simplified' }: LogItemProps)
       setSwipeTranslate(Math.min(diff, 0));
     }
   };
-
-  const handleTouchEnd = useCallback(() => {
-    // If swiped past threshold (-100px), delete the item. Otherwise, snap back.
-    if (swipeTranslate < -DELETE_THRESHOLD) {
-      handleDelete();
-    } else {
-      // Snap back with animation
-      setSwipeTranslate(0);
-    }
-  }, [swipeTranslate]);
 
   const handleDelete = useCallback(async () => {
     setIsDeleting(true);
@@ -80,6 +67,16 @@ export function LogItem({ log, onClick, viewMode = 'simplified' }: LogItemProps)
     }
   }, [log.id]);
 
+  const handleTouchEnd = useCallback(() => {
+    // If swiped past threshold (-100px), delete the item. Otherwise, snap back.
+    if (swipeTranslate < -DELETE_THRESHOLD) {
+      handleDelete();
+    } else {
+      // Snap back with animation
+      setSwipeTranslate(0);
+    }
+  }, [swipeTranslate, handleDelete]);
+
   const details = formatLogSubtitle(log);
 
   let parsed: { left: string; right: string } | null = null;
@@ -93,8 +90,7 @@ export function LogItem({ log, onClick, viewMode = 'simplified' }: LogItemProps)
         subtitle={details}
         activity={log.type}
         onClick={() => onClick?.(log)}
-        multiline={viewMode === 'expanded'}
-        layout={viewMode === 'expanded' ? 'column' : 'row'}
+        layout="row"
       />
     );
   }
@@ -106,26 +102,12 @@ export function LogItem({ log, onClick, viewMode = 'simplified' }: LogItemProps)
         subtitle={details}
         activity={log.type}
         onClick={() => onClick?.(log)}
-        multiline={viewMode === 'expanded'}
-        layout={viewMode === 'expanded' ? 'column' : 'row'}
+        layout="row"
       />
     );
   }
 
-  if (viewMode === 'expanded') {
-    // Expanded: match overview tile format with full description
-    const expandedSubtitle = formatLogSubtitleExpanded(log);
-    return (
-      <ActivityTile
-        title={log.type.charAt(0).toUpperCase() + log.type.slice(1)}
-        subtitle={expandedSubtitle}
-        activity={log.type}
-        onClick={() => onClick?.(log)}
-      />
-    );
-  }
-
-  // Simplified: compact format with left/right columns + swipe-to-delete
+  // Compact format with left/right columns + swipe-to-delete
   const activityClassMap = {
     feed: 'activity-tile--feed',
     sleep: 'activity-tile--sleep',

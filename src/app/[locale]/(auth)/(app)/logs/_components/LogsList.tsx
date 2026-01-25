@@ -1,6 +1,5 @@
 'use client';
 
-import type { ViewMode } from './LogsFilters';
 import type { UnifiedLog } from '@/lib/format-log';
 import { Skeleton } from '@/components/ui/skeleton';
 import { groupLogsByDate } from '@/lib/format-log';
@@ -11,7 +10,6 @@ export type LogsListProps = {
   logs: UnifiedLog[] | undefined;
   hasAnyLogs?: boolean;
   onEditLog?: (log: UnifiedLog) => void;
-  viewMode?: ViewMode;
 };
 
 /**
@@ -20,7 +18,7 @@ export type LogsListProps = {
  * Shows empty state when no logs match filters
  * Always 2-column grid on desktop, single column on mobile
  */
-export function LogsList({ logs, hasAnyLogs = false, onEditLog, viewMode = 'simplified' }: LogsListProps) {
+export function LogsList({ logs, hasAnyLogs = false, onEditLog }: LogsListProps) {
   // Loading state - show skeleton grid
   if (logs === undefined) {
     return (
@@ -29,8 +27,8 @@ export function LogsList({ logs, hasAnyLogs = false, onEditLog, viewMode = 'simp
           <div key={i} className="space-y-2">
             <Skeleton className="h-4 w-20 rounded" />
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              {Array.from({ length: viewMode === 'expanded' ? 2 : 4 }).map((_, j) => (
-                <Skeleton key={j} className={viewMode === 'expanded' ? 'h-20 w-full rounded-lg' : 'h-12 w-full rounded-lg'} />
+              {Array.from({ length: 4 }).map((_, j) => (
+                <Skeleton key={j} className="h-12 w-full rounded-lg" />
               ))}
             </div>
           </div>
@@ -63,7 +61,6 @@ export function LogsList({ logs, hasAnyLogs = false, onEditLog, viewMode = 'simp
                 key={log.id}
                 log={log}
                 onClick={onEditLog}
-                viewMode={viewMode}
               />
             ))}
           </div>

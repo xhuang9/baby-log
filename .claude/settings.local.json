@@ -39,7 +39,9 @@
       "Bash(head:*)",
       "Bash(for f in /Users/xiaotianhuang/Sites/localhost/_binary-top/baby-log/.readme/chunks/*.md)",
       "Bash(do head -2 \"$f\")",
-      "Bash(done)"
+      "Bash(done)",
+      "mcp__shadcn__get_add_command_for_items",
+      "Bash(pnpm dlx:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

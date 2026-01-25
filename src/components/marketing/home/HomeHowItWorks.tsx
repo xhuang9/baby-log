@@ -23,8 +23,11 @@ export function HomeHowItWorks() {
         <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
           How it works
         </h2>
-        <div className="mt-12 grid gap-8 md:grid-cols-2 md:gap-12">
-          <div className="flex flex-col gap-8">
+        <p className="mt-3 text-sm text-muted-foreground md:text-base">
+          Three quick steps to keep everyone on the same timeline.
+        </p>
+        <div className="mt-10 grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] md:gap-12">
+          <div className="flex flex-col gap-6 rounded-2xl border border-border/60 bg-background/70 p-6 shadow-sm">
             {steps.map((step, index) => (
               <div key={step.number} className="flex gap-4">
                 <div className="flex flex-col items-center">
@@ -32,13 +35,10 @@ export function HomeHowItWorks() {
                     {step.number}
                   </div>
                   {index < steps.length - 1 && (
-                    <div className="mt-2 h-full w-px bg-border" />
+                    <div className="mt-2 h-full w-px bg-border/70" />
                   )}
                 </div>
                 <div className="flex flex-col gap-1 pb-8">
-                  <p className="text-sm font-semibold text-foreground">
-                    Step {step.number}
-                  </p>
                   <h3 className="text-lg font-semibold text-foreground">
                     {step.title}
                   </h3>
@@ -49,11 +49,16 @@ export function HomeHowItWorks() {
               </div>
             ))}
           </div>
-          <div className="relative hidden aspect-square overflow-hidden rounded-xl border border-border bg-muted md:block">
+          <div className="relative hidden aspect-square overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-muted/40 via-background to-secondary/30 md:block">
             <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-sm text-muted-foreground">
-                App screenshots
-              </p>
+              <div className="text-center">
+                <p className="text-sm font-medium text-muted-foreground">
+                  App screenshots
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground/70">
+                  Add real screens here
+                </p>
+              </div>
             </div>
           </div>
         </div>
