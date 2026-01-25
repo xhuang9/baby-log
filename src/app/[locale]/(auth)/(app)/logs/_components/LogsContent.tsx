@@ -1,15 +1,16 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import type { ViewMode } from './LogsFilters';
+import type { UnifiedLog } from '@/lib/format-log';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { localDb } from '@/lib/local-db';
+import { useCallback, useState } from 'react';
 import { useAllActivityLogs } from '@/hooks/useAllActivityLogs';
 import { useLogsFilters } from '@/hooks/useLogsFilters';
-import type { UnifiedLog } from '@/lib/format-log';
-import { LogsFilters, type ViewMode } from './LogsFilters';
-import { LogsList } from './LogsList';
+import { localDb } from '@/lib/local-db';
 import { EditFeedModal } from './edit-modals/EditFeedModal';
 import { EditSleepModal } from './edit-modals/EditSleepModal';
+import { LogsFilters } from './LogsFilters';
+import { LogsList } from './LogsList';
 
 /**
  * Main orchestrator component for the activity logs page
@@ -28,8 +29,8 @@ export function LogsContent() {
   const [viewMode, setViewMode] = useState<ViewMode>('simplified');
 
   // Filters with URL sync
-  const { activeTypes, timeRange, startDate, endDate, setActiveTypes, setTimeRange } =
-    useLogsFilters();
+  const { activeTypes, timeRange, startDate, endDate, setActiveTypes, setTimeRange }
+    = useLogsFilters();
 
   // Fetch unified logs across feed and sleep
   const allLogs = useAllActivityLogs(babyId, activeTypes, startDate, endDate);

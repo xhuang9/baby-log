@@ -1,2 +1,2 @@
-export { TimerModeSection } from './TimerModeSection';
 export { ManualModeSection } from './ManualModeSection';
+export { TimerModeSection } from './TimerModeSection';

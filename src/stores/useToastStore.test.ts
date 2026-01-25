@@ -37,6 +37,7 @@ describe('useToastStore', () => {
       expect(id).toBe('test-uuid-123');
 
       const state = useToastStore.getState();
+
       expect(state.queue).toHaveLength(1);
       expect(state.queue[0]).toEqual({
         id: 'test-uuid-123',
@@ -66,6 +67,7 @@ describe('useToastStore', () => {
       });
 
       const state = useToastStore.getState();
+
       expect(state.queue).toHaveLength(3);
       expect(state.queue[0]?.message).toBe('First');
       expect(state.queue[1]?.message).toBe('Second');
@@ -94,6 +96,7 @@ describe('useToastStore', () => {
       });
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]).toEqual({
         id: 'test-uuid-123',
         variant: 'info',
@@ -118,6 +121,7 @@ describe('useToastStore', () => {
       useToastStore.getState().dequeue('toast-2');
 
       const state = useToastStore.getState();
+
       expect(state.queue).toHaveLength(2);
       expect(state.queue.find(t => t.id === 'toast-2')).toBeUndefined();
       expect(state.queue[0]?.id).toBe('toast-1');
@@ -138,6 +142,7 @@ describe('useToastStore', () => {
 
       // Queue should remain unchanged
       const state = useToastStore.getState();
+
       expect(state.queue).toHaveLength(1);
       expect(state.queue[0]?.id).toBe('toast-1');
     });
@@ -156,6 +161,7 @@ describe('useToastStore', () => {
       useToastStore.getState().clear();
 
       const state = useToastStore.getState();
+
       expect(state.queue).toHaveLength(0);
       expect(state.queue).toEqual([]);
     });
@@ -168,6 +174,7 @@ describe('useToastStore', () => {
       }).not.toThrow();
 
       const state = useToastStore.getState();
+
       expect(state.queue).toEqual([]);
     });
   });
@@ -177,6 +184,7 @@ describe('useToastStore', () => {
       const id = toastSuccess('Success message', 'Success Title');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]).toMatchObject({
         variant: 'success',
         message: 'Success message',
@@ -190,6 +198,7 @@ describe('useToastStore', () => {
       const id = toastError('Error message', 'Error Title');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]).toMatchObject({
         variant: 'error',
         message: 'Error message',
@@ -203,6 +212,7 @@ describe('useToastStore', () => {
       const id = toastWarning('Warning message', 'Warning Title');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]).toMatchObject({
         variant: 'warning',
         message: 'Warning message',
@@ -216,6 +226,7 @@ describe('useToastStore', () => {
       const id = toastInfo('Info message', 'Info Title');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]).toMatchObject({
         variant: 'info',
         message: 'Info message',
@@ -229,6 +240,7 @@ describe('useToastStore', () => {
       toastSuccess('Message only');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.title).toBeUndefined();
       expect(state.queue[0]?.message).toBe('Message only');
     });

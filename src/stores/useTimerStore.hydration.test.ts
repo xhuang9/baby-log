@@ -9,8 +9,8 @@
 
 import type { TimerState } from './useTimerStore';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useTimerStore } from './useTimerStore';
 import { resetTimerStoreState } from './__test-utils__/timer-store-setup';
+import { useTimerStore } from './useTimerStore';
 
 // Mock dependencies
 vi.mock('@/lib/local-db/helpers/ui-config', () => ({

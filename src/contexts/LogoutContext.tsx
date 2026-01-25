@@ -1,12 +1,13 @@
 'use client';
 
-import { createContext, useContext, useState, type ReactNode } from 'react';
-import { LogoutConfirmationDialog } from '@/components/auth/LogoutConfirmationDialog';
-import { getPendingOutboxEntries } from '@/lib/local-db';
-import { flushOutbox } from '@/services/sync';
-import { signOutCleanup } from '@/services/operations/auth';
-import { useOnlineStatus } from '@/hooks/useOnlineStatus';
+import type { ReactNode } from 'react';
+import { createContext, use, useState } from 'react';
 import { toast } from 'sonner';
+import { LogoutConfirmationDialog } from '@/components/auth/LogoutConfirmationDialog';
+import { useOnlineStatus } from '@/hooks/useOnlineStatus';
+import { getPendingOutboxEntries } from '@/lib/local-db';
+import { signOutCleanup } from '@/services/operations/auth';
+import { flushOutbox } from '@/services/sync';
 
 type LogoutContextValue = {
   requestLogout: () => Promise<boolean>;
@@ -80,7 +81,7 @@ export function LogoutProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <LogoutContext.Provider value={{ requestLogout }}>
+    <LogoutContext value={{ requestLogout }}>
       {children}
       <LogoutConfirmationDialog
         open={showDialog}
@@ -91,12 +92,12 @@ export function LogoutProvider({ children }: { children: ReactNode }) {
         onLogoutAnyway={handleLogoutAnyway}
         onCancel={handleCancel}
       />
-    </LogoutContext.Provider>
+    </LogoutContext>
   );
 }
 
 export function useLogout() {
-  const context = useContext(LogoutContext);
+  const context = use(LogoutContext);
   if (!context) {
     throw new Error('useLogout must be used within LogoutProvider');
   }

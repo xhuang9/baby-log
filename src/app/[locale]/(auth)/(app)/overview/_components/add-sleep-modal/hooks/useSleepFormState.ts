@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import type { InputMode } from '@/components/activity-modals';
 import type { SleepFormState } from '../types';
+import type { InputMode } from '@/components/activity-modals';
+import { useState } from 'react';
 
 type SleepFormActions = {
   setInputMode: (mode: InputMode) => void;

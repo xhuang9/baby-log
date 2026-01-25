@@ -1,6 +1,16 @@
 'use client';
 
+import type { UnifiedLog } from '@/lib/format-log';
+import type { LocalFeedLog } from '@/lib/local-db';
 import { useEffect, useState } from 'react';
+import {
+  FeedMethodToggle,
+  ManualModeSection,
+  ModeSwitch,
+  TimerModeSection,
+} from '@/app/[locale]/(auth)/(app)/overview/_components/add-feed-modal/components';
+import { useFeedFormState } from '@/app/[locale]/(auth)/(app)/overview/_components/add-feed-modal/hooks/useFeedFormState';
+import { BaseActivityModal } from '@/components/activity-modals/BaseActivityModal';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,23 +22,13 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { notifyToast } from '@/lib/notify';
-import { BaseActivityModal } from '@/components/activity-modals/BaseActivityModal';
-import {
-  FeedMethodToggle,
-  ManualModeSection,
-  ModeSwitch,
-  TimerModeSection,
-} from '@/app/[locale]/(auth)/(app)/overview/_components/add-feed-modal/components';
-import { useFeedFormState } from '@/app/[locale]/(auth)/(app)/overview/_components/add-feed-modal/hooks/useFeedFormState';
-import { updateFeedLog, deleteFeedLog } from '@/services/operations/feed-log';
-import type { UnifiedLog } from '@/lib/format-log';
-import type { LocalFeedLog } from '@/lib/local-db';
+import { deleteFeedLog, updateFeedLog } from '@/services/operations/feed-log';
 
-export interface EditFeedModalProps {
+export type EditFeedModalProps = {
   log: UnifiedLog;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
+};
 
 /**
  * Modal for editing an existing feed log
@@ -53,7 +53,7 @@ export function EditFeedModal({ log, open, onOpenChange }: EditFeedModalProps) {
       if (feed.method === 'breast') {
         if (feed.durationMinutes) {
           const endTime = new Date(
-            feed.startedAt.getTime() + feed.durationMinutes * 60 * 1000
+            feed.startedAt.getTime() + feed.durationMinutes * 60 * 1000,
           );
           actions.setEndTime(endTime);
         }
@@ -77,9 +77,9 @@ export function EditFeedModal({ log, open, onOpenChange }: EditFeedModalProps) {
         durationMinutes:
           state.method === 'breast'
             ? Math.round(
-              (state.endTime.getTime() - state.startTime.getTime()) /
-              (1000 * 60)
-            )
+                (state.endTime.getTime() - state.startTime.getTime())
+                / (1000 * 60),
+              )
             : null,
         endSide: state.method === 'breast' ? state.endSide : null,
       });

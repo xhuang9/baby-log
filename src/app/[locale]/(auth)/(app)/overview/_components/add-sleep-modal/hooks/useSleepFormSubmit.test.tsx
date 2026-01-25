@@ -1,8 +1,8 @@
+import type { InputMode } from '@/components/activity-modals';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 import { page } from 'vitest/browser';
 import { useSleepFormSubmit } from './useSleepFormSubmit';
-import type { InputMode } from '@/components/activity-modals';
 
 // Mock dependencies
 vi.mock('@/services/operations', () => ({
@@ -87,6 +87,7 @@ describe('useSleepFormSubmit', () => {
 
       await vi.waitFor(async () => {
         const errorEl = await page.getByTestId('error').element();
+
         expect(errorEl.textContent).toBe(
           'Please start the timer before saving',
         );
@@ -107,6 +108,7 @@ describe('useSleepFormSubmit', () => {
 
       await vi.waitFor(async () => {
         const errorEl = await page.getByTestId('error').element();
+
         expect(errorEl.textContent).toBe(
           'Please start the timer before saving',
         );
@@ -143,7 +145,7 @@ describe('useSleepFormSubmit', () => {
     it('should calculate duration in manual mode', async () => {
       const { createSleepLog } = await import('@/services/operations');
       const { calculateDuration } = await import(
-        '@/components/activity-modals'
+        '@/components/activity-modals',
       );
 
       vi.mocked(calculateDuration).mockReturnValue(60);
@@ -177,7 +179,7 @@ describe('useSleepFormSubmit', () => {
 
     it('should validate end time is after start time', async () => {
       const { calculateDuration } = await import(
-        '@/components/activity-modals'
+        '@/components/activity-modals',
       );
 
       vi.mocked(calculateDuration).mockReturnValue(-10);
@@ -195,6 +197,7 @@ describe('useSleepFormSubmit', () => {
 
       await vi.waitFor(async () => {
         const errorEl = await page.getByTestId('error').element();
+
         expect(errorEl.textContent).toBe('End time must be after start time');
       });
 
@@ -222,6 +225,7 @@ describe('useSleepFormSubmit', () => {
 
       await vi.waitFor(async () => {
         const errorEl = await page.getByTestId('error').element();
+
         expect(errorEl.textContent).toBe('Database error');
       });
 
@@ -245,6 +249,7 @@ describe('useSleepFormSubmit', () => {
 
       await vi.waitFor(async () => {
         const errorEl = await page.getByTestId('error').element();
+
         expect(errorEl.textContent).toBe('Network error');
       });
     });

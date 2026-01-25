@@ -6,9 +6,9 @@
  */
 
 import type { Mutation, MutationResult, PushResponse } from './types';
+import { getLatestGlobalSyncCursor } from '@/lib/db/helpers/sync-events';
 import { getUserEditableBabyIds } from './access';
 import { processMutation } from './mutations';
-import { getLatestGlobalSyncCursor } from '@/lib/db/helpers/sync-events';
 
 /**
  * Handle push request - process mutations and return results

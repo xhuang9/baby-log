@@ -6,6 +6,7 @@ describe('getDefaultEndTime', () => {
     const now = new Date();
     const result = getDefaultEndTime();
     const diffMinutes = Math.round((result.getTime() - now.getTime()) / (1000 * 60));
+
     expect(diffMinutes).toBe(15);
   });
 });
@@ -15,6 +16,7 @@ describe('getBreastFeedStartTime', () => {
     const now = new Date();
     const result = getBreastFeedStartTime();
     const diffMinutes = Math.round((now.getTime() - result.getTime()) / (1000 * 60));
+
     expect(diffMinutes).toBe(20);
   });
 });

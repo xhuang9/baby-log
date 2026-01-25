@@ -1,8 +1,10 @@
 'use client';
 
+import type { AddSleepModalProps } from './types';
 import { ChevronLeftIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ModeSwitch } from '@/components/activity-modals';
 import { FormFooter } from '@/components/input-controls/FormFooter';
+import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetClose,
@@ -13,14 +15,12 @@ import {
 } from '@/components/ui/sheet';
 import { useTimerSave } from '@/hooks/useTimerSave';
 import { useTimerStore } from '@/stores/useTimerStore';
-import { ModeSwitch } from '@/components/activity-modals';
 import { ManualModeSection, TimerModeSection } from './components';
 import {
   useInitializeSleepForm,
   useSleepFormState,
   useSleepFormSubmit,
 } from './hooks';
-import type { AddSleepModalProps } from './types';
 
 export function AddSleepModal({
   babyId,
@@ -75,13 +75,13 @@ export function AddSleepModal({
       >
         <SheetHeader className="relative mx-auto w-full max-w-150 shrink-0 flex-row items-center space-y-0 border-b px-4 pt-4 pb-4">
           <SheetClose
-            render={
+            render={(
               <Button
                 variant="ghost"
                 size="icon-sm"
                 className="text-muted-foreground"
               />
-            }
+            )}
           >
             <ChevronLeftIcon className="h-5 w-5" />
             <span className="sr-only">Close</span>

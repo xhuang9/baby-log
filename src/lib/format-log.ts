@@ -83,12 +83,18 @@ function formatDate(date: Date): string {
   logDateStart.setHours(0, 0, 0, 0);
 
   const dayDiff = Math.floor(
-    (todayStart.getTime() - logDateStart.getTime()) / (1000 * 60 * 60 * 24)
+    (todayStart.getTime() - logDateStart.getTime()) / (1000 * 60 * 60 * 24),
   );
 
-  if (dayDiff === 0) return 'today';
-  if (dayDiff === 1) return 'yesterday';
-  if (dayDiff >= 2) return `${dayDiff} days ago`;
+  if (dayDiff === 0) {
+    return 'today';
+  }
+  if (dayDiff === 1) {
+    return 'yesterday';
+  }
+  if (dayDiff >= 2) {
+    return `${dayDiff} days ago`;
+  }
 
   return 'today';
 }
@@ -182,7 +188,7 @@ export function groupLogsByDate(logs: UnifiedLog[]): LogGroup[] {
     let sortKey: number;
 
     const dayDiff = Math.floor(
-      (todayStart.getTime() - logDateStart.getTime()) / (1000 * 60 * 60 * 24)
+      (todayStart.getTime() - logDateStart.getTime()) / (1000 * 60 * 60 * 24),
     );
 
     if (dayDiff === 0) {

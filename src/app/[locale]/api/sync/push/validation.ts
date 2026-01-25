@@ -8,16 +8,16 @@
 import type { NextRequest } from 'next/server';
 import type { PushRequest } from './types';
 
-export type ValidationResult =
-  | { success: true; data: PushRequest }
-  | { success: false; status: number; error: string };
+export type ValidationResult
+  = | { success: true; data: PushRequest }
+    | { success: false; status: number; error: string };
 
 /**
  * Validate push request body
  * @returns Validation result with parsed data or error
  */
 export async function validatePushRequest(
-  request: NextRequest
+  request: NextRequest,
 ): Promise<ValidationResult> {
   // Parse JSON
   let body: PushRequest;

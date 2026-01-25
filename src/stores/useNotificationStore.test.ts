@@ -394,7 +394,7 @@ describe('useNotificationStore', () => {
   describe('hydrateFromIndexedDB', () => {
     it('should load notifications and unread count from IndexedDB', async () => {
       const { getNotifications, getUnreadCount, pruneOldNotifications } = await import(
-        '@/lib/local-db/helpers/notifications'
+        '@/lib/local-db/helpers/notifications',
       );
 
       const mockNotifications = [
@@ -421,12 +421,12 @@ describe('useNotificationStore', () => {
 
     it('should set isLoading during hydration', async () => {
       const { getNotifications, getUnreadCount, pruneOldNotifications } = await import(
-        '@/lib/local-db/helpers/notifications'
+        '@/lib/local-db/helpers/notifications',
       );
 
       // Create a promise that we can control
       let resolveGetNotifications: (value: LocalNotification[]) => void;
-      const getNotificationsPromise = new Promise<LocalNotification[]>(resolve => {
+      const getNotificationsPromise = new Promise<LocalNotification[]>((resolve) => {
         resolveGetNotifications = resolve;
       });
 

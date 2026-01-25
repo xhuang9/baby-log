@@ -3,6 +3,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { and, desc, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { serializeFeedLog } from '@/app/[locale]/api/sync/push/serializers/feed-log';
 import { db } from '@/lib/db';
 import { writeSyncEvent } from '@/lib/db/helpers/sync-events';
 import { babyAccessSchema, feedLogSchema } from '@/models/Schema';
@@ -10,7 +11,6 @@ import {
   assertUserCanAccessBaby,
   assertUserCanLogForBaby,
 } from '@/services/baby-access';
-import { serializeFeedLog } from '@/app/[locale]/api/sync/push/serializers/feed-log';
 
 export type FeedMethod = 'breast' | 'bottle';
 export type EndSide = 'left' | 'right';

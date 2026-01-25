@@ -5,23 +5,27 @@ describe('calculateDuration', () => {
   it('should calculate positive duration correctly', () => {
     const start = new Date('2024-01-01T10:00:00');
     const end = new Date('2024-01-01T10:25:00');
+
     expect(calculateDuration(start, end)).toBe(25);
   });
 
   it('should return 0 for same start and end time', () => {
     const time = new Date('2024-01-01T10:00:00');
+
     expect(calculateDuration(time, time)).toBe(0);
   });
 
   it('should return negative value when end is before start', () => {
     const start = new Date('2024-01-01T10:25:00');
     const end = new Date('2024-01-01T10:00:00');
+
     expect(calculateDuration(start, end)).toBe(-25);
   });
 
   it('should round to nearest minute', () => {
     const start = new Date('2024-01-01T10:00:00');
     const end = new Date('2024-01-01T10:00:40'); // 40 seconds
+
     expect(calculateDuration(start, end)).toBe(1);
   });
 });

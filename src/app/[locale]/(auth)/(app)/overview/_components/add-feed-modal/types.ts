@@ -1,5 +1,5 @@
-import type { FeedMethod } from '@/lib/local-db';
 import type { InputMode } from '@/components/activity-modals';
+import type { FeedMethod } from '@/lib/local-db';
 
 export type AddFeedModalProps = {
   babyId: number;

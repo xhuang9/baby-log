@@ -2,9 +2,9 @@
 
 import { Activity } from 'lucide-react';
 
-export interface EmptyStateProps {
+export type EmptyStateProps = {
   hasAnyLogs?: boolean;
-}
+};
 
 /**
  * Empty state for when no logs are found

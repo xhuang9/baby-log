@@ -1,6 +1,15 @@
 'use client';
 
+import type { UnifiedLog } from '@/lib/format-log';
+import type { LocalSleepLog } from '@/lib/local-db';
 import { useEffect, useState } from 'react';
+import {
+  ManualModeSection,
+  TimerModeSection,
+} from '@/app/[locale]/(auth)/(app)/overview/_components/add-sleep-modal/components';
+import { useSleepFormState } from '@/app/[locale]/(auth)/(app)/overview/_components/add-sleep-modal/hooks/useSleepFormState';
+import { ModeSwitch } from '@/components/activity-modals';
+import { BaseActivityModal } from '@/components/activity-modals/BaseActivityModal';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,23 +20,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { ModeSwitch } from '@/components/activity-modals';
 import { notifyToast } from '@/lib/notify';
-import { BaseActivityModal } from '@/components/activity-modals/BaseActivityModal';
-import {
-  ManualModeSection,
-  TimerModeSection,
-} from '@/app/[locale]/(auth)/(app)/overview/_components/add-sleep-modal/components';
-import { useSleepFormState } from '@/app/[locale]/(auth)/(app)/overview/_components/add-sleep-modal/hooks/useSleepFormState';
-import { updateSleepLog, deleteSleepLog } from '@/services/operations/sleep-log';
-import type { UnifiedLog } from '@/lib/format-log';
-import type { LocalSleepLog } from '@/lib/local-db';
+import { deleteSleepLog, updateSleepLog } from '@/services/operations/sleep-log';
 
-export interface EditSleepModalProps {
+export type EditSleepModalProps = {
   log: UnifiedLog;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
+};
 
 /**
  * Modal for editing an existing sleep log
@@ -49,7 +49,7 @@ export function EditSleepModal({ log, open, onOpenChange }: EditSleepModalProps)
 
       if (sleep.durationMinutes && sleep.durationMinutes > 0) {
         const endTime = new Date(
-          sleep.startedAt.getTime() + sleep.durationMinutes * 60 * 1000
+          sleep.startedAt.getTime() + sleep.durationMinutes * 60 * 1000,
         );
         actions.setEndTime(endTime);
       }
@@ -64,12 +64,12 @@ export function EditSleepModal({ log, open, onOpenChange }: EditSleepModalProps)
     setIsSubmitting(true);
 
     try {
-      const durationMinutes =
-        state.endTime && state.startTime
+      const durationMinutes
+        = state.endTime && state.startTime
           ? Math.round(
-            (state.endTime.getTime() - state.startTime.getTime()) /
-            (1000 * 60)
-          )
+              (state.endTime.getTime() - state.startTime.getTime())
+              / (1000 * 60),
+            )
           : null;
 
       const result = await updateSleepLog({

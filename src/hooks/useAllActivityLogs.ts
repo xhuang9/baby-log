@@ -1,11 +1,11 @@
 'use client';
 
+import type { ActivityType } from './useLogsFilters';
+import type { UnifiedLog } from '@/lib/format-log';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { localDb } from '@/lib/local-db';
 import { useFeedLogsByDateRange } from './useFeedLogs';
 import { useSleepLogsByDateRange } from './useSleepLogs';
-import type { ActivityType } from './useLogsFilters';
-import type { UnifiedLog } from '@/lib/format-log';
 
 /**
  * Fetch all activity logs (feed + sleep) for a baby within a date range
@@ -39,12 +39,14 @@ export function useAllActivityLogs(
   // Merge and enrich with caregiver data
   const allLogs = useLiveQuery(
     async () => {
-      if (!babyId) return [];
+      if (!babyId) {
+        return [];
+      }
 
       // If any feed/sleep queries are loading (undefined), return undefined
       if (
-        (activeTypes.includes('feed') && feeds === undefined) ||
-        (activeTypes.includes('sleep') && sleeps === undefined)
+        (activeTypes.includes('feed') && feeds === undefined)
+        || (activeTypes.includes('sleep') && sleeps === undefined)
       ) {
         return undefined;
       }

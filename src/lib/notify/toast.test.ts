@@ -27,6 +27,7 @@ describe('notifyToast', () => {
       notifyToast.success('Success message');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.variant).toBe('success');
       expect(state.queue[0]?.message).toBe('Success message');
     });
@@ -35,6 +36,7 @@ describe('notifyToast', () => {
       notifyToast.success('Success message');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.duration).toBe(3000);
     });
 
@@ -42,6 +44,7 @@ describe('notifyToast', () => {
       notifyToast.success('Success message', 'Title', 10000);
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.duration).toBe(10000);
     });
 
@@ -49,6 +52,7 @@ describe('notifyToast', () => {
       notifyToast.success('Success message', 'Success Title');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.title).toBe('Success Title');
     });
   });
@@ -58,6 +62,7 @@ describe('notifyToast', () => {
       notifyToast.error('Error message');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.variant).toBe('error');
       expect(state.queue[0]?.message).toBe('Error message');
     });
@@ -66,6 +71,7 @@ describe('notifyToast', () => {
       notifyToast.error('Error message');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.duration).toBe(5000);
     });
 
@@ -73,6 +79,7 @@ describe('notifyToast', () => {
       notifyToast.error('Error message', undefined, 8000);
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.duration).toBe(8000);
     });
   });
@@ -82,6 +89,7 @@ describe('notifyToast', () => {
       notifyToast.warning('Warning message');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.variant).toBe('warning');
       expect(state.queue[0]?.message).toBe('Warning message');
     });
@@ -90,6 +98,7 @@ describe('notifyToast', () => {
       notifyToast.warning('Warning message');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.duration).toBe(5000);
     });
 
@@ -97,6 +106,7 @@ describe('notifyToast', () => {
       notifyToast.warning('Warning message', 'Warning', 7000);
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.duration).toBe(7000);
     });
   });
@@ -106,6 +116,7 @@ describe('notifyToast', () => {
       notifyToast.info('Info message');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.variant).toBe('info');
       expect(state.queue[0]?.message).toBe('Info message');
     });
@@ -114,6 +125,7 @@ describe('notifyToast', () => {
       notifyToast.info('Info message');
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.duration).toBe(3000);
     });
 
@@ -121,6 +133,7 @@ describe('notifyToast', () => {
       notifyToast.info('Info message', 'Info', 6000);
 
       const state = useToastStore.getState();
+
       expect(state.queue[0]?.duration).toBe(6000);
     });
   });
@@ -137,6 +150,7 @@ describe('notifyToast', () => {
       notifyToast.dismiss('toast-to-dismiss');
 
       const state = useToastStore.getState();
+
       expect(state.queue).toHaveLength(0);
     });
 
@@ -160,6 +174,7 @@ describe('notifyToast', () => {
       notifyToast.clear();
 
       const state = useToastStore.getState();
+
       expect(state.queue).toHaveLength(0);
     });
   });
@@ -167,21 +182,25 @@ describe('notifyToast', () => {
   describe('return values', () => {
     it('should return toast ID from success', () => {
       const id = notifyToast.success('Message');
+
       expect(id).toBe('test-uuid-123');
     });
 
     it('should return toast ID from error', () => {
       const id = notifyToast.error('Message');
+
       expect(id).toBe('test-uuid-123');
     });
 
     it('should return toast ID from warning', () => {
       const id = notifyToast.warning('Message');
+
       expect(id).toBe('test-uuid-123');
     });
 
     it('should return toast ID from info', () => {
       const id = notifyToast.info('Message');
+
       expect(id).toBe('test-uuid-123');
     });
   });

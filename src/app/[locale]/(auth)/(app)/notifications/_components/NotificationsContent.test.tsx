@@ -13,6 +13,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 import { page, userEvent } from 'vitest/browser';
 
+// Now import the component under test
+import { NotificationsContent } from './NotificationsContent';
+
 // Type for the notification store
 type NotificationStore = {
   items: LocalNotification[];
@@ -61,9 +64,6 @@ vi.mock('@/components/ui/button', () => ({
     </button>
   ),
 }));
-
-// Now import the component under test
-import { NotificationsContent } from './NotificationsContent';
 
 // Helper to create mock notification
 function createMockNotification(overrides: Partial<LocalNotification> = {}): LocalNotification {
@@ -136,7 +136,7 @@ describe('NotificationsContent', () => {
       render(<NotificationsContent />);
 
       expect(
-        page.getByText("You're all caught up! We'll notify you when something happens."),
+        page.getByText('You\'re all caught up! We\'ll notify you when something happens.'),
       ).toBeTruthy();
     });
 

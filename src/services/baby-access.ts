@@ -27,6 +27,7 @@ export type LocalUser = {
 
 export type BabyAccess = {
   babyId: number;
+  userId: number;
   babyName: string;
   accessLevel: AccessLevel;
   caregiverLabel: string | null;
@@ -75,6 +76,7 @@ export async function getBabyAccess(
   const [access] = await db
     .select({
       babyId: babiesSchema.id,
+      userId: babyAccessSchema.userId,
       babyName: babiesSchema.name,
       accessLevel: babyAccessSchema.accessLevel,
       caregiverLabel: babyAccessSchema.caregiverLabel,
@@ -98,6 +100,7 @@ export async function getBabyAccess(
     success: true,
     data: {
       babyId: access.babyId,
+      userId: access.userId!,
       babyName: access.babyName,
       accessLevel: access.accessLevel,
       caregiverLabel: access.caregiverLabel,

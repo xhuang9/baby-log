@@ -1,19 +1,19 @@
 'use client';
 
+import type { ViewMode } from './LogsFilters';
+import type { UnifiedLog } from '@/lib/format-log';
 import { useCallback, useRef, useState } from 'react';
 import { ActivityTile } from '@/app/[locale]/(auth)/(app)/overview/_components/ActivityTile';
-import { cn } from '@/lib/utils';
 import { formatLogSubtitle, formatLogSubtitleExpanded } from '@/lib/format-log';
-import type { UnifiedLog } from '@/lib/format-log';
-import { deleteFeedLog } from '@/services/operations';
 import { notifyToast } from '@/lib/notify';
-import type { ViewMode } from './LogsFilters';
+import { cn } from '@/lib/utils';
+import { deleteFeedLog } from '@/services/operations';
 
-export interface LogItemProps {
+export type LogItemProps = {
   log: UnifiedLog;
   onClick?: (log: UnifiedLog) => void;
   viewMode?: ViewMode;
-}
+};
 
 /**
  * Log item tile for activity logs page
@@ -155,7 +155,7 @@ export function LogItem({ log, onClick, viewMode = 'simplified' }: LogItemProps)
           activityClassMap[log.type as keyof typeof activityClassMap],
           'w-full text-left cursor-pointer flex justify-between font-mono text-sm py-2 px-3',
           swipeTranslate === 0 && 'transition-transform duration-300 ease-out',
-          isDeleting && 'opacity-50'
+          isDeleting && 'opacity-50',
         )}
         style={{
           transform: `translateX(${swipeTranslate}px)`,

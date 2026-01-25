@@ -1,5 +1,7 @@
 'use client';
 
+import type { ActivityType, TimeRange } from '@/hooks/useLogsFilters';
+import { ChevronDownIcon, Minus, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -7,8 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChevronDownIcon, Minus, Plus } from 'lucide-react';
-import type { ActivityType, TimeRange } from '@/hooks/useLogsFilters';
 import {
   ACTIVITY_TYPES,
   TIME_RANGE_OPTIONS,
@@ -16,14 +16,14 @@ import {
 
 export type ViewMode = 'simplified' | 'expanded';
 
-export interface LogsFiltersProps {
+export type LogsFiltersProps = {
   activeTypes: ActivityType[];
   setActiveTypes: (types: ActivityType[]) => void;
   timeRange: TimeRange;
   setTimeRange: (range: TimeRange) => void;
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
-}
+};
 
 /**
  * Filter controls for activity logs
@@ -48,15 +48,15 @@ export function LogsFilters({
   };
 
   // Determine current dropdown value
-  const currentActivityValue =
-    activeTypes.length === 2 ? 'all' : (activeTypes[0] || '');
+  const currentActivityValue
+    = activeTypes.length === 2 ? 'all' : (activeTypes[0] || '');
 
   // Get label for current activity type
-  const activityTypeLabel =
-    currentActivityValue === 'all'
+  const activityTypeLabel
+    = currentActivityValue === 'all'
       ? 'All Activities'
-      : ACTIVITY_TYPES.find(opt => opt.value === currentActivityValue)?.label ||
-        currentActivityValue;
+      : ACTIVITY_TYPES.find(opt => opt.value === currentActivityValue)?.label
+        || currentActivityValue;
 
   // Get label for current time range
   const timeRangeLabel = TIME_RANGE_OPTIONS.find(opt => opt.value === timeRange)?.label || timeRange;
@@ -113,15 +113,21 @@ export function LogsFilters({
         onClick={() => setViewMode(viewMode === 'simplified' ? 'expanded' : 'simplified')}
         className="ml-auto w-fit"
       >
-        {viewMode === 'simplified' ? (
-          <>
-            Expanded <Plus className="ml-1 h-4 w-4" />
-          </>
-        ) : (
-          <>
-            Simplified <Minus className="ml-1 h-4 w-4" />
-          </>
-        )}
+        {viewMode === 'simplified'
+          ? (
+              <>
+                Expanded
+                {' '}
+                <Plus className="ml-1 h-4 w-4" />
+              </>
+            )
+          : (
+              <>
+                Simplified
+                {' '}
+                <Minus className="ml-1 h-4 w-4" />
+              </>
+            )}
       </Button>
     </div>
   );

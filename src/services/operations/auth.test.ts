@@ -102,6 +102,7 @@ describe('Auth Operations', () => {
       const result = await signOutCleanup();
 
       expect(result.success).toBe(false);
+
       if (!result.success) {
         expect(result.error).toBe('Store unavailable');
       }

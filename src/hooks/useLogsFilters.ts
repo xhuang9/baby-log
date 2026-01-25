@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useMemo } from 'react';
 
 export type TimeRange = 'today' | 'yesterday' | 'twoDaysAgo' | 'past7days' | 'past30days' | 'past90days' | 'all';
 
@@ -22,14 +22,14 @@ export const ACTIVITY_TYPES: { value: ActivityType; label: string }[] = [
   { value: 'sleep', label: 'Sleep' },
 ];
 
-export interface UseLogsFiltersResult {
+export type UseLogsFiltersResult = {
   activeTypes: ActivityType[];
   timeRange: TimeRange;
   startDate: Date | null;
   endDate: Date | null;
   setActiveTypes: (types: ActivityType[]) => void;
   setTimeRange: (range: TimeRange) => void;
-}
+};
 
 /**
  * Manage logs filter state with URL sync
@@ -43,7 +43,9 @@ export function useLogsFilters(): UseLogsFiltersResult {
   // Parse active types from URL (default: both)
   const activeTypes = useMemo(() => {
     const types = searchParams.get('types');
-    if (!types) return ['feed', 'sleep'] as ActivityType[];
+    if (!types) {
+      return ['feed', 'sleep'] as ActivityType[];
+    }
 
     return types
       .split(',')
@@ -122,7 +124,7 @@ export function useLogsFilters(): UseLogsFiltersResult {
       }
       router.replace(`${pathname}?${params.toString()}`);
     },
-    [searchParams, router, pathname]
+    [searchParams, router, pathname],
   );
 
   // Update URL when time range changes
@@ -137,7 +139,7 @@ export function useLogsFilters(): UseLogsFiltersResult {
       }
       router.replace(`${pathname}?${params.toString()}`);
     },
-    [searchParams, router, pathname]
+    [searchParams, router, pathname],
   );
 
   return {

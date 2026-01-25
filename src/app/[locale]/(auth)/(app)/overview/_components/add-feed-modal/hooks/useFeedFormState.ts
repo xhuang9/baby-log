@@ -1,6 +1,6 @@
+import type { InputMode } from '../types';
 import type { FeedMethod } from '@/lib/local-db';
 import { useState } from 'react';
-import type { InputMode } from '../types';
 import { getDefaultEndTime } from '../utils';
 
 export function useFeedFormState() {

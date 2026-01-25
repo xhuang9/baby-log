@@ -1,6 +1,6 @@
+import { DurationDisplay } from '@/components/activity-modals';
 import { TimeSwiper } from '@/components/feed/TimeSwiper';
 import { Label } from '@/components/ui/label';
-import { DurationDisplay } from '@/components/activity-modals';
 
 type ManualModeSectionProps = {
   startTime: Date;

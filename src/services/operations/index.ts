@@ -35,8 +35,8 @@ export type {
 
 export {
   createFeedLog,
-  updateFeedLog,
   deleteFeedLog,
+  updateFeedLog,
 } from './feed-log';
 
 // Nappy log operations
@@ -56,8 +56,8 @@ export type {
 
 export {
   createSleepLog,
-  updateSleepLog,
   deleteSleepLog,
+  updateSleepLog,
 } from './sleep-log';
 
 // Core types

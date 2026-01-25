@@ -1,6 +1,5 @@
-import { describe, it, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, it, vi } from 'vitest';
 // @ts-expect-error - TODO: Implement test cases
-import { createBaby } from './create';
 
 // Mocks at module level
 vi.mock('@/lib/local-db', () => ({

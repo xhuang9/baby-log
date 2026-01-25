@@ -1,7 +1,8 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { useClerk } from '@clerk/nextjs';
-import { useEffect, type ReactNode } from 'react';
+import { useEffect } from 'react';
 import { useLogout } from '@/contexts/LogoutContext';
 
 export function AuthLayoutContent({ children }: { children: ReactNode }) {

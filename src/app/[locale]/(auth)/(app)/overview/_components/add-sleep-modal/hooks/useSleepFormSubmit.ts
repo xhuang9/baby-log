@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { createSleepLog } from '@/services/operations';
-import { calculateDuration } from '@/components/activity-modals';
 import type { InputMode } from '@/components/activity-modals';
+import { useState } from 'react';
+import { calculateDuration } from '@/components/activity-modals';
+import { createSleepLog } from '@/services/operations';
 
 type TimerSaveResult = { durationMinutes: number; startTime: Date };
 

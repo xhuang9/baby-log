@@ -1,6 +1,7 @@
 'use client';
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import type { HandMode } from '@/lib/local-db/types/entities';
 import { ChevronLeftIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,9 +12,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import type { HandMode } from '@/lib/local-db/types/entities';
 
-export interface BaseActivityModalProps {
+export type BaseActivityModalProps = {
   title: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -26,7 +26,7 @@ export interface BaseActivityModalProps {
   isLoading?: boolean;
   error?: string | null;
   handMode?: HandMode;
-}
+};
 
 /**
  * Reusable base modal component for activity logs (edit, update, delete)
@@ -63,13 +63,13 @@ export function BaseActivityModal({
         {/* Header */}
         <SheetHeader className="relative mx-auto w-full max-w-[600px] flex-shrink-0 flex-row items-center space-y-0 border-b px-4 pt-4 pb-4">
           <SheetClose
-            render={
+            render={(
               <Button
                 variant="ghost"
                 size="icon-sm"
                 className="text-muted-foreground"
               />
-            }
+            )}
           >
             <ChevronLeftIcon className="h-5 w-5" />
             <span className="sr-only">Close</span>

@@ -1,8 +1,8 @@
+import type { InputMode } from '../types';
 import type { FeedMethod } from '@/lib/local-db';
 import { useState } from 'react';
-import { createFeedLog } from '@/services/operations';
 import { notifyToast } from '@/lib/notify';
-import type { InputMode } from '../types';
+import { createFeedLog } from '@/services/operations';
 import { calculateDuration } from '../utils';
 
 type TimerSaveResult = {

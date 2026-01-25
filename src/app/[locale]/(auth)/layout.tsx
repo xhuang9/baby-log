@@ -2,10 +2,10 @@ import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import { setRequestLocale } from 'next-intl/server';
 import { AppConfig, ClerkLocalizations } from '@/config/app';
+import { LogoutProvider } from '@/contexts/LogoutContext';
 import { clerkAppearance } from '@/lib/clerk-theme';
 import { routing } from '@/lib/i18n/routing';
 import { AuthLayoutContent } from './auth-layout-content';
-import { LogoutProvider } from '@/contexts/LogoutContext';
 
 export const metadata: Metadata = {
   title: `${AppConfig.name} | Account`,

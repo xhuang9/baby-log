@@ -9,6 +9,9 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+// Import after mocking
+import { notifySystem } from './system';
+
 // Mock the notification store before importing the module under test
 const mockAdd = vi.fn().mockResolvedValue({
   id: 'notification-123',
@@ -34,9 +37,6 @@ vi.mock('@/stores/useNotificationStore', () => ({
     })),
   },
 }));
-
-// Import after mocking
-import { notifySystem } from './system';
 
 describe('notifySystem', () => {
   beforeEach(() => {
@@ -229,6 +229,7 @@ describe('notifySystem', () => {
         title: 'Info',
         message: 'Info sync',
       });
+
       expect(mockAdd).toHaveBeenLastCalledWith(
         expect.objectContaining({ severity: 'info', category: 'sync' }),
       );
@@ -238,6 +239,7 @@ describe('notifySystem', () => {
         title: 'Warning',
         message: 'Warning sync',
       });
+
       expect(mockAdd).toHaveBeenLastCalledWith(
         expect.objectContaining({ severity: 'warning', category: 'sync' }),
       );
@@ -247,6 +249,7 @@ describe('notifySystem', () => {
         title: 'Error',
         message: 'Error sync',
       });
+
       expect(mockAdd).toHaveBeenLastCalledWith(
         expect.objectContaining({ severity: 'error', category: 'sync' }),
       );

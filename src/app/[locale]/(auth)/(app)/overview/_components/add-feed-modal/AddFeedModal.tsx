@@ -1,8 +1,9 @@
 'use client';
 
+import type { AddFeedModalProps } from './types';
 import { ChevronLeftIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { FormFooter } from '@/components/input-controls/FormFooter';
+import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetClose,
@@ -24,7 +25,6 @@ import {
   useFeedFormSubmit,
   useInitializeFeedForm,
 } from './hooks';
-import type { AddFeedModalProps } from './types';
 
 export function AddFeedModal({
   babyId,
@@ -86,13 +86,13 @@ export function AddFeedModal({
       >
         <SheetHeader className="relative mx-auto w-full max-w-[600px] flex-shrink-0 flex-row items-center space-y-0 border-b px-4 pt-4 pb-4">
           <SheetClose
-            render={
+            render={(
               <Button
                 variant="ghost"
                 size="icon-sm"
                 className="text-muted-foreground"
               />
-            }
+            )}
           >
             <ChevronLeftIcon className="h-5 w-5" />
             <span className="sr-only">Close</span>

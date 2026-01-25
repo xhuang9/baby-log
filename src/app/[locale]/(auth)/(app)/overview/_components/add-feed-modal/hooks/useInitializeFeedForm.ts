@@ -1,9 +1,9 @@
+import type { InputMode } from '../types';
 import type { FeedMethod } from '@/lib/local-db';
 import { useEffect } from 'react';
 import { getUIConfig } from '@/lib/local-db/helpers/ui-config';
 import { useTimerStore } from '@/stores/useTimerStore';
 import { useUserStore } from '@/stores/useUserStore';
-import type { InputMode } from '../types';
 import { getBreastFeedStartTime } from '../utils';
 
 type UseInitializeFeedFormOptions = {

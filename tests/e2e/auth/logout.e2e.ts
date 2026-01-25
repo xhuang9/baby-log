@@ -19,6 +19,7 @@ test.describe('Logout', () => {
 
       // Should redirect to sign-in
       await page.waitForURL(/\/sign-in/);
+
       expect(page.url()).toContain('/sign-in');
     });
   });

@@ -17,8 +17,8 @@
 import type { NextRequest } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-import { validatePushRequest } from './validation';
 import { handlePushRequest } from './handler';
+import { validatePushRequest } from './validation';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
   try {
     const response = await handlePushRequest(
       clerkId,
-      validation.data.mutations
+      validation.data.mutations,
     );
     return NextResponse.json(response);
   } catch (error) {
