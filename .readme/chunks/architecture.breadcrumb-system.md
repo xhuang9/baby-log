@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-04T12:00:00Z
+last_verified_at: 2026-01-25T14:30:00Z
 source_paths:
   - src/stores/useBreadcrumbStore.ts
   - src/components/navigation/AppHeader.tsx

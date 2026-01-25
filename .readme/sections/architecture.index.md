@@ -15,10 +15,13 @@ source_paths:
 # Architecture Overview
 
 ## Purpose
+
 Describes the route organization, route groups, layout hierarchy, client-first page patterns, and structural patterns specific to this boilerplate that differ from standard Next.js projects.
 
 ## Scope
+
 This boilerplate uses Next.js App Router with a highly structured approach:
+
 - All routes are locale-prefixed via `[locale]` dynamic segment
 - Route groups organize pages by purpose (marketing vs auth) and layout (centered vs full-width)
 - **Client-first pages**: Dashboard pages render from IndexedDB for instant navigation
@@ -53,7 +56,7 @@ The architecture emphasizes separation of concerns, performance-first patterns, 
   - Read when: Understanding type errors, configuring strictness, or adding new compiler options
 
 - `.readme/chunks/architecture.breadcrumb-system.md`
-  - Content: Zustand-based breadcrumb and page title system with hook-based state management
+  - Content: Zustand-based breadcrumb and page title system with hook-based state management, mobile back button integration, and intelligent navigation
   - Read when: Adding breadcrumbs or page titles to pages, understanding the useSetBreadcrumb/useSetPageTitle hooks, or working with AppHeader integration
 
 - `.readme/chunks/architecture.mobile-back-button.md`

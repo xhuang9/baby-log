@@ -36,7 +36,10 @@
       "Bash(npm run build:*)",
       "Bash(npx eslint:*)",
       "Bash(xargs:*)",
-      "Bash(head:*)"
+      "Bash(head:*)",
+      "Bash(for f in /Users/xiaotianhuang/Sites/localhost/_binary-top/baby-log/.readme/chunks/*.md)",
+      "Bash(do head -2 \"$f\")",
+      "Bash(done)"
     ]
   },
   "enableAllProjectMcpServers": true,

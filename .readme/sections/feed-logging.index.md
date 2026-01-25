@@ -88,8 +88,8 @@ This section documents the feed logging implementation including:
 
 #### `chunks/feed-logging.activity-logs-page.md`
 
-- **Content**: Complete logs page implementation with filtering, view modes, unified log querying, date grouping, and edit/delete modal integration
-- **Read when**: Building the logs feature, implementing filter state with URL sync, understanding date grouping and view modes, or working with edit modals
+- **Content**: Complete logs page implementation with filtering, view modes, unified log querying, date grouping, edit/delete modal integration, and mobile swipe-to-delete gesture
+- **Read when**: Building the logs feature, implementing filter state with URL sync, understanding date grouping and view modes, working with edit modals, or implementing swipe gestures on mobile
 
 #### `chunks/feed-logging.edit-delete-operations.md`
 

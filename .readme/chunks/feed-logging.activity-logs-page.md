@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-25T12:00:00Z
+last_verified_at: 2026-01-25T14:30:00Z
 source_paths:
   - src/app/[locale]/(auth)/(app)/logs/page.tsx
   - src/app/[locale]/(auth)/(app)/logs/_components/LogsContent.tsx
@@ -195,10 +195,10 @@ viewMode === 'simplified' ? "Expanded +" : "Simplified -"
 
 ### LogItem Component
 
-Handles both view modes through conditional rendering:
+Handles both view modes through conditional rendering, with touch-based swipe-to-delete on mobile.
 
 1. **Expanded mode**: Renders `ActivityTile` with standard layout
-2. **Simplified mode**: Custom button with monospace flexbox layout
+2. **Simplified mode**: Custom button with monospace flexbox layout + swipe gesture detection
 
 ```typescript
 // Simplified: custom button with left/right alignment
@@ -214,6 +214,45 @@ Handles both view modes through conditional rendering:
   activity="feed"
 />
 ```
+
+### Swipe-to-Delete Gesture (Mobile)
+
+LogItem supports swipe-left-to-delete on touch devices:
+
+**Implementation Details:**
+- Tracks touch position with `touchStartX` reference
+- Calculates horizontal drag distance (`diff = currentX - startX`)
+- Only allows leftward swipes (negative `diff` values)
+- Translates container left as user swipes: `transform: translateX(${swipeTranslate}px)`
+- Reveals red "Delete" button background during swipe
+- Threshold: Swiping past **100px** triggers auto-delete
+- Snaps back with animation if not past threshold
+
+**State Management:**
+```typescript
+const [swipeTranslate, setSwipeTranslate] = useState(0);  // Current swipe distance
+const [isDeleting, setIsDeleting] = useState(false);      // Delete in progress
+const touchStartX = useRef(0);                            // Starting touch X position
+const DELETE_THRESHOLD = 100;                             // px to trigger delete
+```
+
+**Touch Event Flow:**
+1. `handleTouchStart`: Record starting X position
+2. `handleTouchMove`: Update `swipeTranslate` as user drags
+3. `handleTouchEnd`: If past threshold, call `handleDelete()`, else snap back to 0
+
+**Delete Action:**
+- Calls `deleteFeedLog(log.id)` (local-first operation)
+- Sets `isDeleting = true` while operation pending
+- Shows error toast on failure, snaps back
+- On success, item auto-removes via `useLiveQuery`
+- Shows success toast "Feed deleted"
+
+**Visual States:**
+- **At rest**: `swipeTranslate = 0`, smooth transition animation
+- **Swiping**: `swipeTranslate < 0` (no animation for smooth drag)
+- **Deleting**: `opacity-50` fade (button disabled)
+- **Delete background**: Red box with "Delete" text, visible behind translated content
 
 ### Activity Type Styling
 
