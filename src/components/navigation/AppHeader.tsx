@@ -75,8 +75,9 @@ export const AppHeader = ({ locale }: AppHeaderProps) => {
             </div>
           )}
 
-          {/* Right: Settings Button */}
+          {/* Right: Bell + Settings Button */}
           <div className="z-10 flex flex-1 shrink-0 items-center justify-end gap-2">
+            <NotificationBell />
             <Link href="/settings">
               <Button
                 variant="ghost"

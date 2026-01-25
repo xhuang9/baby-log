@@ -19,7 +19,8 @@ export async function processNappyLogMutation(
   userId: number,
   babyId: number | undefined,
 ): Promise<MutationResult> {
-  const numericId = Number.parseInt(entityId, 10);
+  // Nappy log IDs are UUIDs (strings), not numeric IDs
+  const logId = entityId;
 
   if (op === 'create') {
     if (!babyId) {
@@ -52,7 +53,7 @@ export async function processNappyLogMutation(
     const [existing] = await db
       .select()
       .from(nappyLogSchema)
-      .where(eq(nappyLogSchema.id, numericId))
+      .where(eq(nappyLogSchema.id, logId))
       .limit(1);
 
     if (!existing) {
@@ -77,13 +78,13 @@ export async function processNappyLogMutation(
         startedAt: new Date(payload.startedAt as string),
         notes: payload.notes as string | null,
       })
-      .where(eq(nappyLogSchema.id, numericId))
+      .where(eq(nappyLogSchema.id, logId))
       .returning();
 
     await writeSyncEvent({
       babyId: existing.babyId,
       entityType: 'nappy_log',
-      entityId: numericId,
+      entityId: logId,
       op: 'update',
       payload: serializeNappyLog(updated!),
     });
@@ -95,19 +96,19 @@ export async function processNappyLogMutation(
     const [existing] = await db
       .select({ babyId: nappyLogSchema.babyId })
       .from(nappyLogSchema)
-      .where(eq(nappyLogSchema.id, numericId))
+      .where(eq(nappyLogSchema.id, logId))
       .limit(1);
 
     if (!existing) {
       return { mutationId, status: 'success' };
     }
 
-    await db.delete(nappyLogSchema).where(eq(nappyLogSchema.id, numericId));
+    await db.delete(nappyLogSchema).where(eq(nappyLogSchema.id, logId));
 
     await writeSyncEvent({
       babyId: existing.babyId,
       entityType: 'nappy_log',
-      entityId: numericId,
+      entityId: logId,
       op: 'delete',
       payload: null,
     });

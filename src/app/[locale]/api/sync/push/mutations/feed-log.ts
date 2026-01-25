@@ -19,7 +19,8 @@ export async function processFeedLogMutation(
   userId: number,
   babyId: number | undefined,
 ): Promise<MutationResult> {
-  const numericId = Number.parseInt(entityId, 10);
+  // Feed log IDs are UUIDs (strings), not numeric IDs
+  const logId = entityId;
 
   if (op === 'create') {
     if (!babyId) {
@@ -59,7 +60,7 @@ export async function processFeedLogMutation(
     const [existing] = await db
       .select()
       .from(feedLogSchema)
-      .where(eq(feedLogSchema.id, numericId))
+      .where(eq(feedLogSchema.id, logId))
       .limit(1);
 
     if (!existing) {
@@ -90,14 +91,14 @@ export async function processFeedLogMutation(
         isEstimated: (payload.isEstimated as boolean) ?? false,
         endSide: payload.endSide as string | null,
       })
-      .where(eq(feedLogSchema.id, numericId))
+      .where(eq(feedLogSchema.id, logId))
       .returning();
 
     // Record sync event
     await writeSyncEvent({
       babyId: existing.babyId,
       entityType: 'feed_log',
-      entityId: numericId,
+      entityId: logId,
       op: 'update',
       payload: serializeFeedLog(updated!),
     });
@@ -109,7 +110,7 @@ export async function processFeedLogMutation(
     const [existing] = await db
       .select({ babyId: feedLogSchema.babyId })
       .from(feedLogSchema)
-      .where(eq(feedLogSchema.id, numericId))
+      .where(eq(feedLogSchema.id, logId))
       .limit(1);
 
     if (!existing) {
@@ -117,13 +118,13 @@ export async function processFeedLogMutation(
       return { mutationId, status: 'success' };
     }
 
-    await db.delete(feedLogSchema).where(eq(feedLogSchema.id, numericId));
+    await db.delete(feedLogSchema).where(eq(feedLogSchema.id, logId));
 
     // Record sync event
     await writeSyncEvent({
       babyId: existing.babyId,
       entityType: 'feed_log',
-      entityId: numericId,
+      entityId: logId,
       op: 'delete',
       payload: null,
     });

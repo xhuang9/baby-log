@@ -19,7 +19,8 @@ export async function processSleepLogMutation(
   userId: number,
   babyId: number | undefined,
 ): Promise<MutationResult> {
-  const numericId = Number.parseInt(entityId, 10);
+  // Sleep log IDs are UUIDs (strings), not numeric IDs
+  const logId = entityId;
 
   if (op === 'create') {
     if (!babyId) {
@@ -53,7 +54,7 @@ export async function processSleepLogMutation(
     const [existing] = await db
       .select()
       .from(sleepLogSchema)
-      .where(eq(sleepLogSchema.id, numericId))
+      .where(eq(sleepLogSchema.id, logId))
       .limit(1);
 
     if (!existing) {
@@ -79,13 +80,13 @@ export async function processSleepLogMutation(
         durationMinutes: payload.durationMinutes as number | null,
         notes: payload.notes as string | null,
       })
-      .where(eq(sleepLogSchema.id, numericId))
+      .where(eq(sleepLogSchema.id, logId))
       .returning();
 
     await writeSyncEvent({
       babyId: existing.babyId,
       entityType: 'sleep_log',
-      entityId: numericId,
+      entityId: logId,
       op: 'update',
       payload: serializeSleepLog(updated!),
     });
@@ -97,19 +98,19 @@ export async function processSleepLogMutation(
     const [existing] = await db
       .select({ babyId: sleepLogSchema.babyId })
       .from(sleepLogSchema)
-      .where(eq(sleepLogSchema.id, numericId))
+      .where(eq(sleepLogSchema.id, logId))
       .limit(1);
 
     if (!existing) {
       return { mutationId, status: 'success' };
     }
 
-    await db.delete(sleepLogSchema).where(eq(sleepLogSchema.id, numericId));
+    await db.delete(sleepLogSchema).where(eq(sleepLogSchema.id, logId));
 
     await writeSyncEvent({
       babyId: existing.babyId,
       entityType: 'sleep_log',
-      entityId: numericId,
+      entityId: logId,
       op: 'delete',
       payload: null,
     });
