@@ -1,5 +1,5 @@
 import { AmountSlider } from '@/components/feed/AmountSlider';
-import { TimeSwiper } from '@/components/feed/TimeSwiper';
+import { TimeSwiperWithDate } from '@/components/feed/TimeSwiper';
 import { Label } from '@/components/ui/label';
 
 type BottleInputsProps = {
@@ -22,7 +22,7 @@ export function BottleInputs({
       {/* Time Swiper */}
       <div className="space-y-3">
         <Label className="text-muted-foreground">Start time</Label>
-        <TimeSwiper value={startTime} onChange={onStartTimeChange} handMode={handMode} />
+        <TimeSwiperWithDate value={startTime} onChange={onStartTimeChange} handMode={handMode} />
       </div>
 
       {/* Amount Slider */}

@@ -1,5 +1,5 @@
 import { DurationDisplay } from '@/components/activity-modals';
-import { TimeSwiper } from '@/components/feed/TimeSwiper';
+import { TimeSwiperWithDate } from '@/components/feed/TimeSwiper';
 import { Label } from '@/components/ui/label';
 import { EndSideToggle } from './EndSideToggle';
 
@@ -27,13 +27,13 @@ export function BreastInputs({
       {/* Start Time */}
       <div className="space-y-3">
         <Label className="text-muted-foreground">Start time</Label>
-        <TimeSwiper value={startTime} onChange={onStartTimeChange} handMode={handMode} />
+        <TimeSwiperWithDate value={startTime} onChange={onStartTimeChange} handMode={handMode} />
       </div>
 
       {/* End Time */}
       <div className="space-y-3">
         <Label className="text-muted-foreground">End time</Label>
-        <TimeSwiper value={endTime} onChange={onEndTimeChange} handMode={handMode} />
+        <TimeSwiperWithDate value={endTime} onChange={onEndTimeChange} handMode={handMode} />
       </div>
 
       {/* Calculated Duration */}
