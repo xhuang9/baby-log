@@ -64,11 +64,9 @@ export function LogsFilters({
     <div className="flex flex-row flex-wrap items-center gap-2">
       {/* Time Range Filter - Dropdown Menu (first) */}
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button variant="default" size="sm" className="w-fit">
-            {timeRangeLabel}
-            <ChevronDownIcon className="ml-1 h-3.5 w-3.5" />
-          </Button>
+        <DropdownMenuTrigger className="group/button inline-flex h-7 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-[min(var(--radius-md),12px)] bg-primary px-2.5 text-[0.8rem] font-medium text-primary-foreground outline-none hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring">
+          {timeRangeLabel}
+          <ChevronDownIcon className="h-3.5 w-3.5" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           {TIME_RANGE_OPTIONS.map(({ value, label }) => (

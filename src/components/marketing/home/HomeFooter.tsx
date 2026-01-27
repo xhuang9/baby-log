@@ -39,7 +39,9 @@ export function HomeFooter() {
         </div>
         <div className="mt-8 border-t border-border pt-8">
           <p className="text-center text-sm text-muted-foreground">
-            {new Date().getFullYear()} Babylog. All rights reserved.
+            {new Date().getFullYear()}
+            {' '}
+            Babylog. All rights reserved.
           </p>
         </div>
       </div>

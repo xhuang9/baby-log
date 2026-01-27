@@ -11,14 +11,16 @@ export type TimeSwiperSettingsState = {
   incrementMinutes: number;
   magneticFeel: boolean;
   showCurrentTime: boolean;
+  markerMode?: 'all' | 'now-only';
 };
 
 export const DEFAULT_TIME_SWIPER_SETTINGS: TimeSwiperSettingsState = {
   use24Hour: false,
   swipeSpeed: 0.5,
-  incrementMinutes: 30,
-  magneticFeel: false,
-  showCurrentTime: true,
+  incrementMinutes: 1,
+  magneticFeel: true,
+  showCurrentTime: false,
+  markerMode: 'now-only',
 };
 
 const getIncrementLabel = (mins: number): string => {
@@ -93,6 +95,41 @@ export function TimeSwiperSettingsPanel({
           onCheckedChange={checked => saveSetting('showCurrentTime', checked)}
         />
       </div>
+
+      {/* Marker Mode (only visible when showCurrentTime is true) */}
+      {settings.showCurrentTime && (
+        <div className="space-y-2">
+          <p className="text-sm font-medium">Marker display</p>
+          <RadioGroup
+            value={settings.markerMode || 'all'}
+            onValueChange={(value) => saveSetting('markerMode', value as 'all' | 'now-only')}
+            className="space-y-2"
+          >
+            <label
+              className={cn(
+                'relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 transition-colors',
+                (settings.markerMode || 'all') === 'all'
+                  ? 'border-primary bg-primary/10'
+                  : 'border-border hover:bg-muted/50',
+              )}
+            >
+              <RadioGroupItem value="all" className="shrink-0" />
+              <span className="text-sm">All markers (Now, ±1hr, ±2hr)</span>
+            </label>
+            <label
+              className={cn(
+                'relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 transition-colors',
+                settings.markerMode === 'now-only'
+                  ? 'border-primary bg-primary/10'
+                  : 'border-border hover:bg-muted/50',
+              )}
+            >
+              <RadioGroupItem value="now-only" className="shrink-0" />
+              <span className="text-sm">Now marker only</span>
+            </label>
+          </RadioGroup>
+        </div>
+      )}
 
       {/* Swipe Speed */}
       <div className="space-y-2">

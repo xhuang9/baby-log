@@ -50,6 +50,38 @@ export function formatDuration(durationMinutes: number | null | undefined): stri
 }
 
 /**
+ * Format date for TimeSwiper header display
+ * - Today: "" (empty, no label shown)
+ * - Tomorrow: "tomorrow"
+ * - Yesterday: "yesterday"
+ * - 2-3 days ago: "2 days ago", "3 days ago"
+ * - 4+ days ago or other dates: formatted date (e.g., "Jan 24, 2025")
+ */
+export function formatTimeSwiperDate(date: Date, currentTime: Date): string {
+  const selectedDate = new Date(date);
+  selectedDate.setHours(0, 0, 0, 0);
+
+  const today = new Date(currentTime);
+  today.setHours(0, 0, 0, 0);
+
+  const diffMs = selectedDate.getTime() - today.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return ''; // Today
+  if (diffDays === 1) return 'Tomorrow';
+  if (diffDays === -1) return 'Yesterday';
+  if (diffDays === -2) return '2 days ago';
+  if (diffDays === -3) return '3 days ago';
+
+  // 4+ days ago or future dates: show formatted date
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+}
+
+/**
  * Type for unified log representation
  */
 export type UnifiedLog = {

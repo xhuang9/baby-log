@@ -41,7 +41,10 @@
       "Bash(do head -2 \"$f\")",
       "Bash(done)",
       "mcp__shadcn__get_add_command_for_items",
-      "Bash(pnpm dlx:*)"
+      "Bash(pnpm dlx:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git -C /Users/xiaotianhuang/Sites/localhost/_binary-top/baby-log diff src/components/feed/TimeSwiper/hooks/useTimelinePosition.ts)",
+      "Bash(curl:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

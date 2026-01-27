@@ -4,53 +4,53 @@
 @theme inline {
   /* Feed - nourishment/milk, calming teal (Tailwind teal). */
   /* --color-activity-feed-background: oklch(0.7 0.1937 15); */
-  --color-activity-feed-background: oklch(0.63 0.2 10);
-  --color-activity-feed-foreground: #fff;
+  --color-activity-feed-background: oklch(0.63 0.2 10); /* #e7436d */
+  --color-activity-feed-foreground: #fff; /* #ffffff */
 
   /* Sleep - night/quiet, deep indigo (Tailwind indigo). */
   --color-activity-sleep-background: var(--color-indigo-700);
-  --color-activity-sleep-foreground: #fff;
+  --color-activity-sleep-foreground: #fff; /* #ffffff */
 
   /* Nappy - warm/utility, amber (Tailwind amber). */
   --color-activity-nappy-background: var(--color-orange-500);
-  --color-activity-nappy-foreground: #fff;
+  --color-activity-nappy-foreground: #fff; /* #ffffff */
 
   /* Solids - warmth/energy, yellow (Tailwind yellow). */
   /* --color-activity-solids-background: var(--color-yellow-500); */
-  --color-activity-solids-background: oklch(0.7 0.1381 94);
-  --color-activity-solids-foreground: #fff;
+  --color-activity-solids-background: oklch(0.7 0.1381 94); /* #bb9c18 */
+  --color-activity-solids-foreground: #fff; /* #ffffff */
 
   /* Bath - water/clean, sky (Tailwind sky). */
   --color-activity-bath-background: var(--color-sky-500);
-  --color-activity-bath-foreground: #fff;
+  --color-activity-bath-foreground: #fff; /* #ffffff */
 
   /* Tummy time - strength/growth, lime (Tailwind lime). */
   --color-activity-tummy-time-background: var(--color-teal-500);
-  --color-activity-tummy-time-foreground: #fff;
+  --color-activity-tummy-time-foreground: #fff; /* #ffffff */
 
   /* Story time - imagination, violet (Tailwind violet). */
   --color-activity-story-time-background: var(--color-violet-500);
-  --color-activity-story-time-foreground: #fff;
+  --color-activity-story-time-foreground: #fff; /* #ffffff */
 
   /* Screen time - tech/neutral, slate (Tailwind slate). */
   --color-activity-screen-time-background: var(--color-slate-500);
-  --color-activity-screen-time-foreground: #fff;
+  --color-activity-screen-time-foreground: #fff; /* #ffffff */
 
   /* Skin-to-skin - warmth/care, rose (Tailwind rose). */
   --color-activity-skin-to-skin-background: var(--color-pink-600);
-  --color-activity-skin-to-skin-foreground: #fff;
+  --color-activity-skin-to-skin-foreground: #fff; /* #ffffff */
 
   /* Outdoor play - nature, green (Tailwind green). */
   --color-activity-outdoor-play-background: var(--color-green-500);
-  --color-activity-outdoor-play-foreground: #fff;
+  --color-activity-outdoor-play-foreground: #fff; /* #ffffff */
 
   /* Indoor play - cozy/energy, orange (Tailwind orange). */
-  --color-activity-indoor-play-background: oklch(0.68 0.09 175);
-  --color-activity-indoor-play-foreground: #fff;
+  --color-activity-indoor-play-background: oklch(0.68 0.09 175); /* #55ab95 */
+  --color-activity-indoor-play-foreground: #fff; /* #ffffff */
 
   /* Brush teeth - fresh/minty, cyan (Tailwind cyan). */
   --color-activity-brush-teeth-background: var(--color-cyan-500);
-  --color-activity-brush-teeth-foreground: #fff;
+  --color-activity-brush-teeth-foreground: #fff; /* #ffffff */
 }
 
 @layer components {
@@ -130,5 +130,74 @@
   .activity-tile--brush-teeth {
     --activity-tile-background: var(--color-activity-brush-teeth-background);
     --activity-tile-accent: var(--color-activity-brush-teeth-foreground);
+  }
+
+  /* Timeline chart activity blocks */
+  .activity-block {
+    @apply absolute left-0.5 right-0.5 cursor-pointer overflow-hidden rounded text-left transition-opacity;
+  }
+
+  .activity-block:hover {
+    @apply opacity-90;
+  }
+
+  .activity-block--feed {
+    background-color: var(--color-activity-feed-background);
+    color: var(--color-activity-feed-foreground);
+  }
+
+  .activity-block--sleep {
+    background-color: var(--color-activity-sleep-background);
+    color: var(--color-activity-sleep-foreground);
+  }
+
+  .activity-block--nappy {
+    background-color: var(--color-activity-nappy-background);
+    color: var(--color-activity-nappy-foreground);
+  }
+
+  .activity-block--solids {
+    background-color: var(--color-activity-solids-background);
+    color: var(--color-activity-solids-foreground);
+  }
+
+  .activity-block--bath {
+    background-color: var(--color-activity-bath-background);
+    color: var(--color-activity-bath-foreground);
+  }
+
+  .activity-block--tummy-time {
+    background-color: var(--color-activity-tummy-time-background);
+    color: var(--color-activity-tummy-time-foreground);
+  }
+
+  .activity-block--story-time {
+    background-color: var(--color-activity-story-time-background);
+    color: var(--color-activity-story-time-foreground);
+  }
+
+  .activity-block--screen-time {
+    background-color: var(--color-activity-screen-time-background);
+    color: var(--color-activity-screen-time-foreground);
+  }
+
+  .activity-block--skin-to-skin {
+    background-color: var(--color-activity-skin-to-skin-background);
+    color: var(--color-activity-skin-to-skin-foreground);
+  }
+
+  .activity-block--outdoor-play {
+    background-color: var(--color-activity-outdoor-play-background);
+    color: var(--color-activity-outdoor-play-foreground);
+  }
+
+  .activity-block--indoor-play {
+    background-color: var(--color-activity-indoor-play-background);
+    color: var(--color-activity-indoor-play-foreground);
+  }
+
+  .activity-block--brush-teeth {
+    background-color: var(--color-activity-brush-teeth-background);
+    color: var(--color-activity-brush-teeth-foreground);
   }
 }

@@ -11,8 +11,8 @@ const steps = [
   },
   {
     number: 3,
-    title: "See today's summary",
-    description: "View your baby's daily patterns at a glance.",
+    title: 'See today\'s summary',
+    description: 'View your baby\'s daily patterns at a glance.',
   },
 ];
 

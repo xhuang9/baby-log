@@ -2,15 +2,17 @@
 
 import type { UnifiedLog } from '@/lib/format-log';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAllActivityLogs } from '@/hooks/useAllActivityLogs';
-import { useLogsFilters } from '@/hooks/useLogsFilters';
+import { ACTIVITY_TYPES, useLogsFilters } from '@/hooks/useLogsFilters';
 import { localDb } from '@/lib/local-db';
+import { ActivityTypePills } from './ActivityTypePills';
 import { EditFeedModal } from './edit-modals/EditFeedModal';
 import { EditSleepModal } from './edit-modals/EditSleepModal';
 import { LogsFilters } from './LogsFilters';
 import { LogsList } from './LogsList';
+import { ActivityTimelineChart } from './timeline-chart';
 
 export type LogsViewTab = 'listing' | 'today' | 'week';
 
@@ -30,12 +32,26 @@ export function LogsContent() {
   const [editingLog, setEditingLog] = useState<UnifiedLog | null>(null);
   const [activeTab, setActiveTab] = useState<LogsViewTab>('listing');
 
-  // Filters with URL sync
+  // Filters with URL sync (for listing view)
   const { activeTypes, timeRange, startDate, endDate, setActiveTypes, setTimeRange }
     = useLogsFilters();
 
-  // Fetch unified logs across feed and sleep
+  // Separate filter state for chart views (not synced to URL)
+  const [chartActiveTypes, setChartActiveTypes] = useState(ACTIVITY_TYPES.map(t => t.value));
+
+  // Fetch unified logs across feed and sleep (for listing view)
   const allLogs = useAllActivityLogs(babyId, activeTypes, startDate, endDate);
+
+  // Fetch all logs for chart views (no date restriction, but filtered by activity type)
+  const chartLogs = useAllActivityLogs(babyId, chartActiveTypes, null, null);
+
+  // Filter chart logs by activity type
+  const filteredChartLogs = useMemo(() => {
+    if (!chartLogs) {
+      return undefined;
+    }
+    return chartLogs.filter(log => chartActiveTypes.includes(log.type));
+  }, [chartLogs, chartActiveTypes]);
 
   const handleOpenEditModal = useCallback((log: UnifiedLog) => {
     setEditingLog(log);
@@ -46,10 +62,10 @@ export function LogsContent() {
   }, []);
 
   return (
-    <div className="space-y-4">
+    <div className="flex h-full flex-col gap-2 md:gap-4">
       {/* Tabs navigation */}
-      <Tabs value={activeTab} onValueChange={v => setActiveTab(v as LogsViewTab)}>
-        <TabsList className="w-full">
+      <Tabs value={activeTab} onValueChange={v => setActiveTab(v as LogsViewTab)} className="flex min-h-0 flex-1 flex-col">
+        <TabsList className="w-full shrink-0">
           <TabsTrigger value="listing" className="flex-1">
             Listing
           </TabsTrigger>
@@ -62,7 +78,7 @@ export function LogsContent() {
         </TabsList>
 
         {/* Listing View */}
-        <TabsContent value="listing" className="mt-4 space-y-4">
+        <TabsContent value="listing" className="flex flex-col gap-3 md:gap-4">
           {/* Filter controls */}
           <LogsFilters
             activeTypes={activeTypes}
@@ -79,28 +95,36 @@ export function LogsContent() {
           />
         </TabsContent>
 
-        {/* Today View - Coming Soon */}
-        <TabsContent value="today" className="mt-4">
-          <div className="flex min-h-[200px] items-center justify-center rounded-lg border border-dashed border-border bg-muted/30">
-            <div className="text-center">
-              <p className="text-lg font-medium text-muted-foreground">Coming Soon</p>
-              <p className="mt-1 text-sm text-muted-foreground/70">
-                Today&apos;s activity summary
-              </p>
-            </div>
-          </div>
+        {/* Today View */}
+        <TabsContent value="today" className="flex min-h-0 flex-1 flex-col gap-3 md:gap-4">
+          {/* Activity type filter pills */}
+          <ActivityTypePills
+            activeTypes={chartActiveTypes}
+            setActiveTypes={setChartActiveTypes}
+          />
+
+          {/* Timeline chart */}
+          <ActivityTimelineChart
+            logs={filteredChartLogs}
+            mode="today"
+            onEditLog={handleOpenEditModal}
+          />
         </TabsContent>
 
-        {/* Week View - Coming Soon */}
-        <TabsContent value="week" className="mt-4">
-          <div className="flex min-h-[200px] items-center justify-center rounded-lg border border-dashed border-border bg-muted/30">
-            <div className="text-center">
-              <p className="text-lg font-medium text-muted-foreground">Coming Soon</p>
-              <p className="mt-1 text-sm text-muted-foreground/70">
-                Weekly activity overview
-              </p>
-            </div>
-          </div>
+        {/* Week View */}
+        <TabsContent value="week" className="flex min-h-0 flex-1 flex-col gap-3 md:gap-4">
+          {/* Activity type filter pills */}
+          <ActivityTypePills
+            activeTypes={chartActiveTypes}
+            setActiveTypes={setChartActiveTypes}
+          />
+
+          {/* Timeline chart */}
+          <ActivityTimelineChart
+            logs={filteredChartLogs}
+            mode="week"
+            onEditLog={handleOpenEditModal}
+          />
         </TabsContent>
       </Tabs>
 

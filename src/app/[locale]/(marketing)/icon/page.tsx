@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import type { ComponentProps, ComponentType } from 'react';
 import { setRequestLocale } from 'next-intl/server';
-import { HomeFooter, HomeHeader } from '@/components/marketing/home';
 import * as icons from '@/components/icons';
+import { HomeFooter, HomeHeader } from '@/components/marketing/home';
 
 type IconComponent = ComponentType<ComponentProps<'svg'>>;
 
@@ -74,7 +74,7 @@ export default async function IconPage(props: IconPageProps) {
             <span className="text-xs font-semibold tracking-[0.4em] text-muted-foreground uppercase">
               Icon Library
             </span>
-            <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+            <h1 className="text-3xl font-semibold tracking-tight text-balance text-foreground md:text-4xl">
               Baby Log marketing icons
             </h1>
             <p className="max-w-2xl text-sm text-muted-foreground">

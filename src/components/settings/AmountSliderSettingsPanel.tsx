@@ -20,7 +20,7 @@ export const DEFAULT_AMOUNT_SLIDER_SETTINGS: AmountSliderSettingsState = {
   maxAmount: 350,
   increment: 10,
   dragStep: 5,
-  startOnLeft: false,
+  startOnLeft: true,
 };
 
 type AmountSliderSettingsPanelProps = {

@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-20T00:00:00Z
+last_verified_at: 2026-01-27T00:00:00Z
 source_paths:
   - src/actions/feedLogActions.ts
   - src/models/Schema.ts
@@ -66,6 +66,11 @@ This section documents the feed logging implementation including:
 
 - **Content**: Breast feed amount estimation logic and future improvement paths
 - **Read when**: Modifying estimation logic, adding age/gender-based models, or debugging estimated amounts
+
+#### `chunks/feed-logging.timeswiper-date-range.md`
+
+- **Content**: TimeSwiper date range constraint (-7 days to +1 day 23:59), boundary clamping, pixel offset calculations, and day offset display
+- **Read when**: Modifying time selection range, understanding date boundary logic, debugging timeline calculations, or implementing similar constrained scrollable timelines
 
 ### Timer System
 

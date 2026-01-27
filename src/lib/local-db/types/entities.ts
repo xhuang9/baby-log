@@ -104,6 +104,7 @@ export type UIConfigData = {
     incrementMinutes?: number;
     magneticFeel?: boolean;
     showCurrentTime?: boolean;
+    markerMode?: 'all' | 'now-only';
   };
   amountSlider?: {
     minAmount?: number;

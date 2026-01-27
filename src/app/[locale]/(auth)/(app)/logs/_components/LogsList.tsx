@@ -22,11 +22,11 @@ export function LogsList({ logs, hasAnyLogs = false, onEditLog }: LogsListProps)
   // Loading state - show skeleton grid
   if (logs === undefined) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-5">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="space-y-2">
+          <div key={i} className="space-y-2.5">
             <Skeleton className="h-4 w-20 rounded" />
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2">
               {Array.from({ length: 4 }).map((_, j) => (
                 <Skeleton key={j} className="h-12 w-full rounded-lg" />
               ))}
@@ -46,16 +46,16 @@ export function LogsList({ logs, hasAnyLogs = false, onEditLog }: LogsListProps)
   const groups = groupLogsByDate(logs);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {groups.map(group => (
         <div key={group.label}>
           {/* Date header */}
-          <h3 className="mb-3 text-sm font-semibold text-muted-foreground">
+          <h3 className="mb-2.5 text-sm font-semibold text-muted-foreground">
             {group.label}
           </h3>
 
           {/* Log items in grid: 2 columns on desktop, single column on mobile */}
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2">
             {group.logs.map(log => (
               <LogItem
                 key={log.id}

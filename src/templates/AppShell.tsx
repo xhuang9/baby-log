@@ -35,7 +35,7 @@ export const AppShell = ({ children, locale, variant = 'default' }: AppShellProp
           <SidebarInset>
             <AppHeader locale={locale} />
 
-            <main className="flex flex-1 flex-col gap-4 overflow-auto bg-background p-4 md:pb-4">
+            <main className="flex flex-1 flex-col gap-4 overflow-auto bg-background p-4 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-4">
               {variant === 'unwrapped'
                 ? (
                     children

@@ -14,7 +14,7 @@ export function HomeHero() {
               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               Built for newborn routines
             </span>
-            <h1 className="text-balance text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl">
+            <h1 className="text-3xl font-bold tracking-tight text-balance text-foreground md:text-4xl lg:text-5xl">
               Baby tracking, without setup.
             </h1>
             <p className="text-lg leading-relaxed text-muted-foreground">
