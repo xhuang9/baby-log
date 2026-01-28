@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-23T16:00:00Z
+last_verified_at: 2026-01-29T00:00:00Z
 source_paths:
   - src/components/activity-modals/
   - src/app/[locale]/(auth)/(app)/overview/_components/add-feed-modal/
@@ -165,16 +165,41 @@ export function useInitializeSleepForm({
 #### `use{Activity}FormSubmit` - Validation & Persistence
 - Validates form inputs
 - Handles timer vs manual mode logic
+- **Reactively tracks timer state** for button enable/disable (timer mode only)
 - Calls operations layer for persistence
 - Manages loading state and errors
 - Triggers callbacks on success
 
-Example (Sleep):
+Example (Sleep with Timer Validation):
 ```typescript
 export function useSleepFormSubmit(options: UseSleepFormSubmitOptions) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [canSave, setCanSave] = useState(false);
 
+  // 1. Subscribe to timer changes for reactive button state
+  useEffect(() => {
+    if (options.inputMode !== 'timer') {
+      setCanSave(true); // Manual mode always allows save
+      return;
+    }
+
+    const unsubscribe = useTimerStore.subscribe(
+      state => state.totalElapsedSeconds,
+      totalElapsed => {
+        // Save button only enabled if ≥60 seconds recorded
+        setCanSave(totalElapsed >= 60);
+      }
+    );
+
+    // Check initial timer state
+    const initial = useTimerStore.getState().totalElapsedSeconds;
+    setCanSave(initial >= 60);
+
+    return unsubscribe;
+  }, [options.inputMode]);
+
+  // 2. Submit logic
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setError(null);
@@ -187,7 +212,7 @@ export function useSleepFormSubmit(options: UseSleepFormSubmitOptions) {
         // Pause timer, show confirmation, get timer data
         const timerData = await options.prepareTimerSave();
         if (!timerData) {
-          setError('Please start the timer before saving');
+          setError('Please record a timer first');
           return;
         }
         durationMinutes = timerData.durationMinutes;
@@ -229,7 +254,7 @@ export function useSleepFormSubmit(options: UseSleepFormSubmitOptions) {
     }
   };
 
-  return { handleSubmit, isSubmitting, error };
+  return { handleSubmit, isSubmitting, error, canSave };
 }
 ```
 
@@ -260,8 +285,8 @@ export function AddSleepModal({
     setHandMode: actions.setHandMode,
   });
 
-  // 4. Submit logic
-  const { handleSubmit, isSubmitting, error } = useSleepFormSubmit({
+  // 4. Submit logic with reactive timer validation
+  const { handleSubmit, isSubmitting, error, canSave } = useSleepFormSubmit({
     babyId,
     inputMode: state.inputMode,
     startTime: state.startTime,
@@ -304,7 +329,14 @@ export function AddSleepModal({
           onModeChange={actions.setInputMode}
         />
         {/* Error display */}
-        {/* Footer with save/cancel buttons */}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {/* Footer with reactive save button */}
+        <Button
+          onClick={handleSubmit}
+          disabled={!canSave || isSubmitting}
+        >
+          {isSubmitting ? 'Saving...' : 'Save'}
+        </Button>
       </SheetContent>
     </Sheet>
   );
@@ -573,6 +605,33 @@ if (duration <= 0) {
   return;
 }
 ```
+
+### 6. Timer Mode Validation: Reactive Button State
+**Issue:** Save button should be disabled until user records ≥60 seconds on timer
+**Solution:** Use Zustand subscriber pattern to reactively track timer state
+```typescript
+useEffect(() => {
+  if (options.inputMode !== 'timer') {
+    setCanSave(true); // Manual mode always allows save
+    return;
+  }
+
+  // Subscribe to timer changes
+  const unsubscribe = useTimerStore.subscribe(
+    state => state.totalElapsedSeconds,
+    totalElapsed => setCanSave(totalElapsed >= 60)
+  );
+
+  // Check initial state
+  setCanSave(useTimerStore.getState().totalElapsedSeconds >= 60);
+
+  return unsubscribe;
+}, [options.inputMode]);
+
+// Result: When user presses +1m button, Save button instantly enables
+```
+
+See `.readme/chunks/ui-patterns.zustand-selector-reactivity.md` for detailed pattern explanation.
 
 ## Comparison: Before vs After
 

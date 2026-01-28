@@ -90,6 +90,7 @@ export function useSleepLogsByDateRange(
 
 /**
  * Get the most recent sleep log for a baby
+ * Only considers past logs (startedAt <= now) - excludes future scheduled logs
  */
 export function useLatestSleepLog(
   babyId: number | null | undefined,
@@ -100,9 +101,11 @@ export function useLatestSleepLog(
         return null;
       }
 
+      const now = new Date();
       const logs = await localDb.sleepLogs
         .where('babyId')
         .equals(babyId)
+        .and(log => log.startedAt <= now) // Filter out future logs
         .toArray();
 
       if (logs.length === 0) {

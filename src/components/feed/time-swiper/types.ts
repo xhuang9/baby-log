@@ -12,3 +12,14 @@ export type TickMark = {
   isHour: boolean;
   label: string | null;
 };
+
+export type TimeTab = 'start' | 'end';
+
+export type DualTimeSwiperProps = {
+  startTime: Date;
+  onStartTimeChange: (date: Date) => void;
+  endTime: Date;
+  onEndTimeChange: (date: Date) => void;
+  handMode?: 'left' | 'right';
+  className?: string;
+};

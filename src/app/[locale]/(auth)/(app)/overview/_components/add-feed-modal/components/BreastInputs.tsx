@@ -1,6 +1,4 @@
-import { DurationDisplay } from '@/components/activity-modals';
-import { TimeSwiper } from '@/components/feed/TimeSwiper';
-import { Label } from '@/components/ui/label';
+import { DualTimeSwiper } from '@/components/feed/time-swiper';
 import { EndSideToggle } from './EndSideToggle';
 
 type BreastInputsProps = {
@@ -24,17 +22,13 @@ export function BreastInputs({
 }: BreastInputsProps) {
   return (
     <>
-      <div className="space-y-3">
-        <Label className="text-muted-foreground">Start time</Label>
-        <TimeSwiper value={startTime} onChange={onStartTimeChange} handMode={handMode} />
-      </div>
-
-      <div className="space-y-3">
-        <Label className="text-muted-foreground">End time</Label>
-        <TimeSwiper value={endTime} onChange={onEndTimeChange} handMode={handMode} />
-      </div>
-
-      <DurationDisplay startTime={startTime} endTime={endTime} />
+      <DualTimeSwiper
+        startTime={startTime}
+        onStartTimeChange={onStartTimeChange}
+        endTime={endTime}
+        onEndTimeChange={onEndTimeChange}
+        handMode={handMode}
+      />
 
       <EndSideToggle endSide={endSide} onEndSideChange={onEndSideChange} handMode={handMode} />
     </>

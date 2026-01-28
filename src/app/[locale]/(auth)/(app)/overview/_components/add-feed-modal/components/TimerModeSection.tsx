@@ -15,7 +15,7 @@ export function TimerModeSection({
   handMode,
 }: TimerModeSectionProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Timer Widget */}
       <TimerWidget babyId={babyId} logType="feed" />
 

@@ -90,6 +90,7 @@ export function useFeedLogsByDateRange(
 
 /**
  * Get the most recent feed log for a baby
+ * Only considers past logs (startedAt <= now) - excludes future scheduled logs
  */
 export function useLatestFeedLog(
   babyId: number | null | undefined,
@@ -100,9 +101,11 @@ export function useLatestFeedLog(
         return null;
       }
 
+      const now = new Date();
       const logs = await localDb.feedLogs
         .where('babyId')
         .equals(babyId)
+        .and(log => log.startedAt <= now) // Filter out future logs
         .toArray();
 
       if (logs.length === 0) {

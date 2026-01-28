@@ -12,7 +12,7 @@ export function EndSideToggle({ endSide, onEndSideChange, handMode }: EndSideTog
     <div
       className={`${handMode === 'left' ? 'space-y-3' : 'flex items-center justify-between'}`}
     >
-      <Label className="text-muted-foreground">End on</Label>
+      <Label className="text-muted-foreground">Last side</Label>
       <div className={`flex gap-3 ${handMode === 'left' ? '' : 'ml-auto'}`}>
         <BaseButton
           variant={endSide === 'left' ? 'primary' : 'secondary'}

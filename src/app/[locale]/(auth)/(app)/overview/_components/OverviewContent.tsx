@@ -42,13 +42,16 @@ export function OverviewContent({ locale }: OverviewContentProps) {
   }, [userData, locale, router]);
 
   // Read latest feed from IndexedDB with caregiver info
+  // Only consider past logs (startedAt <= now) for "latest" display
   const latestFeedData = useLiveQuery(async () => {
     if (!babyId) {
       return null;
     }
+    const now = new Date();
     const feeds = await localDb.feedLogs
       .where('babyId')
       .equals(babyId)
+      .and(log => log.startedAt <= now) // Filter out future logs
       .toArray();
 
     if (feeds.length === 0) {
@@ -87,13 +90,16 @@ export function OverviewContent({ locale }: OverviewContentProps) {
   }, [babyId]);
 
   // Read latest sleep from IndexedDB with caregiver info
+  // Only consider past logs (startedAt <= now) for "latest" display
   const latestSleepData = useLiveQuery(async () => {
     if (!babyId) {
       return null;
     }
+    const now = new Date();
     const sleeps = await localDb.sleepLogs
       .where('babyId')
       .equals(babyId)
+      .and(log => log.startedAt <= now) // Filter out future logs
       .toArray();
 
     if (sleeps.length === 0) {
@@ -120,13 +126,16 @@ export function OverviewContent({ locale }: OverviewContentProps) {
   }, [babyId]);
 
   // Read latest nappy from IndexedDB with caregiver info
+  // Only consider past logs (startedAt <= now) for "latest" display
   const latestNappyData = useLiveQuery(async () => {
     if (!babyId) {
       return null;
     }
+    const now = new Date();
     const nappies = await localDb.nappyLogs
       .where('babyId')
       .equals(babyId)
+      .and(log => log.startedAt <= now) // Filter out future logs
       .toArray();
 
     if (nappies.length === 0) {

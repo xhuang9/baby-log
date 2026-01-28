@@ -90,6 +90,7 @@ export function useNappyLogsByDateRange(
 
 /**
  * Get the most recent nappy log for a baby
+ * Only considers past logs (startedAt <= now) - excludes future scheduled logs
  */
 export function useLatestNappyLog(
   babyId: number | null | undefined,
@@ -100,9 +101,11 @@ export function useLatestNappyLog(
         return null;
       }
 
+      const now = new Date();
       const logs = await localDb.nappyLogs
         .where('babyId')
         .equals(babyId)
+        .and(log => log.startedAt <= now) // Filter out future logs
         .toArray();
 
       if (logs.length === 0) {

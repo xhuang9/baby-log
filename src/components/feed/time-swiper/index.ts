@@ -1,2 +1,3 @@
+export { DualTimeSwiper } from './DualTimeSwiper';
 export { TimeSwiper } from './TimeSwiper';
-export type { TimeSwiperProps } from './types';
+export type { DualTimeSwiperProps, TimeSwiperProps, TimeTab } from './types';

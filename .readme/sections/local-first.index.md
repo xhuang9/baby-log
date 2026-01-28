@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-28T00:00:00Z
+last_verified_at: 2026-01-29T00:00:00Z
 source_paths:
   - src/lib/local-db/
   - src/lib/db/helpers/sync-events.ts
@@ -85,6 +85,10 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
 - `.readme/chunks/local-first.query-keys.md`
   - Content: Type-safe query key factory pattern for cache management
   - Read when: Adding new queries, invalidating cache, or understanding query key hierarchy
+
+- `.readme/chunks/local-first.dexie-query-patterns.md`
+  - Content: Dexie query pattern fixes: manual sorting (`.toArray()` + sort) and future log filtering for "latest" queries
+  - Read when: Querying activity logs, fixing sort order bugs, implementing new log queries, or understanding why future-dated logs shouldn't appear in UI
 
 ### Sync System
 

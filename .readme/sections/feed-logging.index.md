@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-28T00:00:00Z
+last_verified_at: 2026-01-29T00:00:00Z
 source_paths:
   - src/actions/feedLogActions.ts
   - src/models/Schema.ts
@@ -123,6 +123,20 @@ This section documents the feed logging implementation including:
 
 - **Content**: Shared modal architecture, modular component pattern, hook responsibilities, testing approach, and guide for adding new activity modals
 - **Read when**: Building new activity modals (nappy, meal, medication), refactoring existing modals, understanding the modular architecture, or writing tests for modal hooks
+
+### State Management & Reactivity
+
+#### `chunks/ui-patterns.zustand-selector-reactivity.md`
+
+- **Content**: Zustand selector subscription pattern for reactive component state, especially for modal button enable/disable based on timer state
+- **Read when**: Implementing timer validation in modals, understanding reactive state updates, or working with Zustand subscriptions
+
+### Query Patterns
+
+#### `chunks/local-first.dexie-query-patterns.md`
+
+- **Content**: Dexie query pattern fixes for chronological sorting and future log filtering in "latest" queries
+- **Read when**: Querying activity logs, fixing sort order issues, or ensuring future-dated logs don't appear in UI
 
 ## Related Sections
 

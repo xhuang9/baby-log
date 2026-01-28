@@ -37,10 +37,29 @@ export function AddFeedModal({
 
   // 2. Timer integration
   const { isHydrated } = useTimerStore();
+  const timerKey = `feed-${babyId}`;
+  // Subscribe to timer state reactively so +1m/-1m updates trigger re-render
+  const timerState = useTimerStore(s => s.timers[timerKey]);
+  const timerElapsed = timerState
+    ? timerState.elapsedSeconds + (timerState.lastStartTime
+      ? Math.floor((Date.now() - new Date(timerState.lastStartTime).getTime()) / 1000)
+      : 0)
+    : 0;
   const { prepareTimerSave, completeTimerSave } = useTimerSave({
     babyId,
     logType: 'feed',
   });
+
+  // Disable save for breast feed timer mode if timer is less than 1 minute
+  // (prevents sub-second saves that would round to 0 minutes)
+  const isTimerModeWithNoTime = state.method === 'breast' && state.inputMode === 'timer' && timerElapsed < 60;
+
+  // Disable save for breast feed manual mode if duration is invalid or zero
+  const breastManualDurationMs = state.endTime.getTime() - state.startTime.getTime();
+  const breastManualDurationMinutes = Math.round(breastManualDurationMs / (1000 * 60));
+  const isManualModeInvalidDuration = state.method === 'breast'
+    && state.inputMode === 'manual'
+    && (breastManualDurationMinutes <= 0);
 
   // 3. Initialization effects
   useInitializeFeedForm({
@@ -161,6 +180,7 @@ export function AddFeedModal({
             onSecondary={() => handleOpenChange(false)}
             secondaryLabel="Cancel"
             isLoading={isSubmitting}
+            disabled={isTimerModeWithNoTime || isManualModeInvalidDuration}
             handMode={state.handMode}
           />
         </SheetFooter>

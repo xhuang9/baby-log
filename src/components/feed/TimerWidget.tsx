@@ -100,15 +100,15 @@ export function TimerWidget({
     await adjustTimer(timerKey, seconds);
   };
 
-  // Hold action handlers for +10s and -10s buttons
-  const holdAdd10 = useHoldAction({
-    onAction: () => handleAdjust(10),
-    intervalMs: 100,
+  // Hold action handlers for +1m and -1m buttons
+  const holdAdd1m = useHoldAction({
+    onAction: () => handleAdjust(60),
+    intervalMs: 150,
   });
 
-  const holdSubtract10 = useHoldAction({
-    onAction: () => handleAdjust(-10),
-    intervalMs: 100,
+  const holdSubtract1m = useHoldAction({
+    onAction: () => handleAdjust(-60),
+    intervalMs: 150,
   });
 
   const formatTimerDisplay = (seconds: number): { hours: string; minutes: string; seconds: string } => {
@@ -130,26 +130,26 @@ export function TimerWidget({
         <div className="flex flex-1 flex-col items-center justify-center space-y-8 py-10">
           <div className="flex flex-col items-center space-y-6">
             {/* Timer Display - Above the button */}
-            <div className="flex items-center space-x-4 text-center">
+            <div className="flex items-end space-x-4 text-center">
               <div className="flex flex-col items-center">
                 <p className="text-5xl font-light tracking-wider text-foreground" style={{ width: '62.5px' }}>
                   {time.hours}
                 </p>
                 <span className="mt-1 text-xs text-muted-foreground">hour</span>
               </div>
-              <span className="text-4xl font-light text-foreground">:</span>
+              <span className="mb-6 text-4xl font-light text-foreground">:</span>
               <div className="flex flex-col items-center">
                 <p className="text-5xl font-light tracking-wider text-foreground" style={{ width: '62.5px' }}>
                   {time.minutes}
                 </p>
                 <span className="mt-1 text-xs text-muted-foreground">minute</span>
               </div>
-              <span className="text-4xl font-light text-foreground">:</span>
-              <div className="flex flex-col items-center">
-                <p className="text-5xl font-light tracking-wider text-foreground" style={{ width: '62.5px' }}>
+              <span className="mb-6 text-3xl font-light text-muted-foreground/60">:</span>
+              <div className="flex flex-col items-center opacity-50">
+                <p className="text-3xl font-light tracking-wider text-muted-foreground" style={{ width: '45px' }}>
                   {time.seconds}
                 </p>
-                <span className="mt-1 text-xs text-muted-foreground">second</span>
+                <span className="mt-1 text-xs text-muted-foreground/70">second</span>
               </div>
             </div>
 
@@ -173,23 +173,23 @@ export function TimerWidget({
               <button
                 type="button"
                 onClick={handleReset}
-                className="text-sm text-muted-foreground underline hover:text-foreground"
+                className="text-base text-muted-foreground underline hover:text-foreground"
               >
                 Reset
               </button>
               <button
                 type="button"
-                {...holdAdd10}
-                className="rounded-md bg-muted px-3 py-1 text-sm text-foreground hover:bg-muted/80 active:bg-muted/60"
+                {...holdAdd1m}
+                className="rounded-md bg-muted px-4 py-1.5 text-base text-foreground hover:bg-muted/80 active:bg-muted/60"
               >
-                +10s
+                +1m
               </button>
               <button
                 type="button"
-                {...holdSubtract10}
-                className="rounded-md bg-muted px-3 py-1 text-sm text-foreground hover:bg-muted/80 active:bg-muted/60"
+                {...holdSubtract1m}
+                className="rounded-md bg-muted px-4 py-1.5 text-base text-foreground hover:bg-muted/80 active:bg-muted/60"
               >
-                -10s
+                -1m
               </button>
             </div>
           </div>

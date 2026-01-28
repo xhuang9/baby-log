@@ -55,7 +55,7 @@ export function useFeedFormSubmit({
         const timerData = await prepareTimerSave();
 
         if (!timerData) {
-          setError('Please start the timer before saving');
+          setError('Please record a timer first');
           setIsSubmitting(false);
           return;
         }
@@ -65,7 +65,7 @@ export function useFeedFormSubmit({
 
         // Validate timer duration
         if (method === 'breast' && durationMinutes <= 0) {
-          setError('Please start the timer before saving');
+          setError('Please record a timer first');
           setIsSubmitting(false);
           return;
         }
