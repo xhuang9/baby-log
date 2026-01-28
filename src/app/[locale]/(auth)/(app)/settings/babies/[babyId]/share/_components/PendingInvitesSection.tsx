@@ -89,6 +89,7 @@ export function PendingInvitesSection({ babyId }: PendingInvitesSectionProps) {
   };
 
   const handleRevoke = async (inviteId: number) => {
+    // eslint-disable-next-line no-alert
     if (!confirm('Are you sure you want to revoke this invite?')) {
       return;
     }

@@ -175,9 +175,9 @@ const actualStartTime = getActualStartTime(timerKey);
 - **Total elapsed**: 15 minutes
 - **Actual start time**: 10:20 AM (10:35 AM - 15 minutes)
 
-**This is correct**: Feed started at 10:00 AM with 10-minute break doesn't mean baby was feeding for 35 minutes.
+**This is correct**: Feed started at 10:00 AM with 10-minute break doesn't mean baby was on feed for 35 minutes.
 
-**Edge case**: If you want to track continuous feeding (not wall clock time), use timer without pausing.
+**Edge case**: If you want to track continuous feed time (not wall clock time), use timer without pausing.
 
 ## Validation
 

@@ -34,12 +34,11 @@ function getDaysForWidth(width: number): number {
  * Returns different day counts based on viewport width
  */
 export function useResponsiveDays(): number {
-  const [days, setDays] = useState<number>(BREAKPOINTS.base.days);
+  const [days, setDays] = useState<number>(() =>
+    typeof window !== 'undefined' ? getDaysForWidth(window.innerWidth) : BREAKPOINTS.base.days,
+  );
 
   useEffect(() => {
-    // Set initial value
-    setDays(getDaysForWidth(window.innerWidth));
-
     const handleResize = () => {
       setDays(getDaysForWidth(window.innerWidth));
     };

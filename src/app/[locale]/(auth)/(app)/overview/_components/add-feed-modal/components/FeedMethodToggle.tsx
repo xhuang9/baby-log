@@ -16,7 +16,7 @@ export function FeedMethodToggle({ method, onMethodChange }: FeedMethodTogglePro
         className="h-12 flex-1"
         onClick={() => onMethodChange('bottle')}
       >
-        Bottle Feeding
+        Bottle Feed
       </Button>
       <Button
         type="button"
@@ -24,7 +24,7 @@ export function FeedMethodToggle({ method, onMethodChange }: FeedMethodTogglePro
         className="h-12 flex-1"
         onClick={() => onMethodChange('breast')}
       >
-        Breast Feeding
+        Breast Feed
       </Button>
     </ButtonGroup>
   );

@@ -83,17 +83,19 @@ export function useLogsFilters(): UseLogsFiltersResult {
       case 'today':
         return { startDate: start, endDate: end };
 
-      case 'yesterday':
+      case 'yesterday': {
         start.setDate(start.getDate() - 1);
         const yesterdayEnd = new Date(start);
         yesterdayEnd.setHours(23, 59, 59, 999);
         return { startDate: start, endDate: yesterdayEnd };
+      }
 
-      case 'twoDaysAgo':
+      case 'twoDaysAgo': {
         start.setDate(start.getDate() - 2);
         const twoDaysEnd = new Date(start);
         twoDaysEnd.setHours(23, 59, 59, 999);
         return { startDate: start, endDate: twoDaysEnd };
+      }
 
       case 'past7days':
         start.setDate(start.getDate() - 7);

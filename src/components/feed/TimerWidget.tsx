@@ -60,6 +60,7 @@ export function TimerWidget({
     };
 
     // Update elapsed time
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setElapsedSeconds(calculateElapsed());
 
     // Set up interval only if timer is running

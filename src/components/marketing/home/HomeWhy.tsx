@@ -9,7 +9,7 @@ const features = [
   {
     icon: Baby,
     title: 'Made for 0-12 months',
-    description: 'Features tailored for newborn care, including feeding, sleep, and diaper tracking.',
+    description: 'Features tailored for newborn care, including feed, sleep, and diaper tracking.',
   },
   {
     icon: CreditCard,

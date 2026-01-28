@@ -132,6 +132,7 @@ function Calendar({
         ...classNames,
       }}
       components={{
+        /* eslint-disable react/no-nested-component-definitions -- Standard pattern for react-day-picker components */
         Root: ({ className, rootRef, ...props }) => {
           return (
             <div
@@ -169,6 +170,7 @@ function Calendar({
             </td>
           );
         },
+        /* eslint-enable react/no-nested-component-definitions */
         ...components,
       }}
       {...props}

@@ -19,7 +19,7 @@ export function TimerModeSection({
       {/* Timer Widget */}
       <TimerWidget babyId={babyId} logType="feed" />
 
-      {/* End Side for breast feeding */}
+      {/* End Side for breast feed */}
       <EndSideToggle endSide={endSide} onEndSideChange={onEndSideChange} handMode={handMode} />
     </div>
   );

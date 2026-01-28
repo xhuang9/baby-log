@@ -13,7 +13,7 @@ source_paths:
 
 ## Purpose
 
-Custom baby feed tracking system with dual feeding methods (breast/bottle), automatic amount estimation for breast feeds, timer-based duration tracking, and caregiver attribution through access control.
+Custom baby feed tracking system with dual feed methods (breast/bottle), automatic amount estimation for breast feeds, timer-based duration tracking, and caregiver attribution through access control.
 
 ## Scope
 

@@ -113,7 +113,7 @@ export function AddFeedModal({
             onMethodChange={actions.setMethod}
           />
 
-          {/* Timer Mode - Only for breast feeding */}
+          {/* Timer Mode - Only for breast feed */}
           {state.inputMode === 'timer' && state.method === 'breast' && (
             <TimerModeSection
               babyId={babyId}
@@ -139,7 +139,7 @@ export function AddFeedModal({
             />
           )}
 
-          {/* Mode Switch - Only for breast feeding */}
+          {/* Mode Switch - Only for breast feed */}
           {state.method === 'breast' && (
             <ModeSwitch
               inputMode={state.inputMode}

@@ -45,10 +45,12 @@ function getDatesFromStartToToday(startDate: Date): Date[] {
   start.setHours(0, 0, 0, 0);
 
   // Generate dates from start to today
-  const current = new Date(start);
-  while (current <= today) {
-    dates.push(new Date(current));
-    current.setDate(current.getDate() + 1);
+  let currentDate = new Date(start);
+  const todayTime = today.getTime();
+  while (currentDate.getTime() <= todayTime) {
+    dates.push(new Date(currentDate));
+    currentDate = new Date(currentDate);
+    currentDate.setDate(currentDate.getDate() + 1);
   }
 
   return dates;

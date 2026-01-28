@@ -79,7 +79,6 @@ export async function processBabyMutation(
     }
 
     // Apply update
-    console.log('[SYNC] Applying baby update to DB:', { numericId, name: payload.name });
     const [updated] = await db
       .update(babiesSchema)
       .set({
@@ -92,8 +91,6 @@ export async function processBabyMutation(
       })
       .where(eq(babiesSchema.id, numericId))
       .returning();
-
-    console.log('[SYNC] Baby updated successfully:', { id: updated?.id, name: updated?.name });
 
     // Record sync event
     await writeSyncEvent({

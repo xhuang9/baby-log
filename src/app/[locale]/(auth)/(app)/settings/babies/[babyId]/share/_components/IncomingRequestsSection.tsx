@@ -15,10 +15,6 @@ export function IncomingRequestsSection({ babyId }: IncomingRequestsSectionProps
   const [processingId, setProcessingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadRequests();
-  }, []);
-
   const loadRequests = async () => {
     setLoading(true);
     try {
@@ -34,6 +30,10 @@ export function IncomingRequestsSection({ babyId }: IncomingRequestsSectionProps
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadRequests();
+  }, []);
 
   const handleApprove = async (requestId: number) => {
     setProcessingId(requestId);
@@ -60,6 +60,7 @@ export function IncomingRequestsSection({ babyId }: IncomingRequestsSectionProps
   };
 
   const handleReject = async (requestId: number) => {
+    // eslint-disable-next-line no-alert
     if (!confirm('Are you sure you want to reject this access request?')) {
       return;
     }

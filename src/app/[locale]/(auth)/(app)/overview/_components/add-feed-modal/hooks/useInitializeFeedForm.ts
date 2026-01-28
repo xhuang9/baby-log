@@ -36,7 +36,7 @@ export function useInitializeFeedForm({
   // When method changes, adjust input mode and times
   useEffect(() => {
     if (method === 'breast') {
-      // Breast feeding: use timer by default
+      // Breast feed: use timer by default
       setInputMode('timer');
 
       const twentyMinutesAgo = getBreastFeedStartTime();
@@ -46,7 +46,7 @@ export function useInitializeFeedForm({
       const now = new Date();
       setEndTime(now);
     } else {
-      // Bottle feeding: always use manual entry
+      // Bottle feed: always use manual entry
       setInputMode('manual');
       setStartTime(new Date());
     }

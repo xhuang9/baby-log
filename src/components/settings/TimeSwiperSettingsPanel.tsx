@@ -105,6 +105,7 @@ export function TimeSwiperSettingsPanel({
             onValueChange={value => saveSetting('markerMode', value as 'all' | 'now-only')}
             className="space-y-2"
           >
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- RadioGroupItem handles association */}
             <label
               className={cn(
                 'relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 transition-colors',
@@ -116,6 +117,7 @@ export function TimeSwiperSettingsPanel({
               <RadioGroupItem value="all" className="shrink-0" />
               <span className="text-sm">All markers (Now, ±1hr, ±2hr)</span>
             </label>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- RadioGroupItem handles association */}
             <label
               className={cn(
                 'relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 transition-colors',

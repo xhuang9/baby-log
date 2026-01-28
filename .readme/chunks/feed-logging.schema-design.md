@@ -9,7 +9,7 @@ source_paths:
 
 ## Purpose
 
-Database schema for tracking baby feedings with support for multiple feeding methods, automatic estimation, and user attribution.
+Database schema for tracking baby feeds with support for multiple feed methods, automatic estimation, and user attribution.
 
 ## Schema Definition
 
@@ -21,11 +21,11 @@ export const feedLogSchema = pgTable('feed_log', {
   method: text('method').notNull(), // 'breast' | 'bottle'
   startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
   endedAt: timestamp('ended_at', { withTimezone: true }), // nullable for ongoing feeds
-  durationMinutes: integer('duration_minutes'), // for breast feeding
+  durationMinutes: integer('duration_minutes'), // for breast feed
   amountMl: integer('amount_ml'), // in milliliters
   isEstimated: boolean('is_estimated').notNull().default(false),
   estimatedSource: text('estimated_source'), // 'user_rate|default_model|manual_guess'
-  endSide: text('end_side'), // 'left' | 'right' for breast feeding
+  endSide: text('end_side'), // 'left' | 'right' for breast feed
   ...timestamps, // createdAt, updatedAt
 }, t => [
   index('feed_log_baby_started_at_idx').on(t.babyId, t.startedAt),
@@ -37,7 +37,7 @@ export const feedLogSchema = pgTable('feed_log', {
 ### 1. Method Field as Text (Not Enum)
 
 **Choice**: Used `text` instead of `pgEnum` for method.
-**Why**: Allows easier extension (e.g., adding "mixed" or "tube" feeding types without migration).
+**Why**: Allows easier extension (e.g., adding "mixed" or "tube" feed types without migration).
 **Trade-off**: Application enforces type safety via TypeScript.
 
 ### 2. Optional `endedAt` for Ongoing Feeds

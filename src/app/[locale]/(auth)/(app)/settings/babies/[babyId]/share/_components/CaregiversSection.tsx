@@ -49,6 +49,7 @@ export function CaregiversSection({ babyId }: CaregiversSectionProps) {
   // Fetch from server on mount
   useEffect(() => {
     fetchFromServer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [babyId]);
 
   // Fetch caregivers from IndexedDB (fallback)
@@ -111,6 +112,7 @@ export function CaregiversSection({ babyId }: CaregiversSectionProps) {
   }, [babyId]);
 
   const handleRemove = async (userId: number) => {
+    // eslint-disable-next-line no-alert
     if (!confirm('Are you sure you want to remove this caregiver?')) {
       return;
     }

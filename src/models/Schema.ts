@@ -133,11 +133,11 @@ export const feedLogSchema = pgTable('feed_log', {
   method: text('method').notNull(), // e.g. breast, bottle
   startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
   endedAt: timestamp('ended_at', { withTimezone: true }), // can be null if ongoing
-  durationMinutes: integer('duration_minutes'), // for breast feeding duration
+  durationMinutes: integer('duration_minutes'), // for breast feed duration
   amountMl: integer('amount_ml'), // in milliliters
   isEstimated: boolean('is_estimated').notNull().default(false),
   estimatedSource: text('estimated_source'), // e.g. user_rate|default_model|manual_guess
-  endSide: text('end_side'), // e.g. left, right (for breast feeding)
+  endSide: text('end_side'), // e.g. left, right (for breast feed)
   ...timestamps,
 }, t => [
   index('feed_log_baby_started_at_idx').on(t.babyId, t.startedAt),

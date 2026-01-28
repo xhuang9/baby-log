@@ -53,6 +53,7 @@ export function useAccessRevocationDetection(locale: string = 'en') {
       return;
     }
 
+    // eslint-disable-next-line no-console -- Debug logging for access revocation
     console.log(`[Access Revocation] Checking access for baby ${babyId}`);
     setIsChecking(true);
     checkedBabies.current.add(babyId);
@@ -100,7 +101,7 @@ export function useAccessRevocationDetection(locale: string = 'en') {
           dedupeKey: `access-revoked-${babyId}`,
         });
       } else {
-        console.log(`[Access Revocation] Access confirmed for baby ${babyId}`);
+        // Access confirmed, no action needed
       }
     } catch (error) {
       console.error('[Access Revocation] Error checking access:', error);

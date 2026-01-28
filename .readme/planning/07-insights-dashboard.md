@@ -35,7 +35,7 @@ shadcn/ui uses Recharts under the hood. Available chart types:
 | Feed frequency | Line chart (trend) |
 | Breast vs bottle ratio | Donut chart |
 | Average feed duration | Stat card |
-| Feeding times pattern | Heat map (hour of day) |
+| Feed times pattern | Heat map (hour of day) |
 
 ### Sleep Insights (when implemented)
 

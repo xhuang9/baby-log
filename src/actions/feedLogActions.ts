@@ -71,7 +71,7 @@ export async function createFeedLog(data: CreateFeedLogData): Promise<CreateFeed
     }
 
     // Estimate amount for breast feeds based on duration
-    // Simple estimation: ~1ml per minute of feeding (can be refined with baby age/gender)
+    // Simple estimation: ~1ml per minute of feed (can be refined with baby age/gender)
     let amountMl = data.amountMl ?? null;
     let isEstimated = false;
     let estimatedSource: string | null = null;

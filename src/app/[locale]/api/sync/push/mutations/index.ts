@@ -58,7 +58,6 @@ export async function processMutation(
 
     switch (entityType) {
       case 'baby':
-        console.log('[SYNC] Processing baby mutation:', { mutationId, entityId, op, userId });
         return await processBabyMutation(mutationId, entityId, op, payload, userId);
       case 'feed_log':
         return await processFeedLogMutation(mutationId, entityId, op, payload, userId, babyId);

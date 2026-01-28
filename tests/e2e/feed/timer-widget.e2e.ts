@@ -2,7 +2,7 @@
  * Timer Widget E2E Tests
  *
  * Tests the timer widget functionality in the feed logging flow.
- * The timer widget is used to track feeding duration.
+ * The timer widget is used to track feed duration.
  */
 
 import { expect, test } from '@playwright/test';
@@ -340,7 +340,7 @@ test.describe('Timer Widget', () => {
       await expect(page.getByText('30')).toBeVisible(); // seconds
     });
 
-    test.skip('should handle hour display correctly', async ({ page }) => {
+    test.skip('should handle hour display correctly', async ({ page: _page }) => {
       // TODO: Requires authenticated user with baby and ability to set large time
       // This would need to be tested with mock data or timer store manipulation
       // 3665 seconds = 01:01:05

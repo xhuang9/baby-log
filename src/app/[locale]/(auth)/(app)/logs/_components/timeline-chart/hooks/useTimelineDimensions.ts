@@ -42,17 +42,18 @@ function getDimensionsForWidth(width: number): TimelineDimensions {
  * Returns smaller dimensions on mobile for better fit
  */
 export function useTimelineDimensions(): TimelineDimensions {
-  const [dimensions, setDimensions] = useState<TimelineDimensions>(() => ({
-    hourHeight: HOUR_HEIGHT_MOBILE, // Default to mobile for SSR
-    totalHeight: TOTAL_HEIGHT_MOBILE,
-    gutterWidth: GUTTER_WIDTH_MOBILE,
-    minBlockHeight: MIN_BLOCK_HEIGHT,
-  }));
+  const [dimensions, setDimensions] = useState<TimelineDimensions>(() =>
+    typeof window !== 'undefined'
+      ? getDimensionsForWidth(window.innerWidth)
+      : {
+          hourHeight: HOUR_HEIGHT_MOBILE, // Default to mobile for SSR
+          totalHeight: TOTAL_HEIGHT_MOBILE,
+          gutterWidth: GUTTER_WIDTH_MOBILE,
+          minBlockHeight: MIN_BLOCK_HEIGHT,
+        },
+  );
 
   useEffect(() => {
-    // Set initial value
-    setDimensions(getDimensionsForWidth(window.innerWidth));
-
     const handleResize = () => {
       setDimensions(getDimensionsForWidth(window.innerWidth));
     };

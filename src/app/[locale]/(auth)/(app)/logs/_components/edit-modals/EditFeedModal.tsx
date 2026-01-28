@@ -146,7 +146,7 @@ export function EditFeedModal({ log, open, onOpenChange }: EditFeedModalProps) {
           onMethodChange={actions.setMethod}
         />
 
-        {/* Timer Mode - Only for breast feeding */}
+        {/* Timer Mode - Only for breast feed */}
         {state.inputMode === 'timer' && state.method === 'breast' && (
           <TimerModeSection
             babyId={log.babyId}
@@ -172,7 +172,7 @@ export function EditFeedModal({ log, open, onOpenChange }: EditFeedModalProps) {
           />
         )}
 
-        {/* Mode Switch - Only for breast feeding */}
+        {/* Mode Switch - Only for breast feed */}
         {state.method === 'breast' && (
           <ModeSwitch
             inputMode={state.inputMode}

@@ -377,8 +377,7 @@ export function useBootstrapMachine(
         const valid = await validateSessionForUser(clerkUser.id);
 
         if (!valid) {
-          console.log('[Bootstrap] User switch detected - clearing cached data');
-          console.log('[Bootstrap] New user:', clerkUser.id);
+          // User switch detected - clearing cached data from previous user
 
           // Clear all IndexedDB data from previous user
           await clearAllLocalData();

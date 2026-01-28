@@ -40,9 +40,6 @@ export function useCurrentTime(): UseCurrentTimeResult {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
-    // Update immediately to sync with real time
-    setNow(new Date());
-
     // Calculate ms until next minute
     const msUntilNextMinute = (60 - new Date().getSeconds()) * 1000;
 

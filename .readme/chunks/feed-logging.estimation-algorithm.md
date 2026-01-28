@@ -34,7 +34,7 @@ if (data.method === 'breast' && data.durationMinutes && !amountMl) {
 
 ### Why 1.2 ml/minute?
 
-Research suggests newborns transfer approximately 1-1.5ml per minute during effective breast feeding. The 1.2 ml/minute rate is a conservative mid-point suitable for:
+Research suggests newborns transfer approximately 1-1.5ml per minute during effective breast feed. The 1.2 ml/minute rate is a conservative mid-point suitable for:
 
 - **Newborns** (0-3 months): ~1-1.5 ml/min
 - **Older babies** (4-12 months): ~1.5-2 ml/min (but feed faster, so total is similar)

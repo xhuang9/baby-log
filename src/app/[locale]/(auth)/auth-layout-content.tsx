@@ -13,9 +13,8 @@ export function AuthLayoutContent({ children }: { children: ReactNode }) {
     const originalSignOut = clerk.signOut.bind(clerk);
 
     // Wrap Clerk's signOut to check pending changes first
+    // eslint-disable-next-line react-hooks/immutability
     clerk.signOut = (async (options?: any) => {
-      console.log('[AuthLayout] Intercepting signOut - checking pending changes');
-
       const shouldProceed = await requestLogout();
 
       if (shouldProceed) {

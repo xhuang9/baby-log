@@ -95,6 +95,7 @@ export default function BootstrapPage() {
     }
 
     // If authenticated (any status other than init/no_session), process the invite
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProcessingInvite(true);
 
     acceptInviteByToken({ token })

@@ -11,6 +11,7 @@ import { localDb } from '../database';
  * Clear all local data for a baby when access is revoked
  */
 export async function clearRevokedBabyData(babyId: number, userId: number): Promise<void> {
+  // eslint-disable-next-line no-console -- Debug logging for access revocation
   console.log(`[Access Revoked] Clearing local data for baby ${babyId}`);
 
   await localDb.transaction('rw', [
@@ -27,6 +28,7 @@ export async function clearRevokedBabyData(babyId: number, userId: number): Prom
       .equals([userId, babyId])
       .delete();
 
+    // eslint-disable-next-line no-console -- Debug logging for access revocation
     console.log(`[Access Revoked] Deleted baby access record`);
 
     // Check if there are other users with access to this baby
@@ -39,12 +41,14 @@ export async function clearRevokedBabyData(babyId: number, userId: number): Prom
     if (otherAccess === 0) {
       // Delete baby
       await localDb.babies.delete(babyId);
+      // eslint-disable-next-line no-console -- Debug logging for access revocation
       console.log(`[Access Revoked] Deleted baby record`);
 
       // Delete all logs for this baby
       await localDb.feedLogs.where('babyId').equals(babyId).delete();
       await localDb.sleepLogs.where('babyId').equals(babyId).delete();
       await localDb.nappyLogs.where('babyId').equals(babyId).delete();
+      // eslint-disable-next-line no-console -- Debug logging for access revocation
       console.log(`[Access Revoked] Deleted all logs for baby`);
     }
 
@@ -63,9 +67,11 @@ export async function clearRevokedBabyData(babyId: number, userId: number): Prom
       })
       .delete();
 
+    // eslint-disable-next-line no-console -- Debug logging for access revocation
     console.log(`[Access Revoked] Deleted ${deletedMutations} pending mutations`);
   });
 
+  // eslint-disable-next-line no-console -- Debug logging for access revocation
   console.log(`[Access Revoked] Cleanup complete for baby ${babyId}`);
 }
 

@@ -36,7 +36,6 @@ export async function signOutCleanup(): Promise<OperationResult<void>> {
     // 1. Clear all IndexedDB data (11 tables)
     try {
       await clearAllLocalData();
-      console.log('[Logout] Successfully cleared all IndexedDB data');
     } catch (error) {
       // Log but continue - session invalidation is primary security
       console.error('[Logout] Failed to clear IndexedDB:', error);
@@ -52,7 +51,6 @@ export async function signOutCleanup(): Promise<OperationResult<void>> {
     // 3. Clear additional sessionStorage keys
     sessionStorage.removeItem('baby-log:init-step');
 
-    console.log('[Logout] Cleanup complete');
     return success(undefined);
   } catch (error) {
     console.error('[Logout] Cleanup failed:', error);
