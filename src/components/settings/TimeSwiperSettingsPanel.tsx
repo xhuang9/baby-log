@@ -102,7 +102,7 @@ export function TimeSwiperSettingsPanel({
           <p className="text-sm font-medium">Marker display</p>
           <RadioGroup
             value={settings.markerMode || 'all'}
-            onValueChange={(value) => saveSetting('markerMode', value as 'all' | 'now-only')}
+            onValueChange={value => saveSetting('markerMode', value as 'all' | 'now-only')}
             className="space-y-2"
           >
             <label

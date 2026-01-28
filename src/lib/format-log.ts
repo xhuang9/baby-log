@@ -67,17 +67,27 @@ export function formatTimeSwiperDate(date: Date, currentTime: Date): string {
   const diffMs = selectedDate.getTime() - today.getTime();
   const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return ''; // Today
-  if (diffDays === 1) return 'Tomorrow';
-  if (diffDays === -1) return 'Yesterday';
-  if (diffDays === -2) return '2 days ago';
-  if (diffDays === -3) return '3 days ago';
+  if (diffDays === 0) {
+    return '';
+  } // Today
+  if (diffDays === 1) {
+    return 'Tomorrow';
+  }
+  if (diffDays === -1) {
+    return 'Yesterday';
+  }
+  if (diffDays === -2) {
+    return '2 days ago';
+  }
+  if (diffDays === -3) {
+    return '3 days ago';
+  }
 
   // 4+ days ago or future dates: show formatted date
   return date.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
-    year: 'numeric'
+    year: 'numeric',
   });
 }
 

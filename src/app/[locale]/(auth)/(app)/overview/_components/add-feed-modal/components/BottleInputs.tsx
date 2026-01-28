@@ -1,5 +1,5 @@
 import { AmountSlider } from '@/components/feed/AmountSlider';
-import { TimeSwiperWithDate } from '@/components/feed/TimeSwiper';
+import { TimeSwiperWithDate } from '@/components/feed/TimeSwiperWithDate';
 import { Label } from '@/components/ui/label';
 
 type BottleInputsProps = {

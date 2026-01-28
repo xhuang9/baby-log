@@ -1,13 +1,10 @@
 'use client';
 
-import { RotateCcw } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
-import { DatePickerTrigger } from '../DatePickerTrigger';
 import { TimeSwiper } from './TimeSwiper';
-import { getDayOffset } from './types';
 
 type TimeSwiperWithDateProps = {
   /** Current selected date/time value */
@@ -62,13 +59,10 @@ export function TimeSwiperWithDate({
   const displayDate = useMemo(() => {
     const result = new Date(baseDate);
     result.setDate(result.getDate() + swiperDayOffset);
+    // Apply time from value
+    result.setHours(value.getHours(), value.getMinutes(), 0, 0);
     return result;
-  }, [baseDate, swiperDayOffset]);
-
-  // Check if we're showing a different day than today
-  const dayOffset = useMemo(() => {
-    return getDayOffset(displayDate, currentTime);
-  }, [displayDate, currentTime]);
+  }, [baseDate, swiperDayOffset, value]);
 
   // Date picker range (1 year back to tomorrow)
   const minSelectableDate = useMemo(() => {
@@ -129,33 +123,19 @@ export function TimeSwiperWithDate({
 
   return (
     <div className={cn('relative', className)}>
-      {/* Date indicator and reset button - shown when not today */}
-      {dayOffset !== 0 && (
-        <div className="mb-2 flex items-center justify-between">
-          <DatePickerTrigger
-            selectedDate={displayDate}
-            currentTime={currentTime}
-            onDateSelect={handleDateSelect}
-            minDate={minSelectableDate}
-            maxDate={maxSelectableDate}
-          />
-          <button
-            type="button"
-            onClick={handleResetToNow}
-            className="flex items-center gap-1 text-xs text-primary underline hover:no-underline"
-          >
-            <RotateCcw className="h-3 w-3" />
-            Now
-          </button>
-        </div>
-      )}
-
       <TimeSwiper
         value={value}
         onChange={handleSwiperChange}
         isToday={isToday}
         onDayOffsetChange={handleDayOffsetChange}
         handMode={handMode}
+        // Pass date UI props to render inside the swiper
+        displayDate={displayDate}
+        onDateSelect={handleDateSelect}
+        onResetToNow={handleResetToNow}
+        minSelectableDate={minSelectableDate}
+        maxSelectableDate={maxSelectableDate}
+        currentTime={currentTime}
       />
     </div>
   );

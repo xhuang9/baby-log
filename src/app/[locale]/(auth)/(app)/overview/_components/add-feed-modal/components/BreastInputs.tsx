@@ -1,5 +1,5 @@
 import { DurationDisplay } from '@/components/activity-modals';
-import { TimeSwiperWithDate } from '@/components/feed/TimeSwiper';
+import { TimeSwiperWithDate } from '@/components/feed/TimeSwiperWithDate';
 import { Label } from '@/components/ui/label';
 import { EndSideToggle } from './EndSideToggle';
 
