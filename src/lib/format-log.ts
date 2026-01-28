@@ -1,6 +1,6 @@
 'use client';
 
-import type { LocalFeedLog, LocalSleepLog } from '@/lib/local-db';
+import type { LocalFeedLog, LocalNappyLog, LocalSleepLog } from '@/lib/local-db';
 
 // Re-export from activity-modals for convenience
 export { formatDuration as formatDurationFromMinutes } from '@/components/activity-modals/utils';
@@ -96,11 +96,11 @@ export function formatTimeSwiperDate(date: Date, currentTime: Date): string {
  */
 export type UnifiedLog = {
   id: string;
-  type: 'feed' | 'sleep';
+  type: 'feed' | 'sleep' | 'nappy';
   babyId: number;
   startedAt: Date;
   caregiverLabel: string | null;
-  data: LocalFeedLog | LocalSleepLog;
+  data: LocalFeedLog | LocalSleepLog | LocalNappyLog;
 };
 
 /**
@@ -174,6 +174,15 @@ export function formatLogSubtitle(log: UnifiedLog): string {
     return JSON.stringify({ left: leftPart, right: rightPart });
   }
 
+  if (log.type === 'nappy') {
+    const nappy = log.data as LocalNappyLog;
+    const typeLabel = nappy.type
+      ? nappy.type.charAt(0).toUpperCase() + nappy.type.slice(1)
+      : 'Unknown';
+    const leftPart = `Nappy · ${typeLabel}`;
+    return JSON.stringify({ left: leftPart, right: rightPart });
+  }
+
   return '';
 }
 
@@ -201,6 +210,14 @@ export function formatLogSubtitleExpanded(log: UnifiedLog): string {
     const sleep = log.data as LocalSleepLog;
     const duration = formatDuration(sleep.durationMinutes);
     return `${timeAgo} - duration ${duration}${caregiver}`;
+  }
+
+  if (log.type === 'nappy') {
+    const nappy = log.data as LocalNappyLog;
+    const typeLabel = nappy.type
+      ? nappy.type.charAt(0).toUpperCase() + nappy.type.slice(1)
+      : 'Unknown';
+    return `${timeAgo} - ${typeLabel}${caregiver}`;
   }
 
   return timeAgo;

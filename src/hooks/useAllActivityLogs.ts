@@ -5,10 +5,11 @@ import type { UnifiedLog } from '@/lib/format-log';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { localDb } from '@/lib/local-db';
 import { useFeedLogsByDateRange } from './useFeedLogs';
+import { useNappyLogsByDateRange } from './useNappyLogs';
 import { useSleepLogsByDateRange } from './useSleepLogs';
 
 /**
- * Fetch all activity logs (feed + sleep) for a baby within a date range
+ * Fetch all activity logs (feed + sleep + nappy) for a baby within a date range
  * Returns unified logs sorted DESC by startedAt with caregiver labels
  *
  * Usage:
@@ -36,6 +37,12 @@ export function useAllActivityLogs(
     endDate,
   );
 
+  const nappies = useNappyLogsByDateRange(
+    activeTypes.includes('nappy') ? babyId : null,
+    startDate,
+    endDate,
+  );
+
   // Merge and enrich with caregiver data
   const allLogs = useLiveQuery(
     async () => {
@@ -43,10 +50,11 @@ export function useAllActivityLogs(
         return [];
       }
 
-      // If any feed/sleep queries are loading (undefined), return undefined
+      // If any feed/sleep/nappy queries are loading (undefined), return undefined
       if (
         (activeTypes.includes('feed') && feeds === undefined)
         || (activeTypes.includes('sleep') && sleeps === undefined)
+        || (activeTypes.includes('nappy') && nappies === undefined)
       ) {
         return undefined;
       }
@@ -91,10 +99,29 @@ export function useAllActivityLogs(
         }
       }
 
+      // Transform nappies
+      if (nappies) {
+        for (const nappy of nappies) {
+          const access = await localDb.babyAccess
+            .where('[userId+babyId]')
+            .equals([nappy.loggedByUserId, babyId])
+            .first();
+
+          unified.push({
+            id: nappy.id,
+            type: 'nappy',
+            babyId: nappy.babyId,
+            startedAt: nappy.startedAt,
+            caregiverLabel: access?.caregiverLabel ?? null,
+            data: nappy,
+          });
+        }
+      }
+
       // Sort DESC by startedAt (newest first)
       return unified.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
     },
-    [babyId, feeds, sleeps, activeTypes.join(',')],
+    [babyId, feeds, sleeps, nappies, activeTypes.join(',')],
     undefined,
   );
 

@@ -8,7 +8,7 @@ import type { feedLogSchema } from '@/models/Schema';
 
 export function serializeFeedLog(log: typeof feedLogSchema.$inferSelect): Record<string, unknown> {
   return {
-    id: String(log.id),
+    id: log.id, // Already text (UUID)
     babyId: log.babyId,
     loggedByUserId: log.loggedByUserId,
     method: log.method,

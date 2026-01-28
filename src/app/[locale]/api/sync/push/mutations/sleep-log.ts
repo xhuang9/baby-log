@@ -30,6 +30,7 @@ export async function processSleepLogMutation(
     const [inserted] = await db
       .insert(sleepLogSchema)
       .values({
+        id: payload.id as string, // Use client-generated UUID
         babyId,
         loggedByUserId: userId,
         startedAt: new Date(payload.startedAt as string),

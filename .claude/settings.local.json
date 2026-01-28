@@ -44,7 +44,10 @@
       "Bash(pnpm dlx:*)",
       "Bash(npx tsc:*)",
       "Bash(git -C /Users/xiaotianhuang/Sites/localhost/_binary-top/baby-log diff src/components/feed/TimeSwiper/hooks/useTimelinePosition.ts)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm db:generate:*)",
+      "Bash(git checkout:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

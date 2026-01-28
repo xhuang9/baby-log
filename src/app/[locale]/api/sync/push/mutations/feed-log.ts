@@ -30,6 +30,7 @@ export async function processFeedLogMutation(
     const [inserted] = await db
       .insert(feedLogSchema)
       .values({
+        id: payload.id as string, // Use client-generated UUID
         babyId,
         loggedByUserId: userId,
         method: payload.method as string,

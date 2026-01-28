@@ -12,10 +12,10 @@ import { deleteNappyLog, saveNappyLogs } from '@/lib/local-db';
  */
 export async function applyNappyLogChange(
   op: string,
-  id: number,
+  id: number | string, // Can be number (old data) or string (UUID)
   data: Record<string, unknown> | null,
 ): Promise<void> {
-  const stringId = String(id);
+  const stringId = String(id); // Convert to string for IndexedDB
 
   if (op === 'delete') {
     await deleteNappyLog(stringId);

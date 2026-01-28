@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { localDb } from '@/lib/local-db/database';
 import { ActivityTile } from './ActivityTile';
 import { FeedTile } from './FeedTile';
+import { NappyTile } from './NappyTile';
 import { SleepTile } from './SleepTile';
 
 type OverviewContentProps = {
@@ -48,14 +49,18 @@ export function OverviewContent({ locale }: OverviewContentProps) {
     const feeds = await localDb.feedLogs
       .where('babyId')
       .equals(babyId)
-      .reverse()
-      .sortBy('startedAt');
+      .toArray();
 
-    if (feeds.length === 0 || !feeds[0]) {
+    if (feeds.length === 0) {
       return null;
     }
 
+    // Sort descending by startedAt (newest first)
+    feeds.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
     const latestFeed = feeds[0];
+    if (!latestFeed) {
+      return null;
+    }
 
     // Get caregiver label from babyAccess
     const access = await localDb.babyAccess
@@ -64,12 +69,8 @@ export function OverviewContent({ locale }: OverviewContentProps) {
       .first();
 
     // Transform to FeedLogWithCaregiver type expected by FeedTile
-    // Note: LocalFeedLog has id as string (UUID), but FeedLogWithCaregiver expects number
-    // We'll use a hash of the UUID for the numeric id (only for display purposes)
-    const numericId = Number.parseInt(latestFeed.id.slice(0, 8), 16);
-
     const transformedFeed: FeedLogWithCaregiver = {
-      id: numericId,
+      id: latestFeed.id, // UUID string
       babyId: latestFeed.babyId,
       method: latestFeed.method,
       startedAt: latestFeed.startedAt,
@@ -93,14 +94,18 @@ export function OverviewContent({ locale }: OverviewContentProps) {
     const sleeps = await localDb.sleepLogs
       .where('babyId')
       .equals(babyId)
-      .reverse()
-      .sortBy('startedAt');
+      .toArray();
 
-    if (sleeps.length === 0 || !sleeps[0]) {
+    if (sleeps.length === 0) {
       return null;
     }
 
+    // Sort descending by startedAt (newest first)
+    sleeps.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
     const latestSleep = sleeps[0];
+    if (!latestSleep) {
+      return null;
+    }
 
     // Get caregiver label from babyAccess
     const access = await localDb.babyAccess
@@ -114,8 +119,41 @@ export function OverviewContent({ locale }: OverviewContentProps) {
     };
   }, [babyId]);
 
+  // Read latest nappy from IndexedDB with caregiver info
+  const latestNappyData = useLiveQuery(async () => {
+    if (!babyId) {
+      return null;
+    }
+    const nappies = await localDb.nappyLogs
+      .where('babyId')
+      .equals(babyId)
+      .toArray();
+
+    if (nappies.length === 0) {
+      return null;
+    }
+
+    // Sort descending by startedAt (newest first)
+    nappies.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
+    const latestNappy = nappies[0];
+    if (!latestNappy) {
+      return null;
+    }
+
+    // Get caregiver label from babyAccess
+    const access = await localDb.babyAccess
+      .where('[userId+babyId]')
+      .equals([latestNappy.loggedByUserId, babyId])
+      .first();
+
+    return {
+      ...latestNappy,
+      caregiverLabel: access?.caregiverLabel ?? null,
+    };
+  }, [babyId]);
+
   // Loading state while Dexie initializes
-  if (userData === undefined || latestFeedData === undefined || latestSleepData === undefined) {
+  if (userData === undefined || latestFeedData === undefined || latestSleepData === undefined || latestNappyData === undefined) {
     return <OverviewSkeleton />;
   }
 
@@ -147,7 +185,7 @@ export function OverviewContent({ locale }: OverviewContentProps) {
     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
       <FeedTile babyId={babyId} latestFeed={latestFeedData} />
       <SleepTile babyId={babyId} latestSleep={latestSleepData} />
-      <ActivityTile title="Nappy" subtitle="Coming soon" activity="nappy" disabled />
+      <NappyTile babyId={babyId} latestNappy={latestNappyData} />
       <ActivityTile title="Solids" subtitle="Coming soon" activity="solids" disabled />
       <ActivityTile title="Bath" subtitle="Coming soon" activity="bath" disabled />
     </div>

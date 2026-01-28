@@ -10,9 +10,7 @@ type DatePickerTriggerProps = {
   selectedDate: Date;
   currentTime: Date;
   onDateSelect: (date: Date) => void;
-  /** Min selectable date (1 year back from Jan 1) */
   minDate: Date;
-  /** Max selectable date (+1 day from current time) */
   maxDate: Date;
 };
 
@@ -24,7 +22,6 @@ export function DatePickerTrigger({
   maxDate,
 }: DatePickerTriggerProps) {
   const [open, setOpen] = useState(false);
-
   const displayLabel = formatTimeSwiperDate(selectedDate, currentTime);
 
   // Don't render if today (no label to show)
@@ -48,9 +45,7 @@ export function DatePickerTrigger({
               setOpen(false);
             }
           }}
-          disabled={(date) => {
-            return date < minDate || date > maxDate;
-          }}
+          disabled={date => date < minDate || date > maxDate}
           initialFocus
         />
       </PopoverContent>

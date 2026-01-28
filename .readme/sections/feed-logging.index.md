@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-27T00:00:00Z
+last_verified_at: 2026-01-28T00:00:00Z
 source_paths:
   - src/actions/feedLogActions.ts
   - src/models/Schema.ts
@@ -7,6 +7,10 @@ source_paths:
   - src/components/feed/
   - src/stores/useTimerStore.ts
   - src/hooks/useHoldAction.ts
+  - src/app/[locale]/api/sync/push/mutations/nappy-log.ts
+  - src/lib/local-db/nappy-logs.ts
+  - src/app/[locale]/(auth)/(app)/logs/_components/NappyTile.tsx
+  - src/app/[locale]/(auth)/(app)/logs/_components/NappyLogModal.tsx
 ---
 
 # Feed Logging System
@@ -105,6 +109,13 @@ This section documents the feed logging implementation including:
 
 - **Content**: Formatting utilities for dates (relative), durations, times, and structured log display with left/right columns for efficient scanning
 - **Read when**: Working with log display, implementing formatting logic, understanding LogItem parsing, or extending formatting for new activity types
+
+### Nappy Logging
+
+#### `chunks/feed-logging.nappy-log-feature.md`
+
+- **Content**: Complete nappy log implementation with schema, UI components (modal, tile), sync handlers, timeline defaults, and activity filtering
+- **Read when**: Working with nappy logs, implementing new instant-event activity types, or understanding the pattern for zero-duration logging
 
 ### UI Patterns
 

@@ -8,7 +8,7 @@ import type { nappyLogSchema } from '@/models/Schema';
 
 export function serializeNappyLog(log: typeof nappyLogSchema.$inferSelect): Record<string, unknown> {
   return {
-    id: String(log.id),
+    id: log.id, // Already text (UUID)
     babyId: log.babyId,
     loggedByUserId: log.loggedByUserId,
     type: log.type,

@@ -1,7 +1,7 @@
 'use client';
 
 import type { UnifiedLog } from '@/lib/format-log';
-import type { LocalFeedLog, LocalSleepLog } from '@/lib/local-db';
+import type { LocalFeedLog, LocalNappyLog, LocalSleepLog } from '@/lib/local-db';
 import { formatDuration } from '@/lib/format-log';
 import { cn } from '@/lib/utils';
 
@@ -24,6 +24,9 @@ function getActivityClass(log: UnifiedLog): string {
   }
   if (log.type === 'sleep') {
     return 'activity-block--sleep';
+  }
+  if (log.type === 'nappy') {
+    return 'activity-block--nappy';
   }
   return '';
 }
@@ -51,6 +54,16 @@ function getActivityLabel(log: UnifiedLog): { primary: string; secondary?: strin
     return {
       primary: 'Sleep',
       secondary: sleep.durationMinutes ? formatDuration(sleep.durationMinutes) : undefined,
+    };
+  }
+
+  if (log.type === 'nappy') {
+    const nappy = log.data as LocalNappyLog;
+    const typeLabel = nappy.type
+      ? nappy.type.charAt(0).toUpperCase() + nappy.type.slice(1)
+      : 'Nappy';
+    return {
+      primary: typeLabel,
     };
   }
 

@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-22T00:00:00Z
+last_verified_at: 2026-01-28T00:00:00Z
 source_paths:
   - src/lib/local-db/
   - src/lib/db/helpers/sync-events.ts
@@ -95,6 +95,10 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
 - `.readme/chunks/local-first.delta-sync-api.md`
   - Content: HTTP API contracts for GET /api/sync/pull and POST /api/sync/push endpoints with request/response formats
   - Read when: Implementing sync endpoints, debugging API integration, or understanding sync protocol
+
+- `.readme/chunks/local-first.sync-pagination-strategy.md`
+  - Content: ID-based cursor pagination using sync_events.id, cursor lifecycle, and implications after UUID migration
+  - Read when: Debugging sync pagination issues, understanding cursor management, or implementing new log types with sync
 
 - `.readme/chunks/local-first.delta-sync-client.md`
   - Content: Client-side sync service and React hooks (useSyncScheduler, useMultiBabySync) for automatic polling and outbox flushing

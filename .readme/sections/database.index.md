@@ -1,10 +1,12 @@
 ---
-last_verified_at: 2026-01-10T00:00:00Z
+last_verified_at: 2026-01-28T00:00:00Z
 source_paths:
   - src/models/Schema.ts
   - src/lib/db/index.ts
   - drizzle.config.ts
   - migrations/
+  - src/actions/feedLogActions.ts
+  - src/app/[locale]/api/sync/push/mutations/
 ---
 
 # Database Overview
@@ -42,3 +44,7 @@ All database operations are type-safe with automatic type generation from the sc
 - `.readme/chunks/database.pglite-local.md`
   - Content: Local PGlite server setup for file-based and in-memory modes
   - Read when: Running local dev without remote DB, testing builds, or working offline
+
+- `.readme/chunks/database.uuid-migration.md`
+  - Content: UUID migration for log entities (feed_log, sleep_log, nappy_log), client-generated IDs, and sync correctness
+  - Read when: Understanding why log IDs are text/UUIDs, implementing new log types, or debugging sync ID mismatches

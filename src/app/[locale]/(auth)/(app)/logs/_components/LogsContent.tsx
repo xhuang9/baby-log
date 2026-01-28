@@ -9,6 +9,7 @@ import { ACTIVITY_TYPES, useLogsFilters } from '@/hooks/useLogsFilters';
 import { localDb } from '@/lib/local-db';
 import { ActivityTypePills } from './ActivityTypePills';
 import { EditFeedModal } from './edit-modals/EditFeedModal';
+import { EditNappyModal } from './edit-modals/EditNappyModal';
 import { EditSleepModal } from './edit-modals/EditSleepModal';
 import { LogsFilters } from './LogsFilters';
 import { LogsList } from './LogsList';
@@ -144,6 +145,18 @@ export function LogsContent() {
       {editingLog?.type === 'sleep' && (
         <EditSleepModal
           log={editingLog}
+          open={Boolean(editingLog)}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleCloseEditModal();
+            }
+          }}
+        />
+      )}
+
+      {editingLog?.type === 'nappy' && (
+        <EditNappyModal
+          nappy={editingLog.data as import('@/lib/local-db').LocalNappyLog}
           open={Boolean(editingLog)}
           onOpenChange={(open) => {
             if (!open) {

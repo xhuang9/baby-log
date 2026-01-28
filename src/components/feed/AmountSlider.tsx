@@ -1,7 +1,7 @@
 'use client';
 
 import type { AmountSliderSettingsState } from '@/components/settings';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ButtonStack } from '@/components/input-controls/ButtonStack';
 import { SettingsPopoverWrapper } from '@/components/input-controls/SettingsPopoverWrapper';
 import {
@@ -13,6 +13,23 @@ import { Slider } from '@/components/ui/slider';
 import { getUIConfig, updateUIConfig } from '@/lib/local-db/helpers/ui-config';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores/useUserStore';
+
+// Acceleration tiers for press-and-hold (amount-specific)
+const AMOUNT_SPEED_TIERS: readonly { threshold: number; multiplier: number; repeatMs: number }[] = [
+  { threshold: 0, multiplier: 1, repeatMs: 200 }, // 0.0s – 0.6s: 1x increment
+  { threshold: 600, multiplier: 2, repeatMs: 150 }, // 0.6s – 1.5s: 2x increment
+  { threshold: 1500, multiplier: 5, repeatMs: 120 }, // 1.5s – 3.0s: 5x increment
+  { threshold: 3000, multiplier: 10, repeatMs: 100 }, // 3.0s+: 10x increment
+] as const;
+
+function getAmountTier(index: number): { threshold: number; multiplier: number; repeatMs: number } {
+  const tier = AMOUNT_SPEED_TIERS[index];
+  if (tier) {
+    return tier;
+  }
+  // Fallback to first tier (always defined)
+  return { threshold: 0, multiplier: 1, repeatMs: 200 };
+}
 
 type AmountSliderProps = {
   value: number; // Always in ml
@@ -136,16 +153,80 @@ export function AmountSlider({
     return displayValue;
   }, [useMetric]);
 
-  // +/- adjustment
-  const adjustAmount = useCallback((direction: 1 | -1) => {
+  // Press-and-hold refs
+  const holdStartRef = useRef(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const currentTierRef = useRef(0);
+
+  const getCurrentAmountTier = useCallback((elapsed: number): number => {
+    for (let i = AMOUNT_SPEED_TIERS.length - 1; i >= 0; i--) {
+      const tier = AMOUNT_SPEED_TIERS[i];
+      if (tier && elapsed >= tier.threshold) {
+        return i;
+      }
+    }
+    return 0;
+  }, []);
+
+  // +/- adjustment with multiplier support
+  const adjustAmount = useCallback((direction: 1 | -1, multiplier: number = 1) => {
     const displayValue = mlToDisplay(value);
-    const newDisplayValue = displayValue + (settings.increment * direction);
+    const newDisplayValue = displayValue + (settings.increment * multiplier * direction);
     const newMl = displayToMl(newDisplayValue);
 
     // Clamp to min/max
     const clampedMl = Math.max(settings.minAmount, Math.min(settings.maxAmount, newMl));
     onChange(Math.round(clampedMl));
   }, [value, settings, mlToDisplay, displayToMl, onChange]);
+
+  // Press-and-hold tick function
+  const tickAmount = useCallback((direction: 1 | -1) => {
+    const elapsed = performance.now() - holdStartRef.current;
+    const newTier = getCurrentAmountTier(elapsed);
+
+    // Update tier and reschedule if tier changed
+    if (newTier !== currentTierRef.current) {
+      currentTierRef.current = newTier;
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = setInterval(() => tickAmount(direction), getAmountTier(newTier).repeatMs);
+      }
+    }
+
+    const multiplier = getAmountTier(currentTierRef.current).multiplier;
+    adjustAmount(direction, multiplier);
+  }, [adjustAmount, getCurrentAmountTier]);
+
+  const handleHoldStart = useCallback((direction: 1 | -1) => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    holdStartRef.current = performance.now();
+    currentTierRef.current = 0;
+
+    // Immediate first tick
+    adjustAmount(direction, 1);
+
+    // Start interval
+    intervalRef.current = setInterval(() => tickAmount(direction), getAmountTier(0).repeatMs);
+  }, [adjustAmount, tickAmount]);
+
+  const handleHoldStop = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
 
   // Format display value
   const formatAmount = (): string => {
@@ -187,8 +268,9 @@ export function AmountSlider({
         {/* Control buttons - Left side */}
         {controlsOnLeft && (
           <ButtonStack
-            onIncrement={() => adjustAmount(1)}
-            onDecrement={() => adjustAmount(-1)}
+            onHoldAdjust={() => {}}
+            onHoldStart={handleHoldStart}
+            onHoldStop={handleHoldStop}
             position="left"
             settingsContent={settingsPopoverContent}
             settingsOpen={settingsOpen}
@@ -252,8 +334,9 @@ export function AmountSlider({
         {/* Control buttons - Right side */}
         {!controlsOnLeft && (
           <ButtonStack
-            onIncrement={() => adjustAmount(1)}
-            onDecrement={() => adjustAmount(-1)}
+            onHoldAdjust={() => {}}
+            onHoldStart={handleHoldStart}
+            onHoldStop={handleHoldStop}
             position="right"
             settingsContent={settingsPopoverContent}
             settingsOpen={settingsOpen}

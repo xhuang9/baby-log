@@ -6,6 +6,7 @@ export {
 
 export {
   DEFAULT_TIME_SWIPER_SETTINGS,
+  type SwipeResistance,
   TimeSwiperSettingsPanel,
   type TimeSwiperSettingsState,
 } from './TimeSwiperSettingsPanel';

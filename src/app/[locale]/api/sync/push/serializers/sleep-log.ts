@@ -8,7 +8,7 @@ import type { sleepLogSchema } from '@/models/Schema';
 
 export function serializeSleepLog(log: typeof sleepLogSchema.$inferSelect): Record<string, unknown> {
   return {
-    id: String(log.id),
+    id: log.id, // Already text (UUID)
     babyId: log.babyId,
     loggedByUserId: log.loggedByUserId,
     startedAt: log.startedAt.toISOString(),

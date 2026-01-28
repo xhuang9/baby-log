@@ -18,16 +18,19 @@ export async function saveFeedLogs(logs: LocalFeedLog[]): Promise<void> {
  * Get feed logs for a baby
  */
 export async function getFeedLogsForBaby(babyId: number, limit?: number): Promise<LocalFeedLog[]> {
-  let query = localDb.feedLogs
+  const logs = await localDb.feedLogs
     .where('babyId')
     .equals(babyId)
-    .reverse();
+    .toArray();
+
+  // Sort descending by startedAt (newest first)
+  logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
 
   if (limit) {
-    query = query.limit(limit);
+    return logs.slice(0, limit);
   }
 
-  return query.sortBy('startedAt');
+  return logs;
 }
 
 /**

@@ -26,16 +26,19 @@ export function useNappyLogsForBaby(
         return [];
       }
 
-      let query = localDb.nappyLogs
+      const logs = await localDb.nappyLogs
         .where('babyId')
         .equals(babyId)
-        .reverse();
+        .toArray();
+
+      // Sort descending by startedAt (newest first)
+      logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
 
       if (limit) {
-        query = query.limit(limit);
+        return logs.slice(0, limit);
       }
 
-      return query.toArray();
+      return logs;
     },
     [babyId, limit],
     undefined,
@@ -44,6 +47,7 @@ export function useNappyLogsForBaby(
 
 /**
  * Get nappy logs for a baby within a date range
+ * If startDate and endDate are both null, returns all logs
  */
 export function useNappyLogsByDateRange(
   babyId: number | null | undefined,
@@ -52,15 +56,29 @@ export function useNappyLogsByDateRange(
 ): LocalNappyLog[] | undefined {
   return useLiveQuery(
     async () => {
-      if (!babyId || !startDate || !endDate) {
+      if (!babyId) {
         return [];
       }
 
-      const logs = await localDb.nappyLogs
-        .where('babyId')
-        .equals(babyId)
-        .and(log => log.startedAt >= startDate && log.startedAt <= endDate)
-        .toArray();
+      let logs: LocalNappyLog[];
+
+      // If no date range specified (all history), return all logs
+      if (startDate === null && endDate === null) {
+        logs = await localDb.nappyLogs
+          .where('babyId')
+          .equals(babyId)
+          .toArray();
+      } else if (!startDate || !endDate) {
+        // If dates are partially provided, return empty
+        return [];
+      } else {
+        // Filter by date range
+        logs = await localDb.nappyLogs
+          .where('babyId')
+          .equals(babyId)
+          .and(log => log.startedAt >= startDate && log.startedAt <= endDate)
+          .toArray();
+      }
 
       // Sort descending by startedAt (newest first)
       return logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
@@ -85,10 +103,14 @@ export function useLatestNappyLog(
       const logs = await localDb.nappyLogs
         .where('babyId')
         .equals(babyId)
-        .reverse()
-        .limit(1)
         .toArray();
 
+      if (logs.length === 0) {
+        return null;
+      }
+
+      // Sort descending by startedAt (newest first) and return the first
+      logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
       return logs[0] ?? null;
     },
     [babyId],
@@ -143,18 +165,20 @@ export function useNappyLogsByType(
         return [];
       }
 
-      let logs = await localDb.nappyLogs
+      const logs = await localDb.nappyLogs
         .where('babyId')
         .equals(babyId)
         .and(log => log.type === nappyType)
-        .reverse()
         .toArray();
 
+      // Sort descending by startedAt (newest first)
+      logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
+
       if (limit) {
-        logs = logs.slice(0, limit);
+        return logs.slice(0, limit);
       }
 
-      return logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
+      return logs;
     },
     [babyId, nappyType, limit],
     undefined,

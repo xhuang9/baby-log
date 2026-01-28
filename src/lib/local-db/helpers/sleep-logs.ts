@@ -18,16 +18,19 @@ export async function saveSleepLogs(logs: LocalSleepLog[]): Promise<void> {
  * Get sleep logs for a baby
  */
 export async function getSleepLogsForBaby(babyId: number, limit?: number): Promise<LocalSleepLog[]> {
-  let query = localDb.sleepLogs
+  const logs = await localDb.sleepLogs
     .where('babyId')
     .equals(babyId)
-    .reverse();
+    .toArray();
+
+  // Sort descending by startedAt (newest first)
+  logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
 
   if (limit) {
-    query = query.limit(limit);
+    return logs.slice(0, limit);
   }
 
-  return query.toArray();
+  return logs;
 }
 
 /**

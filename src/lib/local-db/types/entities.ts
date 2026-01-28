@@ -102,7 +102,8 @@ export type UIConfigData = {
     use24Hour?: boolean;
     swipeSpeed?: number;
     incrementMinutes?: number;
-    magneticFeel?: boolean;
+    magneticFeel?: boolean; // @deprecated - migrated to swipeResistance
+    swipeResistance?: 'smooth' | 'default' | 'sticky';
     showCurrentTime?: boolean;
     markerMode?: 'all' | 'now-only';
   };

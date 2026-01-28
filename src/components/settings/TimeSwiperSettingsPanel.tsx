@@ -5,11 +5,12 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
 
+export type SwipeResistance = 'smooth' | 'default' | 'sticky';
+
 export type TimeSwiperSettingsState = {
   use24Hour: boolean;
   swipeSpeed: number;
-  incrementMinutes: number;
-  magneticFeel: boolean;
+  swipeResistance: SwipeResistance;
   showCurrentTime: boolean;
   markerMode?: 'all' | 'now-only';
 };
@@ -17,17 +18,9 @@ export type TimeSwiperSettingsState = {
 export const DEFAULT_TIME_SWIPER_SETTINGS: TimeSwiperSettingsState = {
   use24Hour: false,
   swipeSpeed: 0.5,
-  incrementMinutes: 1,
-  magneticFeel: true,
+  swipeResistance: 'default',
   showCurrentTime: false,
   markerMode: 'now-only',
-};
-
-const getIncrementLabel = (mins: number): string => {
-  if (mins < 60) {
-    return `${mins}m`;
-  }
-  return `${mins / 60}h`;
 };
 
 type TimeSwiperSettingsPanelProps = {
@@ -64,20 +57,66 @@ export function TimeSwiperSettingsPanel({
         />
       </div>
 
-      {/* Magnetic Feel Toggle */}
-      <div className="flex items-center justify-between">
-        <div className="pr-4">
-          <p className="text-sm font-medium">Magnetic feel</p>
-          {!compact && (
-            <p className="text-xs text-muted-foreground">
-              Snappier swipe animation
-            </p>
-          )}
-        </div>
-        <Switch
-          checked={settings.magneticFeel}
-          onCheckedChange={checked => saveSetting('magneticFeel', checked)}
-        />
+      {/* Swipe Resistance */}
+      <div className="space-y-2">
+        <p className="text-sm font-medium">Swipe resistance</p>
+        <RadioGroup
+          value={settings.swipeResistance}
+          onValueChange={value => saveSetting('swipeResistance', value as SwipeResistance)}
+          className="space-y-2"
+        >
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- RadioGroupItem handles association */}
+          <label
+            className={cn(
+              'relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 transition-colors',
+              settings.swipeResistance === 'smooth'
+                ? 'border-primary bg-primary/10'
+                : 'border-border hover:bg-muted/50',
+            )}
+          >
+            <RadioGroupItem value="smooth" className="shrink-0" />
+            <div>
+              <span className="text-sm">Smooth</span>
+              {!compact && (
+                <p className="text-xs text-muted-foreground">Less resistance, longer glide</p>
+              )}
+            </div>
+          </label>
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- RadioGroupItem handles association */}
+          <label
+            className={cn(
+              'relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 transition-colors',
+              settings.swipeResistance === 'default'
+                ? 'border-primary bg-primary/10'
+                : 'border-border hover:bg-muted/50',
+            )}
+          >
+            <RadioGroupItem value="default" className="shrink-0" />
+            <div>
+              <span className="text-sm">Default</span>
+              {!compact && (
+                <p className="text-xs text-muted-foreground">Balanced feel</p>
+              )}
+            </div>
+          </label>
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- RadioGroupItem handles association */}
+          <label
+            className={cn(
+              'relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 transition-colors',
+              settings.swipeResistance === 'sticky'
+                ? 'border-primary bg-primary/10'
+                : 'border-border hover:bg-muted/50',
+            )}
+          >
+            <RadioGroupItem value="sticky" className="shrink-0" />
+            <div>
+              <span className="text-sm">Sticky</span>
+              {!compact && (
+                <p className="text-xs text-muted-foreground">More resistance, snappier stop</p>
+              )}
+            </div>
+          </label>
+        </RadioGroup>
       </div>
 
       {/* Show Time Markers Toggle */}
@@ -156,31 +195,6 @@ export function TimeSwiperSettingsPanel({
           <span>Slower</span>
           <span>Faster</span>
         </div>
-      </div>
-
-      {/* Increment Options */}
-      <div className="space-y-2">
-        <p className="text-sm font-medium">+/- button increment</p>
-        <RadioGroup
-          value={settings.incrementMinutes.toString()}
-          onValueChange={val => saveSetting('incrementMinutes', Number.parseInt(String(val)))}
-          className="grid grid-cols-6 gap-1"
-        >
-          {[1, 5, 15, 30, 60, 120].map(mins => (
-            <label
-              key={mins}
-              className={cn(
-                'relative flex cursor-pointer items-center justify-center rounded-lg border px-2 py-2 text-xs transition-colors',
-                settings.incrementMinutes === mins
-                  ? 'border-primary bg-primary/10'
-                  : 'border-border hover:bg-muted/50',
-              )}
-            >
-              <RadioGroupItem value={mins.toString()} className="absolute opacity-0" />
-              <span>{getIncrementLabel(mins)}</span>
-            </label>
-          ))}
-        </RadioGroup>
       </div>
     </div>
   );

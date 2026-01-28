@@ -127,7 +127,7 @@ export const babyMeasurementsSchema = pgTable('baby_measurements', {
 ]);
 
 export const feedLogSchema = pgTable('feed_log', {
-  id: serial('id').primaryKey(),
+  id: text('id').primaryKey(), // Client-generated UUID
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
   loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
   method: text('method').notNull(), // e.g. breast, bottle
@@ -144,7 +144,7 @@ export const feedLogSchema = pgTable('feed_log', {
 ]);
 
 export const sleepLogSchema = pgTable('sleep_log', {
-  id: serial('id').primaryKey(),
+  id: text('id').primaryKey(), // Client-generated UUID
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
   loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
   startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
@@ -157,7 +157,7 @@ export const sleepLogSchema = pgTable('sleep_log', {
 ]);
 
 export const nappyLogSchema = pgTable('nappy_log', {
-  id: serial('id').primaryKey(),
+  id: text('id').primaryKey(), // Client-generated UUID
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
   loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
   type: nappyTypeEnum('type'), // wee, poo, mixed, dry - nullable
@@ -225,7 +225,7 @@ export const syncEventsSchema = pgTable('sync_events', {
   id: serial('id').primaryKey(),
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
   entityType: text('entity_type').notNull(), // feed_log, sleep_log, nappy_log, baby
-  entityId: integer('entity_id').notNull(), // ID of the entity being synced
+  entityId: text('entity_id').notNull(), // ID of the entity being synced (text to support UUIDs)
   op: syncOpEnum('op').notNull(), // create, update, delete
   payload: text('payload'), // JSON string of entity data (for create/update)
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),

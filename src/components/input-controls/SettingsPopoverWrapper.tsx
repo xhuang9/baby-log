@@ -12,7 +12,7 @@ type SettingsPopoverWrapperProps = {
   onClose: () => void;
   /** Save and close */
   onSave: () => void;
-  /** Cancel and close (reverts changes) */
+  /** Close and revert any unsaved changes */
   onCancel: () => void;
   /** Whether there are unsaved changes */
   isDirty?: boolean;
@@ -39,11 +39,11 @@ export function SettingsPopoverWrapper({
       disabled={isSaving}
       className="flex-1"
     >
-      {isSaving ? 'Saving...' : isDirty ? 'Save' : 'Done'}
+      {isSaving ? 'Saving...' : 'Save'}
     </Button>
   );
 
-  const cancelButton = (
+  const closeButton = (
     <Button
       variant="outline"
       size="sm"
@@ -51,7 +51,7 @@ export function SettingsPopoverWrapper({
       disabled={isSaving}
       className="flex-1"
     >
-      Cancel
+      Close
     </Button>
   );
 
@@ -71,18 +71,18 @@ export function SettingsPopoverWrapper({
 
       {children}
 
-      {/* Save/Cancel Buttons - order based on hand mode */}
+      {/* Save/Close Buttons - order based on hand mode */}
       <div className="flex gap-2 pt-2">
         {handMode === 'left'
           ? (
               <>
                 {saveButton}
-                {cancelButton}
+                {closeButton}
               </>
             )
           : (
               <>
-                {cancelButton}
+                {closeButton}
                 {saveButton}
               </>
             )}

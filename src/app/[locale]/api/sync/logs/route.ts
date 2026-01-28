@@ -6,7 +6,7 @@
  *
  * Query Parameters:
  * - babyId: number (required) - The baby to fetch logs for
- * - before: number (optional) - Cursor for pagination (fetch logs before this ID)
+ * - before: string (optional) - Cursor for pagination (ISO timestamp, fetch logs before this time)
  * - limit: number (optional) - Number of logs to fetch (default: 100, max: 500)
  *
  * @see .readme/planning/01-state-management-sync.md
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     500,
   );
 
-  const beforeCursor = beforeParam ? Number.parseInt(beforeParam, 10) : null;
+  const beforeCursor = beforeParam ? new Date(beforeParam) : null;
 
   try {
     // Get local user
@@ -101,8 +101,8 @@ export async function GET(request: NextRequest) {
     // Build query conditions
     const conditions = [eq(feedLogSchema.babyId, babyId)];
 
-    if (beforeCursor !== null && !Number.isNaN(beforeCursor)) {
-      conditions.push(lt(feedLogSchema.id, beforeCursor));
+    if (beforeCursor !== null && !Number.isNaN(beforeCursor.getTime())) {
+      conditions.push(lt(feedLogSchema.createdAt, beforeCursor));
     }
 
     // Fetch logs with one extra to determine hasMore
@@ -123,16 +123,16 @@ export async function GET(request: NextRequest) {
       })
       .from(feedLogSchema)
       .where(and(...conditions))
-      .orderBy(desc(feedLogSchema.id))
+      .orderBy(desc(feedLogSchema.createdAt))
       .limit(limit + 1);
 
     // Check if there are more results
     const hasMore = logs.length > limit;
     const resultLogs = hasMore ? logs.slice(0, limit) : logs;
 
-    // Get next cursor (the ID of the last log in results)
+    // Get next cursor (the createdAt timestamp of the last log in results)
     const nextCursor = resultLogs.length > 0
-      ? resultLogs[resultLogs.length - 1]?.id ?? null
+      ? resultLogs[resultLogs.length - 1]?.createdAt.toISOString() ?? null
       : null;
 
     // Build response

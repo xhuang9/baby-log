@@ -15,7 +15,7 @@ type SyncOp = 'create' | 'update' | 'delete';
 export type WriteSyncEventParams = {
   babyId: number;
   entityType: EntityType;
-  entityId: number;
+  entityId: number | string; // Can be number (old data, baby IDs) or string (UUID for logs)
   op: SyncOp;
   payload: Record<string, unknown> | null;
 };
@@ -28,7 +28,7 @@ export async function writeSyncEvent(params: WriteSyncEventParams): Promise<numb
   const [result] = await db.insert(syncEventsSchema).values({
     babyId: params.babyId,
     entityType: params.entityType,
-    entityId: params.entityId,
+    entityId: String(params.entityId), // Convert to string for database
     op: params.op,
     payload: params.payload ? JSON.stringify(params.payload) : null,
   }).returning({ id: syncEventsSchema.id });

@@ -1,7 +1,7 @@
 'use client';
 
 import type { UnifiedLog } from '@/lib/format-log';
-import type { LocalFeedLog, LocalSleepLog } from '@/lib/local-db';
+import type { LocalFeedLog, LocalNappyLog, LocalSleepLog } from '@/lib/local-db';
 import { Baby, ChevronRight, Moon, MousePointerClick } from 'lucide-react';
 import { formatDuration } from '@/lib/format-log';
 import { cn } from '@/lib/utils';
@@ -25,9 +25,12 @@ function formatTime(date: Date): string {
 /**
  * Get icon for activity type
  */
-function ActivityIcon({ type }: { type: 'feed' | 'sleep' }) {
+function ActivityIcon({ type }: { type: 'feed' | 'sleep' | 'nappy' }) {
   if (type === 'sleep') {
     return <Moon className="h-5 w-5" />;
+  }
+  if (type === 'nappy') {
+    return <Baby className="h-5 w-5" />;
   }
   return <Baby className="h-5 w-5" />;
 }
@@ -44,6 +47,14 @@ function getActivityTitle(log: UnifiedLog): string {
     }
     const side = feed.endSide ? ` (${feed.endSide})` : '';
     return `Breast${side}`;
+  }
+
+  if (log.type === 'nappy') {
+    const nappy = log.data as LocalNappyLog;
+    const typeLabel = nappy.type
+      ? nappy.type.charAt(0).toUpperCase() + nappy.type.slice(1)
+      : 'Nappy';
+    return typeLabel;
   }
 
   return 'Sleep';
@@ -63,6 +74,10 @@ function getDurationText(log: UnifiedLog): string {
     return sleep.durationMinutes ? formatDuration(sleep.durationMinutes) : '';
   }
 
+  if (log.type === 'nappy') {
+    return ''; // Nappy logs don't have duration
+  }
+
   return '';
 }
 
@@ -70,8 +85,14 @@ function getDurationText(log: UnifiedLog): string {
  * Get time range text
  */
 function getTimeRange(log: UnifiedLog): string {
-  const data = log.data as LocalFeedLog | LocalSleepLog;
   const start = formatTime(log.startedAt);
+
+  // Nappy logs don't have end time
+  if (log.type === 'nappy') {
+    return start;
+  }
+
+  const data = log.data as LocalFeedLog | LocalSleepLog;
 
   if (data.endedAt) {
     const end = formatTime(data.endedAt);

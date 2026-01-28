@@ -26,16 +26,19 @@ export function useFeedLogsForBaby(
         return [];
       }
 
-      let query = localDb.feedLogs
+      const logs = await localDb.feedLogs
         .where('babyId')
         .equals(babyId)
-        .reverse();
+        .toArray();
+
+      // Sort descending by startedAt (newest first)
+      logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
 
       if (limit) {
-        query = query.limit(limit);
+        return logs.slice(0, limit);
       }
 
-      return query.toArray();
+      return logs;
     },
     [babyId, limit],
     undefined,
@@ -57,25 +60,25 @@ export function useFeedLogsByDateRange(
         return [];
       }
 
+      let logs: LocalFeedLog[];
+
       // If no date range specified (all history), return all logs
       if (startDate === null && endDate === null) {
-        return localDb.feedLogs
+        logs = await localDb.feedLogs
           .where('babyId')
           .equals(babyId)
-          .reverse()
+          .toArray();
+      } else if (!startDate || !endDate) {
+        // If dates are partially provided, return empty
+        return [];
+      } else {
+        // Filter by date range
+        logs = await localDb.feedLogs
+          .where('babyId')
+          .equals(babyId)
+          .and(log => log.startedAt >= startDate && log.startedAt <= endDate)
           .toArray();
       }
-
-      // If dates are provided, filter by date range
-      if (!startDate || !endDate) {
-        return [];
-      }
-
-      const logs = await localDb.feedLogs
-        .where('babyId')
-        .equals(babyId)
-        .and(log => log.startedAt >= startDate && log.startedAt <= endDate)
-        .toArray();
 
       // Sort descending by startedAt (newest first)
       return logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
@@ -100,10 +103,14 @@ export function useLatestFeedLog(
       const logs = await localDb.feedLogs
         .where('babyId')
         .equals(babyId)
-        .reverse()
-        .limit(1)
         .toArray();
 
+      if (logs.length === 0) {
+        return null;
+      }
+
+      // Sort descending by startedAt (newest first) and return the first
+      logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
       return logs[0] ?? null;
     },
     [babyId],

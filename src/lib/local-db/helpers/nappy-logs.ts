@@ -18,16 +18,19 @@ export async function saveNappyLogs(logs: LocalNappyLog[]): Promise<void> {
  * Get nappy logs for a baby
  */
 export async function getNappyLogsForBaby(babyId: number, limit?: number): Promise<LocalNappyLog[]> {
-  let query = localDb.nappyLogs
+  const logs = await localDb.nappyLogs
     .where('babyId')
     .equals(babyId)
-    .reverse();
+    .toArray();
+
+  // Sort descending by startedAt (newest first)
+  logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
 
   if (limit) {
-    query = query.limit(limit);
+    return logs.slice(0, limit);
   }
 
-  return query.toArray();
+  return logs;
 }
 
 /**

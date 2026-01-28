@@ -16,7 +16,7 @@ export type FeedMethod = 'breast' | 'bottle';
 export type EndSide = 'left' | 'right';
 
 export type FeedLogWithCaregiver = {
-  id: number;
+  id: string; // UUID
   babyId: number;
   method: FeedMethod;
   startedAt: Date;
@@ -87,6 +87,7 @@ export async function createFeedLog(data: CreateFeedLogData): Promise<CreateFeed
     const feedLogResult = await db
       .insert(feedLogSchema)
       .values({
+        id: crypto.randomUUID(), // Generate UUID for feed log
         babyId: data.babyId,
         loggedByUserId: user.id,
         method: data.method,

@@ -59,7 +59,7 @@ function getLogDuration(log: UnifiedLog): number {
   }
 
   // For ongoing activities or instant events, use a small duration for visibility
-  return 5;
+  return 15; // Default 15-minute span for instant events (nappy, etc.)
 }
 
 /**

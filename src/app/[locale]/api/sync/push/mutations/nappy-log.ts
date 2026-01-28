@@ -30,6 +30,7 @@ export async function processNappyLogMutation(
     const [inserted] = await db
       .insert(nappyLogSchema)
       .values({
+        id: payload.id as string, // Use client-generated UUID
         babyId,
         loggedByUserId: userId,
         type: payload.type as 'wee' | 'poo' | 'mixed' | 'dry' | null,
