@@ -49,6 +49,30 @@ The config layers multiple plugins in sequence:
 3. **Tailwind CSS** - Class name linting (`tailwind.configs['flat/recommended']`)
 4. **Playwright** - E2E test rules (applied to `*.spec.ts` and `*.e2e.ts` files only)
 
+### Tailwind CSS Configuration
+
+The Tailwind plugin requires a custom settings path:
+
+```typescript
+{
+  settings: {
+    tailwindcss: {
+      config: `${dirname(fileURLToPath(import.meta.url))}/src/styles/global.css`,
+    },
+  },
+}
+```
+
+### Ignored Paths
+
+```typescript
+ignores: [
+  'migrations/**/*',
+  '.readme-human/**/*',
+  '.readme/**/*',
+]
+```
+
 ### Custom Rule Overrides
 
 ```typescript

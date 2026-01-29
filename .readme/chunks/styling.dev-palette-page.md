@@ -169,6 +169,22 @@ open http://localhost:3000/dev
 # 5. Observe hot-reload in dev palette page
 ```
 
+## Color System Notes
+
+**⚠️ Color System Migration:** This project has migrated from HSL-based colors to OKLCH color space for better perceptual uniformity and wider color gamut support.
+
+**Current Implementation:**
+- Colors defined using `oklch()` notation in `src/styles/activity-colors.css`
+- Example: `--color-activity-feed-background: oklch(0.63 0.2 10);` instead of HSL variables
+- All activity colors use OKLCH with hex color comments for reference
+- Foreground colors are typically `#fff` for sufficient contrast
+
+**Benefits of OKLCH:**
+- Perceptually uniform (equal distance = equal perceived difference)
+- Hardware-independent color space
+- Better for programmatic color manipulation
+- Future-proof for wide-gamut displays
+
 ## Future Enhancements
 
 ### Planned Additions

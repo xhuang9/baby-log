@@ -32,14 +32,34 @@ Exports:
 ### `seedTestBaby(page, data)`
 Creates a baby record via `/api/test/seed/baby` endpoint.
 
-**Parameters:**
+**Function Signature:**
 ```typescript
-{
-  name: string;              // Required
-  birthDate?: string | null; // ISO date string, optional
-  gender?: 'male' | 'female' | null;
+export async function seedTestBaby(
+  page: Page,
+  data: Partial<TestBaby> & { name: string },
+): Promise<TestBaby> {
+  const response = await page.request.post('/api/test/seed/baby', {
+    data: {
+      name: data.name,
+      birthDate: data.birthDate ?? null,
+      gender: data.gender ?? null,
+    },
+    headers: {
+      'x-test-seed': 'true',
+    },
+  });
+
+  if (!response.ok()) {
+    throw new Error(`Failed to seed baby: ${await response.text()}`);
+  }
+
+  return response.json();
 }
 ```
+
+**Parameters:**
+- `page`: Playwright Page instance
+- `data`: Baby data with required `name` field, optional `birthDate` and `gender`
 
 **Returns:** `TestBaby` object with generated `id`
 

@@ -29,30 +29,47 @@ Exports:
 
 ```typescript
 export const TEST_USERS = {
-  newUser: {          // No babies, triggers onboarding
+  newUser: {
     id: 'test-new-user',
     clerkId: 'user_test_new',
     email: 'new-user@test.example.com',
     firstName: 'New',
   },
-  singleBabyUser: {   // One baby, standard flow
+  singleBabyUser: {
+    id: 'test-single-baby',
     clerkId: 'user_test_single',
-    // ...
+    email: 'single-baby@test.example.com',
+    firstName: 'Single',
   },
-  multiBabyUser: {    // Multiple babies, selection flow
+  multiBabyUser: {
+    id: 'test-multi-baby',
     clerkId: 'user_test_multi',
-    // ...
+    email: 'multi-baby@test.example.com',
+    firstName: 'Multi',
   },
-  invitedUser: {      // Has pending invites
+  invitedUser: {
+    id: 'test-invited',
     clerkId: 'user_test_invited',
-    // ...
+    email: 'invited@test.example.com',
+    firstName: 'Invited',
   },
-  ownerUser: {        // Baby owner, full permissions
+  ownerUser: {
+    id: 'test-owner',
     clerkId: 'user_test_owner',
-    // ...
+    email: 'owner@test.example.com',
+    firstName: 'Owner',
   },
-};
+} as const satisfies Record<string, TestUser>;
 ```
+
+**Notes:**
+- Each user has `id`, `clerkId`, `email`, and `firstName` fields
+- Uses `as const satisfies` for type safety and const assertion
+- `newUser`: No babies, triggers onboarding flow
+- `singleBabyUser`: One baby, standard flow
+- `multiBabyUser`: Multiple babies, selection flow
+- `invitedUser`: Has pending invites
+- `ownerUser`: Baby owner, full permissions
 
 ### Authentication Fixtures
 

@@ -16,6 +16,12 @@ Next.js 16+ with App Router, TypeScript, Tailwind CSS 4, DrizzleORM, Clerk auth.
 
 All detailed documentation lives in `.readme/sections/`. Each section contains chunks with file paths, code patterns, and rules.
 
+**Documentation Conventions:**
+- Code examples may be simplified for clarity and pedagogical purposes
+- Snippets focus on **conceptual accuracy** rather than character-exact matching
+- Use the `docs-architect` agent (via `/doc-init`, `/doc-update`, `/doc-task`) for major documentation updates
+- Prioritize updating high-traffic sections when making significant code changes (authentication, local-first, database)
+
 | Section | Purpose | Read when |
 |---------|---------|-----------|
 | `getting-started.index.md` | Commands, config files, integrations | Running commands, setting up environment, configuring integrations |
