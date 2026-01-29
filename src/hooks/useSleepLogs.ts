@@ -12,6 +12,13 @@
 import type { LocalSleepLog } from '@/lib/local-db';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { localDb } from '@/lib/local-db';
+import {
+  getTodayDateRange,
+  useActivityLogsByDateRange,
+  useActivityLogsCount,
+  useActivityLogsForBaby,
+  useLatestActivityLog,
+} from './useActivityLogs';
 
 /**
  * Get sleep logs for a specific baby
@@ -20,29 +27,7 @@ export function useSleepLogsForBaby(
   babyId: number | null | undefined,
   limit?: number,
 ): LocalSleepLog[] | undefined {
-  return useLiveQuery(
-    async () => {
-      if (!babyId) {
-        return [];
-      }
-
-      const logs = await localDb.sleepLogs
-        .where('babyId')
-        .equals(babyId)
-        .toArray();
-
-      // Sort descending by startedAt (newest first)
-      logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
-
-      if (limit) {
-        return logs.slice(0, limit);
-      }
-
-      return logs;
-    },
-    [babyId, limit],
-    undefined,
-  );
+  return useActivityLogsForBaby(localDb.sleepLogs, babyId, limit);
 }
 
 /**
@@ -54,38 +39,7 @@ export function useSleepLogsByDateRange(
   startDate: Date | null,
   endDate: Date | null,
 ): LocalSleepLog[] | undefined {
-  return useLiveQuery(
-    async () => {
-      if (!babyId) {
-        return [];
-      }
-
-      let logs: LocalSleepLog[];
-
-      // If no date range specified (all history), return all logs
-      if (startDate === null && endDate === null) {
-        logs = await localDb.sleepLogs
-          .where('babyId')
-          .equals(babyId)
-          .toArray();
-      } else if (!startDate || !endDate) {
-        // If dates are partially provided, return empty
-        return [];
-      } else {
-        // Filter by date range
-        logs = await localDb.sleepLogs
-          .where('babyId')
-          .equals(babyId)
-          .and(log => log.startedAt >= startDate && log.startedAt <= endDate)
-          .toArray();
-      }
-
-      // Sort descending by startedAt (newest first)
-      return logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
-    },
-    [babyId, startDate?.getTime(), endDate?.getTime()],
-    undefined,
-  );
+  return useActivityLogsByDateRange(localDb.sleepLogs, babyId, startDate, endDate);
 }
 
 /**
@@ -95,62 +49,21 @@ export function useSleepLogsByDateRange(
 export function useLatestSleepLog(
   babyId: number | null | undefined,
 ): LocalSleepLog | null | undefined {
-  return useLiveQuery(
-    async () => {
-      if (!babyId) {
-        return null;
-      }
-
-      const now = new Date();
-      const logs = await localDb.sleepLogs
-        .where('babyId')
-        .equals(babyId)
-        .and(log => log.startedAt <= now) // Filter out future logs
-        .toArray();
-
-      if (logs.length === 0) {
-        return null;
-      }
-
-      // Sort descending by startedAt (newest first) and return the first
-      logs.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
-      return logs[0] ?? null;
-    },
-    [babyId],
-    undefined,
-  );
+  return useLatestActivityLog(localDb.sleepLogs, babyId);
 }
 
 /**
  * Get sleep logs count for a baby
  */
 export function useSleepLogsCount(babyId: number | null | undefined): number | undefined {
-  return useLiveQuery(
-    async () => {
-      if (!babyId) {
-        return 0;
-      }
-
-      return localDb.sleepLogs
-        .where('babyId')
-        .equals(babyId)
-        .count();
-    },
-    [babyId],
-    undefined,
-  );
+  return useActivityLogsCount(localDb.sleepLogs, babyId);
 }
 
 /**
  * Get today's sleep logs for a baby
  */
 export function useTodaysSleepLogs(babyId: number | null | undefined): LocalSleepLog[] | undefined {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
+  const { today, tomorrow } = getTodayDateRange();
   return useSleepLogsByDateRange(babyId, today, tomorrow);
 }
 

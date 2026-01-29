@@ -59,22 +59,49 @@ export function useAllActivityLogs(
         return undefined;
       }
 
+      // Collect all unique userIds to batch query babyAccess
+      const userIds = new Set<number>();
+      if (feeds) {
+        for (const feed of feeds) {
+          userIds.add(feed.loggedByUserId);
+        }
+      }
+      if (sleeps) {
+        for (const sleep of sleeps) {
+          userIds.add(sleep.loggedByUserId);
+        }
+      }
+      if (nappies) {
+        for (const nappy of nappies) {
+          userIds.add(nappy.loggedByUserId);
+        }
+      }
+
+      // Batch query all babyAccess records for this baby
+      const accessRecords = await localDb.babyAccess
+        .where('babyId')
+        .equals(babyId)
+        .toArray();
+
+      // Create lookup map: userId -> caregiverLabel
+      const accessMap = new Map<number, string | null>();
+      for (const access of accessRecords) {
+        if (userIds.has(access.userId)) {
+          accessMap.set(access.userId, access.caregiverLabel ?? null);
+        }
+      }
+
       const unified: UnifiedLog[] = [];
 
       // Transform feeds
       if (feeds) {
         for (const feed of feeds) {
-          const access = await localDb.babyAccess
-            .where('[userId+babyId]')
-            .equals([feed.loggedByUserId, babyId])
-            .first();
-
           unified.push({
             id: feed.id,
             type: 'feed',
             babyId: feed.babyId,
             startedAt: feed.startedAt,
-            caregiverLabel: access?.caregiverLabel ?? null,
+            caregiverLabel: accessMap.get(feed.loggedByUserId) ?? null,
             data: feed,
           });
         }
@@ -83,17 +110,12 @@ export function useAllActivityLogs(
       // Transform sleeps
       if (sleeps) {
         for (const sleep of sleeps) {
-          const access = await localDb.babyAccess
-            .where('[userId+babyId]')
-            .equals([sleep.loggedByUserId, babyId])
-            .first();
-
           unified.push({
             id: sleep.id,
             type: 'sleep',
             babyId: sleep.babyId,
             startedAt: sleep.startedAt,
-            caregiverLabel: access?.caregiverLabel ?? null,
+            caregiverLabel: accessMap.get(sleep.loggedByUserId) ?? null,
             data: sleep,
           });
         }
@@ -102,17 +124,12 @@ export function useAllActivityLogs(
       // Transform nappies
       if (nappies) {
         for (const nappy of nappies) {
-          const access = await localDb.babyAccess
-            .where('[userId+babyId]')
-            .equals([nappy.loggedByUserId, babyId])
-            .first();
-
           unified.push({
             id: nappy.id,
             type: 'nappy',
             babyId: nappy.babyId,
             startedAt: nappy.startedAt,
-            caregiverLabel: access?.caregiverLabel ?? null,
+            caregiverLabel: accessMap.get(nappy.loggedByUserId) ?? null,
             data: nappy,
           });
         }
