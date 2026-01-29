@@ -261,6 +261,8 @@ export function useBootstrapMachine(
           babyId: log.babyId,
           loggedByUserId: log.loggedByUserId,
           type: log.type,
+          colour: log.colour ?? null,
+          texture: log.texture ?? null,
           startedAt: new Date(log.startedAt),
           notes: log.notes,
           createdAt: new Date(log.createdAt),

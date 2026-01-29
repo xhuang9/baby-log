@@ -14,6 +14,8 @@ import type {
   LocalNappyLog,
   LocalSleepLog,
   LocalUser,
+  NappyColour,
+  NappyTexture,
   NappyType,
   UIConfigData,
 } from '@/lib/local-db';
@@ -118,6 +120,8 @@ type ServerInitialSyncResponse = {
     babyId: number;
     loggedByUserId: number;
     type: NappyType | null;
+    colour: NappyColour | null;
+    texture: NappyTexture | null;
     startedAt: string;
     notes: string | null;
     createdAt: string;
@@ -201,6 +205,8 @@ function transformServerData(serverData: ServerInitialSyncResponse): InitialSync
       babyId: log.babyId,
       loggedByUserId: log.loggedByUserId,
       type: log.type,
+      colour: log.colour ?? null,
+      texture: log.texture ?? null,
       startedAt: new Date(log.startedAt),
       notes: log.notes,
       createdAt: new Date(log.createdAt),

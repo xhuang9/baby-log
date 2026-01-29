@@ -5,6 +5,7 @@
  */
 
 import type { MutationOp, MutationResult } from '../types';
+import type { NappyColour, NappyTexture } from '@/lib/local-db';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { writeSyncEvent } from '@/lib/db/helpers/sync-events';
@@ -33,7 +34,9 @@ export async function processNappyLogMutation(
         id: payload.id as string, // Use client-generated UUID
         babyId,
         loggedByUserId: userId,
-        type: payload.type as 'wee' | 'poo' | 'mixed' | 'dry' | null,
+        type: payload.type as 'wee' | 'poo' | 'mixed' | 'dry' | 'clean' | null,
+        colour: payload.colour as NappyColour | null,
+        texture: payload.texture as NappyTexture | null,
         startedAt: new Date(payload.startedAt as string),
         notes: payload.notes as string | null,
       })
@@ -75,7 +78,9 @@ export async function processNappyLogMutation(
     const [updated] = await db
       .update(nappyLogSchema)
       .set({
-        type: payload.type as 'wee' | 'poo' | 'mixed' | 'dry' | null,
+        type: payload.type as 'wee' | 'poo' | 'mixed' | 'dry' | 'clean' | null,
+        colour: payload.colour as NappyColour | null,
+        texture: payload.texture as NappyTexture | null,
         startedAt: new Date(payload.startedAt as string),
         notes: payload.notes as string | null,
       })

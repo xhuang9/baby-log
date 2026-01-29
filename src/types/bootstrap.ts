@@ -121,7 +121,9 @@ export type BootstrapNappyLog = {
   id: string;
   babyId: number;
   loggedByUserId: number;
-  type: 'wee' | 'poo' | 'mixed' | 'dry' | null;
+  type: 'wee' | 'poo' | 'mixed' | 'dry' | 'clean' | null;
+  colour: 'green' | 'yellow' | 'brown' | 'black' | 'red' | 'grey' | null;
+  texture: 'veryRunny' | 'runny' | 'mushy' | 'mucusy' | 'solid' | 'littleBalls' | null;
   startedAt: string;
   notes: string | null;
   createdAt: string;

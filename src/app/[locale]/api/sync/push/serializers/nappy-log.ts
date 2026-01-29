@@ -12,6 +12,8 @@ export function serializeNappyLog(log: typeof nappyLogSchema.$inferSelect): Reco
     babyId: log.babyId,
     loggedByUserId: log.loggedByUserId,
     type: log.type,
+    colour: log.colour,
+    texture: log.texture,
     startedAt: log.startedAt.toISOString(),
     notes: log.notes,
     createdAt: log.createdAt.toISOString(),

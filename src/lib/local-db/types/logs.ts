@@ -48,13 +48,19 @@ export type LocalSleepLog = {
 // Nappy Log Types
 // ============================================================================
 
-export type NappyType = 'wee' | 'poo' | 'mixed' | 'dry';
+export type NappyType = 'wee' | 'poo' | 'mixed' | 'dry' | 'clean';
+
+export type NappyColour = 'green' | 'yellow' | 'brown' | 'black' | 'red' | 'grey';
+
+export type NappyTexture = 'veryRunny' | 'runny' | 'mushy' | 'mucusy' | 'solid' | 'littleBalls';
 
 export type LocalNappyLog = {
   id: string; // UUID - client-generated for idempotent creates
   babyId: number;
   loggedByUserId: number;
   type: NappyType | null;
+  colour: NappyColour | null;
+  texture: NappyTexture | null;
   startedAt: Date; // instant event, no endedAt
   notes: string | null;
   createdAt: Date;

@@ -41,9 +41,32 @@ function formatNappySubtitle(
   const typeLabel = nappy.type
     ? nappy.type.charAt(0).toUpperCase() + nappy.type.slice(1)
     : 'Unknown';
+
+  // Format colour and texture if present
+  let details = typeLabel;
+  if (nappy.colour || nappy.texture) {
+    const colourLabel = nappy.colour
+      ? nappy.colour === 'black'
+        ? 'Black'
+        : nappy.colour.charAt(0).toUpperCase() + nappy.colour.slice(1)
+      : null;
+    const textureLabel = nappy.texture
+      ? nappy.texture === 'veryRunny'
+        ? 'Very Runny'
+        : nappy.texture === 'littleBalls'
+          ? 'Little Balls'
+          : nappy.texture.charAt(0).toUpperCase() + nappy.texture.slice(1)
+      : null;
+
+    const additionalDetails = [colourLabel, textureLabel].filter(Boolean).join(' ');
+    if (additionalDetails) {
+      details = `${typeLabel}    ${additionalDetails}`;  // 4 spaces for visual separation
+    }
+  }
+
   const caregiver = nappy.caregiverLabel ? ` - by ${nappy.caregiverLabel}` : '';
 
-  return `${timeAgo} - ${typeLabel}${caregiver}`;
+  return `${timeAgo} - ${details}${caregiver}`;
 }
 
 export function NappyTile({ babyId, latestNappy }: NappyTileProps) {

@@ -52,7 +52,14 @@
       "Bash(__NEW_LINE_a1619193a8bfb6d6__ echo \"\")",
       "Bash(__NEW_LINE_10f51f6c2d0f16b7__ echo \"\")",
       "Bash(__NEW_LINE_05a718d472c6e61f__ echo \"\")",
-      "Bash(__NEW_LINE_27e20edef9713650__ echo \"\")"
+      "Bash(__NEW_LINE_27e20edef9713650__ echo \"\")",
+      "Bash(git mv:*)",
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(pnpm run db:generate:*)",
+      "Bash(git commit:*)",
+      "Bash(pnpm run db:migrate:*)",
+      "Bash(pnpm run typecheck:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

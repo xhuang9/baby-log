@@ -203,7 +203,7 @@ export function useTodaysNappyCountByType(
   return useLiveQuery(
     async () => {
       if (!babyId) {
-        return { wee: 0, poo: 0, mixed: 0, dry: 0 };
+        return { wee: 0, poo: 0, mixed: 0, dry: 0, clean: 0 };
       }
 
       const logs = await localDb.nappyLogs
@@ -212,7 +212,7 @@ export function useTodaysNappyCountByType(
         .and(log => log.startedAt >= today && log.startedAt < tomorrow)
         .toArray();
 
-      const counts: Record<NappyType, number> = { wee: 0, poo: 0, mixed: 0, dry: 0 };
+      const counts: Record<NappyType, number> = { wee: 0, poo: 0, mixed: 0, dry: 0, clean: 0 };
       for (const log of logs) {
         if (log.type) {
           counts[log.type]++;

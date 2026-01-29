@@ -4,7 +4,7 @@
  * Applies nappy log entity changes from the server to local IndexedDB.
  */
 
-import type { LocalNappyLog, NappyType } from '@/lib/local-db';
+import type { LocalNappyLog, NappyColour, NappyTexture, NappyType } from '@/lib/local-db';
 import { deleteNappyLog, saveNappyLogs } from '@/lib/local-db';
 
 /**
@@ -31,6 +31,8 @@ export async function applyNappyLogChange(
     babyId: data.babyId as number,
     loggedByUserId: data.loggedByUserId as number,
     type: data.type as NappyType | null,
+    colour: data.colour as NappyColour | null,
+    texture: data.texture as NappyTexture | null,
     startedAt: new Date(data.startedAt as string),
     notes: (data.notes as string) ?? null,
     createdAt: new Date(data.createdAt as string),

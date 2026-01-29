@@ -142,7 +142,9 @@ type BootstrapResponse = {
       id: string;
       babyId: number;
       loggedByUserId: number;
-      type: 'wee' | 'poo' | 'mixed' | 'dry' | null;
+      type: 'wee' | 'poo' | 'mixed' | 'dry' | 'clean' | null;
+      colour: 'green' | 'yellow' | 'brown' | 'black' | 'red' | 'grey' | null;
+      texture: 'veryRunny' | 'runny' | 'mushy' | 'mucusy' | 'solid' | 'littleBalls' | null;
       startedAt: string;
       notes: string | null;
       createdAt: string;
@@ -463,6 +465,8 @@ export async function GET() {
         babyId: nappyLogSchema.babyId,
         loggedByUserId: nappyLogSchema.loggedByUserId,
         type: nappyLogSchema.type,
+        colour: nappyLogSchema.colour,
+        texture: nappyLogSchema.texture,
         startedAt: nappyLogSchema.startedAt,
         notes: nappyLogSchema.notes,
         createdAt: nappyLogSchema.createdAt,
@@ -582,6 +586,8 @@ export async function GET() {
         babyId: log.babyId,
         loggedByUserId: log.loggedByUserId,
         type: log.type,
+        colour: log.colour,
+        texture: log.texture,
         startedAt: log.startedAt.toISOString(),
         notes: log.notes,
         createdAt: log.createdAt.toISOString(),

@@ -1,6 +1,6 @@
 'use client';
 
-import type { NappyType } from '@/lib/local-db';
+import type { NappyColour, NappyTexture, NappyType } from '@/lib/local-db';
 import { useState } from 'react';
 import { createNappyLog } from '@/services/operations/nappy-log';
 
@@ -8,6 +8,8 @@ type UseNappyFormSubmitProps = {
   babyId: number;
   startTime: Date;
   nappyType: NappyType;
+  colour: NappyColour | null;
+  texture: NappyTexture | null;
   notes: string;
   resetForm: () => void;
   onSuccess?: () => void;
@@ -18,6 +20,8 @@ export function useNappyFormSubmit({
   babyId,
   startTime,
   nappyType,
+  colour,
+  texture,
   notes,
   resetForm,
   onSuccess,
@@ -34,6 +38,8 @@ export function useNappyFormSubmit({
       const result = await createNappyLog({
         babyId,
         type: nappyType,
+        colour,
+        texture,
         startedAt: startTime,
         notes: notes.trim() || null,
       });

@@ -9,7 +9,7 @@
  */
 
 import type { OperationResult } from './types';
-import type { LocalNappyLog, NappyType } from '@/lib/local-db';
+import type { LocalNappyLog, NappyColour, NappyTexture, NappyType } from '@/lib/local-db';
 import { addToOutbox, localDb, saveNappyLogs } from '@/lib/local-db';
 import { flushOutbox } from '@/services/sync';
 import { useUserStore } from '@/stores/useUserStore';
@@ -28,6 +28,8 @@ import {
 export type CreateNappyLogInput = {
   babyId: number;
   type: NappyType;
+  colour?: NappyColour | null;
+  texture?: NappyTexture | null;
   startedAt: Date;
   notes?: string | null;
 };
@@ -36,6 +38,8 @@ export type UpdateNappyLogInput = {
   id: string;
   babyId: number;
   type?: NappyType;
+  colour?: NappyColour | null;
+  texture?: NappyTexture | null;
   startedAt?: Date;
   notes?: string | null;
 };
@@ -97,6 +101,8 @@ export async function createNappyLog(
       babyId: input.babyId,
       loggedByUserId: user.localId,
       type: input.type,
+      colour: input.colour ?? null,
+      texture: input.texture ?? null,
       startedAt: input.startedAt,
       notes: input.notes ?? null,
       createdAt: now,
@@ -117,6 +123,8 @@ export async function createNappyLog(
         babyId: nappyLog.babyId,
         loggedByUserId: nappyLog.loggedByUserId,
         type: nappyLog.type,
+        colour: nappyLog.colour,
+        texture: nappyLog.texture,
         startedAt: nappyLog.startedAt.toISOString(),
         notes: nappyLog.notes,
         createdAt: nappyLog.createdAt.toISOString(),
@@ -174,6 +182,8 @@ export async function updateNappyLog(
     const updated: LocalNappyLog = {
       ...existing,
       type: input.type ?? existing.type,
+      colour: input.colour !== undefined ? input.colour : existing.colour,
+      texture: input.texture !== undefined ? input.texture : existing.texture,
       startedAt: input.startedAt ?? existing.startedAt,
       notes: input.notes !== undefined ? input.notes : existing.notes,
       updatedAt: new Date(),
@@ -193,6 +203,8 @@ export async function updateNappyLog(
         babyId: updated.babyId,
         loggedByUserId: updated.loggedByUserId,
         type: updated.type,
+        colour: updated.colour,
+        texture: updated.texture,
         startedAt: updated.startedAt.toISOString(),
         notes: updated.notes,
         updatedAt: updated.updatedAt.toISOString(),

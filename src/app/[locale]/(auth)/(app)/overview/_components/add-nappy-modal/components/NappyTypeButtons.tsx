@@ -14,7 +14,7 @@ const NAPPY_TYPES: { value: NappyType; label: string }[] = [
   { value: 'wee', label: 'Wee' },
   { value: 'poo', label: 'Poo' },
   { value: 'mixed', label: 'Mixed' },
-  { value: 'dry', label: 'Dry' },
+  { value: 'clean', label: 'Clean' },
 ];
 
 export function NappyTypeButtons({ value, onChange, handMode }: NappyTypeButtonsProps) {

@@ -67,6 +67,25 @@ export const nappyTypeEnum = pgEnum('nappy_type_enum', [
   'poo',
   'mixed',
   'dry',
+  'clean',
+]);
+
+export const nappyColourEnum = pgEnum('nappy_colour_enum', [
+  'green',
+  'yellow',
+  'brown',
+  'black',
+  'red',
+  'grey',
+]);
+
+export const nappyTextureEnum = pgEnum('nappy_texture_enum', [
+  'veryRunny',
+  'runny',
+  'mushy',
+  'mucusy',
+  'solid',
+  'littleBalls',
 ]);
 
 // Tables
@@ -160,7 +179,9 @@ export const nappyLogSchema = pgTable('nappy_log', {
   id: text('id').primaryKey(), // Client-generated UUID
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
   loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
-  type: nappyTypeEnum('type'), // wee, poo, mixed, dry - nullable
+  type: nappyTypeEnum('type'), // wee, poo, mixed, dry, clean - nullable
+  colour: nappyColourEnum('colour'), // colour - nullable
+  texture: nappyTextureEnum('texture'), // texture - nullable
   startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
   notes: text('notes'),
   ...timestamps,

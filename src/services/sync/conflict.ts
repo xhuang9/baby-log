@@ -12,6 +12,8 @@ import type {
   LocalFeedLog,
   LocalNappyLog,
   LocalSleepLog,
+  NappyColour,
+  NappyTexture,
   NappyType,
 } from '@/lib/local-db';
 import {
@@ -84,6 +86,8 @@ export async function applyServerData(
       babyId: serverData.babyId as number,
       loggedByUserId: serverData.loggedByUserId as number,
       type: serverData.type as NappyType | null,
+      colour: (serverData.colour as NappyColour | null) ?? null,
+      texture: (serverData.texture as NappyTexture | null) ?? null,
       startedAt: new Date(serverData.startedAt as string),
       notes: (serverData.notes as string) ?? null,
       createdAt: new Date(serverData.createdAt as string),

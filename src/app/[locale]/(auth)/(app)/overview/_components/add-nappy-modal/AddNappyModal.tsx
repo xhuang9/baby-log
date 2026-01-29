@@ -15,7 +15,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { NappyTypeButtons } from './components/NappyTypeButtons';
+import { ColourButtons, NappyTypeButtons, TextureButtons } from './components';
 import {
   useInitializeNappyForm,
   useNappyFormState,
@@ -41,13 +41,25 @@ export function AddNappyModal({
     babyId,
     startTime: state.startTime,
     nappyType: state.nappyType,
+    colour: state.colour,
+    texture: state.texture,
     notes: state.notes,
     resetForm: actions.resetForm,
     onSuccess,
     onClose: () => onOpenChange(false),
   });
 
-  // 4. Open change handler
+  // 4. Handle nappy type change - clear colour/texture when switching to Wee or Clean
+  const handleNappyTypeChange = (newType: typeof state.nappyType) => {
+    actions.setNappyType(newType);
+    // Clear colour and texture if switching to Wee or Clean
+    if (newType === 'wee' || newType === 'clean') {
+      actions.setColour(null);
+      actions.setTexture(null);
+    }
+  };
+
+  // 5. Open change handler
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
       actions.resetForm();
@@ -55,7 +67,7 @@ export function AddNappyModal({
     onOpenChange(newOpen);
   };
 
-  // 5. Render
+  // 6. Render
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent
@@ -83,7 +95,7 @@ export function AddNappyModal({
         </SheetHeader>
 
         <div
-          className="mx-auto w-full max-w-150 flex-1 space-y-6 overflow-y-auto px-4 pt-6 pb-6"
+          className="mx-auto w-full max-w-150 flex-1 space-y-8 overflow-y-auto px-4 pt-6 pb-6"
           style={{ minHeight: 0 }}
         >
           {/* Time Picker */}
@@ -99,9 +111,27 @@ export function AddNappyModal({
           {/* Nappy Type Selection */}
           <NappyTypeButtons
             value={state.nappyType}
-            onChange={actions.setNappyType}
+            onChange={handleNappyTypeChange}
             handMode={state.handMode}
           />
+
+          {/* Colour Selection - Only show for Poo and Mixed */}
+          {(state.nappyType === 'poo' || state.nappyType === 'mixed') && (
+            <ColourButtons
+              value={state.colour}
+              onChange={actions.setColour}
+              handMode={state.handMode}
+            />
+          )}
+
+          {/* Texture Selection - Only show for Poo and Mixed */}
+          {(state.nappyType === 'poo' || state.nappyType === 'mixed') && (
+            <TextureButtons
+              value={state.texture}
+              onChange={actions.setTexture}
+              handMode={state.handMode}
+            />
+          )}
 
           {/* Collapsible Notes Toggle */}
           <div className="flex justify-center">
