@@ -20,6 +20,10 @@ export type LogsViewTab = 'listing' | 'today' | 'week';
 /**
  * Main orchestrator component for the activity logs page
  * Manages filter state, tabs, and modal state, coordinates display components
+ *
+ * Performance optimizations:
+ * - Lazy tab rendering: chart tabs only mount after first visit
+ * - Unified data query: single fetch, filter in useMemo for different views
  */
 export function LogsContent() {
   // Get current user and their default baby from IndexedDB
@@ -33,6 +37,9 @@ export function LogsContent() {
   const [editingLog, setEditingLog] = useState<UnifiedLog | null>(null);
   const [activeTab, setActiveTab] = useState<LogsViewTab>('listing');
 
+  // Track which tabs have been visited (for lazy rendering)
+  const [visitedTabs, setVisitedTabs] = useState<Set<LogsViewTab>>(() => new Set(['listing']));
+
   // Filters with URL sync (for listing view)
   const { activeTypes, timeRange, startDate, endDate, setActiveTypes, setTimeRange }
     = useLogsFilters();
@@ -40,19 +47,49 @@ export function LogsContent() {
   // Separate filter state for chart views (not synced to URL)
   const [chartActiveTypes, setChartActiveTypes] = useState(ACTIVITY_TYPES.map(t => t.value));
 
-  // Fetch unified logs across feed and sleep (for listing view)
-  const allLogs = useAllActivityLogs(babyId, activeTypes, startDate, endDate);
+  // Handle tab change - mark tab as visited for lazy rendering
+  const handleTabChange = useCallback((value: string) => {
+    const tab = value as LogsViewTab;
+    setActiveTab(tab);
+    setVisitedTabs(prev => new Set([...prev, tab]));
+  }, []);
 
-  // Fetch all logs for chart views (no date restriction, but filtered by activity type)
-  const chartLogs = useAllActivityLogs(babyId, chartActiveTypes, null, null);
+  // Unified data query: fetch ALL logs (no date restriction, all activity types)
+  // This single query feeds both listing and chart views
+  const allActivityTypes = ACTIVITY_TYPES.map(t => t.value);
+  const allLogs = useAllActivityLogs(babyId, allActivityTypes, null, null);
 
-  // Filter chart logs by activity type
-  const filteredChartLogs = useMemo(() => {
-    if (!chartLogs) {
+  // Filter logs for listing view (by date range and selected activity types)
+  const filteredListingLogs = useMemo(() => {
+    if (!allLogs) {
       return undefined;
     }
-    return chartLogs.filter(log => chartActiveTypes.includes(log.type));
-  }, [chartLogs, chartActiveTypes]);
+
+    return allLogs.filter((log) => {
+      // Filter by activity type
+      if (!activeTypes.includes(log.type)) {
+        return false;
+      }
+
+      // Filter by date range (if specified)
+      if (startDate && endDate) {
+        const logTime = log.startedAt.getTime();
+        if (logTime < startDate.getTime() || logTime > endDate.getTime()) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [allLogs, activeTypes, startDate, endDate]);
+
+  // Filter logs for chart views (by chart activity types only, no date restriction)
+  const filteredChartLogs = useMemo(() => {
+    if (!allLogs) {
+      return undefined;
+    }
+    return allLogs.filter(log => chartActiveTypes.includes(log.type));
+  }, [allLogs, chartActiveTypes]);
 
   const handleOpenEditModal = useCallback((log: UnifiedLog) => {
     setEditingLog(log);
@@ -65,7 +102,7 @@ export function LogsContent() {
   return (
     <div className="flex h-full flex-col gap-2 md:gap-4">
       {/* Tabs navigation */}
-      <Tabs value={activeTab} onValueChange={v => setActiveTab(v as LogsViewTab)} className="flex min-h-0 flex-1 flex-col">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="flex min-h-0 flex-1 flex-col">
         <TabsList className="w-full shrink-0">
           <TabsTrigger value="listing" className="flex-1">
             Listing
@@ -90,42 +127,50 @@ export function LogsContent() {
 
           {/* Logs list */}
           <LogsList
-            logs={allLogs}
+            logs={filteredListingLogs}
             hasAnyLogs={Boolean(allLogs && allLogs.length > 0)}
             onEditLog={handleOpenEditModal}
           />
         </TabsContent>
 
-        {/* Today View */}
+        {/* Today View - lazy render only after first visit */}
         <TabsContent value="today" className="flex min-h-0 flex-1 flex-col gap-3 md:gap-4">
-          {/* Activity type filter pills */}
-          <ActivityTypePills
-            activeTypes={chartActiveTypes}
-            setActiveTypes={setChartActiveTypes}
-          />
+          {visitedTabs.has('today') && (
+            <>
+              {/* Activity type filter pills */}
+              <ActivityTypePills
+                activeTypes={chartActiveTypes}
+                setActiveTypes={setChartActiveTypes}
+              />
 
-          {/* Timeline chart */}
-          <ActivityTimelineChart
-            logs={filteredChartLogs}
-            mode="today"
-            onEditLog={handleOpenEditModal}
-          />
+              {/* Timeline chart */}
+              <ActivityTimelineChart
+                logs={filteredChartLogs}
+                mode="today"
+                onEditLog={handleOpenEditModal}
+              />
+            </>
+          )}
         </TabsContent>
 
-        {/* Week View */}
+        {/* Week View - lazy render only after first visit */}
         <TabsContent value="week" className="flex min-h-0 flex-1 flex-col gap-3 md:gap-4">
-          {/* Activity type filter pills */}
-          <ActivityTypePills
-            activeTypes={chartActiveTypes}
-            setActiveTypes={setChartActiveTypes}
-          />
+          {visitedTabs.has('week') && (
+            <>
+              {/* Activity type filter pills */}
+              <ActivityTypePills
+                activeTypes={chartActiveTypes}
+                setActiveTypes={setChartActiveTypes}
+              />
 
-          {/* Timeline chart */}
-          <ActivityTimelineChart
-            logs={filteredChartLogs}
-            mode="week"
-            onEditLog={handleOpenEditModal}
-          />
+              {/* Timeline chart */}
+              <ActivityTimelineChart
+                logs={filteredChartLogs}
+                mode="week"
+                onEditLog={handleOpenEditModal}
+              />
+            </>
+          )}
         </TabsContent>
       </Tabs>
 

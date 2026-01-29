@@ -7,6 +7,7 @@ source_paths:
   - src/components/feed/
   - src/stores/useTimerStore.ts
   - src/hooks/useHoldAction.ts
+  - src/hooks/useTimerSave.ts
   - src/app/[locale]/api/sync/push/mutations/nappy-log.ts
   - src/lib/local-db/nappy-logs.ts
   - src/app/[locale]/(auth)/(app)/logs/_components/NappyTile.tsx
@@ -76,6 +77,11 @@ This section documents the feed logging implementation including:
 - **Content**: TimeSwiper date range constraint (-7 days to +1 day 23:59), boundary clamping, pixel offset calculations, and day offset display
 - **Read when**: Modifying time selection range, understanding date boundary logic, debugging timeline calculations, or implementing similar constrained scrollable timelines
 
+#### `chunks/feed-logging.dual-time-swiper.md`
+
+- **Content**: DualTimeSwiper component for breast feed logging with tab-based time switching, inline duration editing, hand-mode layout, and invalid duration error handling
+- **Read when**: Implementing breast feed time input, understanding tab-based switching patterns, working with inline editable inputs, or implementing similar time range pickers with duration display
+
 ### Timer System
 
 #### `chunks/feed-logging.timer-persistence.md`
@@ -92,6 +98,11 @@ This section documents the feed logging implementation including:
 
 - **Content**: Dual input modes (timer vs. manual) in AddFeedModal, timer-to-feed-log conversion, actual start time reconstruction, and validation logic
 - **Read when**: Working with AddFeedModal, understanding timer/manual mode switching, debugging timer submission, or implementing similar dual-mode input patterns
+
+#### `chunks/feed-logging.timer-save-validation.md`
+
+- **Content**: Save button validation logic allowing sub-minute durations (< 60 seconds), Math.ceil rounding to 1 minute minimum, and user-facing confirmation flow
+- **Read when**: Implementing timer validation, understanding sub-minute rounding behavior, or debugging save button enable/disable logic for breast feeds
 
 ### Activity Logs Page
 

@@ -36,7 +36,7 @@ export function SettingsPopoverWrapper({
     <Button
       size="sm"
       onClick={onSave}
-      disabled={isSaving}
+      disabled={isSaving || !isDirty}
       className="flex-1"
     >
       {isSaving ? 'Saving...' : 'Save'}

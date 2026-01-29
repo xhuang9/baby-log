@@ -47,7 +47,12 @@
       "Bash(curl:*)",
       "Bash(pnpm typecheck:*)",
       "Bash(pnpm db:generate:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(__NEW_LINE_14f52190e6770d24__ echo \"\")",
+      "Bash(__NEW_LINE_a1619193a8bfb6d6__ echo \"\")",
+      "Bash(__NEW_LINE_10f51f6c2d0f16b7__ echo \"\")",
+      "Bash(__NEW_LINE_05a718d472c6e61f__ echo \"\")",
+      "Bash(__NEW_LINE_27e20edef9713650__ echo \"\")"
     ]
   },
   "enableAllProjectMcpServers": true,

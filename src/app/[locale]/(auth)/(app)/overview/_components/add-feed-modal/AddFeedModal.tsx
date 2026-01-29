@@ -50,9 +50,9 @@ export function AddFeedModal({
     logType: 'feed',
   });
 
-  // Disable save for breast feed timer mode if timer is less than 1 minute
-  // (prevents sub-second saves that would round to 0 minutes)
-  const isTimerModeWithNoTime = state.method === 'breast' && state.inputMode === 'timer' && timerElapsed < 60;
+  // Disable save for breast feed timer mode if timer has no time recorded
+  // (duration will be rounded up to 1 minute for any time > 0)
+  const isTimerModeWithNoTime = state.method === 'breast' && state.inputMode === 'timer' && timerElapsed < 1;
 
   // Disable save for breast feed manual mode if duration is invalid or zero
   const breastManualDurationMs = state.endTime.getTime() - state.startTime.getTime();
