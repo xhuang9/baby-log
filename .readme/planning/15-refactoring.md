@@ -56,14 +56,14 @@ Use the `src/lib/local-db/` structure as the baseline approach:
 | 363 | `src/services/operations/feed-log.test.ts` | ⏳ | Split by operation type (create/update/delete/apply). |
 | 358 | `src/app/[locale]/api/sync/pull/route.test.ts` | ⏳ | Split into pagination/filters/auth tests. |
 | 331 | `src/services/initial-sync.ts` | ⏳ | Split into fetch, transform, apply stages under `services/sync/initial/`. |
-| 313 | `src/hooks/useSyncScheduler.ts` | ⏳ | Extract scheduler logic and constants into `hooks/sync/` helper module. |
+| 265 | `src/hooks/useSyncScheduler.ts` | ✅ | Refactored: extracted `handleAccessRevocation` helper, reduced from 362 to ~265 LOC. |
 | 293 | `src/components/ui/combobox.tsx` | ⏳ | Split into `Combobox`, `ComboboxTrigger`, `ComboboxList`, and hook utilities. |
 | 289 | `src/lib/local-db/helpers/ui-config.ts` | ⏳ | Further split into `ui-config/` (paths, merge/update, defaults, queries). |
 | 268 | `src/app/[locale]/(auth)/(app)/overview/_components/AddSleepModal.tsx` | ✅ | Extract shared form pieces and modal layout. |
-| 267 | `src/components/feed/AmountSlider.tsx` | ⏳ | Split slider UI, labels, and value math utilities. |
+| 159 | `src/components/feed/AmountSlider.tsx` | ✅ | Refactored: extracted 3 hooks into `amount-slider/hooks/`, reduced from 346 to 159 LOC. |
 | 265 | `src/app/[locale]/(auth)/(app)/settings/babies/[babyId]/share/_components/PendingInvitesSection.tsx` | ⏳ | Extract list item and empty states. |
 | 258 | `src/app/[locale]/(auth)/(app)/settings/babies/[babyId]/share/_components/CaregiversSection.tsx` | ⏳ | Extract list item and access badge components. |
-| 258 | `src/app/[locale]/(auth)/(app)/settings/babies/BabiesManagement.tsx` | ⏳ | Split into table/list, actions, and row components. |
+| 258 | `src/app/[locale]/(auth)/(app)/settings/babies/BabiesManagement.tsx` | 🟡 | Partial: added React.memo to BabyRow, improved memoization. Further extraction possible. |
 | 253 | `src/components/ui/dropdown-menu.tsx` | ⏳ | Split base primitives and custom menu items. |
 | 247 | `src/services/sync-worker-manager.ts` | ⏳ | Split worker lifecycle, message handlers, and configuration. |
 | 245 | `src/models/Schema.ts` | ⏳ | Split into `models/schema/` (tables, relations, enums). |
@@ -301,3 +301,44 @@ add-sleep-modal/hooks/
 - Maintains exact same functionality and behavior
 - **Complete test coverage for all sleep modal hooks** (20 tests)
 - Documentation serves as blueprint for future modal implementations
+
+### Phase 4 (Completed: 2026-01-30)
+
+**Completed Refactorings:**
+
+6. ✅ `src/components/feed/AmountSlider.tsx` (346 LOC → 159 LOC main + modular hooks)
+   - Extracted 3 custom hooks into `amount-slider/hooks/`:
+     - `useAmountSliderSettings.ts` - Settings state, persistence, dirty tracking
+     - `useAmountConversion.ts` - ml/oz conversion utilities
+     - `useAmountHoldAdjust.ts` - Hold-to-adjust button logic
+   - Main component reduced to clean orchestrator (~159 LOC)
+   - Clear separation: settings management, unit conversion, interaction logic
+   - TypeScript compilation passes
+
+**File Structure:**
+```
+amount-slider/
+├── hooks/
+│   ├── index.ts                    # Public API exports
+│   ├── useAmountSliderSettings.ts  # Settings state & persistence
+│   ├── useAmountConversion.ts      # ml/oz conversion utilities
+│   └── useAmountHoldAdjust.ts      # Hold button adjustment logic
+```
+
+7. ✅ `src/hooks/useSyncScheduler.ts` (362 LOC → ~265 LOC)
+   - Extracted access revocation handling into centralized helper
+   - Created `src/hooks/helpers/handleAccessRevocation.ts` (~60 LOC)
+   - Eliminates duplicated access revocation logic (previously 3 places)
+   - Single responsibility: store updates, toast, notification logging
+   - Used by both `useSyncScheduler` and `useMultiBabySync`
+
+8. 🟡 `src/app/[locale]/(auth)/(app)/settings/babies/BabiesManagement.tsx`
+   - Added `React.memo` wrapper to `BabyRow` component
+   - Improved memoization to prevent unnecessary re-renders
+   - LOC unchanged but performance improved
+
+**Results:**
+- AmountSlider: 346 → 159 LOC (54% reduction in main component)
+- useSyncScheduler: 362 → 265 LOC (27% reduction)
+- Access revocation logic consolidated from 3 locations to 1
+- All refactored code maintains exact same behavior

@@ -11,13 +11,11 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
 import { getSyncCursor } from '@/lib/local-db';
-import { notifySystem } from '@/lib/notify';
 import { queryKeys } from '@/lib/query-keys';
 import { flushOutbox, pullChanges } from '@/services/sync';
-import { useBabyStore } from '@/stores/useBabyStore';
 import { useUserStore } from '@/stores/useUserStore';
+import { handleAccessRevocation } from './helpers/handleAccessRevocation';
 import { useOnlineStatus, useOnlineStatusChange } from './useOnlineStatus';
 
 // ============================================================================
@@ -63,9 +61,6 @@ export function useSyncScheduler({
   const [lastSyncAt, setLastSyncAt] = useState<Date | null>(null);
   const [lastSyncChanges, setLastSyncChanges] = useState(0);
   const [lastError, setLastError] = useState<string | null>(null);
-
-  // Get baby store for access revocation handling
-  const { activeBaby, allBabies, setActiveBaby, setAllBabies } = useBabyStore();
   const user = useUserStore(s => s.user);
 
   // Fetch cursor to use in query key
@@ -96,39 +91,12 @@ export function useSyncScheduler({
         queryClient.invalidateQueries({
           queryKey: queryKeys.feedLogs.list(babyId),
         });
-      } else if (result.errorType === 'access_revoked') {
-        // Handle access revocation
+      } else if (result.errorType === 'access_revoked' && result.revokedBabyId) {
         setLastError(result.error ?? 'Access revoked');
-
-        // Remove the revoked baby from allBabies
-        const updatedBabies = allBabies.filter(b => b.babyId !== result.revokedBabyId);
-        setAllBabies(updatedBabies);
-
-        // If the active baby was revoked, switch to another baby
-        if (activeBaby?.babyId === result.revokedBabyId) {
-          const nextBaby = updatedBabies[0] ?? null;
-          if (nextBaby) {
-            setActiveBaby(nextBaby);
-          }
-        }
-
-        // Show toast notification
-        toast.error('Access Revoked', {
-          description: 'Your access to this baby has been removed by the owner.',
+        handleAccessRevocation({
+          revokedBabyId: result.revokedBabyId,
+          userLocalId: user?.localId,
         });
-
-        // Log to notification system
-        if (user?.localId) {
-          void notifySystem.access('error', {
-            userId: user.localId,
-            title: 'Access Revoked',
-            message: 'Your access to this baby has been removed by the owner.',
-            babyId: result.revokedBabyId,
-            dedupeKey: `access-revoked-${result.revokedBabyId}`,
-          });
-        }
-
-        // Invalidate queries to refresh UI
         queryClient.invalidateQueries();
       } else {
         setLastError(result.error ?? 'Unknown error');
@@ -223,9 +191,6 @@ export function useMultiBabySync({
   const isOnline = useOnlineStatus();
   const [isSyncing, setIsSyncing] = useState(false);
   const isSyncingRef = useRef(false);
-
-  // Get baby store for access revocation handling
-  const { activeBaby, allBabies, setActiveBaby, setAllBabies } = useBabyStore();
   const user = useUserStore(s => s.user);
 
   // Flush outbox when coming online
@@ -236,34 +201,14 @@ export function useMultiBabySync({
 
         // Handle access revocation from outbox flush
         if (result.errorType === 'access_revoked' && result.revokedBabyId) {
-          const updatedBabies = allBabies.filter(b => b.babyId !== result.revokedBabyId);
-          setAllBabies(updatedBabies);
-
-          if (activeBaby?.babyId === result.revokedBabyId) {
-            const nextBaby = updatedBabies[0] ?? null;
-            if (nextBaby) {
-              setActiveBaby(nextBaby);
-            }
-          }
-
-          toast.error('Access Revoked', {
-            description: 'Your access to this baby has been removed by the owner.',
-          });
-
-          // Log to notification system
           const currentUser = useUserStore.getState().user;
-          if (currentUser?.localId) {
-            void notifySystem.access('error', {
-              userId: currentUser.localId,
-              title: 'Access Revoked',
-              message: 'Your access to this baby has been removed by the owner.',
-              babyId: result.revokedBabyId,
-              dedupeKey: `access-revoked-${result.revokedBabyId}`,
-            });
-          }
+          handleAccessRevocation({
+            revokedBabyId: result.revokedBabyId,
+            userLocalId: currentUser?.localId,
+          });
         }
       }
-    }, [enabled, allBabies, activeBaby, setAllBabies, setActiveBaby]),
+    }, [enabled]),
   );
 
   const triggerSync = useCallback(async () => {
@@ -280,30 +225,10 @@ export function useMultiBabySync({
 
       // Handle access revocation from outbox flush
       if (flushResult.errorType === 'access_revoked' && flushResult.revokedBabyId) {
-        const updatedBabies = allBabies.filter(b => b.babyId !== flushResult.revokedBabyId);
-        setAllBabies(updatedBabies);
-
-        if (activeBaby?.babyId === flushResult.revokedBabyId) {
-          const nextBaby = updatedBabies[0] ?? null;
-          if (nextBaby) {
-            setActiveBaby(nextBaby);
-          }
-        }
-
-        toast.error('Access Revoked', {
-          description: 'Your access to this baby has been removed by the owner.',
+        handleAccessRevocation({
+          revokedBabyId: flushResult.revokedBabyId,
+          userLocalId: user?.localId,
         });
-
-        // Log to notification system
-        if (user?.localId) {
-          void notifySystem.access('error', {
-            userId: user.localId,
-            title: 'Access Revoked',
-            message: 'Your access to this baby has been removed by the owner.',
-            babyId: flushResult.revokedBabyId,
-            dedupeKey: `access-revoked-${flushResult.revokedBabyId}`,
-          });
-        }
       }
 
       // Pull changes for each baby
@@ -312,32 +237,10 @@ export function useMultiBabySync({
 
         // Handle access revocation
         if (result.errorType === 'access_revoked' && result.revokedBabyId) {
-          const currentBabies = useBabyStore.getState().allBabies;
-          const updatedBabies = currentBabies.filter(b => b.babyId !== result.revokedBabyId);
-          setAllBabies(updatedBabies);
-
-          const currentActive = useBabyStore.getState().activeBaby;
-          if (currentActive?.babyId === result.revokedBabyId) {
-            const nextBaby = updatedBabies[0] ?? null;
-            if (nextBaby) {
-              setActiveBaby(nextBaby);
-            }
-          }
-
-          toast.error('Access Revoked', {
-            description: 'Your access to this baby has been removed by the owner.',
+          handleAccessRevocation({
+            revokedBabyId: result.revokedBabyId,
+            userLocalId: user?.localId,
           });
-
-          // Log to notification system
-          if (user?.localId) {
-            void notifySystem.access('error', {
-              userId: user.localId,
-              title: 'Access Revoked',
-              message: 'Your access to this baby has been removed by the owner.',
-              babyId: result.revokedBabyId,
-              dedupeKey: `access-revoked-${result.revokedBabyId}`,
-            });
-          }
         }
       }
 
@@ -352,7 +255,7 @@ export function useMultiBabySync({
       isSyncingRef.current = false;
       setIsSyncing(false);
     }
-  }, [isOnline, babyIds, queryClient, allBabies, activeBaby, setAllBabies, setActiveBaby, user]);
+  }, [isOnline, babyIds, queryClient, user]);
 
   return {
     triggerSync,

@@ -11,8 +11,8 @@ import {
 import { cn } from '@/lib/utils';
 
 type ButtonStackProps = {
-  /** Callback for hold-based increment (receives minutes to adjust) */
-  onHoldAdjust: (minutes: number) => void;
+  /** Callback for hold-based increment (receives minutes to adjust) - used by TimeSwiper */
+  onHoldAdjust?: (minutes: number) => void;
   /** Called when hold starts */
   onHoldStart: (direction: 1 | -1) => void;
   /** Called when hold ends */

@@ -70,7 +70,7 @@ export function TimerWidget({
 
     const interval = setInterval(() => {
       setElapsedSeconds(calculateElapsed());
-    }, 100);
+    }, 1000);
     return () => clearInterval(interval);
   }, [timerState]);
 

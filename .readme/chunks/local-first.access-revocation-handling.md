@@ -1,8 +1,9 @@
 ---
-last_verified_at: 2026-01-22T00:00:00Z
+last_verified_at: 2026-01-30T00:00:00Z
 source_paths:
   - src/services/sync-service.ts
   - src/hooks/useSyncScheduler.ts
+  - src/hooks/helpers/handleAccessRevocation.ts
   - src/lib/local-db/helpers/access-revoked.ts
   - src/lib/local-db/helpers/index.ts
 ---
@@ -188,67 +189,83 @@ export async function clearRevokedBabyData(
 
 **Export location:** `src/lib/local-db/helpers/index.ts`
 
-### 4. UI Updates: useSyncScheduler Hook
+### 4. UI Updates: Centralized Handler
 
-The sync scheduler hook handles UI state updates and notifications:
+UI state updates and notifications are handled by a centralized helper:
+
+**File:** `src/hooks/helpers/handleAccessRevocation.ts`
+
+```typescript
+type AccessRevocationParams = {
+  revokedBabyId: number;
+  userLocalId?: number;
+  message?: string;
+};
+
+export function handleAccessRevocation({
+  revokedBabyId,
+  userLocalId,
+  message = 'Your access to this baby has been removed by the owner.',
+}: AccessRevocationParams): void {
+  const { activeBaby, allBabies, setActiveBaby, setAllBabies } = useBabyStore.getState();
+
+  // Remove the revoked baby from allBabies
+  const updatedBabies = allBabies.filter(b => b.babyId !== revokedBabyId);
+  setAllBabies(updatedBabies);
+
+  // If the active baby was revoked, switch to another baby
+  if (activeBaby?.babyId === revokedBabyId) {
+    const nextBaby = updatedBabies[0] ?? null;
+    if (nextBaby) {
+      setActiveBaby(nextBaby);
+    }
+  }
+
+  // Show toast notification
+  toast.error('Access Revoked', { description: message });
+
+  // Log to notification system
+  if (userLocalId) {
+    void notifySystem.access('error', {
+      userId: userLocalId,
+      title: 'Access Revoked',
+      message,
+      babyId: revokedBabyId,
+      dedupeKey: `access-revoked-${revokedBabyId}`,
+    });
+  }
+}
+```
 
 **File:** `src/hooks/useSyncScheduler.ts`
 
+The sync scheduler calls the centralized handler:
+
 ```typescript
-// In useSyncScheduler (single baby)
-if (result.errorType === 'access_revoked') {
+// In useSyncScheduler (single baby pull sync)
+if (result.errorType === 'access_revoked' && result.revokedBabyId) {
   setLastError(result.error ?? 'Access revoked');
-
-  // Remove revoked baby from allBabies
-  const updatedBabies = allBabies.filter(
-    b => b.babyId !== result.revokedBabyId
-  );
-  setAllBabies(updatedBabies);
-
-  // Switch active baby if needed
-  if (activeBaby?.babyId === result.revokedBabyId) {
-    const nextBaby = updatedBabies[0] ?? null;
-    if (nextBaby) {
-      setActiveBaby(nextBaby);
-    }
-  }
-
-  // Show user notification
-  toast.error('Access Revoked', {
-    description: 'Your access to this baby has been removed by the owner.',
+  handleAccessRevocation({
+    revokedBabyId: result.revokedBabyId,
+    userLocalId: user?.localId,
   });
-
-  // Invalidate all queries to refresh UI
   queryClient.invalidateQueries();
 }
 
-// In useMultiBabySync (multiple babies)
+// In useMultiBabySync (outbox flush and multi-baby pulls)
 if (result.errorType === 'access_revoked' && result.revokedBabyId) {
-  const currentBabies = useBabyStore.getState().allBabies;
-  const updatedBabies = currentBabies.filter(
-    b => b.babyId !== result.revokedBabyId
-  );
-  setAllBabies(updatedBabies);
-
-  const currentActive = useBabyStore.getState().activeBaby;
-  if (currentActive?.babyId === result.revokedBabyId) {
-    const nextBaby = updatedBabies[0] ?? null;
-    if (nextBaby) {
-      setActiveBaby(nextBaby);
-    }
-  }
-
-  toast.error('Access Revoked', {
-    description: 'Your access to this baby has been removed by the owner.',
+  handleAccessRevocation({
+    revokedBabyId: result.revokedBabyId,
+    userLocalId: user?.localId,
   });
 }
 ```
 
-**UI updates:**
+**UI updates (handled by `handleAccessRevocation`):**
 1. Remove revoked baby from `allBabies` in Zustand store
 2. If active baby was revoked, switch to next available baby
 3. Show toast notification with error message
-4. Invalidate TanStack Query cache to refresh all views
+4. Log to notification system with deduplication
 
 ## Trigger Points
 

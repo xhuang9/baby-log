@@ -1,7 +1,7 @@
 'use client';
 
 import type { TickMark, TimeSwiperProps } from './types';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ButtonStack } from '@/components/input-controls/ButtonStack';
 import { SettingsPopoverWrapper } from '@/components/input-controls/SettingsPopoverWrapper';
 import { TimeSwiperSettingsPanel } from '@/components/settings';
@@ -97,22 +97,24 @@ export function TimeSwiper({ value, onChange, handMode = 'right', className }: T
     return () => resizeObserver.disconnect();
   }, []);
 
-  // Formatting helpers
-  const formatHourLabel = (hour: number): string => {
-    const h = hour % 24;
-    if (settings.use24Hour) {
-      return h.toString().padStart(2, '0');
-    }
-    const ampm = h >= 12 ? 'pm' : 'am';
-    return `${h % 12 || 12}${ampm}`;
-  };
+  // Generate tick marks (memoized to avoid recalculation on every render)
+  const ticks = useMemo(() => {
+    const formatHourLabel = (hour: number): string => {
+      const h = hour % 24;
+      if (settings.use24Hour) {
+        return h.toString().padStart(2, '0');
+      }
+      const ampm = h >= 12 ? 'pm' : 'am';
+      return `${h % 12 || 12}${ampm}`;
+    };
 
-  // Generate tick marks
-  const ticks: TickMark[] = [];
-  for (let hour = 0; hour < 24; hour++) {
-    ticks.push({ position: hour * HOUR_WIDTH, isHour: true, label: formatHourLabel(hour) });
-    ticks.push({ position: hour * HOUR_WIDTH + HOUR_WIDTH / 2, isHour: false, label: null });
-  }
+    const result: TickMark[] = [];
+    for (let hour = 0; hour < 24; hour++) {
+      result.push({ position: hour * HOUR_WIDTH, isHour: true, label: formatHourLabel(hour) });
+      result.push({ position: hour * HOUR_WIDTH + HOUR_WIDTH / 2, isHour: false, label: null });
+    }
+    return result;
+  }, [settings.use24Hour]);
 
   const centerX = containerWidth / 2;
   const buttonsOnLeft = handMode === 'left';

@@ -3,7 +3,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Baby, Check, ChevronRight, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { localDb } from '@/lib/local-db/database';
 import { setDefaultBaby } from '@/services/operations';
@@ -63,6 +63,13 @@ export function BabiesManagement(props: {
   const router = useRouter();
   const [switchingTo, setSwitchingTo] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Memoize current and other babies to avoid multiple filter operations
+  const { currentBaby, otherBabies } = useMemo(() => {
+    const current = babies?.find(b => b.babyId === currentDefaultId) ?? null;
+    const others = babies?.filter(b => b.babyId !== currentDefaultId) ?? [];
+    return { currentBaby: current, otherBabies: others };
+  }, [babies, currentDefaultId]);
 
   const handleSwitchBaby = async (babyId: number) => {
     setSwitchingTo(babyId);
@@ -135,28 +142,64 @@ export function BabiesManagement(props: {
       )}
 
       {/* Current Default Baby */}
-      {currentDefaultId && (
+      {currentBaby && (
         <div className="space-y-2">
           <h2 className="text-sm font-medium text-muted-foreground">
             Current Default Baby
           </h2>
-          {babies
-            .filter(b => b.babyId === currentDefaultId)
-            .map(baby => (
+          <div
+            className="rounded-lg border-2 border-primary bg-primary/5 p-4"
+          >
+            <div className="flex items-start gap-3">
+              <div className="rounded-full bg-primary/10 p-2">
+                <Baby className="h-5 w-5 text-primary" />
+              </div>
+
+              <div className="flex-1 space-y-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold">{currentBaby.name}</h3>
+                  <Check className="h-4 w-4 text-primary" />
+                </div>
+
+                <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                  {formatAge(currentBaby.birthDate) && (
+                    <span>{formatAge(currentBaby.birthDate)}</span>
+                  )}
+                  <span className="rounded-full bg-muted px-2 py-0.5">
+                    {currentBaby.accessLevel}
+                  </span>
+                  {currentBaby.caregiverLabel && (
+                    <span>
+                      Your role:
+                      {currentBaby.caregiverLabel}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Other Babies */}
+      {otherBabies.length > 0 && (
+        <div className="space-y-2">
+          <h2 className="text-sm font-medium text-muted-foreground">
+            Other Babies
+          </h2>
+          <div className="space-y-2">
+            {otherBabies.map(baby => (
               <div
                 key={baby.babyId}
-                className="rounded-lg border-2 border-primary bg-primary/5 p-4"
+                className="rounded-lg border bg-card p-4"
               >
                 <div className="flex items-start gap-3">
-                  <div className="rounded-full bg-primary/10 p-2">
-                    <Baby className="h-5 w-5 text-primary" />
+                  <div className="rounded-full bg-muted p-2">
+                    <Baby className="h-5 w-5" />
                   </div>
 
                   <div className="flex-1 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">{baby.name}</h3>
-                      <Check className="h-4 w-4 text-primary" />
-                    </div>
+                    <h3 className="font-semibold">{baby.name}</h3>
 
                     <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
                       {formatAge(baby.birthDate) && (
@@ -173,63 +216,20 @@ export function BabiesManagement(props: {
                       )}
                     </div>
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleSwitchBaby(baby.babyId)}
+                    disabled={switchingTo !== null}
+                    className="rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+                  >
+                    {switchingTo === baby.babyId
+                      ? 'Switching...'
+                      : 'Switch'}
+                  </button>
                 </div>
               </div>
             ))}
-        </div>
-      )}
-
-      {/* Other Babies */}
-      {babies.filter(b => b.babyId !== currentDefaultId).length > 0 && (
-        <div className="space-y-2">
-          <h2 className="text-sm font-medium text-muted-foreground">
-            Other Babies
-          </h2>
-          <div className="space-y-2">
-            {babies
-              .filter(b => b.babyId !== currentDefaultId)
-              .map(baby => (
-                <div
-                  key={baby.babyId}
-                  className="rounded-lg border bg-card p-4"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-muted p-2">
-                      <Baby className="h-5 w-5" />
-                    </div>
-
-                    <div className="flex-1 space-y-1">
-                      <h3 className="font-semibold">{baby.name}</h3>
-
-                      <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                        {formatAge(baby.birthDate) && (
-                          <span>{formatAge(baby.birthDate)}</span>
-                        )}
-                        <span className="rounded-full bg-muted px-2 py-0.5">
-                          {baby.accessLevel}
-                        </span>
-                        {baby.caregiverLabel && (
-                          <span>
-                            Your role:
-                            {baby.caregiverLabel}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleSwitchBaby(baby.babyId)}
-                      disabled={switchingTo !== null}
-                      className="rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
-                    >
-                      {switchingTo === baby.babyId
-                        ? 'Switching...'
-                        : 'Switch'}
-                    </button>
-                  </div>
-                </div>
-              ))}
           </div>
         </div>
       )}
