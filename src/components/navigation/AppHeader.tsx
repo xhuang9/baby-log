@@ -2,6 +2,7 @@
 
 import { ChevronLeft, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { SidebarTrigger } from '@/components/ui-custom/sidebar';
 import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { useBreadcrumbStore } from '@/stores/useBreadcrumbStore';
 import { ThemeToggle } from '../theme-toggle';
@@ -14,7 +15,6 @@ import {
   BreadcrumbSeparator,
 } from '../ui/breadcrumb';
 import { Button } from '../ui/button';
-import { SidebarTrigger } from '../ui/sidebar';
 import { BabySwitcher } from './BabySwitcher';
 import { NotificationBell } from './NotificationBell';
 

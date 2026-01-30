@@ -8,7 +8,7 @@ import { AppSidebar } from '@/components/navigation/AppSidebar';
 import { MobileBottomBar } from '@/components/navigation/MobileBottomBar';
 import { OfflineBanner } from '@/components/OfflineBanner';
 import { SyncProvider } from '@/components/SyncProvider';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui-custom/sidebar';
 import { useAccessRevocationDetection } from '@/hooks/useAccessRevocationDetection';
 import { useAuthSessionSync } from '@/hooks/useAuthSessionSync';
 

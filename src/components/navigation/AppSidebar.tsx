@@ -10,7 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar';
+} from '@/components/ui-custom/sidebar';
 import { appNavItems } from '@/config/app-nav';
 import { getI18nPath } from '@/utils/Helpers';
 import { BabySwitcher } from './BabySwitcher';
