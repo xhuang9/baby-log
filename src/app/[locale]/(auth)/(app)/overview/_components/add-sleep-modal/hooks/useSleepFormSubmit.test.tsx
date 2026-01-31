@@ -28,6 +28,7 @@ function TestWrapper({
       <div data-testid="error">{error || 'no-error'}</div>
       <div data-testid="is-submitting">{isSubmitting ? 'true' : 'false'}</div>
       <button
+        type="button"
         data-testid="submit"
         onClick={() => {
           handleSubmit();

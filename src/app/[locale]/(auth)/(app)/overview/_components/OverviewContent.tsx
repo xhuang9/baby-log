@@ -176,6 +176,7 @@ export function OverviewContent({ locale }: OverviewContentProps) {
           You need to be online to set up your account for the first time.
         </p>
         <button
+          type="button"
           onClick={() => window.location.reload()}
           className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground"
         >

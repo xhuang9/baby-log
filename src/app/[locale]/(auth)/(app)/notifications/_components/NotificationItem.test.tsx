@@ -56,7 +56,7 @@ vi.mock('@/components/ui/button', () => ({
     'aria-label': ariaLabel,
     ...props
   }: React.ButtonHTMLAttributes<HTMLButtonElement> & { 'aria-label'?: string }) => (
-    <button onClick={onClick} aria-label={ariaLabel} {...props}>
+    <button type="button" onClick={onClick} aria-label={ariaLabel} {...props}>
       {children}
     </button>
   ),

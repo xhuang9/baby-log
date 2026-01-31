@@ -122,6 +122,7 @@ export function SyncProvider({ children }: SyncProviderProps) {
       <div className="flex h-screen flex-col items-center justify-center gap-4">
         <div className="text-destructive">{state.error}</div>
         <button
+          type="button"
           onClick={() => window.location.reload()}
           className="rounded-md bg-primary px-4 py-2 text-primary-foreground"
         >

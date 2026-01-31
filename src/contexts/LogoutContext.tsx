@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { createContext, use, useState } from 'react';
+import { createContext, use, useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { LogoutConfirmationDialog } from '@/components/auth/LogoutConfirmationDialog';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
@@ -22,7 +22,7 @@ export function LogoutProvider({ children }: { children: ReactNode }) {
   const [resolveLogout, setResolveLogout] = useState<((proceed: boolean) => void) | null>(null);
   const isOnline = useOnlineStatus();
 
-  const requestLogout = async (): Promise<boolean> => {
+  const requestLogout = useCallback(async (): Promise<boolean> => {
     // Check for pending outbox entries
     const pending = await getPendingOutboxEntries();
 
@@ -40,7 +40,7 @@ export function LogoutProvider({ children }: { children: ReactNode }) {
     return new Promise((resolve) => {
       setResolveLogout(() => resolve);
     });
-  };
+  }, []);
 
   const handleSyncAndLogout = async () => {
     setIsSyncing(true);
@@ -80,8 +80,10 @@ export function LogoutProvider({ children }: { children: ReactNode }) {
     resolveLogout?.(false);
   };
 
+  const contextValue = useMemo(() => ({ requestLogout }), [requestLogout]);
+
   return (
-    <LogoutContext value={{ requestLogout }}>
+    <LogoutContext value={contextValue}>
       {children}
       <LogoutConfirmationDialog
         open={showDialog}

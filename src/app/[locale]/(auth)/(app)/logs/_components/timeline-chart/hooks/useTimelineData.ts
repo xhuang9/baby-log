@@ -70,10 +70,6 @@ export function useTimelineData(
   dateRange?: { start: Date; end: Date },
   hourHeight: number = 60,
 ): TimelineDay[] {
-  // Extract dependencies to simple expressions for React hooks rules
-  const rangeStartTime = dateRange?.start?.getTime();
-  const rangeEndTime = dateRange?.end?.getTime();
-
   return useMemo(() => {
     if (!logs || logs.length === 0) {
       return [];
@@ -128,7 +124,7 @@ export function useTimelineData(
     days.sort((a, b) => b.date.getTime() - a.date.getTime());
 
     return days;
-  }, [logs, dateRange, rangeStartTime, rangeEndTime, hourHeight]);
+  }, [logs, dateRange, hourHeight]);
 }
 
 /**

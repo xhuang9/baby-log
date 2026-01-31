@@ -59,7 +59,7 @@ vi.mock('lucide-react', () => ({
 // Mock Button component to avoid @base-ui/react issues
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, onClick, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
-    <button onClick={onClick} {...props}>
+    <button type="button" onClick={onClick} {...props}>
       {children}
     </button>
   ),

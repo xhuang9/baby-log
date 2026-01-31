@@ -32,4 +32,6 @@ export const Env = createEnv({
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     NODE_ENV: process.env.NODE_ENV,
   },
+  // Skip validation when SKIP_ENV_VALIDATION is set (useful for CI without secrets)
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });

@@ -19,30 +19,34 @@ function TestWrapper() {
         )}
       </div>
       <button
+        type="button"
         data-testid="set-manual"
         onClick={() => actions.setInputMode('manual')}
       >
         Set Manual
       </button>
       <button
+        type="button"
         data-testid="set-left-hand"
         onClick={() => actions.setHandMode('left')}
       >
         Set Left Hand
       </button>
       <button
+        type="button"
         data-testid="set-start-time"
         onClick={() => actions.setStartTime(new Date('2024-01-15T08:00:00Z'))}
       >
         Set Start Time
       </button>
       <button
+        type="button"
         data-testid="set-end-time"
         onClick={() => actions.setEndTime(new Date('2024-01-15T12:00:00Z'))}
       >
         Set End Time
       </button>
-      <button data-testid="reset" onClick={() => actions.resetForm()}>
+      <button type="button" data-testid="reset" onClick={() => actions.resetForm()}>
         Reset
       </button>
     </div>

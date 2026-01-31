@@ -18,7 +18,7 @@ function TestButton({ onAction, intervalMs, delayMs }: {
 }) {
   const handlers = useHoldAction({ onAction, intervalMs, delayMs });
   return (
-    <button data-testid="test-button" {...handlers}>
+    <button type="button" data-testid="test-button" {...handlers}>
       Test Button
     </button>
   );
