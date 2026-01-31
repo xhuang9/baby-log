@@ -139,4 +139,10 @@ Detailed documentation lives in `.readme/sections/`. Key sections:
 
 ## License
 
-Private project - all rights reserved.
+**All Rights Reserved** - Copyright (c) 2026 Parry Huang
+
+This source code is proprietary and confidential. It is made available for viewing purposes only, specifically for employment evaluation by prospective employers and recruiters.
+
+No permission is granted to use, copy, modify, merge, publish, distribute, sublicense, or sell copies of this software.
+
+See [LICENSE](LICENSE) for full terms.
