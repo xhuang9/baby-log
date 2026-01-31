@@ -11,10 +11,21 @@ const config: KnipConfig = {
   ],
   // Dependencies to ignore during analysis
   ignoreDependencies: [
-    '@commitlint/types',
-    '@clerk/types',
     'conventional-changelog-conventionalcommits',
-    'vite',
+    // Sentry peer dependencies - explicitly pinned for compatibility
+    'import-in-the-middle',
+    'require-in-the-middle',
+    // Used in src/lib/logger.ts - knip doesn't detect top-level await import
+    '@logtape/logtape',
+    // Used by shadcn UI components - knip doesn't follow component re-exports
+    '@radix-ui/react-dialog',
+    '@radix-ui/react-slot',
+    // Used by babel-plugin-react-compiler in next.config.ts
+    '@babel/core',
+    '@babel/preset-env',
+    'babel-loader',
+    // Git hooks - config in lefthook.yml
+    'lefthook',
   ],
   // Binaries to ignore during analysis
   ignoreBinaries: [
