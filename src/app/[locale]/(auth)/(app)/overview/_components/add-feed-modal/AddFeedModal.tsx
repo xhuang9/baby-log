@@ -2,6 +2,7 @@
 
 import type { AddFeedModalProps } from './types';
 import { ChevronLeftIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { FormFooter } from '@/components/input-controls/FormFooter';
 import { Button } from '@/components/ui/button';
 import {
@@ -40,12 +41,23 @@ export function AddFeedModal({
   const timerKey = `feed-${babyId}`;
   // Subscribe to timer state reactively so +1m/-1m updates trigger re-render
   const timerState = useTimerStore(s => s.timers[timerKey]);
-  const now = Date.now();
-  const timerElapsed = timerState
-    ? timerState.elapsedSeconds + (timerState.lastStartTime
-      ? Math.floor((now - new Date(timerState.lastStartTime).getTime()) / 1000)
-      : 0)
-    : 0;
+  const [timerElapsed, setTimerElapsed] = useState(() => {
+    // Initial calculation in lazy initializer
+    return 0;
+  });
+  useEffect(() => {
+    const calculateElapsed = () => {
+      if (!timerState) {
+        return 0;
+      }
+      const now = Date.now();
+      return timerState.elapsedSeconds + (timerState.lastStartTime
+        ? Math.floor((now - new Date(timerState.lastStartTime).getTime()) / 1000)
+        : 0);
+    };
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Derived value calculation from external store
+    setTimerElapsed(calculateElapsed());
+  }, [timerState]);
   const { prepareTimerSave, completeTimerSave } = useTimerSave({
     babyId,
     logType: 'feed',

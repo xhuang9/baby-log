@@ -65,7 +65,7 @@ export function TimeSwiperSettingsPanel({
           onValueChange={value => saveSetting('swipeResistance', value as SwipeResistance)}
           className="space-y-2"
         >
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- RadioGroupItem handles association */}
+          { }
           <label
             className={cn(
               'relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 transition-colors',
@@ -82,7 +82,7 @@ export function TimeSwiperSettingsPanel({
               )}
             </div>
           </label>
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- RadioGroupItem handles association */}
+          { }
           <label
             className={cn(
               'relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 transition-colors',
@@ -99,7 +99,7 @@ export function TimeSwiperSettingsPanel({
               )}
             </div>
           </label>
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- RadioGroupItem handles association */}
+          { }
           <label
             className={cn(
               'relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 transition-colors',

@@ -1,9 +1,9 @@
 'use client';
 
+import type { SidebarContextProps } from '../context';
 import * as React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import type { SidebarContextProps } from '../context';
 import {
   SIDEBAR_COOKIE_MAX_AGE,
   SIDEBAR_COOKIE_NAME,
