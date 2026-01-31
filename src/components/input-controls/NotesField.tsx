@@ -4,14 +4,14 @@ import { useEffect, useRef } from 'react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
-interface NotesFieldProps {
+type NotesFieldProps = {
   value: string;
   onChange: (value: string) => void;
   visible: boolean;
   onToggleVisible: () => void;
   placeholder?: string;
   handMode?: 'left' | 'right';
-}
+};
 
 export function NotesField({
   value,

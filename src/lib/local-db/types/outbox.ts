@@ -9,7 +9,7 @@
 // Outbox Types
 // ============================================================================
 
-export type OutboxEntityType = 'feed_log' | 'sleep_log' | 'nappy_log' | 'baby';
+export type OutboxEntityType = 'feed_log' | 'sleep_log' | 'nappy_log' | 'solids_log' | 'baby';
 export type OutboxOperation = 'create' | 'update' | 'delete';
 export type OutboxStatus = 'pending' | 'syncing' | 'synced' | 'failed';
 

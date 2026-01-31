@@ -20,7 +20,7 @@ export function NappyTypeButtons({ value, onChange, handMode }: NappyTypeButtons
   return (
     <FieldSection label="Type" handMode={handMode}>
       <div className="flex flex-wrap justify-end gap-3">
-        {NAPPY_TYPES.map(type => {
+        {NAPPY_TYPES.map((type) => {
           const isSelected = value === type.value;
           return (
             <button

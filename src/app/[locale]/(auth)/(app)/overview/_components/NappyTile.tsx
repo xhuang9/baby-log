@@ -68,7 +68,7 @@ function formatNappySubtitle(
 
     const additionalDetails = [colourLabel, consistencyLabel].filter(Boolean).join(' ');
     if (additionalDetails) {
-      details = `${typeLabel}    ${additionalDetails}`;  // 4 spaces for visual separation
+      details = `${typeLabel}    ${additionalDetails}`; // 4 spaces for visual separation
     }
   }
 

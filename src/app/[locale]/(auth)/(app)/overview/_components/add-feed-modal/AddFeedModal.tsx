@@ -40,9 +40,10 @@ export function AddFeedModal({
   const timerKey = `feed-${babyId}`;
   // Subscribe to timer state reactively so +1m/-1m updates trigger re-render
   const timerState = useTimerStore(s => s.timers[timerKey]);
+  const now = Date.now();
   const timerElapsed = timerState
     ? timerState.elapsedSeconds + (timerState.lastStartTime
-      ? Math.floor((Date.now() - new Date(timerState.lastStartTime).getTime()) / 1000)
+      ? Math.floor((now - new Date(timerState.lastStartTime).getTime()) / 1000)
       : 0)
     : 0;
   const { prepareTimerSave, completeTimerSave } = useTimerSave({

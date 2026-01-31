@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
+import type { SidebarContextProps } from '../context';
 import {
   SIDEBAR_COOKIE_MAX_AGE,
   SIDEBAR_COOKIE_NAME,
@@ -11,7 +12,6 @@ import {
   SIDEBAR_WIDTH_ICON,
   SidebarContext,
 } from '../context';
-import type { SidebarContextProps } from '../context';
 
 export function SidebarProvider({
   defaultOpen = true,

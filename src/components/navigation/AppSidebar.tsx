@@ -1,7 +1,6 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { OfflineLink as Link } from '@/components/ui/offline-link';
 import {
   Sidebar,
   SidebarContent,
@@ -11,6 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui-custom/sidebar';
+import { OfflineLink as Link } from '@/components/ui/offline-link';
 import { appNavItems } from '@/config/app-nav';
 import { getI18nPath } from '@/utils/Helpers';
 import { BabySwitcher } from './BabySwitcher';

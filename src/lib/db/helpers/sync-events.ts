@@ -9,7 +9,7 @@ import { desc, eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { syncEventsSchema } from '@/models/Schema';
 
-type EntityType = 'baby' | 'feed_log' | 'sleep_log' | 'nappy_log';
+type EntityType = 'baby' | 'feed_log' | 'sleep_log' | 'nappy_log' | 'solids_log';
 type SyncOp = 'create' | 'update' | 'delete';
 
 export type WriteSyncEventParams = {

@@ -32,7 +32,7 @@ export function ConsistencyButtons({ value, onChange, handMode }: ConsistencyBut
   return (
     <FieldSection label="Consistency" handMode={handMode}>
       <div className="grid w-fit grid-cols-2 gap-3 sm:grid-cols-3">
-        {CONSISTENCIES.map(consistency => {
+        {CONSISTENCIES.map((consistency) => {
           const Icon = CONSISTENCY_ICONS[consistency.value];
           const isSelected = value === consistency.value;
           return (

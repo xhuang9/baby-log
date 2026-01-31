@@ -16,6 +16,7 @@ export type SyncEntityType
     | 'feed_logs'
     | 'sleep_logs'
     | 'nappy_logs'
+    | 'solids_logs'
     | 'ui_config'
     | 'bootstrap';
 
