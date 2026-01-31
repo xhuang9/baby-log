@@ -79,13 +79,20 @@ export const nappyColourEnum = pgEnum('nappy_colour_enum', [
   'grey',
 ]);
 
-export const nappyTextureEnum = pgEnum('nappy_texture_enum', [
-  'veryRunny',
+export const nappyConsistencyEnum = pgEnum('nappy_consistency_enum', [
+  'watery',
   'runny',
   'mushy',
-  'mucusy',
-  'solid',
-  'littleBalls',
+  'pasty',
+  'formed',
+  'hardPellets',
+]);
+
+export const solidsReactionEnum = pgEnum('solids_reaction_enum', [
+  'allergic',
+  'hate',
+  'liked',
+  'loved',
 ]);
 
 // Tables
@@ -181,12 +188,25 @@ export const nappyLogSchema = pgTable('nappy_log', {
   loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
   type: nappyTypeEnum('type'), // wee, poo, mixed, dry, clean - nullable
   colour: nappyColourEnum('colour'), // colour - nullable
-  texture: nappyTextureEnum('texture'), // texture - nullable
+  consistency: nappyConsistencyEnum('consistency'), // consistency - nullable
   startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
   notes: text('notes'),
   ...timestamps,
 }, t => [
   index('nappy_log_baby_started_at_idx').on(t.babyId, t.startedAt),
+]);
+
+export const solidsLogSchema = pgTable('solids_log', {
+  id: text('id').primaryKey(), // Client-generated UUID
+  babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
+  loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
+  food: text('food').notNull(), // Plain text food name
+  reaction: solidsReactionEnum('reaction').notNull(), // allergic, hate, liked, loved
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+  notes: text('notes'),
+  ...timestamps,
+}, t => [
+  index('solids_log_baby_started_at_idx').on(t.babyId, t.startedAt),
 ]);
 
 export const babyInvitesSchema = pgTable('baby_invites', {

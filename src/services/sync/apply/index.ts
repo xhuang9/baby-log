@@ -9,11 +9,13 @@ import { applyBabyChange } from './baby';
 import { applyFeedLogChange } from './feed-log';
 import { applyNappyLogChange } from './nappy-log';
 import { applySleepLogChange } from './sleep-log';
+import { applySolidsLogChange } from './solids-log';
 
 export { applyBabyChange } from './baby';
 export { applyFeedLogChange } from './feed-log';
 export { applyNappyLogChange } from './nappy-log';
 export { applySleepLogChange } from './sleep-log';
+export { applySolidsLogChange } from './solids-log';
 
 /**
  * Apply a change from the server to the local database
@@ -33,6 +35,9 @@ export async function applyChange(change: SyncChange): Promise<void> {
       break;
     case 'nappy_log':
       await applyNappyLogChange(op, id, data);
+      break;
+    case 'solids_log':
+      await applySolidsLogChange(op, id, data);
       break;
     default:
       console.warn(`Unknown entity type: ${type}`);

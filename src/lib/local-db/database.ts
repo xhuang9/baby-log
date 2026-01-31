@@ -17,7 +17,7 @@
 
 import type { EntityTable } from 'dexie';
 import type { LocalBaby, LocalBabyAccess, LocalBabyInvite, LocalUIConfig, LocalUser } from './types/entities';
-import type { LocalFeedLog, LocalNappyLog, LocalSleepLog } from './types/logs';
+import type { LocalFeedLog, LocalNappyLog, LocalSleepLog, LocalSolidsLog } from './types/logs';
 import type { LocalNotification } from './types/notifications';
 import type { OutboxEntry } from './types/outbox';
 import type { AuthSession, LocalSyncStatus, SyncMeta } from './types/sync';
@@ -32,6 +32,7 @@ class BabyLogDatabase extends Dexie {
   feedLogs!: EntityTable<LocalFeedLog, 'id'>;
   sleepLogs!: EntityTable<LocalSleepLog, 'id'>;
   nappyLogs!: EntityTable<LocalNappyLog, 'id'>;
+  solidsLogs!: EntityTable<LocalSolidsLog, 'id'>;
 
   // Entity tables
   babies!: EntityTable<LocalBaby, 'id'>;
@@ -81,6 +82,37 @@ class BabyLogDatabase extends Dexie {
       authSession: 'id',
       // Notifications
       notifications: 'id, userId, createdAt, readAt, category, severity, babyId, dedupeKey',
+    });
+
+    // Version 2: Rename texture -> consistency with value migration
+    this.version(2).stores({
+      // Schema unchanged, just data migration
+      nappyLogs: 'id, babyId, startedAt, [babyId+startedAt]',
+    }).upgrade(async (tx) => {
+      // Map old texture values to new consistency values
+      const textureToConsistencyMap: Record<string, string> = {
+        veryRunny: 'watery',
+        runny: 'runny',
+        mushy: 'mushy',
+        mucusy: 'pasty',
+        solid: 'formed',
+        littleBalls: 'hardPellets',
+      };
+
+      // Migrate all nappy logs
+      await tx.table('nappyLogs').toCollection().modify((log: Record<string, unknown>) => {
+        // Rename texture to consistency with value mapping
+        if ('texture' in log) {
+          const oldTexture = log.texture as string | null;
+          log.consistency = oldTexture ? (textureToConsistencyMap[oldTexture] ?? null) : null;
+          delete log.texture;
+        }
+      });
+    });
+
+    // Version 3: Add solids logs table
+    this.version(3).stores({
+      solidsLogs: 'id, babyId, startedAt, [babyId+startedAt]',
     });
   }
 }

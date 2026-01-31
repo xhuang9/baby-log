@@ -1,7 +1,7 @@
 'use client';
 
 import type { NappyColour } from '@/lib/local-db';
-import { Label } from '@/components/ui/label';
+import { FieldSection } from '@/components/input-controls';
 
 type ColourButtonsProps = {
   value: NappyColour | null;
@@ -29,34 +29,37 @@ export function ColourButtons({ value, onChange, handMode }: ColourButtonsProps)
   };
 
   return (
-    <div
-      className={`${handMode === 'left' ? 'space-y-3' : 'flex items-center justify-between'}`}
-    >
-      <Label className="text-muted-foreground">Colour</Label>
-      <div className={`flex flex-wrap justify-end gap-3 ${handMode === 'left' ? '' : 'ml-auto'}`}>
+    <FieldSection label="Colour" handMode={handMode}>
+      <div className="flex flex-wrap justify-end gap-4">
         {COLOURS.map(colour => (
           <button
             key={colour.value}
             type="button"
             onClick={() => handleClick(colour.value)}
-            className={`flex flex-col items-center gap-1.5 transition-opacity ${
-              value && value !== colour.value ? 'opacity-40' : 'opacity-100'
-            }`}
+            className="group flex flex-col items-center gap-2"
             aria-label={colour.label}
             aria-pressed={value === colour.value}
           >
             <div
-              className={`h-8 w-8 rounded-full border-2 transition-all ${
+              className={`h-12 w-12 rounded-3xl transition-all ${
                 value === colour.value
-                  ? 'border-primary scale-110'
-                  : 'border-border'
+                  ? 'scale-110 ring-4 ring-primary ring-offset-2 ring-offset-background'
+                  : 'hover:scale-105'
               }`}
               style={{ backgroundColor: colour.hex }}
             />
-            <span className="text-xs text-muted-foreground">{colour.label}</span>
+            <span
+              className={`text-xs transition-colors ${
+                value === colour.value
+                  ? 'font-medium text-foreground'
+                  : 'text-muted-foreground'
+              }`}
+            >
+              {colour.label}
+            </span>
           </button>
         ))}
       </div>
-    </div>
+    </FieldSection>
   );
 }

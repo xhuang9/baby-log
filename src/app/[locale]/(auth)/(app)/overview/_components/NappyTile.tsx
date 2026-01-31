@@ -34,6 +34,18 @@ function formatTimeAgo(date: Date): string {
   return 'Just now';
 }
 
+function formatConsistencyLabel(consistency: string): string {
+  const labels: Record<string, string> = {
+    watery: 'Watery',
+    runny: 'Runny',
+    mushy: 'Mushy',
+    pasty: 'Pasty',
+    formed: 'Formed',
+    hardPellets: 'Hard pellets',
+  };
+  return labels[consistency] ?? consistency.charAt(0).toUpperCase() + consistency.slice(1);
+}
+
 function formatNappySubtitle(
   nappy: LocalNappyLog & { caregiverLabel: string | null },
 ): string {
@@ -42,23 +54,19 @@ function formatNappySubtitle(
     ? nappy.type.charAt(0).toUpperCase() + nappy.type.slice(1)
     : 'Unknown';
 
-  // Format colour and texture if present
+  // Format colour and consistency if present
   let details = typeLabel;
-  if (nappy.colour || nappy.texture) {
+  if (nappy.colour || nappy.consistency) {
     const colourLabel = nappy.colour
       ? nappy.colour === 'black'
         ? 'Black'
         : nappy.colour.charAt(0).toUpperCase() + nappy.colour.slice(1)
       : null;
-    const textureLabel = nappy.texture
-      ? nappy.texture === 'veryRunny'
-        ? 'Very Runny'
-        : nappy.texture === 'littleBalls'
-          ? 'Little Balls'
-          : nappy.texture.charAt(0).toUpperCase() + nappy.texture.slice(1)
+    const consistencyLabel = nappy.consistency
+      ? formatConsistencyLabel(nappy.consistency)
       : null;
 
-    const additionalDetails = [colourLabel, textureLabel].filter(Boolean).join(' ');
+    const additionalDetails = [colourLabel, consistencyLabel].filter(Boolean).join(' ');
     if (additionalDetails) {
       details = `${typeLabel}    ${additionalDetails}`;  // 4 spaces for visual separation
     }

@@ -123,7 +123,19 @@ export type BootstrapNappyLog = {
   loggedByUserId: number;
   type: 'wee' | 'poo' | 'mixed' | 'dry' | 'clean' | null;
   colour: 'green' | 'yellow' | 'brown' | 'black' | 'red' | 'grey' | null;
-  texture: 'veryRunny' | 'runny' | 'mushy' | 'mucusy' | 'solid' | 'littleBalls' | null;
+  consistency: 'watery' | 'runny' | 'mushy' | 'pasty' | 'formed' | 'hardPellets' | null;
+  startedAt: string;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type BootstrapSolidsLog = {
+  id: string;
+  babyId: number;
+  loggedByUserId: number;
+  food: string;
+  reaction: 'allergic' | 'hate' | 'liked' | 'loved';
   startedAt: string;
   notes: string | null;
   createdAt: string;
@@ -153,6 +165,7 @@ export type BootstrapSyncData = {
   recentFeedLogs: BootstrapFeedLog[];
   recentSleepLogs: BootstrapSleepLog[];
   recentNappyLogs: BootstrapNappyLog[];
+  recentSolidsLogs: BootstrapSolidsLog[];
   uiConfig: null; // UI config is stored locally only for now
 };
 

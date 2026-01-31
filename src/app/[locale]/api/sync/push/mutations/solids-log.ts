@@ -1,18 +1,18 @@
 /**
- * Nappy Log Mutation Processor
+ * Solids Log Mutation Processor
  *
- * Handles create, update, and delete operations for nappy log entities.
+ * Handles create, update, and delete operations for solids log entities.
  */
 
 import type { MutationOp, MutationResult } from '../types';
-import type { NappyColour, NappyConsistency } from '@/lib/local-db';
+import type { SolidsReaction } from '@/lib/local-db';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { writeSyncEvent } from '@/lib/db/helpers/sync-events';
-import { nappyLogSchema } from '@/models/Schema';
-import { serializeNappyLog } from '../serializers';
+import { solidsLogSchema } from '@/models/Schema';
+import { serializeSolidsLog } from '../serializers';
 
-export async function processNappyLogMutation(
+export async function processSolidsLogMutation(
   mutationId: string,
   entityId: string,
   op: MutationOp,
@@ -20,7 +20,7 @@ export async function processNappyLogMutation(
   userId: number,
   babyId: number | undefined,
 ): Promise<MutationResult> {
-  // Nappy log IDs are UUIDs (strings), not numeric IDs
+  // Solids log IDs are UUIDs (strings), not numeric IDs
   const logId = entityId;
 
   if (op === 'create') {
@@ -29,14 +29,13 @@ export async function processNappyLogMutation(
     }
 
     const [inserted] = await db
-      .insert(nappyLogSchema)
+      .insert(solidsLogSchema)
       .values({
         id: payload.id as string, // Use client-generated UUID
         babyId,
         loggedByUserId: userId,
-        type: payload.type as 'wee' | 'poo' | 'mixed' | 'dry' | 'clean' | null,
-        colour: payload.colour as NappyColour | null,
-        consistency: payload.consistency as NappyConsistency | null,
+        food: payload.food as string,
+        reaction: payload.reaction as SolidsReaction,
         startedAt: new Date(payload.startedAt as string),
         notes: payload.notes as string | null,
       })
@@ -44,10 +43,10 @@ export async function processNappyLogMutation(
 
     await writeSyncEvent({
       babyId,
-      entityType: 'nappy_log',
+      entityType: 'solids_log',
       entityId: inserted!.id,
       op: 'create',
-      payload: serializeNappyLog(inserted!),
+      payload: serializeSolidsLog(inserted!),
     });
 
     return { mutationId, status: 'success' };
@@ -56,8 +55,8 @@ export async function processNappyLogMutation(
   if (op === 'update') {
     const [existing] = await db
       .select()
-      .from(nappyLogSchema)
-      .where(eq(nappyLogSchema.id, logId))
+      .from(solidsLogSchema)
+      .where(eq(solidsLogSchema.id, logId))
       .limit(1);
 
     if (!existing) {
@@ -71,28 +70,27 @@ export async function processNappyLogMutation(
       return {
         mutationId,
         status: 'conflict',
-        serverData: serializeNappyLog(existing),
+        serverData: serializeSolidsLog(existing),
       };
     }
 
     const [updated] = await db
-      .update(nappyLogSchema)
+      .update(solidsLogSchema)
       .set({
-        type: payload.type as 'wee' | 'poo' | 'mixed' | 'dry' | 'clean' | null,
-        colour: payload.colour as NappyColour | null,
-        consistency: payload.consistency as NappyConsistency | null,
+        food: payload.food as string,
+        reaction: payload.reaction as SolidsReaction,
         startedAt: new Date(payload.startedAt as string),
         notes: payload.notes as string | null,
       })
-      .where(eq(nappyLogSchema.id, logId))
+      .where(eq(solidsLogSchema.id, logId))
       .returning();
 
     await writeSyncEvent({
       babyId: existing.babyId,
-      entityType: 'nappy_log',
+      entityType: 'solids_log',
       entityId: logId,
       op: 'update',
-      payload: serializeNappyLog(updated!),
+      payload: serializeSolidsLog(updated!),
     });
 
     return { mutationId, status: 'success' };
@@ -100,20 +98,20 @@ export async function processNappyLogMutation(
 
   if (op === 'delete') {
     const [existing] = await db
-      .select({ babyId: nappyLogSchema.babyId })
-      .from(nappyLogSchema)
-      .where(eq(nappyLogSchema.id, logId))
+      .select({ babyId: solidsLogSchema.babyId })
+      .from(solidsLogSchema)
+      .where(eq(solidsLogSchema.id, logId))
       .limit(1);
 
     if (!existing) {
       return { mutationId, status: 'success' };
     }
 
-    await db.delete(nappyLogSchema).where(eq(nappyLogSchema.id, logId));
+    await db.delete(solidsLogSchema).where(eq(solidsLogSchema.id, logId));
 
     await writeSyncEvent({
       babyId: existing.babyId,
-      entityType: 'nappy_log',
+      entityType: 'solids_log',
       entityId: logId,
       op: 'delete',
       payload: null,

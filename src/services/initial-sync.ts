@@ -13,10 +13,12 @@ import type {
   LocalFeedLog,
   LocalNappyLog,
   LocalSleepLog,
+  LocalSolidsLog,
   LocalUser,
   NappyColour,
-  NappyTexture,
+  NappyConsistency,
   NappyType,
+  SolidsReaction,
   UIConfigData,
 } from '@/lib/local-db';
 import {
@@ -27,6 +29,7 @@ import {
   saveLocalUser,
   saveNappyLogs,
   saveSleepLogs,
+  saveSolidsLogs,
   updateSyncStatus,
 } from '@/lib/local-db';
 
@@ -48,6 +51,7 @@ export type InitialSyncData = {
   recentFeedLogs: LocalFeedLog[];
   recentSleepLogs: LocalSleepLog[];
   recentNappyLogs: LocalNappyLog[];
+  recentSolidsLogs: LocalSolidsLog[];
   uiConfig: ServerUIConfig | null;
 };
 
@@ -121,7 +125,18 @@ type ServerInitialSyncResponse = {
     loggedByUserId: number;
     type: NappyType | null;
     colour: NappyColour | null;
-    texture: NappyTexture | null;
+    consistency: NappyConsistency | null;
+    startedAt: string;
+    notes: string | null;
+    createdAt: string;
+    updatedAt: string;
+  }>;
+  recentSolidsLogs: Array<{
+    id: string;
+    babyId: number;
+    loggedByUserId: number;
+    food: string;
+    reaction: SolidsReaction;
     startedAt: string;
     notes: string | null;
     createdAt: string;
@@ -206,7 +221,18 @@ function transformServerData(serverData: ServerInitialSyncResponse): InitialSync
       loggedByUserId: log.loggedByUserId,
       type: log.type,
       colour: log.colour ?? null,
-      texture: log.texture ?? null,
+      consistency: log.consistency ?? null,
+      startedAt: new Date(log.startedAt),
+      notes: log.notes,
+      createdAt: new Date(log.createdAt),
+      updatedAt: new Date(log.updatedAt),
+    })),
+    recentSolidsLogs: serverData.recentSolidsLogs.map(log => ({
+      id: log.id,
+      babyId: log.babyId,
+      loggedByUserId: log.loggedByUserId,
+      food: log.food,
+      reaction: log.reaction,
       startedAt: new Date(log.startedAt),
       notes: log.notes,
       createdAt: new Date(log.createdAt),
@@ -261,6 +287,7 @@ export async function storeInitialSyncData(data: InitialSyncData): Promise<void>
   await updateSyncStatus('feed_logs', 'syncing');
   await updateSyncStatus('sleep_logs', 'syncing');
   await updateSyncStatus('nappy_logs', 'syncing');
+  await updateSyncStatus('solids_logs', 'syncing');
   await updateSyncStatus('ui_config', 'syncing');
 
   try {
@@ -287,6 +314,10 @@ export async function storeInitialSyncData(data: InitialSyncData): Promise<void>
     // Store nappy logs
     await saveNappyLogs(data.recentNappyLogs);
     await updateSyncStatus('nappy_logs', 'complete');
+
+    // Store solids logs
+    await saveSolidsLogs(data.recentSolidsLogs);
+    await updateSyncStatus('solids_logs', 'complete');
 
     // Store UI config using LWW merge
     if (data.uiConfig && data.user.id) {

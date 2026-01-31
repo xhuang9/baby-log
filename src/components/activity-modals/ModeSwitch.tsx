@@ -13,7 +13,7 @@ export function ModeSwitch({ inputMode, onModeChange }: ModeSwitchProps) {
         onClick={() => onModeChange(inputMode === 'manual' ? 'timer' : 'manual')}
         className="text-sm text-primary underline hover:opacity-80"
       >
-        {inputMode === 'manual' ? 'Use a timer' : "Didn't use timer? Manual entry"}
+        {inputMode === 'manual' ? 'Use a timer' : 'Didn\'t use timer? Manual entry'}
       </button>
     </div>
   );

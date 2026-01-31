@@ -22,6 +22,7 @@ import {
   feedLogSchema,
   nappyLogSchema,
   sleepLogSchema,
+  solidsLogSchema,
   userSchema,
   userUiConfigSchema,
 } from '@/models/Schema';
@@ -144,7 +145,18 @@ type BootstrapResponse = {
       loggedByUserId: number;
       type: 'wee' | 'poo' | 'mixed' | 'dry' | 'clean' | null;
       colour: 'green' | 'yellow' | 'brown' | 'black' | 'red' | 'grey' | null;
-      texture: 'veryRunny' | 'runny' | 'mushy' | 'mucusy' | 'solid' | 'littleBalls' | null;
+      consistency: 'watery' | 'runny' | 'mushy' | 'pasty' | 'formed' | 'hardPellets' | null;
+      startedAt: string;
+      notes: string | null;
+      createdAt: string;
+      updatedAt: string;
+    }>;
+    recentSolidsLogs: Array<{
+      id: string;
+      babyId: number;
+      loggedByUserId: number;
+      food: string;
+      reaction: 'allergic' | 'hate' | 'liked' | 'loved';
       startedAt: string;
       notes: string | null;
       createdAt: string;
@@ -234,6 +246,7 @@ export async function GET() {
           recentFeedLogs: [],
           recentSleepLogs: [],
           recentNappyLogs: [],
+          recentSolidsLogs: [],
           uiConfig: null,
         },
         syncedAt: new Date().toISOString(),
@@ -326,6 +339,7 @@ export async function GET() {
             recentFeedLogs: [],
             recentSleepLogs: [],
             recentNappyLogs: [],
+            recentSolidsLogs: [],
             uiConfig: null,
           },
           syncedAt: new Date().toISOString(),
@@ -367,6 +381,7 @@ export async function GET() {
             recentFeedLogs: [],
             recentSleepLogs: [],
             recentNappyLogs: [],
+            recentSolidsLogs: [],
             uiConfig: null,
           },
           syncedAt: new Date().toISOString(),
@@ -383,6 +398,7 @@ export async function GET() {
           recentFeedLogs: [],
           recentSleepLogs: [],
           recentNappyLogs: [],
+          recentSolidsLogs: [],
           uiConfig: null,
         },
         syncedAt: new Date().toISOString(),
@@ -466,7 +482,7 @@ export async function GET() {
         loggedByUserId: nappyLogSchema.loggedByUserId,
         type: nappyLogSchema.type,
         colour: nappyLogSchema.colour,
-        texture: nappyLogSchema.texture,
+        consistency: nappyLogSchema.consistency,
         startedAt: nappyLogSchema.startedAt,
         notes: nappyLogSchema.notes,
         createdAt: nappyLogSchema.createdAt,
@@ -480,6 +496,27 @@ export async function GET() {
         ),
       )
       .orderBy(desc(nappyLogSchema.startedAt));
+
+    const recentSolidsLogs = await db
+      .select({
+        id: solidsLogSchema.id,
+        babyId: solidsLogSchema.babyId,
+        loggedByUserId: solidsLogSchema.loggedByUserId,
+        food: solidsLogSchema.food,
+        reaction: solidsLogSchema.reaction,
+        startedAt: solidsLogSchema.startedAt,
+        notes: solidsLogSchema.notes,
+        createdAt: solidsLogSchema.createdAt,
+        updatedAt: solidsLogSchema.updatedAt,
+      })
+      .from(solidsLogSchema)
+      .where(
+        and(
+          sql`${solidsLogSchema.babyId} IN (${sql.join(babyIds.map(id => sql`${id}`), sql`, `)})`,
+          gte(solidsLogSchema.startedAt, sevenDaysAgo),
+        ),
+      )
+      .orderBy(desc(solidsLogSchema.startedAt));
 
     // Get UI config
     const uiConfigResult = await db
@@ -587,7 +624,18 @@ export async function GET() {
         loggedByUserId: log.loggedByUserId,
         type: log.type,
         colour: log.colour,
-        texture: log.texture,
+        consistency: log.consistency,
+        startedAt: log.startedAt.toISOString(),
+        notes: log.notes,
+        createdAt: log.createdAt.toISOString(),
+        updatedAt: log.updatedAt?.toISOString() ?? log.createdAt.toISOString(),
+      })),
+      recentSolidsLogs: recentSolidsLogs.map(log => ({
+        id: String(log.id),
+        babyId: log.babyId,
+        loggedByUserId: log.loggedByUserId,
+        food: log.food,
+        reaction: log.reaction,
         startedAt: log.startedAt.toISOString(),
         notes: log.notes,
         createdAt: log.createdAt.toISOString(),

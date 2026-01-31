@@ -125,8 +125,13 @@ This section documents the feed logging implementation including:
 
 #### `chunks/feed-logging.nappy-log-feature.md`
 
-- **Content**: Complete nappy log implementation with schema, UI components (modal, tile), sync handlers, timeline defaults, and activity filtering
-- **Read when**: Working with nappy logs, implementing new instant-event activity types, or understanding the pattern for zero-duration logging
+- **Content**: Complete nappy log implementation with schema (type, colour, consistency), UI components (add/edit modals, tile), sync handlers, timeline defaults, and activity filtering
+- **Read when**: Working with nappy logs, implementing new instant-event activity types, understanding the pattern for zero-duration logging, or working with colour/consistency fields
+
+#### `chunks/feed-logging.nappy-refactor-texture-consistency.md`
+
+- **Content**: Complete refactor documentation for texture → consistency rename (January 2026), including schema changes, value mappings, IndexedDB/PostgreSQL migrations, UI updates, and checklist
+- **Read when**: Implementing nappy features post-January 2026, understanding the migration path, debugging old vs. new data, or making future consistency field changes
 
 ### UI Patterns
 

@@ -52,7 +52,7 @@ export type NappyType = 'wee' | 'poo' | 'mixed' | 'dry' | 'clean';
 
 export type NappyColour = 'green' | 'yellow' | 'brown' | 'black' | 'red' | 'grey';
 
-export type NappyTexture = 'veryRunny' | 'runny' | 'mushy' | 'mucusy' | 'solid' | 'littleBalls';
+export type NappyConsistency = 'watery' | 'runny' | 'mushy' | 'pasty' | 'formed' | 'hardPellets';
 
 export type LocalNappyLog = {
   id: string; // UUID - client-generated for idempotent creates
@@ -60,7 +60,25 @@ export type LocalNappyLog = {
   loggedByUserId: number;
   type: NappyType | null;
   colour: NappyColour | null;
-  texture: NappyTexture | null;
+  consistency: NappyConsistency | null;
+  startedAt: Date; // instant event, no endedAt
+  notes: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+// ============================================================================
+// Solids Log Types
+// ============================================================================
+
+export type SolidsReaction = 'allergic' | 'hate' | 'liked' | 'loved';
+
+export type LocalSolidsLog = {
+  id: string; // UUID - client-generated for idempotent creates
+  babyId: number;
+  loggedByUserId: number;
+  food: string; // Plain text food name
+  reaction: SolidsReaction;
   startedAt: Date; // instant event, no endedAt
   notes: string | null;
   createdAt: Date;

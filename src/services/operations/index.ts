@@ -60,6 +60,18 @@ export {
   updateSleepLog,
 } from './sleep-log';
 
+// Solids log operations
+export type {
+  CreateSolidsLogInput,
+  UpdateSolidsLogInput,
+} from './solids-log';
+
+export {
+  createSolidsLog,
+  deleteSolidsLog,
+  updateSolidsLog,
+} from './solids-log';
+
 // Core types
 export type {
   OperationResult,

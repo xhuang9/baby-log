@@ -12,7 +12,7 @@ const baseButtonVariants = cva(
     variants: {
       variant: {
         primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        secondary: 'border border-border bg-background text-foreground hover:bg-muted',
+        secondary: 'bg-secondary text-foreground hover:bg-secondary/80',
       },
       size: {
         default: 'h-11 px-6 py-2 text-base',

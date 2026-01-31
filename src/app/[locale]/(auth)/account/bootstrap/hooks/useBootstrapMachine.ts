@@ -262,7 +262,7 @@ export function useBootstrapMachine(
           loggedByUserId: log.loggedByUserId,
           type: log.type,
           colour: log.colour ?? null,
-          texture: log.texture ?? null,
+          consistency: log.consistency ?? null,
           startedAt: new Date(log.startedAt),
           notes: log.notes,
           createdAt: new Date(log.createdAt),

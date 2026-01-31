@@ -1,9 +1,9 @@
 'use client';
 
-import type { LocalNappyLog, NappyType } from '@/lib/local-db';
+import type { LocalNappyLog, NappyColour, NappyConsistency, NappyType } from '@/lib/local-db';
 import { ChevronLeftIcon } from 'lucide-react';
 import { useState } from 'react';
-import { NappyTypeButtons } from '@/app/[locale]/(auth)/(app)/overview/_components/add-nappy-modal/components/NappyTypeButtons';
+import { ColourButtons, ConsistencyButtons, NappyTypeButtons } from '@/app/[locale]/(auth)/(app)/overview/_components/add-nappy-modal/components';
 import { TimeSwiper } from '@/components/feed/TimeSwiper';
 import { FormFooter } from '@/components/input-controls/FormFooter';
 import { Button } from '@/components/ui/button';
@@ -35,12 +35,23 @@ export function EditNappyModal({
   const [handMode] = useState<'left' | 'right'>('right');
   const [startTime, setStartTime] = useState(nappy.startedAt);
   const [nappyType, setNappyType] = useState<NappyType>(nappy.type ?? 'wee');
+  const [colour, setColour] = useState<NappyColour | null>(nappy.colour);
+  const [consistency, setConsistency] = useState<NappyConsistency | null>(nappy.consistency);
   const [notes, setNotes] = useState(nappy.notes ?? '');
   const [notesVisible, setNotesVisible] = useState(!!nappy.notes);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Handle nappy type change - clear colour/consistency when switching to Wee or Clean
+  const handleNappyTypeChange = (newType: NappyType) => {
+    setNappyType(newType);
+    if (newType === 'wee' || newType === 'clean') {
+      setColour(null);
+      setConsistency(null);
+    }
+  };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -51,6 +62,8 @@ export function EditNappyModal({
         id: nappy.id,
         babyId: nappy.babyId,
         type: nappyType,
+        colour,
+        consistency,
         startedAt: startTime,
         notes: notes.trim() || null,
       });
@@ -133,9 +146,27 @@ export function EditNappyModal({
           {/* Nappy Type Selection */}
           <NappyTypeButtons
             value={nappyType}
-            onChange={setNappyType}
+            onChange={handleNappyTypeChange}
             handMode={handMode}
           />
+
+          {/* Colour Selection - Only show for Poo and Mixed */}
+          {(nappyType === 'poo' || nappyType === 'mixed') && (
+            <ColourButtons
+              value={colour}
+              onChange={setColour}
+              handMode={handMode}
+            />
+          )}
+
+          {/* Consistency Selection - Only show for Poo and Mixed */}
+          {(nappyType === 'poo' || nappyType === 'mixed') && (
+            <ConsistencyButtons
+              value={consistency}
+              onChange={setConsistency}
+              handMode={handMode}
+            />
+          )}
 
           {/* Collapsible Notes Toggle */}
           <div className="flex justify-center">
@@ -155,7 +186,7 @@ export function EditNappyModal({
               <Input
                 id="edit-nappy-notes"
                 type="text"
-                placeholder="e.g., rash, normal..."
+                placeholder="Anything unusual? (Mucus, Blood, Black/tarry, Pale/white, Straining)"
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
               />

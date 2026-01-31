@@ -9,11 +9,13 @@ import { processBabyMutation } from './baby';
 import { processFeedLogMutation } from './feed-log';
 import { processNappyLogMutation } from './nappy-log';
 import { processSleepLogMutation } from './sleep-log';
+import { processSolidsLogMutation } from './solids-log';
 
 export { processBabyMutation } from './baby';
 export { processFeedLogMutation } from './feed-log';
 export { processNappyLogMutation } from './nappy-log';
 export { processSleepLogMutation } from './sleep-log';
+export { processSolidsLogMutation } from './solids-log';
 
 /**
  * Process a single mutation and return the result
@@ -65,6 +67,8 @@ export async function processMutation(
         return await processSleepLogMutation(mutationId, entityId, op, payload, userId, babyId);
       case 'nappy_log':
         return await processNappyLogMutation(mutationId, entityId, op, payload, userId, babyId);
+      case 'solids_log':
+        return await processSolidsLogMutation(mutationId, entityId, op, payload, userId, babyId);
       default:
         return {
           mutationId,

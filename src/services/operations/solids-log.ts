@@ -1,7 +1,7 @@
 /**
- * Nappy Log Operations
+ * Solids Log Operations
  *
- * Centralized operations for nappy log creation. All operations:
+ * Centralized operations for solids log creation. All operations:
  * 1. Write to IndexedDB immediately (local-first)
  * 2. Update Zustand stores if needed (or rely on useLiveQuery)
  * 3. Enqueue mutations to outbox for background sync
@@ -9,8 +9,8 @@
  */
 
 import type { OperationResult } from './types';
-import type { LocalNappyLog, NappyColour, NappyConsistency, NappyType } from '@/lib/local-db';
-import { addToOutbox, localDb, saveNappyLogs } from '@/lib/local-db';
+import type { LocalSolidsLog, SolidsReaction } from '@/lib/local-db';
+import { addToOutbox, localDb, saveSolidsLogs } from '@/lib/local-db';
 import { flushOutbox } from '@/services/sync';
 import { useUserStore } from '@/stores/useUserStore';
 
@@ -25,38 +25,36 @@ import {
 // Input Types
 // ============================================================================
 
-export type CreateNappyLogInput = {
+export type CreateSolidsLogInput = {
   babyId: number;
-  type: NappyType;
-  colour?: NappyColour | null;
-  consistency?: NappyConsistency | null;
+  food: string;
+  reaction: SolidsReaction;
   startedAt: Date;
   notes?: string | null;
 };
 
-export type UpdateNappyLogInput = {
+export type UpdateSolidsLogInput = {
   id: string;
   babyId: number;
-  type?: NappyType;
-  colour?: NappyColour | null;
-  consistency?: NappyConsistency | null;
+  food?: string;
+  reaction?: SolidsReaction;
   startedAt?: Date;
   notes?: string | null;
 };
 
 // ============================================================================
-// Nappy Log Operations
+// Solids Log Operations
 // ============================================================================
 
 /**
- * Create a new nappy log entry
- * - Creates nappy log in IndexedDB
+ * Create a new solids log entry
+ * - Creates solids log in IndexedDB
  * - Enqueues to outbox for sync
  * - UI updates via useLiveQuery automatically
  */
-export async function createNappyLog(
-  input: CreateNappyLogInput,
-): Promise<OperationResult<LocalNappyLog>> {
+export async function createSolidsLog(
+  input: CreateSolidsLogInput,
+): Promise<OperationResult<LocalSolidsLog>> {
   if (!isClientSide()) {
     return failure('Client-only operation');
   }
@@ -67,8 +65,12 @@ export async function createNappyLog(
       return failure('Baby ID is required');
     }
 
-    if (!input.type) {
-      return failure('Nappy type is required');
+    if (!input.food || input.food.trim() === '') {
+      return failure('Food name is required');
+    }
+
+    if (!input.reaction) {
+      return failure('Reaction is required');
     }
 
     if (!input.startedAt) {
@@ -91,18 +93,17 @@ export async function createNappyLog(
       return failure('Access denied to this baby');
     }
 
-    // Generate UUID for nappy log (client-side ID)
-    const nappyLogId = crypto.randomUUID();
+    // Generate UUID for solids log (client-side ID)
+    const solidsLogId = crypto.randomUUID();
     const now = new Date();
 
-    // Create nappy log object
-    const nappyLog: LocalNappyLog = {
-      id: nappyLogId,
+    // Create solids log object
+    const solidsLog: LocalSolidsLog = {
+      id: solidsLogId,
       babyId: input.babyId,
       loggedByUserId: user.localId,
-      type: input.type,
-      colour: input.colour ?? null,
-      consistency: input.consistency ?? null,
+      food: input.food.trim(),
+      reaction: input.reaction,
       startedAt: input.startedAt,
       notes: input.notes ?? null,
       createdAt: now,
@@ -110,25 +111,24 @@ export async function createNappyLog(
     };
 
     // Write to IndexedDB via helper
-    await saveNappyLogs([nappyLog]);
+    await saveSolidsLogs([solidsLog]);
 
     // Enqueue to outbox
     await addToOutbox({
       mutationId: generateMutationId(),
-      entityType: 'nappy_log',
-      entityId: nappyLogId,
+      entityType: 'solids_log',
+      entityId: solidsLogId,
       op: 'create',
       payload: {
-        id: nappyLog.id,
-        babyId: nappyLog.babyId,
-        loggedByUserId: nappyLog.loggedByUserId,
-        type: nappyLog.type,
-        colour: nappyLog.colour,
-        consistency: nappyLog.consistency,
-        startedAt: nappyLog.startedAt.toISOString(),
-        notes: nappyLog.notes,
-        createdAt: nappyLog.createdAt.toISOString(),
-        updatedAt: nappyLog.updatedAt.toISOString(),
+        id: solidsLog.id,
+        babyId: solidsLog.babyId,
+        loggedByUserId: solidsLog.loggedByUserId,
+        food: solidsLog.food,
+        reaction: solidsLog.reaction,
+        startedAt: solidsLog.startedAt.toISOString(),
+        notes: solidsLog.notes,
+        createdAt: solidsLog.createdAt.toISOString(),
+        updatedAt: solidsLog.updatedAt.toISOString(),
       },
     });
 
@@ -137,30 +137,30 @@ export async function createNappyLog(
       console.warn('Background sync failed:', err);
     });
 
-    return success(nappyLog);
+    return success(solidsLog);
   } catch (err) {
-    console.error('Failed to create nappy log:', err);
-    return failure(err instanceof Error ? err.message : 'Failed to create nappy log');
+    console.error('Failed to create solids log:', err);
+    return failure(err instanceof Error ? err.message : 'Failed to create solids log');
   }
 }
 
 /**
- * Update an existing nappy log entry
- * - Updates nappy log in IndexedDB
+ * Update an existing solids log entry
+ * - Updates solids log in IndexedDB
  * - Enqueues to outbox for sync
  */
-export async function updateNappyLog(
-  input: UpdateNappyLogInput,
-): Promise<OperationResult<LocalNappyLog>> {
+export async function updateSolidsLog(
+  input: UpdateSolidsLogInput,
+): Promise<OperationResult<LocalSolidsLog>> {
   if (!isClientSide()) {
     return failure('Client-only operation');
   }
 
   try {
-    // Get existing nappy log
-    const existing = await localDb.nappyLogs.get(input.id);
+    // Get existing solids log
+    const existing = await localDb.solidsLogs.get(input.id);
     if (!existing) {
-      return failure('Nappy log not found');
+      return failure('Solids log not found');
     }
 
     // Verify access
@@ -179,32 +179,30 @@ export async function updateNappyLog(
     }
 
     // Update fields
-    const updated: LocalNappyLog = {
+    const updated: LocalSolidsLog = {
       ...existing,
-      type: input.type ?? existing.type,
-      colour: input.colour !== undefined ? input.colour : existing.colour,
-      consistency: input.consistency !== undefined ? input.consistency : existing.consistency,
+      food: input.food !== undefined ? input.food.trim() : existing.food,
+      reaction: input.reaction ?? existing.reaction,
       startedAt: input.startedAt ?? existing.startedAt,
       notes: input.notes !== undefined ? input.notes : existing.notes,
       updatedAt: new Date(),
     };
 
     // Write to IndexedDB
-    await saveNappyLogs([updated]);
+    await saveSolidsLogs([updated]);
 
     // Enqueue to outbox
     await addToOutbox({
       mutationId: generateMutationId(),
-      entityType: 'nappy_log',
+      entityType: 'solids_log',
       entityId: updated.id,
       op: 'update',
       payload: {
         id: updated.id,
         babyId: updated.babyId,
         loggedByUserId: updated.loggedByUserId,
-        type: updated.type,
-        colour: updated.colour,
-        consistency: updated.consistency,
+        food: updated.food,
+        reaction: updated.reaction,
         startedAt: updated.startedAt.toISOString(),
         notes: updated.notes,
         updatedAt: updated.updatedAt.toISOString(),
@@ -218,17 +216,17 @@ export async function updateNappyLog(
 
     return success(updated);
   } catch (err) {
-    console.error('Failed to update nappy log:', err);
-    return failure(err instanceof Error ? err.message : 'Failed to update nappy log');
+    console.error('Failed to update solids log:', err);
+    return failure(err instanceof Error ? err.message : 'Failed to update solids log');
   }
 }
 
 /**
- * Delete a nappy log entry
+ * Delete a solids log entry
  * - Removes from IndexedDB
  * - Enqueues deletion to outbox for sync
  */
-export async function deleteNappyLog(
+export async function deleteSolidsLog(
   id: string,
   babyId: number,
 ): Promise<OperationResult<void>> {
@@ -253,12 +251,12 @@ export async function deleteNappyLog(
     }
 
     // Delete from IndexedDB
-    await localDb.nappyLogs.delete(id);
+    await localDb.solidsLogs.delete(id);
 
     // Enqueue to outbox
     await addToOutbox({
       mutationId: generateMutationId(),
-      entityType: 'nappy_log',
+      entityType: 'solids_log',
       entityId: id,
       op: 'delete',
       payload: {},
@@ -271,7 +269,7 @@ export async function deleteNappyLog(
 
     return success(undefined);
   } catch (err) {
-    console.error('Failed to delete nappy log:', err);
-    return failure(err instanceof Error ? err.message : 'Failed to delete nappy log');
+    console.error('Failed to delete solids log:', err);
+    return failure(err instanceof Error ? err.message : 'Failed to delete solids log');
   }
 }

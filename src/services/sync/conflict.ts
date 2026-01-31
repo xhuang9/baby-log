@@ -12,9 +12,11 @@ import type {
   LocalFeedLog,
   LocalNappyLog,
   LocalSleepLog,
+  LocalSolidsLog,
   NappyColour,
-  NappyTexture,
+  NappyConsistency,
   NappyType,
+  SolidsReaction,
 } from '@/lib/local-db';
 import {
   saveBabies,
@@ -22,6 +24,7 @@ import {
   saveFeedLogs,
   saveNappyLogs,
   saveSleepLogs,
+  saveSolidsLogs,
 } from '@/lib/local-db';
 
 /**
@@ -87,13 +90,27 @@ export async function applyServerData(
       loggedByUserId: serverData.loggedByUserId as number,
       type: serverData.type as NappyType | null,
       colour: (serverData.colour as NappyColour | null) ?? null,
-      texture: (serverData.texture as NappyTexture | null) ?? null,
+      consistency: (serverData.consistency as NappyConsistency | null) ?? null,
       startedAt: new Date(serverData.startedAt as string),
       notes: (serverData.notes as string) ?? null,
       createdAt: new Date(serverData.createdAt as string),
       updatedAt: new Date(serverData.updatedAt as string),
     };
     await saveNappyLogs([nappyLog]);
+  } else if ('food' in serverData && 'reaction' in serverData) {
+    // Solids log (has 'food' and 'reaction' fields)
+    const solidsLog: LocalSolidsLog = {
+      id: serverData.id as string,
+      babyId: serverData.babyId as number,
+      loggedByUserId: serverData.loggedByUserId as number,
+      food: serverData.food as string,
+      reaction: serverData.reaction as SolidsReaction,
+      startedAt: new Date(serverData.startedAt as string),
+      notes: (serverData.notes as string) ?? null,
+      createdAt: new Date(serverData.createdAt as string),
+      updatedAt: new Date(serverData.updatedAt as string),
+    };
+    await saveSolidsLogs([solidsLog]);
   } else if ('startedAt' in serverData && 'endedAt' in serverData) {
     // Sleep log
     const sleepLog: LocalSleepLog = {

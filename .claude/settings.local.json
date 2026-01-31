@@ -59,7 +59,10 @@
       "Bash(pnpm run db:generate:*)",
       "Bash(git commit:*)",
       "Bash(pnpm run db:migrate:*)",
-      "Bash(pnpm run typecheck:*)"
+      "Bash(pnpm run typecheck:*)",
+      "Bash(pnpm exec tsc:*)",
+      "Bash(pnpm drizzle-kit generate:*)",
+      "Bash(printf:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

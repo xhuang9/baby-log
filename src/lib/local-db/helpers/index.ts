@@ -12,6 +12,7 @@ export * from './nappy-logs';
 export * from './notifications';
 export * from './outbox';
 export * from './sleep-logs';
+export * from './solids-logs';
 export * from './sync-status';
 export * from './ui-config';
 export * from './user';

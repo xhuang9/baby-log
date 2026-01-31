@@ -1,19 +1,18 @@
 /**
- * Nappy Log Serializer
+ * Solids Log Serializer
  *
- * Converts nappy log database records to JSON-safe format.
+ * Converts solids log database records to JSON-safe format.
  */
 
-import type { nappyLogSchema } from '@/models/Schema';
+import type { solidsLogSchema } from '@/models/Schema';
 
-export function serializeNappyLog(log: typeof nappyLogSchema.$inferSelect): Record<string, unknown> {
+export function serializeSolidsLog(log: typeof solidsLogSchema.$inferSelect): Record<string, unknown> {
   return {
     id: log.id, // Already text (UUID)
     babyId: log.babyId,
     loggedByUserId: log.loggedByUserId,
-    type: log.type,
-    colour: log.colour,
-    consistency: log.consistency,
+    food: log.food,
+    reaction: log.reaction,
     startedAt: log.startedAt.toISOString(),
     notes: log.notes,
     createdAt: log.createdAt.toISOString(),
