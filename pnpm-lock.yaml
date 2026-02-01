@@ -4,14 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  baseline-browser-mapping: 2.9.19
-
-patchedDependencies:
-  baseline-browser-mapping@2.9.19:
-    hash: 474046dbaa4afdba4bdc75460acf0ad98fd5ef7cbd47b2fc001141a04f284b0d
-    path: patches/baseline-browser-mapping@2.9.19.patch
-
 importers:
 
   .:
@@ -211,7 +203,7 @@ importers:
         version: 1.0.0
       baseline-browser-mapping:
         specifier: 2.9.19
-        version: 2.9.19(patch_hash=474046dbaa4afdba4bdc75460acf0ad98fd5ef7cbd47b2fc001141a04f284b0d)
+        version: 2.9.19
       checkly:
         specifier: ^6.9.10
         version: 6.9.10(@types/node@24.10.9)(jiti@2.6.1)(typescript@5.9.3)
@@ -14647,7 +14639,7 @@ snapshots:
 
   base64-js@1.5.1: {}
 
-  baseline-browser-mapping@2.9.19(patch_hash=474046dbaa4afdba4bdc75460acf0ad98fd5ef7cbd47b2fc001141a04f284b0d): {}
+  baseline-browser-mapping@2.9.19: {}
 
   before-after-hook@4.0.0: {}
 
@@ -14746,7 +14738,7 @@ snapshots:
 
   browserslist@4.28.1:
     dependencies:
-      baseline-browser-mapping: 2.9.19(patch_hash=474046dbaa4afdba4bdc75460acf0ad98fd5ef7cbd47b2fc001141a04f284b0d)
+      baseline-browser-mapping: 2.9.19
       caniuse-lite: 1.0.30001766
       electron-to-chromium: 1.5.283
       node-releases: 2.0.27
@@ -18283,7 +18275,7 @@ snapshots:
     dependencies:
       '@next/env': 16.1.6
       '@swc/helpers': 0.5.15
-      baseline-browser-mapping: 2.9.19(patch_hash=474046dbaa4afdba4bdc75460acf0ad98fd5ef7cbd47b2fc001141a04f284b0d)
+      baseline-browser-mapping: 2.9.19
       caniuse-lite: 1.0.30001766
       postcss: 8.4.31
       react: 19.2.4

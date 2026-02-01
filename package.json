@@ -1,5 +1,6 @@
 {
   "name": "next-js-boilerplate",
+  "version": "0.3.0-dev.0",
   "author": "Ixartz (https://github.com/ixartz)",
   "engines": {
     "node": ">=20"
@@ -143,14 +144,5 @@
       "@semantic-release/release-notes-generator",
       "@semantic-release/github"
     ]
-  },
-  "pnpm": {
-    "overrides": {
-      "baseline-browser-mapping": "2.9.19"
-    },
-    "patchedDependencies": {
-      "baseline-browser-mapping@2.9.19": "patches/baseline-browser-mapping@2.9.19.patch"
-    }
-  },
-  "version": "0.3.0-dev.0"
+  }
 }
