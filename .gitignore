@@ -67,3 +67,5 @@ next-env.d.ts
 
 # readme resources
 .readme/resource/*
+
+.claude
