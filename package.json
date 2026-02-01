@@ -3,7 +3,7 @@
   "version": "0.3.0-dev.0",
   "author": "Ixartz (https://github.com/ixartz)",
   "engines": {
-    "node": ">=20"
+    "node": ">=22 <25"
   },
   "scripts": {
     "dev:spotlight": "npx @spotlightjs/spotlight",
