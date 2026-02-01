@@ -2,6 +2,7 @@
 
 import type { FeedLogWithCaregiver } from '@/actions/feedLogActions';
 import { useState } from 'react';
+import { useTimerStore } from '@/stores/useTimerStore';
 import { ActivityTile } from './ActivityTile';
 import { AddFeedModal } from './add-feed-modal';
 
@@ -34,39 +35,47 @@ function formatTimeAgo(date: Date): string {
   return 'Just now';
 }
 
-function formatFeedSubtitle(feed: FeedLogWithCaregiver | null): string {
+function getFeedStatusText(feed: FeedLogWithCaregiver | null): string {
   if (!feed) {
     return 'Tap to log a feed';
   }
-
-  const timeAgo = formatTimeAgo(feed.startedAt);
-  const caregiver = feed.caregiverLabel ? ` - by ${feed.caregiverLabel}` : '';
-
   if (feed.method === 'bottle') {
-    return `${timeAgo} - ${feed.amountMl ?? 0}ml formula${caregiver}`;
+    return `${feed.amountMl ?? 0}ml formula`;
   }
-
   // Breast feed
-  const duration = feed.durationMinutes ? `${feed.durationMinutes}m` : '';
-  const side = feed.endSide ? ` (end on ${feed.endSide})` : '';
-  return `${timeAgo} - ${duration} breast feed${side}${caregiver}`;
+  return feed.durationMinutes ? `${feed.durationMinutes}m breast feed` : 'breast feed';
 }
 
 export function FeedTile({ babyId, latestFeed }: FeedTileProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
 
+  // Get timer state for this activity
+  const timerKey = `feed-${babyId}`;
+  const timerState = useTimerStore(s => s.timers[timerKey]);
+
+  // Pass timer data to ActivityTile - it handles live updates internally
+  const timerElapsedBase = timerState?.elapsedSeconds ?? 0;
+  const timerStartTime = timerState?.lastStartTime ?? null;
+  const isTimerRunning = Boolean(timerStartTime);
+  const hasActiveTimer = timerElapsedBase > 0 || isTimerRunning;
+
   return (
     <>
       <ActivityTile
         title="Feed"
-        subtitle={formatFeedSubtitle(latestFeed)}
+        statusText={getFeedStatusText(latestFeed)}
+        timeAgo={latestFeed ? formatTimeAgo(latestFeed.startedAt) : undefined}
+        caregiver={latestFeed?.caregiverLabel}
         activity="feed"
         onClick={() => setSheetOpen(true)}
+        timerElapsedBase={timerElapsedBase}
+        timerStartTime={timerStartTime}
       />
       <AddFeedModal
         babyId={babyId}
         open={sheetOpen}
         onOpenChange={setSheetOpen}
+        initialMethod={hasActiveTimer ? 'breast' : undefined}
       />
     </>
   );

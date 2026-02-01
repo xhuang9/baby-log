@@ -32,9 +32,10 @@ export function AddFeedModal({
   open,
   onOpenChange,
   onSuccess,
+  initialMethod,
 }: AddFeedModalProps) {
   // 1. State management
-  const { state, actions } = useFeedFormState();
+  const { state, actions } = useFeedFormState({ initialMethod });
 
   // 2. Timer integration
   const { isHydrated } = useTimerStore();

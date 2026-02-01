@@ -36,60 +36,44 @@ function formatTimeAgo(date: Date): string {
 
 function formatConsistencyLabel(consistency: string): string {
   const labels: Record<string, string> = {
-    watery: 'Watery',
-    runny: 'Runny',
-    mushy: 'Mushy',
-    pasty: 'Pasty',
-    formed: 'Formed',
-    hardPellets: 'Hard pellets',
+    watery: 'watery',
+    runny: 'runny',
+    mushy: 'mushy',
+    pasty: 'pasty',
+    formed: 'formed',
+    hardPellets: 'hard pellets',
   };
-  return labels[consistency] ?? consistency.charAt(0).toUpperCase() + consistency.slice(1);
+  return labels[consistency] ?? consistency;
 }
 
-function formatNappySubtitle(
+function getNappyStatusText(
   nappy: LocalNappyLog & { caregiverLabel: string | null },
 ): string {
-  const timeAgo = formatTimeAgo(nappy.startedAt);
   const typeLabel = nappy.type
     ? nappy.type.charAt(0).toUpperCase() + nappy.type.slice(1)
     : 'Unknown';
 
-  // Format colour and consistency if present
-  let details = typeLabel;
-  if (nappy.colour || nappy.consistency) {
-    const colourLabel = nappy.colour
-      ? nappy.colour === 'black'
-        ? 'Black'
-        : nappy.colour.charAt(0).toUpperCase() + nappy.colour.slice(1)
-      : null;
-    const consistencyLabel = nappy.consistency
-      ? formatConsistencyLabel(nappy.consistency)
-      : null;
-
-    const additionalDetails = [colourLabel, consistencyLabel].filter(Boolean).join(' ');
-    if (additionalDetails) {
-      details = `${typeLabel}    ${additionalDetails}`; // 4 spaces for visual separation
-    }
+  const detailParts = [typeLabel];
+  if (nappy.colour) {
+    detailParts.push(nappy.colour.toLowerCase());
+  }
+  if (nappy.consistency) {
+    detailParts.push(formatConsistencyLabel(nappy.consistency));
   }
 
-  const caregiver = nappy.caregiverLabel ? ` - by ${nappy.caregiverLabel}` : '';
-
-  return `${timeAgo} - ${details}${caregiver}`;
+  return detailParts.join(' ');
 }
 
 export function NappyTile({ babyId, latestNappy }: NappyTileProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Format subtitle from latest nappy
-  const subtitle = latestNappy
-    ? formatNappySubtitle(latestNappy)
-    : 'Tap to log a nappy change';
-
   return (
     <>
       <ActivityTile
         title="Nappy"
-        subtitle={subtitle}
+        statusText={latestNappy ? getNappyStatusText(latestNappy) : 'Tap to log a nappy change'}
+        timeAgo={latestNappy ? formatTimeAgo(latestNappy.startedAt) : undefined}
+        caregiver={latestNappy?.caregiverLabel}
         activity="nappy"
         onClick={() => setIsModalOpen(true)}
       />

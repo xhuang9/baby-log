@@ -2,6 +2,7 @@
 
 import type { LocalSleepLog } from '@/lib/local-db';
 import { useState } from 'react';
+import { useTimerStore } from '@/stores/useTimerStore';
 import { ActivityTile } from './ActivityTile';
 import { AddSleepModal } from './add-sleep-modal';
 
@@ -52,30 +53,38 @@ function formatDuration(durationMinutes: number | null): string {
   return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
 }
 
-function formatSleepSubtitle(sleep: SleepLogWithCaregiver | null): string {
+function getSleepStatusText(sleep: SleepLogWithCaregiver | null): string {
   if (!sleep) {
     return 'Tap to log sleep';
   }
-
-  // Calculate time ago from endedAt if available, otherwise from startedAt
-  const referenceTime = sleep.endedAt ?? sleep.startedAt;
-  const timeAgo = formatTimeAgo(referenceTime);
-  const duration = formatDuration(sleep.durationMinutes);
-  const caregiver = sleep.caregiverLabel ? ` - by ${sleep.caregiverLabel}` : '';
-
-  return `${timeAgo} - duration ${duration}${caregiver}`;
+  return `duration ${formatDuration(sleep.durationMinutes)}`;
 }
 
 export function SleepTile({ babyId, latestSleep }: SleepTileProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
 
+  // Get timer state for this activity
+  const timerKey = `sleep-${babyId}`;
+  const timerState = useTimerStore(s => s.timers[timerKey]);
+
+  // Pass timer data to ActivityTile - it handles live updates internally
+  const timerElapsedBase = timerState?.elapsedSeconds ?? 0;
+  const timerStartTime = timerState?.lastStartTime ?? null;
+
+  // Calculate time ago from endedAt if available, otherwise from startedAt
+  const referenceTime = latestSleep?.endedAt ?? latestSleep?.startedAt;
+
   return (
     <>
       <ActivityTile
         title="Sleep"
-        subtitle={formatSleepSubtitle(latestSleep)}
+        statusText={getSleepStatusText(latestSleep)}
+        timeAgo={referenceTime ? formatTimeAgo(referenceTime) : undefined}
+        caregiver={latestSleep?.caregiverLabel}
         activity="sleep"
         onClick={() => setSheetOpen(true)}
+        timerElapsedBase={timerElapsedBase}
+        timerStartTime={timerStartTime}
       />
       <AddSleepModal
         babyId={babyId}

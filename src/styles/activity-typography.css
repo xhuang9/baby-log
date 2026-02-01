@@ -1,10 +1,23 @@
 /* Activity tile typography styles for titles and labels. */
 @layer components {
   .activity-tile-title {
-    @apply font-sans text-lg font-semibold leading-snug tracking-tight text-white;
+    @apply font-sans text-2xl font-bold leading-tight tracking-tight;
+    /* Title uses the accent color */
+    color: var(--activity-tile-accent, var(--foreground));
   }
 
   .activity-tile-label {
-    @apply font-sans text-sm font-normal leading-snug text-white;
+    @apply mt-1 flex flex-wrap items-center gap-x-1 font-sans text-sm font-normal leading-relaxed;
+    /* Subtitle uses neutral foreground color */
+    color: var(--foreground);
+    opacity: 0.9;
+  }
+
+  .activity-tile-separator {
+    @apply text-muted-foreground;
+  }
+
+  .activity-tile-caregiver {
+    @apply max-w-[10rem] truncate;
   }
 }

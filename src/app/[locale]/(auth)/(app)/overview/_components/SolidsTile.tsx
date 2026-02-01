@@ -34,29 +34,23 @@ function formatTimeAgo(date: Date): string {
   return 'Just now';
 }
 
-function formatSolidsSubtitle(
+function getSolidsStatusText(
   solids: LocalSolidsLog & { caregiverLabel: string | null },
 ): string {
-  const timeAgo = formatTimeAgo(solids.startedAt);
   const reactionLabel = solids.reaction.charAt(0).toUpperCase() + solids.reaction.slice(1);
-  const caregiver = solids.caregiverLabel ? ` - by ${solids.caregiverLabel}` : '';
-
-  return `${timeAgo} - ${reactionLabel} ${solids.food}${caregiver}`;
+  return `${reactionLabel} ${solids.food}`;
 }
 
 export function SolidsTile({ babyId, latestSolids }: SolidsTileProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Format subtitle from latest solids
-  const subtitle = latestSolids
-    ? formatSolidsSubtitle(latestSolids)
-    : 'Tap to log solid food';
-
   return (
     <>
       <ActivityTile
         title="Solids"
-        subtitle={subtitle}
+        statusText={latestSolids ? getSolidsStatusText(latestSolids) : 'Tap to log solid food'}
+        timeAgo={latestSolids ? formatTimeAgo(latestSolids.startedAt) : undefined}
+        caregiver={latestSolids?.caregiverLabel}
         activity="solids"
         onClick={() => setIsModalOpen(true)}
       />

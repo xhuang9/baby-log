@@ -1,6 +1,8 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { PlusIcon, TimerIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 const activityClasses = {
@@ -20,29 +22,85 @@ const activityClasses = {
 
 export type ActivityType = keyof typeof activityClasses;
 
+/** Format elapsed seconds as HH:MM:SS (hide HH when < 1 hour) */
+function formatTimerDisplay(seconds: number): string {
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  if (hrs > 0) {
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
 export type ActivityTileProps = {
   title: string;
-  subtitle: string;
+  /** Main status/description text */
+  statusText: string;
+  /** Time ago text (e.g., "1d 4h ago") */
+  timeAgo?: string;
+  /** Caregiver name - will be truncated with ellipsis if too long */
+  caregiver?: string | null;
   activity: ActivityType;
   disabled?: boolean;
   onClick?: () => void;
-  rightContent?: ReactNode;
+  /** Override the default action pill content (defaults to + icon) */
+  actionContent?: ReactNode;
+  /** Base elapsed seconds from timer (accumulated when paused) */
+  timerElapsedBase?: number;
+  /** ISO timestamp of when timer started (null if not running) */
+  timerStartTime?: string | null;
   className?: string;
-  multiline?: boolean;
-  layout?: 'row' | 'column';
 };
 
 export function ActivityTile({
   title,
-  subtitle,
+  statusText,
+  timeAgo,
+  caregiver,
   activity,
   disabled,
   onClick,
-  rightContent,
+  actionContent,
+  timerElapsedBase = 0,
+  timerStartTime,
   className,
-  multiline = false,
-  layout = 'row',
 }: ActivityTileProps) {
+  const isTimerRunning = Boolean(timerStartTime);
+  const hasTimer = timerElapsedBase > 0 || isTimerRunning;
+
+  // Live timer display that updates every second when running
+  const [displaySeconds, setDisplaySeconds] = useState(0);
+
+  useEffect(() => {
+    const calculateElapsed = () => {
+      let total = timerElapsedBase;
+      if (timerStartTime) {
+        const sessionElapsed = Math.floor(
+          (Date.now() - new Date(timerStartTime).getTime()) / 1000,
+        );
+        total += sessionElapsed;
+      }
+      return total;
+    };
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Sync with external timer state
+    setDisplaySeconds(calculateElapsed());
+
+    if (isTimerRunning) {
+      const interval = setInterval(() => {
+        setDisplaySeconds(calculateElapsed());
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timerElapsedBase, timerStartTime, isTimerRunning]);
+
+  // Default action content is a plus icon
+  const defaultActionContent = (
+    <PlusIcon className="h-[22px] w-auto" strokeWidth={2} />
+  );
+
   return (
     <button
       type="button"
@@ -51,19 +109,45 @@ export function ActivityTile({
       className={cn(
         'activity-tile',
         activityClasses[activity],
-        layout === 'column' && 'flex-col items-start justify-start gap-2',
         className,
       )}
     >
+      {/* Left content - title and subtitle */}
       <div className="min-w-0 flex-1">
         <h3 className="activity-tile-title">{title}</h3>
-        <p className={cn('activity-tile-label', !multiline && 'truncate')}>{subtitle}</p>
-      </div>
-      {rightContent && (
-        <div className={cn(layout === 'column' ? 'mt-2' : 'ml-4', 'shrink-0')}>
-          {rightContent}
+        <div className="activity-tile-label">
+          <span>{statusText}</span>
+          {timeAgo && (
+            <>
+              <span className="activity-tile-separator">•</span>
+              <span>{timeAgo}</span>
+            </>
+          )}
+          {caregiver && (
+            <>
+              <span className="activity-tile-separator">•</span>
+              <span className="activity-tile-caregiver">{caregiver}</span>
+            </>
+          )}
         </div>
-      )}
+      </div>
+
+      {/* Right action pill - either timer or custom action or + icon */}
+      <div className="activity-tile-action shrink-0 self-start">
+        {hasTimer
+          ? (
+              <>
+                <TimerIcon className="h-4 w-auto" strokeWidth={2} />
+                <span className="text-sm leading-none font-medium">
+                  {formatTimerDisplay(displaySeconds)}
+                </span>
+                {isTimerRunning && (
+                  <span className="activity-tile-pulse" />
+                )}
+              </>
+            )
+          : (actionContent ?? defaultActionContent)}
+      </div>
     </button>
   );
 }

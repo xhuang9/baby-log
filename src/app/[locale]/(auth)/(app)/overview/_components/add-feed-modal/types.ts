@@ -6,6 +6,8 @@ export type AddFeedModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
+  /** Initial feed method - defaults to 'bottle'. Use 'breast' to open in timer mode. */
+  initialMethod?: FeedMethod;
 };
 
 export type { InputMode };

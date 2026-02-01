@@ -229,19 +229,19 @@ export function OverviewContent({ locale }: OverviewContentProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
       <FeedTile babyId={babyId} latestFeed={latestFeedData} />
       <SleepTile babyId={babyId} latestSleep={latestSleepData} />
       <NappyTile babyId={babyId} latestNappy={latestNappyData} />
       <SolidsTile babyId={babyId} latestSolids={latestSolidsData} />
-      <ActivityTile title="Bath" subtitle="Coming soon" activity="bath" disabled />
+      <ActivityTile title="Bath" statusText="Coming soon" activity="bath" disabled />
     </div>
   );
 }
 
 function OverviewSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
       {[...Array.from({ length: 5 })].map((_, i) => (
         <div key={i} className="h-32 animate-pulse rounded-lg bg-muted" />
       ))}
