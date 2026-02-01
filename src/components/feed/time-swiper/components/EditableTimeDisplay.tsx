@@ -8,6 +8,7 @@ type EditableTimeDisplayProps = {
   onChange: (date: Date) => void;
   use24Hour: boolean;
   className?: string;
+  dimmed?: boolean;
 };
 
 export function EditableTimeDisplay({
@@ -15,6 +16,7 @@ export function EditableTimeDisplay({
   onChange,
   use24Hour,
   className,
+  dimmed = false,
 }: EditableTimeDisplayProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -144,7 +146,8 @@ export function EditableTimeDisplay({
       type="button"
       onClick={handleClick}
       className={cn(
-        'relative cursor-text text-3xl font-semibold tracking-tight transition-colors hover:text-primary/80',
+        'relative cursor-text text-3xl font-semibold tracking-tight transition-colors',
+        dimmed ? 'text-primary hover:text-primary/80' : 'hover:opacity-85',
         className,
       )}
     >

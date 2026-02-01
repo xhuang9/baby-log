@@ -79,6 +79,7 @@ export function useTimeSwiperState({ value, onChange, dayOffset, setDayOffset }:
     const todayBase = new Date(now);
     todayBase.setHours(0, 0, 0, 0);
 
+    setCurrentTime(now); // Update current time to ensure "In future" check is accurate
     setBaseDate(todayBase);
     setDayOffset(0);
     onChange(now);

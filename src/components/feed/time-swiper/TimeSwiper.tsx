@@ -54,7 +54,7 @@ export function TimeSwiper({ value, onChange, handMode = 'right', className }: T
     maxSelectableDate,
     showDateRow,
     handleDateSelect: baseHandleDateSelect,
-    handleBackToToday,
+    handleResetToNow,
   } = useTimeSwiperState({
     value,
     onChange,
@@ -175,7 +175,7 @@ export function TimeSwiper({ value, onChange, handMode = 'right', className }: T
                 />
                 <button
                   type="button"
-                  onClick={handleBackToToday}
+                  onClick={handleResetToNow}
                   className="text-xs text-primary underline hover:no-underline"
                 >
                   Back to now
@@ -195,7 +195,7 @@ export function TimeSwiper({ value, onChange, handMode = 'right', className }: T
             {/* Editable Time Display */}
             <div
               className={cn(
-                'absolute inset-x-0 z-10 flex justify-center transition-all duration-200',
+                'absolute inset-x-0 z-10 flex flex-col items-center transition-all duration-200',
                 showDateRow ? 'top-7' : 'top-4',
               )}
             >
@@ -203,7 +203,13 @@ export function TimeSwiper({ value, onChange, handMode = 'right', className }: T
                 value={value}
                 onChange={onChange}
                 use24Hour={settings.use24Hour}
+                dimmed={value > currentTime}
               />
+              {value > currentTime && (
+                <div className="mt-1 text-xs font-medium text-primary">
+                  In future
+                </div>
+              )}
             </div>
 
             {/* Timeline Track */}
