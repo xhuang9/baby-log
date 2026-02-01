@@ -1,6 +1,5 @@
 'use client';
 
-import * as Sentry from '@sentry/nextjs';
 import NextError from 'next/error';
 import { useEffect } from 'react';
 import { routing } from '@/lib/i18n/routing';
@@ -9,7 +8,17 @@ export default function GlobalError(props: {
   error: Error & { digest?: string };
 }) {
   useEffect(() => {
-    Sentry.captureException(props.error);
+    // Dynamically import Sentry only when needed
+    if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
+      import('@sentry/nextjs').then((Sentry) => {
+        Sentry.captureException(props.error);
+      }).catch(() => {
+        // Sentry not available, log to console instead
+        console.error('Global error:', props.error);
+      });
+    } else {
+      console.error('Global error:', props.error);
+    }
   }, [props.error]);
 
   return (
