@@ -54,8 +54,8 @@ EXCEPTION
 END $$;--> statement-breakpoint
 
 -- Drop old enum if it exists
-DROP TYPE IF EXISTS "public"."nappy_consistency_enum_old";--> statement-breakpoint
-DROP TYPE IF EXISTS "public"."nappy_texture_enum";--> statement-breakpoint
+DROP TYPE IF EXISTS "public"."nappy_consistency_enum_old" CASCADE;--> statement-breakpoint
+DROP TYPE IF EXISTS "public"."nappy_texture_enum" CASCADE;--> statement-breakpoint
 
 -- Add foreign keys if they don't exist
 DO $$ BEGIN
