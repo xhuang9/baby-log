@@ -60,8 +60,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(@types/react@19.2.10)(dexie@4.3.0)(react@19.2.4)
       drizzle-orm:
-        specifier: ^0.44.7
-        version: 0.44.7(@electric-sql/pglite@0.3.14)(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(pg@8.18.0)
+        specifier: ^0.45.1
+        version: 0.45.1(@electric-sql/pglite@0.3.14)(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(pg@8.18.0)
       import-in-the-middle:
         specifier: ^2.0.6
         version: 2.0.6
@@ -75,8 +75,8 @@ importers:
         specifier: ^9.0.3
         version: 9.0.3
       lucide-react:
-        specifier: ^0.561.0
-        version: 0.561.0(react@19.2.4)
+        specifier: ^0.563.0
+        version: 0.563.0(react@19.2.4)
       next:
         specifier: ^16.1.6
         version: 16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -148,8 +148,8 @@ importers:
         specifier: ^20.4.0
         version: 20.4.0(@types/node@24.10.9)(typescript@5.9.3)
       '@electric-sql/pglite-socket':
-        specifier: ^0.0.19
-        version: 0.0.19(@electric-sql/pglite@0.3.14)
+        specifier: ^0.0.20
+        version: 0.0.20(@electric-sql/pglite@0.3.14)
       '@eslint-react/eslint-plugin':
         specifier: ^2.8.1
         version: 2.8.1(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
@@ -166,8 +166,8 @@ importers:
         specifier: ^1.58.1
         version: 1.58.1
       '@spotlightjs/spotlight':
-        specifier: 4.5.1
-        version: 4.5.1
+        specifier: 4.10.0
+        version: 4.10.0(hono-rate-limiter@0.4.2(hono@4.11.7))
       '@tailwindcss/postcss':
         specifier: ^4.1.18
         version: 4.1.18
@@ -244,8 +244,8 @@ importers:
         specifier: 4.0.0-beta.0
         version: 4.0.0-beta.0(tailwindcss@4.1.18)
       get-db:
-        specifier: ^0.11.0
-        version: 0.11.0
+        specifier: ^0.12.1
+        version: 0.12.1
       knip:
         specifier: ^5.82.1
         version: 5.82.1(@types/node@24.10.9)(typescript@5.9.3)
@@ -1195,11 +1195,11 @@ packages:
     peerDependencies:
       '@noble/ciphers': ^1.0.0
 
-  '@electric-sql/pglite-socket@0.0.19':
-    resolution: {integrity: sha512-9Uq0aXJyfeQMQCk9OiX3dfjdKCKurjGPkhHemDo+sA5QeYPuH48Bxfue4sfA+dBXZGe9cUCjwrnZ351E3wPPIA==}
+  '@electric-sql/pglite-socket@0.0.20':
+    resolution: {integrity: sha512-J5nLGsicnD9wJHnno9r+DGxfcZWh+YJMCe0q/aCgtG6XOm9Z7fKeite8IZSNXgZeGltSigM9U/vAWZQWdgcSFg==}
     hasBin: true
     peerDependencies:
-      '@electric-sql/pglite': 0.3.14
+      '@electric-sql/pglite': 0.3.15
 
   '@electric-sql/pglite@0.3.14':
     resolution: {integrity: sha512-3DB258dhqdsArOI1fIt7cb9RpUOgcDg5hXWVgVHAeqVQ/qxtFy605QKs4gx6mFq3jWsSPqDN8TgSEsqC3OfV9Q==}
@@ -1881,11 +1881,13 @@ packages:
     resolution: {integrity: sha512-kjotm7XJrJ6v+7knhPaRgaT6q8F8K2jiafwYdNHLzmV0uGLuZY43FK6smNSHUPrhq5kX2slCUy+RGG/xGqmIKA==}
     engines: {node: '>=10.13.0'}
 
-  '@hono/mcp@0.1.5':
-    resolution: {integrity: sha512-q6Yurx9VUwVEpqnwVXtzIYaq4kgQgWWq9lYLM7NFS2W0sg1RzL+RdKh6jO4/dGyvBLKrahPd2v+NC6rr0XWBvQ==}
+  '@hono/mcp@0.2.3':
+    resolution: {integrity: sha512-wrYKVQSjnBg4/ZinnnP/1t3jlvP3Z9fqZv8OzuhLXV4gVTLOHOHDhnXsIwD0nFVKk2pMOvA+sDfrKyRzw4yUPg==}
     peerDependencies:
-      '@modelcontextprotocol/sdk': ^1.12.0
-      hono: '>=4.0.0'
+      '@modelcontextprotocol/sdk': ^1.25.1
+      hono: '*'
+      hono-rate-limiter: ^0.4.2
+      zod: ^3.25.0 || ^4.0.0
 
   '@hono/node-server@1.19.9':
     resolution: {integrity: sha512-vHL6w3ecZsky+8P5MD+eFfaGTyCeOHUIFYMGpQGbrBTSmNNoxv0if69rEZ5giu36weC5saFuznL411gRX7bJDw==}
@@ -3447,16 +3449,8 @@ packages:
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
 
-  '@spotlightjs/overlay@4.5.0':
-    resolution: {integrity: sha512-Pn8qnVI68082y/RCuZXX6lUctMRFxH5v48IctbC8WogOCWZ3VSdZoKqCAcDQpafZwTgoGADGPp/vIeYyqfNCaQ==}
-
-  '@spotlightjs/sidecar@2.5.0':
-    resolution: {integrity: sha512-KCkADnSMqt65LpfX99clXrUqG+ROPjbQfXxSLkZ5uPZ0t0NwOVd+CjYPH7siNl1CBQGCrLm0vgJ2USbaWzGk3g==}
-    engines: {node: '>=20'}
-    hasBin: true
-
-  '@spotlightjs/spotlight@4.5.1':
-    resolution: {integrity: sha512-PtoYz7ov/owm2PBrV9DY11CTNkQWsC6eiWKOM0e+M40E1/AfgtlhMTYLFA4+qk1Ifh8AazDD0tcfPFUQuDZDxQ==}
+  '@spotlightjs/spotlight@4.10.0':
+    resolution: {integrity: sha512-d2raVmMqQQbSUguhYdui4tmkGvibSzRVM3dVvq/jPbxqRDB+vNELSsDlbEwweOIFDTXZEYoWBSHEW2pRqCtmjQ==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -4253,6 +4247,9 @@ packages:
 
   ajv@8.17.1:
     resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
+
+  anser@2.3.5:
+    resolution: {integrity: sha512-vcZjxvvVoxTeR5XBNJB38oTu/7eDCZlwdz32N1eNgpyPF7j/Z7Idf+CUwQOkKKpJ7RJyjxgLHCM7vdIK0iCNMQ==}
 
   ansi-escapes@4.3.2:
     resolution: {integrity: sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==}
@@ -5229,8 +5226,8 @@ packages:
     resolution: {integrity: sha512-O9EC/miwdnRDY10qRxM8P3Pg8hXe3LyU4ZipReKOgTwn4OqANmftj8XJz1UPUAS6NMHf0E2htjsbQujUTkncCg==}
     hasBin: true
 
-  drizzle-orm@0.44.7:
-    resolution: {integrity: sha512-quIpnYznjU9lHshEOAYLoZ9s3jweleHlZIAWR/jX9gAWNg/JhQ1wj0KGRf7/Zm+obRrYd9GjPVJg790QY9N5AQ==}
+  drizzle-orm@0.45.1:
+    resolution: {integrity: sha512-Te0FOdKIistGNPMq2jscdqngBRfBpC8uMFVwqjf6gtTVJHIQ/dosgV/CLBU2N4ZJBsXL5savCba9b0YJskKdcA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -6115,9 +6112,9 @@ packages:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
     engines: {node: 6.* || 8.* || >= 10.*}
 
-  get-db@0.11.0:
-    resolution: {integrity: sha512-GMKW/m/rjCHiw56S/jfnN4snDkc6BZlCi4AQwG+zvXLMuHER3imBn3QqTb/oPiKwL7UpsZ3YeLdcpRJSO9TK/w==}
-    engines: {node: '22'}
+  get-db@0.12.1:
+    resolution: {integrity: sha512-YQR0/5wkecBdXbdiPPpe/zzCS5sRU/IJoTAtk+HQAUgPEguUlC8UMDcRRPZLMznByGFC1OK4jVO8WWwG7ghMmw==}
+    engines: {node: '>=22'}
     hasBin: true
 
   get-east-asian-width@1.4.0:
@@ -6339,6 +6336,11 @@ packages:
 
   highlight.js@10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}
+
+  hono-rate-limiter@0.4.2:
+    resolution: {integrity: sha512-AAtFqgADyrmbDijcRTT/HJfwqfvhalya2Zo+MgfdrMPas3zSMD8SU03cv+ZsYwRU1swv7zgVt0shwN059yzhjw==}
+    peerDependencies:
+      hono: ^4.1.1
 
   hono@4.11.7:
     resolution: {integrity: sha512-l7qMiNee7t82bH3SeyUCt9UF15EVmaBvsppY2zQtrbIhl/yzBTny+YUxsVjSjQ6gaqaeVtZmGocom8TzBlA4Yw==}
@@ -7252,8 +7254,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  lucide-react@0.561.0:
-    resolution: {integrity: sha512-Y59gMY38tl4/i0qewcqohPdEbieBy7SovpBL9IFebhc2mDd8x4PZSOsiFRkpPcOq6bj1r/mjH/Rk73gSlIJP2A==}
+  lucide-react@0.563.0:
+    resolution: {integrity: sha512-8dXPB2GI4dI8jV4MgUDGBeLdGk8ekfqVZ0BdLcrRzocGgG75ltNEmWS+gE7uokKF/0oSUuczNDT+g9hFJ23FkA==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -11249,7 +11251,7 @@ snapshots:
     dependencies:
       '@noble/ciphers': 1.3.0
 
-  '@electric-sql/pglite-socket@0.0.19(@electric-sql/pglite@0.3.14)':
+  '@electric-sql/pglite-socket@0.0.20(@electric-sql/pglite@0.3.14)':
     dependencies:
       '@electric-sql/pglite': 0.3.14
 
@@ -11797,10 +11799,13 @@ snapshots:
     dependencies:
       is-negated-glob: 1.0.0
 
-  '@hono/mcp@0.1.5(@modelcontextprotocol/sdk@1.25.3(hono@4.11.7)(zod@3.25.76))(hono@4.11.7)':
+  '@hono/mcp@0.2.3(@modelcontextprotocol/sdk@1.25.3(hono@4.11.7)(zod@4.3.6))(hono-rate-limiter@0.4.2(hono@4.11.7))(hono@4.11.7)(zod@4.3.6)':
     dependencies:
       '@modelcontextprotocol/sdk': 1.25.3(hono@4.11.7)(zod@4.3.6)
       hono: 4.11.7
+      hono-rate-limiter: 0.4.2(hono@4.11.7)
+      pkce-challenge: 5.0.1
+      zod: 4.3.6
 
   '@hono/node-server@1.19.9(hono@4.11.7)':
     dependencies:
@@ -12155,7 +12160,7 @@ snapshots:
       pkce-challenge: 5.0.1
       raw-body: 3.0.2
       zod: 4.3.6
-      zod-to-json-schema: 3.25.1(zod@3.25.76)
+      zod-to-json-schema: 3.25.1(zod@4.3.6)
     transitivePeerDependencies:
       - hono
       - supports-color
@@ -13431,16 +13436,15 @@ snapshots:
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
-  '@spotlightjs/overlay@4.5.0': {}
-
-  '@spotlightjs/sidecar@2.5.0':
+  '@spotlightjs/spotlight@4.10.0(hono-rate-limiter@0.4.2(hono@4.11.7))':
     dependencies:
-      '@hono/mcp': 0.1.5(@modelcontextprotocol/sdk@1.25.3(hono@4.11.7)(zod@3.25.76))(hono@4.11.7)
+      '@hono/mcp': 0.2.3(@modelcontextprotocol/sdk@1.25.3(hono@4.11.7)(zod@4.3.6))(hono-rate-limiter@0.4.2(hono@4.11.7))(hono@4.11.7)(zod@4.3.6)
       '@hono/node-server': 1.19.9(hono@4.11.7)
       '@jridgewell/trace-mapping': 0.3.31
       '@modelcontextprotocol/sdk': 1.25.3(hono@4.11.7)(zod@4.3.6)
       '@sentry/core': 10.38.0
       '@sentry/node': 10.38.0
+      anser: 2.3.5
       chalk: 5.6.2
       eventsource: 4.1.0
       fast-fuzzy: 1.12.0
@@ -13448,21 +13452,13 @@ snapshots:
       launch-editor: 2.12.0
       logfmt: 1.4.0
       mcp-proxy: 5.12.5
+      semver: 7.7.3
       uuidv7: 1.1.0
       yaml: 2.8.2
-      zod: 3.25.76
+      zod: 4.3.6
     transitivePeerDependencies:
       - '@cfworker/json-schema'
-      - supports-color
-
-  '@spotlightjs/spotlight@4.5.1':
-    dependencies:
-      '@sentry/node': 10.38.0
-      '@spotlightjs/overlay': 4.5.0
-      '@spotlightjs/sidecar': 2.5.0
-      import-meta-resolve: 4.2.0
-    transitivePeerDependencies:
-      - '@cfworker/json-schema'
+      - hono-rate-limiter
       - supports-color
 
   '@stablelib/base64@1.0.1': {}
@@ -14415,6 +14411,8 @@ snapshots:
       fast-uri: 3.1.0
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
+
+  anser@2.3.5: {}
 
   ansi-escapes@4.3.2:
     dependencies:
@@ -15437,7 +15435,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.7(@electric-sql/pglite@0.3.14)(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(pg@8.18.0):
+  drizzle-orm@0.45.1(@electric-sql/pglite@0.3.14)(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(pg@8.18.0):
     optionalDependencies:
       '@electric-sql/pglite': 0.3.14
       '@neondatabase/serverless': 1.0.2
@@ -16566,7 +16564,7 @@ snapshots:
 
   get-caller-file@2.0.5: {}
 
-  get-db@0.11.0:
+  get-db@0.12.1:
     dependencies:
       '@clack/prompts': 0.10.1
       '@neondatabase/serverless': 1.0.2
@@ -16574,6 +16572,8 @@ snapshots:
       gradient-string: 3.0.0
       open: 10.2.0
       p-wait-for: 5.0.2
+      yargs: 18.0.0
+      yoctocolors: 2.1.2
 
   get-east-asian-width@1.4.0: {}
 
@@ -16819,6 +16819,10 @@ snapshots:
       hermes-estree: 0.25.1
 
   highlight.js@10.7.3: {}
+
+  hono-rate-limiter@0.4.2(hono@4.11.7):
+    dependencies:
+      hono: 4.11.7
 
   hono@4.11.7: {}
 
@@ -17690,7 +17694,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-react@0.561.0(react@19.2.4):
+  lucide-react@0.563.0(react@19.2.4):
     dependencies:
       react: 19.2.4
 
@@ -20953,6 +20957,10 @@ snapshots:
   zod-to-json-schema@3.25.1(zod@3.25.76):
     dependencies:
       zod: 3.25.76
+
+  zod-to-json-schema@3.25.1(zod@4.3.6):
+    dependencies:
+      zod: 4.3.6
 
   zod-validation-error@4.0.2(zod@4.3.6):
     dependencies:
