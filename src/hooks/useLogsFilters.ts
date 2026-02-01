@@ -15,12 +15,13 @@ export const TIME_RANGE_OPTIONS: { value: TimeRange; label: string }[] = [
   { value: 'past90days', label: 'Past 90 days' },
 ];
 
-export type ActivityType = 'feed' | 'sleep' | 'nappy';
+export type ActivityType = 'feed' | 'sleep' | 'nappy' | 'solids';
 
 export const ACTIVITY_TYPES: { value: ActivityType; label: string }[] = [
   { value: 'feed', label: 'Feed' },
   { value: 'sleep', label: 'Sleep' },
   { value: 'nappy', label: 'Nappy' },
+  { value: 'solids', label: 'Solids' },
 ];
 
 export type UseLogsFiltersResult = {
@@ -45,12 +46,12 @@ export function useLogsFilters(): UseLogsFiltersResult {
   const activeTypes = useMemo(() => {
     const types = searchParams.get('types');
     if (!types) {
-      return ['feed', 'sleep', 'nappy'] as ActivityType[];
+      return ['feed', 'sleep', 'nappy', 'solids'] as ActivityType[];
     }
 
     return types
       .split(',')
-      .filter((t): t is ActivityType => t === 'feed' || t === 'sleep' || t === 'nappy');
+      .filter((t): t is ActivityType => t === 'feed' || t === 'sleep' || t === 'nappy' || t === 'solids');
   }, [searchParams]);
 
   // Parse time range from URL (default: all)
@@ -119,7 +120,8 @@ export function useLogsFilters(): UseLogsFiltersResult {
   const setActiveTypes = useCallback(
     (types: ActivityType[]) => {
       const params = new URLSearchParams(searchParams);
-      if (types.length === 0 || (types.includes('feed') && types.includes('sleep') && types.includes('nappy'))) {
+      const allTypesSelected = types.includes('feed') && types.includes('sleep') && types.includes('nappy') && types.includes('solids');
+      if (types.length === 0 || allTypesSelected) {
         // If no types selected or all types selected, remove the param
         params.delete('types');
       } else {

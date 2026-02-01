@@ -9,6 +9,7 @@ import { ActivityTile } from './ActivityTile';
 import { FeedTile } from './FeedTile';
 import { NappyTile } from './NappyTile';
 import { SleepTile } from './SleepTile';
+import { SolidsTile } from './SolidsTile';
 
 type OverviewContentProps = {
   locale: string;
@@ -161,8 +162,44 @@ export function OverviewContent({ locale }: OverviewContentProps) {
     };
   }, [babyId]);
 
+  // Read latest solids from IndexedDB with caregiver info
+  // Only consider past logs (startedAt <= now) for "latest" display
+  const latestSolidsData = useLiveQuery(async () => {
+    if (!babyId) {
+      return null;
+    }
+    const now = new Date();
+    const solids = await localDb.solidsLogs
+      .where('babyId')
+      .equals(babyId)
+      .and(log => log.startedAt <= now) // Filter out future logs
+      .toArray();
+
+    if (solids.length === 0) {
+      return null;
+    }
+
+    // Sort descending by startedAt (newest first)
+    solids.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
+    const latestSolid = solids[0];
+    if (!latestSolid) {
+      return null;
+    }
+
+    // Get caregiver label from babyAccess
+    const access = await localDb.babyAccess
+      .where('[userId+babyId]')
+      .equals([latestSolid.loggedByUserId, babyId])
+      .first();
+
+    return {
+      ...latestSolid,
+      caregiverLabel: access?.caregiverLabel ?? null,
+    };
+  }, [babyId]);
+
   // Loading state while Dexie initializes
-  if (userData === undefined || latestFeedData === undefined || latestSleepData === undefined || latestNappyData === undefined) {
+  if (userData === undefined || latestFeedData === undefined || latestSleepData === undefined || latestNappyData === undefined || latestSolidsData === undefined) {
     return <OverviewSkeleton />;
   }
 
@@ -196,7 +233,7 @@ export function OverviewContent({ locale }: OverviewContentProps) {
       <FeedTile babyId={babyId} latestFeed={latestFeedData} />
       <SleepTile babyId={babyId} latestSleep={latestSleepData} />
       <NappyTile babyId={babyId} latestNappy={latestNappyData} />
-      <ActivityTile title="Solids" subtitle="Coming soon" activity="solids" disabled />
+      <SolidsTile babyId={babyId} latestSolids={latestSolidsData} />
       <ActivityTile title="Bath" subtitle="Coming soon" activity="bath" disabled />
     </div>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import type { LocalFeedLog, LocalNappyLog, LocalSleepLog } from '@/lib/local-db';
+import type { LocalFeedLog, LocalNappyLog, LocalSleepLog, LocalSolidsLog } from '@/lib/local-db';
 
 // Re-export from activity-modals for convenience
 export { formatDuration as formatDurationFromMinutes } from '@/components/activity-modals/utils';
@@ -96,11 +96,11 @@ export function formatTimeSwiperDate(date: Date, currentTime: Date): string {
  */
 export type UnifiedLog = {
   id: string;
-  type: 'feed' | 'sleep' | 'nappy';
+  type: 'feed' | 'sleep' | 'nappy' | 'solids';
   babyId: number;
   startedAt: Date;
   caregiverLabel: string | null;
-  data: LocalFeedLog | LocalSleepLog | LocalNappyLog;
+  data: LocalFeedLog | LocalSleepLog | LocalNappyLog | LocalSolidsLog;
 };
 
 /**
@@ -183,6 +183,13 @@ export function formatLogSubtitle(log: UnifiedLog): string {
     return JSON.stringify({ left: leftPart, right: rightPart });
   }
 
+  if (log.type === 'solids') {
+    const solids = log.data as LocalSolidsLog;
+    const reactionLabel = solids.reaction.charAt(0).toUpperCase() + solids.reaction.slice(1);
+    const leftPart = `Solids · ${reactionLabel} ${solids.food}`;
+    return JSON.stringify({ left: leftPart, right: rightPart });
+  }
+
   return '';
 }
 
@@ -218,6 +225,12 @@ export function formatLogSubtitleExpanded(log: UnifiedLog): string {
       ? nappy.type.charAt(0).toUpperCase() + nappy.type.slice(1)
       : 'Unknown';
     return `${timeAgo} - ${typeLabel}${caregiver}`;
+  }
+
+  if (log.type === 'solids') {
+    const solids = log.data as LocalSolidsLog;
+    const reactionLabel = solids.reaction.charAt(0).toUpperCase() + solids.reaction.slice(1);
+    return `${timeAgo} - ${reactionLabel} ${solids.food}${caregiver}`;
   }
 
   return timeAgo;

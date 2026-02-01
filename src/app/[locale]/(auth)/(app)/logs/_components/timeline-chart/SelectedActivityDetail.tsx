@@ -1,8 +1,8 @@
 'use client';
 
 import type { UnifiedLog } from '@/lib/format-log';
-import type { LocalFeedLog, LocalNappyLog, LocalSleepLog } from '@/lib/local-db';
-import { Baby, ChevronRight, Moon, MousePointerClick } from 'lucide-react';
+import type { LocalFeedLog, LocalNappyLog, LocalSleepLog, LocalSolidsLog } from '@/lib/local-db';
+import { Apple, Baby, ChevronRight, Moon, MousePointerClick } from 'lucide-react';
 import { formatDuration } from '@/lib/format-log';
 import { cn } from '@/lib/utils';
 
@@ -25,12 +25,15 @@ function formatTime(date: Date): string {
 /**
  * Get icon for activity type
  */
-function ActivityIcon({ type }: { type: 'feed' | 'sleep' | 'nappy' }) {
+function ActivityIcon({ type }: { type: 'feed' | 'sleep' | 'nappy' | 'solids' }) {
   if (type === 'sleep') {
     return <Moon className="h-5 w-5" />;
   }
   if (type === 'nappy') {
     return <Baby className="h-5 w-5" />;
+  }
+  if (type === 'solids') {
+    return <Apple className="h-5 w-5" />;
   }
   return <Baby className="h-5 w-5" />;
 }
@@ -55,6 +58,12 @@ function getActivityTitle(log: UnifiedLog): string {
       ? nappy.type.charAt(0).toUpperCase() + nappy.type.slice(1)
       : 'Nappy';
     return typeLabel;
+  }
+
+  if (log.type === 'solids') {
+    const solids = log.data as LocalSolidsLog;
+    const reactionLabel = solids.reaction.charAt(0).toUpperCase() + solids.reaction.slice(1);
+    return `${reactionLabel} ${solids.food}`;
   }
 
   return 'Sleep';
