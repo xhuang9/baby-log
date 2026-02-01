@@ -30,7 +30,7 @@ export function ColourButtons({ value, onChange, handMode }: ColourButtonsProps)
 
   return (
     <FieldSection label="Colour" handMode={handMode}>
-      <div className="flex flex-wrap justify-end gap-4">
+      <div className="grid w-fit grid-cols-3 gap-4 sm:flex sm:flex-wrap sm:justify-end">
         {COLOURS.map(colour => (
           <button
             key={colour.value}

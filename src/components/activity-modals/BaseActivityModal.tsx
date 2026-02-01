@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import type { HandMode } from '@/lib/local-db/types/entities';
 import { ChevronLeftIcon } from 'lucide-react';
+import { BaseButton } from '@/components/base/BaseButton';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -93,11 +94,7 @@ export function BaseActivityModal({
         </div>
 
         {/* Footer */}
-        <SheetFooter
-          className={`mx-auto w-full max-w-[600px] flex-shrink-0 flex-row border-t px-4 pt-4 pb-4 ${
-            handMode === 'left' ? 'justify-start' : 'justify-end'
-          }`}
-        >
+        <SheetFooter className="mx-auto w-full max-w-[600px] flex-shrink-0 flex-row border-t px-4 pt-4 pb-4">
           {/* Delete button aligned left */}
           {onDelete && (
             <Button
@@ -110,23 +107,49 @@ export function BaseActivityModal({
             </Button>
           )}
 
-          {/* Primary/Secondary buttons aligned right */}
-          <div className="flex gap-2">
-            {onSecondary && (
-              <Button
-                variant="outline"
-                onClick={() => handleOpenChange(false)}
-                disabled={isLoading}
-              >
-                {secondaryLabel}
-              </Button>
-            )}
-            <Button
-              onClick={onPrimary}
-              disabled={isLoading}
-            >
-              {primaryLabel}
-            </Button>
+          {/* Primary/Secondary buttons with hand mode support */}
+          <div className="flex gap-3">
+            {handMode === 'left'
+              ? (
+                  <>
+                    <BaseButton
+                      variant="primary"
+                      onClick={onPrimary}
+                      disabled={isLoading}
+                    >
+                      {primaryLabel}
+                    </BaseButton>
+                    {onSecondary && (
+                      <BaseButton
+                        variant="secondary"
+                        onClick={() => handleOpenChange(false)}
+                        disabled={isLoading}
+                      >
+                        {secondaryLabel}
+                      </BaseButton>
+                    )}
+                  </>
+                )
+              : (
+                  <>
+                    {onSecondary && (
+                      <BaseButton
+                        variant="secondary"
+                        onClick={() => handleOpenChange(false)}
+                        disabled={isLoading}
+                      >
+                        {secondaryLabel}
+                      </BaseButton>
+                    )}
+                    <BaseButton
+                      variant="primary"
+                      onClick={onPrimary}
+                      disabled={isLoading}
+                    >
+                      {primaryLabel}
+                    </BaseButton>
+                  </>
+                )}
           </div>
         </SheetFooter>
       </SheetContent>

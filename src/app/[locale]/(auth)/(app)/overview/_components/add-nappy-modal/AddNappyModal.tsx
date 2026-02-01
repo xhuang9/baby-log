@@ -99,7 +99,7 @@ export function AddNappyModal({
         >
           {/* Time Picker */}
           <div className="space-y-2">
-            <Label>Start</Label>
+            <Label className="text-muted-foreground">Start</Label>
             <TimeSwiper
               value={state.startTime}
               onChange={actions.setStartTime}
