@@ -165,7 +165,10 @@ export function TimeSwiper({ value, onChange, handMode = 'right', className }: T
           >
             {/* Date row - only when not today */}
             {showDateRow && (
-              <div className="absolute inset-x-0 top-2 z-20 flex items-center justify-between px-3">
+              <div
+                className="absolute inset-x-0 top-2 z-20 flex items-center justify-between px-3"
+                data-testid="date-row"
+              >
                 <DatePickerTrigger
                   selectedDate={displayDate}
                   currentTime={currentTime}
@@ -203,9 +206,9 @@ export function TimeSwiper({ value, onChange, handMode = 'right', className }: T
                 value={value}
                 onChange={onChange}
                 use24Hour={settings.use24Hour}
-                dimmed={value > currentTime}
+                dimmed={displayDate > currentTime}
               />
-              {value > currentTime && (
+              {displayDate > currentTime && (
                 <div className="mt-1 text-xs font-medium text-primary">
                   In future
                 </div>
