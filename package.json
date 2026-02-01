@@ -150,5 +150,6 @@
     "patchedDependencies": {
       "baseline-browser-mapping@2.9.19": "patches/baseline-browser-mapping@2.9.19.patch"
     }
-  }
+  },
+  "version": "0.2.0-dev.0"
 }
