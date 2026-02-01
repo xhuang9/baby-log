@@ -116,7 +116,7 @@ export const userSchema = pgTable('user', {
 export const babiesSchema = pgTable('babies', {
   id: serial('id').primaryKey(),
   // @ts-expect-error - Circular reference is intentional in Drizzle
-  ownerUserId: integer('owner_user_id').references(() => userSchema.id),
+  ownerUserId: integer('owner_user_id').references(() => userSchema.id).notNull(),
   name: text('name').notNull(),
   birthDate: timestamp('birth_date', { mode: 'date' }),
   gender: genderEnum('gender'),
