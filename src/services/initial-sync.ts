@@ -21,11 +21,13 @@ import type {
   SolidsReaction,
   UIConfigData,
 } from '@/lib/local-db';
+import type { LocalFoodType } from '@/lib/local-db/types/food-types';
 import {
   mergeUIConfig,
   saveBabies,
   saveBabyAccess,
   saveFeedLogs,
+  saveFoodTypes,
   saveLocalUser,
   saveNappyLogs,
   saveSleepLogs,
@@ -52,6 +54,7 @@ export type InitialSyncData = {
   recentSleepLogs: LocalSleepLog[];
   recentNappyLogs: LocalNappyLog[];
   recentSolidsLogs: LocalSolidsLog[];
+  foodTypes: LocalFoodType[];
   uiConfig: ServerUIConfig | null;
 };
 
@@ -136,9 +139,17 @@ type ServerInitialSyncResponse = {
     babyId: number;
     loggedByUserId: number;
     food: string;
+    foodTypeIds: string[];
     reaction: SolidsReaction;
     startedAt: string;
     notes: string | null;
+    createdAt: string;
+    updatedAt: string;
+  }>;
+  foodTypes: Array<{
+    id: string;
+    userId: number;
+    name: string;
     createdAt: string;
     updatedAt: string;
   }>;
@@ -232,11 +243,19 @@ function transformServerData(serverData: ServerInitialSyncResponse): InitialSync
       babyId: log.babyId,
       loggedByUserId: log.loggedByUserId,
       food: log.food,
+      foodTypeIds: log.foodTypeIds ?? [],
       reaction: log.reaction,
       startedAt: new Date(log.startedAt),
       notes: log.notes,
       createdAt: new Date(log.createdAt),
       updatedAt: new Date(log.updatedAt),
+    })),
+    foodTypes: serverData.foodTypes.map(ft => ({
+      id: ft.id,
+      userId: ft.userId,
+      name: ft.name,
+      createdAt: new Date(ft.createdAt),
+      updatedAt: new Date(ft.updatedAt),
     })),
     uiConfig: serverData.uiConfig,
   };
@@ -288,6 +307,7 @@ export async function storeInitialSyncData(data: InitialSyncData): Promise<void>
   await updateSyncStatus('sleep_logs', 'syncing');
   await updateSyncStatus('nappy_logs', 'syncing');
   await updateSyncStatus('solids_logs', 'syncing');
+  await updateSyncStatus('food_types', 'syncing');
   await updateSyncStatus('ui_config', 'syncing');
 
   try {
@@ -318,6 +338,10 @@ export async function storeInitialSyncData(data: InitialSyncData): Promise<void>
     // Store solids logs
     await saveSolidsLogs(data.recentSolidsLogs);
     await updateSyncStatus('solids_logs', 'complete');
+
+    // Store food types
+    await saveFoodTypes(data.foodTypes);
+    await updateSyncStatus('food_types', 'complete');
 
     // Store UI config using LWW merge
     if (data.uiConfig && data.user.id) {

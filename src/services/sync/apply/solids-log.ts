@@ -31,6 +31,7 @@ export async function applySolidsLogChange(
     babyId: data.babyId as number,
     loggedByUserId: data.loggedByUserId as number,
     food: data.food as string,
+    foodTypeIds: (data.foodTypeIds as string[]) ?? [],
     reaction: data.reaction as SolidsReaction,
     startedAt: new Date(data.startedAt as string),
     notes: (data.notes as string) ?? null,

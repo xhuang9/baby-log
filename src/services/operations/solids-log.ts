@@ -27,7 +27,8 @@ import {
 
 export type CreateSolidsLogInput = {
   babyId: number;
-  food: string;
+  foodTypeIds: string[]; // Array of food type UUIDs
+  foodDisplay: string; // Display text: "Apple, Pear, Carrot"
   reaction: SolidsReaction;
   startedAt: Date;
   notes?: string | null;
@@ -36,7 +37,8 @@ export type CreateSolidsLogInput = {
 export type UpdateSolidsLogInput = {
   id: string;
   babyId: number;
-  food?: string;
+  foodTypeIds?: string[];
+  foodDisplay?: string;
   reaction?: SolidsReaction;
   startedAt?: Date;
   notes?: string | null;
@@ -65,8 +67,12 @@ export async function createSolidsLog(
       return failure('Baby ID is required');
     }
 
-    if (!input.food || input.food.trim() === '') {
-      return failure('Food name is required');
+    if (!input.foodTypeIds || input.foodTypeIds.length === 0) {
+      return failure('Please select at least one food');
+    }
+
+    if (!input.foodDisplay || input.foodDisplay.trim() === '') {
+      return failure('Food display name is required');
     }
 
     if (!input.reaction) {
@@ -102,7 +108,8 @@ export async function createSolidsLog(
       id: solidsLogId,
       babyId: input.babyId,
       loggedByUserId: user.localId,
-      food: input.food.trim(),
+      food: input.foodDisplay.trim(),
+      foodTypeIds: input.foodTypeIds,
       reaction: input.reaction,
       startedAt: input.startedAt,
       notes: input.notes ?? null,
@@ -124,6 +131,7 @@ export async function createSolidsLog(
         babyId: solidsLog.babyId,
         loggedByUserId: solidsLog.loggedByUserId,
         food: solidsLog.food,
+        foodTypeIds: solidsLog.foodTypeIds,
         reaction: solidsLog.reaction,
         startedAt: solidsLog.startedAt.toISOString(),
         notes: solidsLog.notes,
@@ -181,7 +189,8 @@ export async function updateSolidsLog(
     // Update fields
     const updated: LocalSolidsLog = {
       ...existing,
-      food: input.food !== undefined ? input.food.trim() : existing.food,
+      food: input.foodDisplay !== undefined ? input.foodDisplay.trim() : existing.food,
+      foodTypeIds: input.foodTypeIds ?? existing.foodTypeIds,
       reaction: input.reaction ?? existing.reaction,
       startedAt: input.startedAt ?? existing.startedAt,
       notes: input.notes !== undefined ? input.notes : existing.notes,
@@ -202,6 +211,7 @@ export async function updateSolidsLog(
         babyId: updated.babyId,
         loggedByUserId: updated.loggedByUserId,
         food: updated.food,
+        foodTypeIds: updated.foodTypeIds,
         reaction: updated.reaction,
         startedAt: updated.startedAt.toISOString(),
         notes: updated.notes,

@@ -19,6 +19,7 @@ import {
   babiesSchema,
   babyAccessSchema,
   feedLogSchema,
+  foodTypesSchema,
   userSchema,
 } from '@/models/Schema';
 
@@ -118,6 +119,18 @@ export async function GET() {
           .orderBy(desc(feedLogSchema.startedAt))
       : [];
 
+    // Get all food types for this user
+    const foodTypes = await db
+      .select({
+        id: foodTypesSchema.id,
+        userId: foodTypesSchema.userId,
+        name: foodTypesSchema.name,
+        createdAt: foodTypesSchema.createdAt,
+        updatedAt: foodTypesSchema.updatedAt,
+      })
+      .from(foodTypesSchema)
+      .where(eq(foodTypesSchema.userId, localUser.id));
+
     // Build response
     const response = {
       user: {
@@ -165,6 +178,13 @@ export async function GET() {
         notes: null,
         createdAt: log.createdAt.toISOString(),
         updatedAt: log.updatedAt?.toISOString() ?? log.createdAt.toISOString(),
+      })),
+      foodTypes: foodTypes.map(ft => ({
+        id: ft.id,
+        userId: ft.userId,
+        name: ft.name,
+        createdAt: ft.createdAt.toISOString(),
+        updatedAt: ft.updatedAt?.toISOString() ?? ft.createdAt.toISOString(),
       })),
       uiConfig: null, // UI config is stored locally only for now
     };

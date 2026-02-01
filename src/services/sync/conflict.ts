@@ -104,6 +104,7 @@ export async function applyServerData(
       babyId: serverData.babyId as number,
       loggedByUserId: serverData.loggedByUserId as number,
       food: serverData.food as string,
+      foodTypeIds: (serverData.foodTypeIds as string[]) ?? [],
       reaction: serverData.reaction as SolidsReaction,
       startedAt: new Date(serverData.startedAt as string),
       notes: (serverData.notes as string) ?? null,

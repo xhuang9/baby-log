@@ -77,7 +77,8 @@ export type LocalSolidsLog = {
   id: string; // UUID - client-generated for idempotent creates
   babyId: number;
   loggedByUserId: number;
-  food: string; // Plain text food name
+  food: string; // Display text: "Apple, Pear, Carrot"
+  foodTypeIds: string[]; // Array of food type UUIDs for data integrity
   reaction: SolidsReaction;
   startedAt: Date; // instant event, no endedAt
   notes: string | null;

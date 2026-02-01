@@ -5,7 +5,8 @@ import { useState } from 'react';
 
 export function useSolidsFormState() {
   const [startTime, setStartTime] = useState(() => new Date());
-  const [food, setFood] = useState('');
+  const [foodInput, setFoodInput] = useState('');
+  const [selectedFoodIds, setSelectedFoodIds] = useState<string[]>([]);
   const [reaction, setReaction] = useState<SolidsReaction>('liked'); // Default to 'liked'
   const [notes, setNotes] = useState('');
   const [notesVisible, setNotesVisible] = useState(false);
@@ -13,14 +14,15 @@ export function useSolidsFormState() {
 
   const resetForm = () => {
     setStartTime(new Date());
-    setFood('');
+    setFoodInput('');
+    setSelectedFoodIds([]);
     setReaction('liked'); // Reset to default
     setNotes('');
     setNotesVisible(false); // Hide notes on reset
   };
 
   return {
-    state: { startTime, food, reaction, notes, notesVisible, handMode },
-    actions: { setStartTime, setFood, setReaction, setNotes, setNotesVisible, setHandMode, resetForm },
+    state: { startTime, foodInput, selectedFoodIds, reaction, notes, notesVisible, handMode },
+    actions: { setStartTime, setFoodInput, setSelectedFoodIds, setReaction, setNotes, setNotesVisible, setHandMode, resetForm },
   };
 }

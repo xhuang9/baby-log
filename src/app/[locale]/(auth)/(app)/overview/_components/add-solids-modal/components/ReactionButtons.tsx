@@ -12,11 +12,48 @@ type ReactionButtonsProps = {
   handMode?: 'left' | 'right';
 };
 
-const REACTIONS: { value: SolidsReaction; label: string; icon: typeof Heart }[] = [
-  { value: 'allergic', label: 'Allergic', icon: AlertTriangle },
-  { value: 'hate', label: 'Hate', icon: Frown },
-  { value: 'liked', label: 'Liked', icon: Smile },
-  { value: 'loved', label: 'Loved', icon: Heart },
+type ReactionConfig = {
+  value: SolidsReaction;
+  label: string;
+  icon: typeof Heart;
+  bgSelected: string;
+  textSelected: string;
+  iconColor: string;
+};
+
+const REACTIONS: ReactionConfig[] = [
+  {
+    value: 'allergic',
+    label: 'Allergic',
+    icon: AlertTriangle,
+    bgSelected: 'bg-red-500',
+    textSelected: 'text-white',
+    iconColor: 'text-red-500',
+  },
+  {
+    value: 'hate',
+    label: 'Hate',
+    icon: Frown,
+    bgSelected: 'bg-orange-500',
+    textSelected: 'text-white',
+    iconColor: 'text-orange-500',
+  },
+  {
+    value: 'liked',
+    label: 'Liked',
+    icon: Smile,
+    bgSelected: 'bg-yellow-500',
+    textSelected: 'text-black',
+    iconColor: 'text-yellow-500',
+  },
+  {
+    value: 'loved',
+    label: 'Loved',
+    icon: Heart,
+    bgSelected: 'bg-green-500',
+    textSelected: 'text-white',
+    iconColor: 'text-green-500',
+  },
 ];
 
 export function ReactionButtons({ value, onChange, handMode = 'right' }: ReactionButtonsProps) {
@@ -40,10 +77,14 @@ export function ReactionButtons({ value, onChange, handMode = 'right' }: Reactio
               onClick={() => onChange(reaction.value)}
               className={cn(
                 'flex items-center gap-2',
-                isSelected && 'ring-2 ring-primary ring-offset-2',
+                isSelected && [
+                  reaction.bgSelected,
+                  reaction.textSelected,
+                  'hover:opacity-90',
+                ],
               )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className={cn('h-4 w-4', !isSelected && reaction.iconColor)} />
               <span>{reaction.label}</span>
             </Button>
           );
