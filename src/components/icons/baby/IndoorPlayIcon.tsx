@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 
-export const IndoorPlayIcon = ({ className, width = 32, height = 32, ...props }: ComponentProps<'svg'>) => (
+export const IndoorPlay = ({ className, width = 32, height = 32, ...props }: ComponentProps<'svg'>) => (
   <svg
     {...props}
     width={width}

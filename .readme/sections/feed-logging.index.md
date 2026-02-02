@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-29T00:00:00Z
+last_verified_at: 2026-02-02T00:00:00Z
 source_paths:
   - src/actions/feedLogActions.ts
   - src/models/Schema.ts
@@ -8,8 +8,13 @@ source_paths:
   - src/stores/useTimerStore.ts
   - src/hooks/useHoldAction.ts
   - src/hooks/useTimerSave.ts
+  - src/hooks/useFoodTypes.ts
   - src/app/[locale]/api/sync/push/mutations/nappy-log.ts
+  - src/app/[locale]/api/sync/push/mutations/food-types.ts
   - src/lib/local-db/nappy-logs.ts
+  - src/lib/local-db/types/food-types.ts
+  - src/lib/local-db/helpers/food-types.ts
+  - src/services/operations/food-types.ts
   - src/app/[locale]/(auth)/(app)/logs/_components/NappyTile.tsx
   - src/app/[locale]/(auth)/(app)/logs/_components/NappyLogModal.tsx
 ---
@@ -33,6 +38,7 @@ This section documents the feed logging implementation including:
 - Activity logs page with filtering, view modes, and editing
 - Edit/delete operations with local-first sync
 - Log formatting and display utilities
+- Food types library for solids logging with create/delete operations
 
 ## Key Features
 
@@ -132,6 +138,13 @@ This section documents the feed logging implementation including:
 
 - **Content**: Complete refactor documentation for texture → consistency rename (January 2026), including schema changes, value mappings, IndexedDB/PostgreSQL migrations, UI updates, and checklist
 - **Read when**: Implementing nappy features post-January 2026, understanding the migration path, debugging old vs. new data, or making future consistency field changes
+
+### Solids Logging
+
+#### `chunks/feed-logging.food-types.md`
+
+- **Content**: User-created food type library for solids logging with offline-first create/delete operations, real-time React hook, and server sync
+- **Read when**: Building food type features, implementing solids logging, understanding the operations pattern, or working with useFoodTypes hook
 
 ### UI Patterns
 

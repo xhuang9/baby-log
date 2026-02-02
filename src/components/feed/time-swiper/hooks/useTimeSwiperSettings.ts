@@ -19,7 +19,7 @@ function migrateSwipeResistance(
   }
   // Migrate from old magneticFeel boolean
   if (magneticFeel !== undefined) {
-    return magneticFeel ? 'sticky' : 'smooth';
+    return magneticFeel ? 'sticky' : 'default';
   }
   // Default
   return DEFAULT_TIME_SWIPER_SETTINGS.swipeResistance;

@@ -1,6 +1,6 @@
 'use client';
 
-import { PauseIcon, PlayIcon } from 'lucide-react';
+import { Pause, Play } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useHoldAction } from '@/hooks/useHoldAction';
 import { useTimerStore } from '@/stores/useTimerStore';
@@ -161,10 +161,10 @@ export function TimerWidget({
             >
               {timerState?.lastStartTime
                 ? (
-                    <PauseIcon className="h-10 w-10 fill-primary-foreground text-primary-foreground" />
+                    <Pause className="h-10 w-10 fill-primary-foreground text-primary-foreground" />
                   )
                 : (
-                    <PlayIcon className="h-10 w-10 fill-primary-foreground text-primary-foreground" />
+                    <Play className="h-10 w-10 fill-primary-foreground text-primary-foreground" />
                   )}
             </button>
 

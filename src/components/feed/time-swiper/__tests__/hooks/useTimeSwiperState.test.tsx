@@ -3,7 +3,7 @@ import { render } from 'vitest-browser-react';
 import { page } from 'vitest/browser';
 import { useState } from 'react';
 import { useTimeSwiperState } from '../../hooks/useTimeSwiperState';
-import { setTestTime } from '../test-utils';
+import { setTestTime, waitForElement } from '../test-utils';
 
 // Mock the user store
 vi.mock('@/stores/useUserStore', () => ({
@@ -66,9 +66,8 @@ function TestWrapper({
 
 describe('useTimeSwiperState - "In future" detection', () => {
   beforeEach(() => {
-    vi.useFakeTimers();
     // Set current time to June 15, 2024 at 2:30 PM (14:30)
-    setTestTime('2024-06-15T14:30:00Z');
+    vi.setSystemTime(new Date('2024-06-15T14:30:00Z'));
   });
 
   afterEach(() => {
@@ -85,7 +84,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
 
       render(<TestWrapper value={yesterdayWithFutureTime} dayOffset={-1} />);
 
-      const isInFuture = await page.getByTestId('is-in-future').element();
+      const isInFuture = await waitForElement('is-in-future');
       expect(isInFuture).toHaveTextContent('false');
     });
 
@@ -95,7 +94,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
 
       render(<TestWrapper value={futureTimeToday} dayOffset={0} />);
 
-      const isInFuture = await page.getByTestId('is-in-future').element();
+      const isInFuture = await waitForElement('is-in-future');
       expect(isInFuture).toHaveTextContent('true');
     });
 
@@ -105,7 +104,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
 
       render(<TestWrapper value={pastTimeToday} dayOffset={0} />);
 
-      const isInFuture = await page.getByTestId('is-in-future').element();
+      const isInFuture = await waitForElement('is-in-future');
       expect(isInFuture).toHaveTextContent('false');
     });
 
@@ -115,7 +114,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
 
       render(<TestWrapper value={tomorrowMorning} dayOffset={1} />);
 
-      const isInFuture = await page.getByTestId('is-in-future').element();
+      const isInFuture = await waitForElement('is-in-future');
       expect(isInFuture).toHaveTextContent('true');
     });
 
@@ -125,16 +124,15 @@ describe('useTimeSwiperState - "In future" detection', () => {
 
       render(<TestWrapper value={futureTime} dayOffset={0} />);
 
-      let isInFuture = await page.getByTestId('is-in-future').element();
+      let isInFuture = await waitForElement('is-in-future');
       expect(isInFuture).toHaveTextContent('true');
 
       // Click button to change offset to -1 (yesterday)
-      const changeOffsetBtn = await page.getByTestId('change-offset-btn').element();
-      await changeOffsetBtn.click();
+      await page.getByTestId('change-offset-btn').click();
 
       // Wait for state update
       await vi.waitFor(async () => {
-        isInFuture = await page.getByTestId('is-in-future').element();
+        isInFuture = await waitForElement('is-in-future');
         expect(isInFuture).toHaveTextContent('false');
       });
     });
@@ -145,7 +143,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
 
       render(<TestWrapper value={exactCurrentTime} dayOffset={0} />);
 
-      const isInFuture = await page.getByTestId('is-in-future').element();
+      const isInFuture = await waitForElement('is-in-future');
       // displayDate <= currentTime → NOT in future
       expect(isInFuture).toHaveTextContent('false');
     });
@@ -157,7 +155,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
 
       render(<TestWrapper value={baseTime} dayOffset={1} />);
 
-      const displayDate = await page.getByTestId('display-date').element();
+      const displayDate = await waitForElement('display-date');
       const displayDateValue = new Date(displayDate.textContent!);
 
       // Should be tomorrow at 10:00 AM
@@ -171,7 +169,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
 
       render(<TestWrapper value={baseTime} dayOffset={-2} />);
 
-      const displayDate = await page.getByTestId('display-date').element();
+      const displayDate = await waitForElement('display-date');
       const displayDateValue = new Date(displayDate.textContent!);
 
       // Should be June 13 at 10:00 AM (2 days ago)
@@ -185,7 +183,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
 
       render(<TestWrapper value={baseTime} dayOffset={0} />);
 
-      const displayDate = await page.getByTestId('display-date').element();
+      const displayDate = await waitForElement('display-date');
       const displayDateValue = new Date(displayDate.textContent!);
 
       // Time should be preserved (15:45)
@@ -200,7 +198,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
 
       render(<TestWrapper value={baseTime} dayOffset={0} />);
 
-      const minDate = await page.getByTestId('min-date').element();
+      const minDate = await waitForElement('min-date');
       const minDateValue = new Date(minDate.textContent!);
       const expectedMinDate = new Date('2024-06-15T14:30:00Z'); // Current time
       expectedMinDate.setFullYear(expectedMinDate.getFullYear() - 1);
@@ -215,36 +213,40 @@ describe('useTimeSwiperState - "In future" detection', () => {
 
       render(<TestWrapper value={baseTime} dayOffset={0} />);
 
-      const maxDate = await page.getByTestId('max-date').element();
+      const maxDate = await waitForElement('max-date');
       const maxDateValue = new Date(maxDate.textContent!);
 
-      // Should be June 16 (tomorrow)
-      expect(maxDateValue.getUTCDate()).toBe(16);
-      expect(maxDateValue.getUTCMonth()).toBe(5); // June (0-indexed)
-      expect(maxDateValue.getUTCFullYear()).toBe(2024);
+      // maxDate is currentTime + 1 day
+      // currentTime is mocked to 2024-06-15T14:30:00Z
+      const expectedMaxDate = new Date('2024-06-15T14:30:00Z');
+      expectedMaxDate.setDate(expectedMaxDate.getDate() + 1);
+      expectedMaxDate.setHours(23, 59, 59, 999);
+
+      expect(maxDateValue.getDate()).toBe(expectedMaxDate.getDate());
+      expect(maxDateValue.getMonth()).toBe(expectedMaxDate.getMonth());
+      expect(maxDateValue.getFullYear()).toBe(expectedMaxDate.getFullYear());
     });
   });
 
   describe('Reset Functionality', () => {
     it('should reset to current time when resetToNow is called', async () => {
-      // Start with yesterday
+      // Start with past time (June 14 with offset -1 = June 13)
       const pastTime = new Date('2024-06-14T10:00:00Z');
 
       render(<TestWrapper value={pastTime} dayOffset={-1} />);
 
-      // Verify initial state
-      let displayDate = await page.getByTestId('display-date').element();
+      // Verify initial state (June 14 + offset -1 = June 13)
+      let displayDate = await waitForElement('display-date');
       let displayDateValue = new Date(displayDate.textContent!);
-      expect(displayDateValue.getUTCDate()).toBe(14);
+      expect(displayDateValue.getUTCDate()).toBe(13);
 
       // Click reset button
-      const resetBtn = await page.getByTestId('reset-btn').element();
-      await resetBtn.click();
+      await page.getByTestId('reset-btn').click();
 
       // Wait for state update
       await vi.waitFor(async () => {
-        displayDate = await page.getByTestId('display-date').element();
-        const currentTime = await page.getByTestId('current-time').element();
+        displayDate = await waitForElement('display-date');
+        const currentTime = await waitForElement('current-time');
         displayDateValue = new Date(displayDate.textContent!);
         const currentTimeValue = new Date(currentTime.textContent!);
 
@@ -261,12 +263,11 @@ describe('useTimeSwiperState - "In future" detection', () => {
 
       render(<TestWrapper value={pastTime} dayOffset={-1} />);
 
-      const resetBtn = await page.getByTestId('reset-btn').element();
-      await resetBtn.click();
+      await page.getByTestId('reset-btn').click();
 
       // After reset, should not be in the past
       await vi.waitFor(async () => {
-        const displayDate = await page.getByTestId('display-date').element();
+        const displayDate = await waitForElement('display-date');
         const displayDateValue = new Date(displayDate.textContent!);
         // Should be today (15th)
         expect(displayDateValue.getUTCDate()).toBe(15);

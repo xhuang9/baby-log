@@ -44,10 +44,7 @@ export function useTimeSwiperState({ value, onChange, dayOffset, setDayOffset }:
   // Date picker range (1 year back to tomorrow)
   const minSelectableDate = useMemo(() => {
     const d = new Date(currentTime);
-    d.setMonth(0);
-    d.setDate(1);
     d.setFullYear(d.getFullYear() - 1);
-    d.setHours(0, 0, 0, 0);
     return d;
   }, [currentTime]);
 

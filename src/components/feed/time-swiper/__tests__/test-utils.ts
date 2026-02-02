@@ -1,4 +1,24 @@
+import { page } from '@vitest/browser/context';
 import { vi } from 'vitest';
+
+/**
+ * Wait for an element to be available in the DOM
+ * Handles the async timing issue with vitest-browser-react
+ */
+export async function waitForElement(testId: string) {
+  return vi.waitFor(() => page.getByTestId(testId).element(), {
+    timeout: 3000,
+  });
+}
+
+/**
+ * Wait for text to be present in the DOM
+ */
+export async function waitForText(text: string) {
+  return vi.waitFor(() => page.getByText(text).element(), {
+    timeout: 3000,
+  });
+}
 
 /**
  * Mock the user store consistently across tests
@@ -50,7 +70,7 @@ export function simulatePointerDrag(
   element: HTMLElement,
   startX: number,
   endX: number,
-  steps = 5
+  steps = 5,
 ) {
   const pointerId = 1;
 
@@ -59,7 +79,7 @@ export function simulatePointerDrag(
       clientX: startX,
       pointerId,
       bubbles: true,
-    })
+    }),
   );
 
   const deltaX = (endX - startX) / steps;
@@ -69,7 +89,7 @@ export function simulatePointerDrag(
         clientX: startX + deltaX * i,
         pointerId,
         bubbles: true,
-      })
+      }),
     );
   }
 
@@ -78,7 +98,7 @@ export function simulatePointerDrag(
       clientX: endX,
       pointerId,
       bubbles: true,
-    })
+    }),
   );
 }
 
@@ -98,20 +118,26 @@ export function advanceTime(ms: number) {
 
 /**
  * Setup animation frame mocking for tests that need RAF control
+ * Works in browser environment by mocking window.requestAnimationFrame
  */
 export function setupAnimationFrameMock() {
   let animationFrameId = 0;
   const animationFrameCallbacks = new Map<number, FrameRequestCallback>();
 
-  global.requestAnimationFrame = vi.fn((callback: FrameRequestCallback) => {
+  // Save originals
+  const originalRAF = window.requestAnimationFrame;
+  const originalCAF = window.cancelAnimationFrame;
+
+  // Mock at window level (not global) for browser environment
+  window.requestAnimationFrame = vi.fn((callback: FrameRequestCallback) => {
     const id = ++animationFrameId;
     animationFrameCallbacks.set(id, callback);
     return id;
-  });
+  }) as any;
 
-  global.cancelAnimationFrame = vi.fn((id: number) => {
+  window.cancelAnimationFrame = vi.fn((id: number) => {
     animationFrameCallbacks.delete(id);
-  });
+  }) as any;
 
   /**
    * Trigger all pending animation frame callbacks
@@ -119,8 +145,17 @@ export function setupAnimationFrameMock() {
   const triggerNextFrame = (timestamp = performance.now()) => {
     const callbacks = Array.from(animationFrameCallbacks.values());
     animationFrameCallbacks.clear();
-    callbacks.forEach((cb) => cb(timestamp));
+    callbacks.forEach(cb => cb(timestamp));
   };
 
-  return { triggerNextFrame };
+  /**
+   * Cleanup - restore original functions
+   */
+  const cleanup = () => {
+    window.requestAnimationFrame = originalRAF;
+    window.cancelAnimationFrame = originalCAF;
+    animationFrameCallbacks.clear();
+  };
+
+  return { triggerNextFrame, cleanup };
 }

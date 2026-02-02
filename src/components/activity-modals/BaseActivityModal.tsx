@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import type { HandMode } from '@/lib/local-db/types/entities';
-import { ChevronLeftIcon } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { BaseButton } from '@/components/base/BaseButton';
 import { Button } from '@/components/ui/button';
 import {
@@ -72,7 +72,7 @@ export function BaseActivityModal({
               />
             )}
           >
-            <ChevronLeftIcon className="h-5 w-5" />
+            <ChevronLeft className="h-5 w-5" />
             <span className="sr-only">Close</span>
           </SheetClose>
 

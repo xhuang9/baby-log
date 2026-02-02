@@ -1,6 +1,6 @@
 'use client';
 
-import { XIcon } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type SettingsPopoverWrapperProps = {
@@ -65,7 +65,7 @@ export function SettingsPopoverWrapper({
           className="h-6 w-6 text-muted-foreground hover:text-foreground"
           onClick={onClose}
         >
-          <XIcon className="h-4 w-4" />
+          <X className="h-4 w-4" />
         </Button>
       </div>
 

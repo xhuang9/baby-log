@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 import { page } from 'vitest/browser';
 import { useTimeSwiperSettings } from '../../hooks/useTimeSwiperSettings';
-import { mockUIConfig } from '../test-utils';
+import { mockUIConfig, waitForElement } from '../test-utils';
 
 // Mock dependencies
 vi.mock('@/stores/useUserStore', () => ({
@@ -127,7 +127,7 @@ describe('useTimeSwiperSettings', () => {
 
       // Wait for component to render with defaults
       await vi.waitFor(async () => {
-        const use24Hour = await page.getByTestId('use24Hour').element();
+        const use24Hour = await waitForElement('use24Hour');
         expect(use24Hour.textContent).toBe('false'); // Default
       });
     });
@@ -156,7 +156,7 @@ describe('useTimeSwiperSettings', () => {
 
       // Should migrate to swipeResistance: 'sticky'
       await vi.waitFor(async () => {
-        const resistance = await page.getByTestId('swipeResistance').element();
+        const resistance = await waitForElement('swipeResistance');
         expect(resistance.textContent).toBe('sticky');
       });
     });
@@ -170,7 +170,7 @@ describe('useTimeSwiperSettings', () => {
       render(<TestWrapper />);
 
       await vi.waitFor(async () => {
-        const use24Hour = await page.getByTestId('use24Hour').element();
+        const use24Hour = await waitForElement('use24Hour');
         expect(use24Hour.textContent).toBe('false'); // Default fallback
       });
     });
@@ -182,17 +182,16 @@ describe('useTimeSwiperSettings', () => {
 
       // Wait for initial load
       await vi.waitFor(async () => {
-        const isDirty = await page.getByTestId('isDirty').element();
+        const isDirty = await waitForElement('isDirty');
         expect(isDirty.textContent).toBe('false');
       });
 
       // Change a setting
-      const toggle24h = await page.getByTestId('toggle-24h').element();
-      await toggle24h.click();
+      await page.getByTestId('toggle-24h').click();
 
       // Should be dirty
       await vi.waitFor(async () => {
-        const isDirty = await page.getByTestId('isDirty').element();
+        const isDirty = await waitForElement('isDirty');
         expect(isDirty.textContent).toBe('true');
       });
     });
@@ -200,11 +199,10 @@ describe('useTimeSwiperSettings', () => {
     it('should update setting value locally', async () => {
       render(<TestWrapper />);
 
-      const setSpeedBtn = await page.getByTestId('set-speed-fast').element();
-      await setSpeedBtn.click();
+      await page.getByTestId('set-speed-fast').click();
 
       await vi.waitFor(async () => {
-        const speed = await page.getByTestId('swipeSpeed').element();
+        const speed = await waitForElement('swipeSpeed');
         expect(speed.textContent).toBe('2');
       });
     });
@@ -212,15 +210,12 @@ describe('useTimeSwiperSettings', () => {
     it('should update multiple settings independently', async () => {
       render(<TestWrapper />);
 
-      const toggle24h = await page.getByTestId('toggle-24h').element();
-      const setStickyBtn = await page.getByTestId('set-resistance-sticky').element();
-
-      await toggle24h.click();
-      await setStickyBtn.click();
+      await page.getByTestId('toggle-24h').click();
+      await page.getByTestId('set-resistance-sticky').click();
 
       await vi.waitFor(async () => {
-        const use24Hour = await page.getByTestId('use24Hour').element();
-        const resistance = await page.getByTestId('swipeResistance').element();
+        const use24Hour = await waitForElement('use24Hour');
+        const resistance = await waitForElement('swipeResistance');
 
         expect(use24Hour.textContent).toBe('true');
         expect(resistance.textContent).toBe('sticky');
@@ -235,21 +230,16 @@ describe('useTimeSwiperSettings', () => {
       render(<TestWrapper />);
 
       // Make a change
-      const toggle24h = await page.getByTestId('toggle-24h').element();
-      await toggle24h.click();
+      await page.getByTestId('toggle-24h').click();
 
       // Save
-      const saveBtn = await page.getByTestId('save-btn').element();
-      await saveBtn.click();
+      await page.getByTestId('save-btn').click();
 
       // Should call updateUIConfig
       await vi.waitFor(() => {
         expect(updateUIConfig).toHaveBeenCalledWith(
           1, // userId
-          'timeSwiper',
-          expect.objectContaining({
-            use24Hour: true,
-          })
+          { timeSwiper: expect.objectContaining({ use24Hour: true }) }
         );
       });
     });
@@ -258,24 +248,21 @@ describe('useTimeSwiperSettings', () => {
       render(<TestWrapper />);
 
       // Open settings
-      const openBtn = await page.getByTestId('open-settings').element();
-      await openBtn.click();
+      await page.getByTestId('open-settings').click();
 
       await vi.waitFor(async () => {
-        const isOpen = await page.getByTestId('isOpen').element();
+        const isOpen = await waitForElement('isOpen');
         expect(isOpen.textContent).toBe('true');
       });
 
       // Make a change and save
-      const toggle24h = await page.getByTestId('toggle-24h').element();
-      await toggle24h.click();
+      await page.getByTestId('toggle-24h').click();
 
-      const saveBtn = await page.getByTestId('save-btn').element();
-      await saveBtn.click();
+      await page.getByTestId('save-btn').click();
 
       // Should close
       await vi.waitFor(async () => {
-        const isOpen = await page.getByTestId('isOpen').element();
+        const isOpen = await waitForElement('isOpen');
         expect(isOpen.textContent).toBe('false');
       });
     });
@@ -287,13 +274,12 @@ describe('useTimeSwiperSettings', () => {
 
       // Wait for initial load
       await vi.waitFor(async () => {
-        const isDirty = await page.getByTestId('isDirty').element();
+        const isDirty = await waitForElement('isDirty');
         expect(isDirty.textContent).toBe('false');
       });
 
       // Try to save without changes
-      const saveBtn = await page.getByTestId('save-btn').element();
-      await saveBtn.click();
+      await page.getByTestId('save-btn').click();
 
       // Should NOT call updateUIConfig
       expect(updateUIConfig).not.toHaveBeenCalled();
@@ -307,35 +293,36 @@ describe('useTimeSwiperSettings', () => {
       render(<TestWrapper />);
 
       // Make a change
-      const toggle24h = await page.getByTestId('toggle-24h').element();
-      await toggle24h.click();
+      await page.getByTestId('toggle-24h').click();
 
       // Try to save (should not throw)
-      const saveBtn = await page.getByTestId('save-btn').element();
       expect(async () => {
-        await saveBtn.click();
+        await page.getByTestId('save-btn').click();
       }).not.toThrow();
     });
 
     it('should clear dirty flag after successful save', async () => {
+      const { updateUIConfig } = await import('@/lib/local-db/helpers/ui-config');
+
+      // Reset mock to resolve successfully (previous test mocked rejection)
+      vi.mocked(updateUIConfig).mockResolvedValue();
+
       render(<TestWrapper />);
 
       // Make a change
-      const toggle24h = await page.getByTestId('toggle-24h').element();
-      await toggle24h.click();
+      await page.getByTestId('toggle-24h').click();
 
       await vi.waitFor(async () => {
-        const isDirty = await page.getByTestId('isDirty').element();
+        const isDirty = await waitForElement('isDirty');
         expect(isDirty.textContent).toBe('true');
       });
 
       // Save
-      const saveBtn = await page.getByTestId('save-btn').element();
-      await saveBtn.click();
+      await page.getByTestId('save-btn').click();
 
       // Should clear dirty flag
       await vi.waitFor(async () => {
-        const isDirty = await page.getByTestId('isDirty').element();
+        const isDirty = await waitForElement('isDirty');
         expect(isDirty.textContent).toBe('false');
       });
     });
@@ -346,25 +333,23 @@ describe('useTimeSwiperSettings', () => {
       render(<TestWrapper />);
 
       // Original value
-      let use24Hour = await page.getByTestId('use24Hour').element();
+      let use24Hour = await waitForElement('use24Hour');
       const originalValue = use24Hour.textContent;
 
       // Make a change
-      const toggle24h = await page.getByTestId('toggle-24h').element();
-      await toggle24h.click();
+      await page.getByTestId('toggle-24h').click();
 
       await vi.waitFor(async () => {
-        use24Hour = await page.getByTestId('use24Hour').element();
+        use24Hour = await waitForElement('use24Hour');
         expect(use24Hour.textContent).not.toBe(originalValue);
       });
 
       // Cancel
-      const cancelBtn = await page.getByTestId('cancel-btn').element();
-      await cancelBtn.click();
+      await page.getByTestId('cancel-btn').click();
 
       // Should revert
       await vi.waitFor(async () => {
-        use24Hour = await page.getByTestId('use24Hour').element();
+        use24Hour = await waitForElement('use24Hour');
         expect(use24Hour.textContent).toBe(originalValue);
       });
     });
@@ -373,21 +358,19 @@ describe('useTimeSwiperSettings', () => {
       render(<TestWrapper />);
 
       // Open settings
-      const openBtn = await page.getByTestId('open-settings').element();
-      await openBtn.click();
+      await page.getByTestId('open-settings').click();
 
       await vi.waitFor(async () => {
-        const isOpen = await page.getByTestId('isOpen').element();
+        const isOpen = await waitForElement('isOpen');
         expect(isOpen.textContent).toBe('true');
       });
 
       // Cancel
-      const cancelBtn = await page.getByTestId('cancel-btn').element();
-      await cancelBtn.click();
+      await page.getByTestId('cancel-btn').click();
 
       // Should close
       await vi.waitFor(async () => {
-        const isOpen = await page.getByTestId('isOpen').element();
+        const isOpen = await waitForElement('isOpen');
         expect(isOpen.textContent).toBe('false');
       });
     });
@@ -396,21 +379,19 @@ describe('useTimeSwiperSettings', () => {
       render(<TestWrapper />);
 
       // Make a change
-      const toggle24h = await page.getByTestId('toggle-24h').element();
-      await toggle24h.click();
+      await page.getByTestId('toggle-24h').click();
 
       await vi.waitFor(async () => {
-        const isDirty = await page.getByTestId('isDirty').element();
+        const isDirty = await waitForElement('isDirty');
         expect(isDirty.textContent).toBe('true');
       });
 
       // Cancel
-      const cancelBtn = await page.getByTestId('cancel-btn').element();
-      await cancelBtn.click();
+      await page.getByTestId('cancel-btn').click();
 
       // Should clear dirty flag
       await vi.waitFor(async () => {
-        const isDirty = await page.getByTestId('isDirty').element();
+        const isDirty = await waitForElement('isDirty');
         expect(isDirty.textContent).toBe('false');
       });
     });
@@ -419,34 +400,30 @@ describe('useTimeSwiperSettings', () => {
       render(<TestWrapper />);
 
       // Get original values
-      let use24Hour = await page.getByTestId('use24Hour').element();
-      let resistance = await page.getByTestId('swipeResistance').element();
+      let use24Hour = await waitForElement('use24Hour');
+      let resistance = await waitForElement('swipeResistance');
       const originalUse24Hour = use24Hour.textContent;
       const originalResistance = resistance.textContent;
 
       // Change multiple settings
-      const toggle24h = await page.getByTestId('toggle-24h').element();
-      const setStickyBtn = await page.getByTestId('set-resistance-sticky').element();
-
-      await toggle24h.click();
-      await setStickyBtn.click();
+      await page.getByTestId('toggle-24h').click();
+      await page.getByTestId('set-resistance-sticky').click();
 
       // Verify changes
       await vi.waitFor(async () => {
-        use24Hour = await page.getByTestId('use24Hour').element();
-        resistance = await page.getByTestId('swipeResistance').element();
+        use24Hour = await waitForElement('use24Hour');
+        resistance = await waitForElement('swipeResistance');
         expect(use24Hour.textContent).not.toBe(originalUse24Hour);
         expect(resistance.textContent).toBe('sticky');
       });
 
       // Cancel
-      const cancelBtn = await page.getByTestId('cancel-btn').element();
-      await cancelBtn.click();
+      await page.getByTestId('cancel-btn').click();
 
       // Should revert all
       await vi.waitFor(async () => {
-        use24Hour = await page.getByTestId('use24Hour').element();
-        resistance = await page.getByTestId('swipeResistance').element();
+        use24Hour = await waitForElement('use24Hour');
+        resistance = await waitForElement('swipeResistance');
         expect(use24Hour.textContent).toBe(originalUse24Hour);
         expect(resistance.textContent).toBe(originalResistance);
       });
@@ -457,20 +434,17 @@ describe('useTimeSwiperSettings', () => {
     it('should toggle popover open/closed', async () => {
       render(<TestWrapper />);
 
-      const openBtn = await page.getByTestId('open-settings').element();
-      const closeBtn = await page.getByTestId('close-settings').element();
-
       // Open
-      await openBtn.click();
+      await page.getByTestId('open-settings').click();
       await vi.waitFor(async () => {
-        const isOpen = await page.getByTestId('isOpen').element();
+        const isOpen = await waitForElement('isOpen');
         expect(isOpen.textContent).toBe('true');
       });
 
       // Close
-      await closeBtn.click();
+      await page.getByTestId('close-settings').click();
       await vi.waitFor(async () => {
-        const isOpen = await page.getByTestId('isOpen').element();
+        const isOpen = await waitForElement('isOpen');
         expect(isOpen.textContent).toBe('false');
       });
     });
@@ -500,7 +474,7 @@ describe('useTimeSwiperSettings', () => {
 
       // magneticFeel: false should migrate to swipeResistance: 'default'
       await vi.waitFor(async () => {
-        const resistance = await page.getByTestId('swipeResistance').element();
+        const resistance = await waitForElement('swipeResistance');
         expect(resistance.textContent).toBe('default');
       });
     });
@@ -529,7 +503,7 @@ describe('useTimeSwiperSettings', () => {
 
       // Should keep existing swipeResistance
       await vi.waitFor(async () => {
-        const resistance = await page.getByTestId('swipeResistance').element();
+        const resistance = await waitForElement('swipeResistance');
         expect(resistance.textContent).toBe('smooth');
       });
     });

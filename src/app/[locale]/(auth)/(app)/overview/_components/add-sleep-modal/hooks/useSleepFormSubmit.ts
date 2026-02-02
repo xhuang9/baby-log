@@ -34,7 +34,7 @@ export function useSleepFormSubmit(options: UseSleepFormSubmitOptions) {
         const timerData = await options.prepareTimerSave();
 
         if (!timerData) {
-          setError('Please record a timer first');
+          setError('Please start the timer before saving');
           setIsSubmitting(false);
           return;
         }
@@ -44,7 +44,7 @@ export function useSleepFormSubmit(options: UseSleepFormSubmitOptions) {
 
         // Validate timer duration
         if (durationMinutes <= 0) {
-          setError('Please record a timer first');
+          setError('Please start the timer before saving');
           setIsSubmitting(false);
           return;
         }

@@ -114,13 +114,14 @@ describe('NotificationsContent', () => {
 
       render(<NotificationsContent />);
 
-      // Should show loading spinner - look for the animation class in DOM
-      // Note: In vitest-browser-react, we need to use page locators or check DOM directly
-      const spinners = page.getByRole('status', { includeHidden: true }).elements();
-      const hasSpinner = spinners.length > 0
-        || document.querySelector('.animate-spin') !== null;
+      // Wait for loading spinner to render
+      const spinner = await vi.waitFor(() => {
+        const element = page.getByTestId('loader').query();
+        if (!element) throw new Error('Loader not found');
+        return element;
+      }, { timeout: 3000 });
 
-      expect(hasSpinner).toBeTruthy();
+      expect(spinner).toBeTruthy();
     });
   });
 
@@ -143,8 +144,12 @@ describe('NotificationsContent', () => {
     it('should show bell icon in empty state', async () => {
       render(<NotificationsContent />);
 
-      // Bell icon is mocked to render a span with data-testid
-      const bellIcon = page.getByText('Bell').elements();
+      // Wait for bell icon to render
+      const bellIcon = await vi.waitFor(() => {
+        const elements = page.getByText('Bell').elements();
+        if (elements.length === 0) throw new Error('Bell icon not found');
+        return elements;
+      }, { timeout: 3000 });
 
       expect(bellIcon.length).toBeGreaterThan(0);
     });

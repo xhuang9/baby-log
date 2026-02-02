@@ -122,32 +122,41 @@ export function useTimeSwiperAnimation({
   }, []);
 
   const checkDayCrossing = useCallback((prevOffset: number, newOffset: number) => {
-    const prevNormalized = ((prevOffset % TOTAL_WIDTH) + TOTAL_WIDTH) % TOTAL_WIDTH;
-    const newNormalized = ((newOffset % TOTAL_WIDTH) + TOTAL_WIDTH) % TOTAL_WIDTH;
     const futureLimit = isTodayRef.current ? FUTURE_DAYS_LIMIT_TODAY : FUTURE_DAYS_LIMIT_PAST;
 
-    if (prevNormalized > TOTAL_WIDTH * 0.75 && newNormalized < TOTAL_WIDTH * 0.25) {
-      const clamped = clampDayOffset(dayOffsetRef.current + 1);
-      if (clamped !== dayOffsetRef.current) {
-        dayOffsetRef.current = clamped;
-        setDayOffset(clamped);
-        setAtBoundary(null);
-      } else if (dayOffsetRef.current >= futureLimit) {
+    // Calculate how many days we've crossed based on raw offset
+    let daysCrossed = 0;
+
+    if (newOffset >= TOTAL_WIDTH) {
+      // Crossed forward - count how many complete day boundaries we passed
+      daysCrossed = Math.floor(newOffset / TOTAL_WIDTH);
+    } else if (newOffset < 0) {
+      // Crossed backward - count how many complete day boundaries we passed
+      // For negative numbers, we need to count how many TOTAL_WIDTH chunks fit
+      // e.g., -50 means we crossed back 1 day, -2450 means 2 days back
+      daysCrossed = -Math.ceil(Math.abs(newOffset) / TOTAL_WIDTH);
+    }
+
+    if (daysCrossed !== 0) {
+      const attemptedOffset = dayOffsetRef.current + daysCrossed;
+
+      // Check boundaries BEFORE attempting change
+      if (attemptedOffset > futureLimit) {
         setAtBoundary('future');
         setTimeout(() => setAtBoundary(null), 600);
-      }
-    } else if (prevNormalized < TOTAL_WIDTH * 0.25 && newNormalized > TOTAL_WIDTH * 0.75) {
-      const clamped = clampDayOffset(dayOffsetRef.current - 1);
-      if (clamped !== dayOffsetRef.current) {
-        dayOffsetRef.current = clamped;
-        setDayOffset(clamped);
-        setAtBoundary(null);
-      } else if (dayOffsetRef.current <= -PAST_DAYS_LIMIT) {
+        return; // Don't update dayOffset
+      } else if (attemptedOffset < -PAST_DAYS_LIMIT) {
         setAtBoundary('past');
         setTimeout(() => setAtBoundary(null), 600);
+        return; // Don't update dayOffset
       }
+
+      // Update day offset
+      dayOffsetRef.current = attemptedOffset;
+      setDayOffset(attemptedOffset);
+      setAtBoundary(null);
     }
-  }, [clampDayOffset]);
+  }, []);
 
   // Animation loop
   const animateLoopRef = useRef<(() => void) | undefined>(undefined);
@@ -174,7 +183,7 @@ export function useTimeSwiperAnimation({
       const progress = elapsed / duration;
       const easedProgress = easeOutCubic(progress);
       const currentVelocityFactor = 1 - easedProgress;
-      velocityRef.current = initialVelocity * currentVelocityFactor * 0.3;
+      velocityRef.current = initialVelocity * currentVelocityFactor;
 
       const prevOffset = offsetRef.current;
       offsetRef.current += velocityRef.current;
@@ -185,7 +194,9 @@ export function useTimeSwiperAnimation({
       const currentDate = offsetToDate(offsetRef.current, dayOffsetRef.current);
       onChangeRef.current(currentDate);
 
-      animationRef.current = requestAnimationFrame(() => animateLoopRef.current?.());
+      if (animateLoopRef.current) {
+        animationRef.current = requestAnimationFrame(animateLoopRef.current);
+      }
     };
   }, [offsetToDate, checkDayCrossing]);
 

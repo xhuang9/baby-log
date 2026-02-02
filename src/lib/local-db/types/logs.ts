@@ -78,7 +78,7 @@ export type LocalSolidsLog = {
   babyId: number;
   loggedByUserId: number;
   food: string; // Display text: "Apple, Pear, Carrot"
-  foodTypeIds: string[]; // Array of food type UUIDs for data integrity
+  foodTypeIds?: string[]; // Array of food type UUIDs for data integrity (optional for legacy logs)
   reaction: SolidsReaction;
   startedAt: Date; // instant event, no endedAt
   notes: string | null;

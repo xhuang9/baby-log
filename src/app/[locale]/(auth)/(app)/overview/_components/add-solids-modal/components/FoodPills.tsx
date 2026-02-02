@@ -24,6 +24,9 @@ export function FoodPills({
     return null;
   }
 
+  // Safety check for undefined/null selectedIds (handles data migration)
+  const safeSelectedIds = selectedIds ?? [];
+
   return (
     <div
       className={cn(
@@ -32,7 +35,7 @@ export function FoodPills({
       )}
     >
       {foodTypes.map((foodType) => {
-        const isSelected = selectedIds.includes(foodType.id);
+        const isSelected = safeSelectedIds.includes(foodType.id);
         return (
           <div key={foodType.id} className="relative group">
             <Button

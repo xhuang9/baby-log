@@ -1,6 +1,6 @@
 'use client';
 
-import { PanelLeftIcon } from 'lucide-react';
+import { PanelLeft } from 'lucide-react';
 
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
@@ -27,7 +27,7 @@ export function SidebarTrigger({
       }}
       {...props}
     >
-      <PanelLeftIcon />
+      <PanelLeft />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );

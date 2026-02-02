@@ -12,6 +12,7 @@
 import type { LocalFoodType } from '@/lib/local-db/types/food-types';
 import { addToOutbox, localDb } from '@/lib/local-db';
 import { useUserStore } from '@/stores/useUserStore';
+import { generateMutationId } from './types';
 
 // ============================================================================
 // Types
@@ -85,6 +86,7 @@ export async function createFoodType(
 
     // 7. Add to outbox
     await addToOutbox({
+      mutationId: generateMutationId(),
       entityType: 'food_type',
       entityId: id,
       op: 'create',
@@ -130,6 +132,7 @@ export async function deleteFoodType(id: string): Promise<OperationResult> {
 
     // 4. Add to outbox
     await addToOutbox({
+      mutationId: generateMutationId(),
       entityType: 'food_type',
       entityId: id,
       op: 'delete',
