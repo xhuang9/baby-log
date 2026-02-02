@@ -94,6 +94,7 @@ export function ActivityTile({
       }, 1000);
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [timerElapsedBase, timerStartTime, isTimerRunning]);
 
   // Default action content is a plus icon

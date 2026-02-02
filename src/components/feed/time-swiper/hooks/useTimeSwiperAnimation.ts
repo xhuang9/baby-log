@@ -116,12 +116,7 @@ export function useTimeSwiperAnimation({
 
   const easeOutCubic = (t: number): number => 1 - (1 - t) ** 3;
 
-  const clampDayOffset = useCallback((newDayOffset: number): number => {
-    const futureLimit = isTodayRef.current ? FUTURE_DAYS_LIMIT_TODAY : FUTURE_DAYS_LIMIT_PAST;
-    return Math.max(-PAST_DAYS_LIMIT, Math.min(futureLimit, newDayOffset));
-  }, []);
-
-  const checkDayCrossing = useCallback((prevOffset: number, newOffset: number) => {
+  const checkDayCrossing = useCallback((_prevOffset: number, newOffset: number) => {
     const futureLimit = isTodayRef.current ? FUTURE_DAYS_LIMIT_TODAY : FUTURE_DAYS_LIMIT_PAST;
 
     // Calculate how many days we've crossed based on raw offset

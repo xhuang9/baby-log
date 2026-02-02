@@ -33,7 +33,7 @@ vi.mock('@/components/ui/popover', () => ({
 }));
 
 vi.mock('@/components/ui/calendar', () => ({
-  Calendar: ({ selected, onSelect }: { selected?: Date; onSelect: (date?: Date) => void }) => (
+  Calendar: ({ onSelect }: { onSelect: (date?: Date) => void }) => (
     <div data-testid="calendar">
       <button
         data-testid="calendar-select"

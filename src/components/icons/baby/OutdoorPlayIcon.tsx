@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 
-export const OutdoorPlay = ({ className, width = 32, height = 32, ...props }: ComponentProps<'svg'>) => (
+export const OutdoorPlayIcon = ({ className, width = 32, height = 32, ...props }: ComponentProps<'svg'>) => (
   <svg
     {...props}
     width={width}

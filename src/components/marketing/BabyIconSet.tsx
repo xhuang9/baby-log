@@ -4,10 +4,10 @@ import {
   BathIcon,
   FeedIcon,
   GrowthIcon,
-  IndoorPlay,
+  IndoorPlayIcon,
   MedicineIcon,
   NappyIcon,
-  OutdoorPlay,
+  OutdoorPlayIcon,
   PottyIcon,
   PumpingIcon,
   SkinToSkinIcon,
@@ -76,13 +76,13 @@ const iconItems: IconItem[] = [
   {
     key: 'outdoor-play',
     label: 'Outdoor play',
-    Icon: OutdoorPlay,
+    Icon: OutdoorPlayIcon,
     background: 'var(--color-activity-outdoor-play-background)',
   },
   {
     key: 'indoor-play',
     label: 'Indoor play',
-    Icon: IndoorPlay,
+    Icon: IndoorPlayIcon,
     background: 'var(--color-activity-indoor-play-background)',
   },
   {

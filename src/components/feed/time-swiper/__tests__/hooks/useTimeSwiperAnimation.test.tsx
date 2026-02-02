@@ -404,8 +404,6 @@ describe('useTimeSwiperAnimation', () => {
     });
 
     it('should respect swipeResistance config', async () => {
-      const initialValue = new Date(2024, 5, 15, 14, 30, 0, 0);
-
       // This test is currently skipped due to test infrastructure limitations.
       // The drag offset changes are identical for both resistance levels in the test environment,
       // which doesn't match the expected behavior where 'smooth' should allow more movement than 'sticky'.

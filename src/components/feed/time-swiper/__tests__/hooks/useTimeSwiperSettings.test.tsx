@@ -145,7 +145,7 @@ describe('useTimeSwiperSettings', () => {
             use24Hour: false,
             swipeSpeed: 1.0,
             showCurrentTime: true,
-            markerMode: 'line' as const,
+            markerMode: 'now-only' as const,
           },
         },
         keyUpdatedAt: {},
@@ -314,7 +314,7 @@ describe('useTimeSwiperSettings', () => {
       const { updateUIConfig } = await import('@/lib/local-db/helpers/ui-config');
 
       // Reset mock to resolve successfully (previous test mocked rejection)
-      vi.mocked(updateUIConfig).mockResolvedValue();
+      vi.mocked(updateUIConfig).mockResolvedValue({} as any);
 
       render(<TestWrapper />);
 
@@ -483,7 +483,7 @@ describe('useTimeSwiperSettings', () => {
             use24Hour: false,
             swipeSpeed: 1.0,
             showCurrentTime: true,
-            markerMode: 'line' as const,
+            markerMode: 'now-only' as const,
           },
         },
         keyUpdatedAt: {},
@@ -513,7 +513,7 @@ describe('useTimeSwiperSettings', () => {
             use24Hour: false,
             swipeSpeed: 1.0,
             showCurrentTime: true,
-            markerMode: 'line' as const,
+            markerMode: 'now-only' as const,
           },
         },
         keyUpdatedAt: {},

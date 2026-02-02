@@ -42,7 +42,7 @@ export async function mockUIConfig(overrides?: Partial<{
   swipeSpeed: number;
   swipeResistance: 'smooth' | 'default' | 'sticky';
   showCurrentTime: boolean;
-  markerMode: 'line' | 'triangle';
+  markerMode: 'all' | 'now-only';
 }>) {
   const { getUIConfig } = await import('@/lib/local-db/helpers/ui-config');
 
@@ -51,7 +51,7 @@ export async function mockUIConfig(overrides?: Partial<{
     swipeSpeed: 1.0,
     swipeResistance: 'default' as const,
     showCurrentTime: true,
-    markerMode: 'line' as const,
+    markerMode: 'now-only' as const,
   };
 
   vi.mocked(getUIConfig).mockResolvedValue({
