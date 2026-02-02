@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { useState } from 'react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 import { page } from 'vitest/browser';
-import { useState } from 'react';
 import { useTimeSwiperState } from '../../hooks/useTimeSwiperState';
-import { setTestTime, waitForElement } from '../test-utils';
+import { waitForElement } from '../test-utils';
 
 // Mock the user store
 vi.mock('@/stores/useUserStore', () => ({
@@ -85,6 +85,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
       render(<TestWrapper value={yesterdayWithFutureTime} dayOffset={-1} />);
 
       const isInFuture = await waitForElement('is-in-future');
+
       expect(isInFuture).toHaveTextContent('false');
     });
 
@@ -95,6 +96,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
       render(<TestWrapper value={futureTimeToday} dayOffset={0} />);
 
       const isInFuture = await waitForElement('is-in-future');
+
       expect(isInFuture).toHaveTextContent('true');
     });
 
@@ -105,6 +107,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
       render(<TestWrapper value={pastTimeToday} dayOffset={0} />);
 
       const isInFuture = await waitForElement('is-in-future');
+
       expect(isInFuture).toHaveTextContent('false');
     });
 
@@ -115,6 +118,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
       render(<TestWrapper value={tomorrowMorning} dayOffset={1} />);
 
       const isInFuture = await waitForElement('is-in-future');
+
       expect(isInFuture).toHaveTextContent('true');
     });
 
@@ -125,6 +129,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
       render(<TestWrapper value={futureTime} dayOffset={0} />);
 
       let isInFuture = await waitForElement('is-in-future');
+
       expect(isInFuture).toHaveTextContent('true');
 
       // Click button to change offset to -1 (yesterday)
@@ -133,6 +138,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
       // Wait for state update
       await vi.waitFor(async () => {
         isInFuture = await waitForElement('is-in-future');
+
         expect(isInFuture).toHaveTextContent('false');
       });
     });
@@ -144,6 +150,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
       render(<TestWrapper value={exactCurrentTime} dayOffset={0} />);
 
       const isInFuture = await waitForElement('is-in-future');
+
       // displayDate <= currentTime → NOT in future
       expect(isInFuture).toHaveTextContent('false');
     });
@@ -238,6 +245,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
       // Verify initial state (June 14 + offset -1 = June 13)
       let displayDate = await waitForElement('display-date');
       let displayDateValue = new Date(displayDate.textContent!);
+
       expect(displayDateValue.getUTCDate()).toBe(13);
 
       // Click reset button
@@ -252,8 +260,9 @@ describe('useTimeSwiperState - "In future" detection', () => {
 
         // displayDate should be very close to currentTime (within a few ms)
         const timeDiff = Math.abs(
-          displayDateValue.getTime() - currentTimeValue.getTime()
+          displayDateValue.getTime() - currentTimeValue.getTime(),
         );
+
         expect(timeDiff).toBeLessThan(1000); // Within 1 second
       });
     });
@@ -269,6 +278,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
       await vi.waitFor(async () => {
         const displayDate = await waitForElement('display-date');
         const displayDateValue = new Date(displayDate.textContent!);
+
         // Should be today (15th)
         expect(displayDateValue.getUTCDate()).toBe(15);
       });

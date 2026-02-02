@@ -185,7 +185,9 @@ describe('NotificationItem', () => {
       // Wait for the unread indicator to render
       const unreadDot = await vi.waitFor(() => {
         const element = page.getByTestId('unread-indicator').query();
-        if (!element) throw new Error('Unread indicator not found');
+        if (!element) {
+          throw new Error('Unread indicator not found');
+        }
         return element;
       }, { timeout: 3000 });
 
@@ -295,7 +297,9 @@ describe('NotificationItem', () => {
       // Wait for the time element to render
       const timeElement = await vi.waitFor(() => {
         const element = document.querySelector('time');
-        if (!element) throw new Error('Time element not found');
+        if (!element) {
+          throw new Error('Time element not found');
+        }
         return element;
       }, { timeout: 3000 });
 

@@ -61,7 +61,7 @@ export async function createFoodType(
       .toArray();
 
     const existing = allUserFoodTypes.find(
-      ft => ft.name.toLowerCase() === name.toLowerCase()
+      ft => ft.name.toLowerCase() === name.toLowerCase(),
     );
 
     if (existing) {

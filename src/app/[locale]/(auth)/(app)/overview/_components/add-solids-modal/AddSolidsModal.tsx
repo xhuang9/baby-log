@@ -1,8 +1,8 @@
 'use client';
 
 import type { AddSolidsModalProps } from './types';
-import { useState } from 'react';
 import { ChevronLeftIcon } from 'lucide-react';
+import { useState } from 'react';
 import { TimeSwiper } from '@/components/feed/TimeSwiper';
 import { FormFooter, NotesField, SectionDivider } from '@/components/input-controls';
 import { Button } from '@/components/ui/button';
@@ -55,7 +55,9 @@ export function AddSolidsModal({
   // 4. Food management handlers
   const handleAddFood = async () => {
     const name = state.foodInput.trim();
-    if (!name) return;
+    if (!name) {
+      return;
+    }
 
     const result = await createFood(name);
     if (result.success) {
@@ -76,14 +78,18 @@ export function AddSolidsModal({
 
   const handleDeleteFood = (id: string) => {
     const food = foodTypes.find(ft => ft.id === id);
-    if (!food) return;
+    if (!food) {
+      return;
+    }
 
     setFoodToDelete({ id, name: food.name });
     setDeleteDialogOpen(true);
   };
 
   const handleConfirmDelete = async () => {
-    if (!foodToDelete) return;
+    if (!foodToDelete) {
+      return;
+    }
 
     await deleteFood(foodToDelete.id);
 

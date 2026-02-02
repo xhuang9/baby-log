@@ -1,7 +1,7 @@
 'use client';
 
-import type { LocalFoodType } from '@/lib/local-db/types/food-types';
 import type { SolidsReaction } from '@/lib/local-db';
+import type { LocalFoodType } from '@/lib/local-db/types/food-types';
 import { useState } from 'react';
 import { createSolidsLog } from '@/services/operations/solids-log';
 

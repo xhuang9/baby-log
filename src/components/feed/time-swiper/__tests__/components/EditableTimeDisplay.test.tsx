@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { useState } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 import { page, userEvent } from 'vitest/browser';
-import { useState } from 'react';
 import { EditableTimeDisplay } from '../../components/EditableTimeDisplay';
 import { waitForElement } from '../test-utils';
 
@@ -45,6 +45,7 @@ describe('EditableTimeDisplay', () => {
       render(<TestWrapper initialTime={testTime} use24Hour={true} />);
 
       const element = await waitForElement('time-display');
+
       expect(element).toBeTruthy();
       expect(element.textContent).toContain('14:30');
     });
@@ -55,6 +56,7 @@ describe('EditableTimeDisplay', () => {
       render(<TestWrapper initialTime={testTime} use24Hour={false} />);
 
       const element = await waitForElement('time-display');
+
       expect(element).toBeTruthy();
       expect(element.textContent).toMatch(/2:30.*PM/);
     });
@@ -65,6 +67,7 @@ describe('EditableTimeDisplay', () => {
       render(<TestWrapper initialTime={testTime} dimmed={true} />);
 
       const element = await waitForElement('time-display');
+
       expect(element).toBeTruthy();
       expect(element.className).toContain('opacity-50');
     });
@@ -75,6 +78,7 @@ describe('EditableTimeDisplay', () => {
       render(<TestWrapper initialTime={testTime} dimmed={false} />);
 
       const element = await waitForElement('time-display');
+
       expect(element).toBeTruthy();
       expect(element.className).not.toContain('opacity-50');
     });
@@ -90,6 +94,7 @@ describe('EditableTimeDisplay', () => {
       // Input should appear
       await vi.waitFor(async () => {
         const input = await page.getByTestId('time-input').query();
+
         expect(input).toBeTruthy();
       });
     });
@@ -104,7 +109,8 @@ describe('EditableTimeDisplay', () => {
       const display = await waitForElement('time-display');
       await display.click();
 
-      const input = await waitForElement('time-input');
+      const input = await waitForElement('time-input') as HTMLInputElement;
+
       expect(input.value).toBe('14:30');
     });
 
@@ -118,6 +124,7 @@ describe('EditableTimeDisplay', () => {
 
       await vi.waitFor(async () => {
         const input = await page.getByTestId('time-input').element();
+
         expect(document.activeElement).toBe(input);
       });
     });
@@ -141,6 +148,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(14);
         expect(newTime.getMinutes()).toBe(30);
       });
@@ -162,6 +170,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(9);
         expect(newTime.getMinutes()).toBe(5);
       });
@@ -184,6 +193,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(10); // Original hour
       });
     });
@@ -205,6 +215,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(10); // Original
       });
     });
@@ -227,6 +238,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(14); // 2 PM = 14:00
         expect(newTime.getMinutes()).toBe(30);
       });
@@ -248,6 +260,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(0); // Midnight
       });
     });
@@ -268,6 +281,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(12); // Noon
       });
     });
@@ -288,6 +302,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(15); // 3 PM
         expect(newTime.getMinutes()).toBe(45);
       });
@@ -310,6 +325,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(10); // Original
       });
     });
@@ -334,6 +350,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(16);
         expect(newTime.getMinutes()).toBe(45);
       });
@@ -355,6 +372,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(16);
         expect(newTime.getMinutes()).toBe(45);
       });
@@ -377,11 +395,13 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(10); // Original time
       });
 
       // Should return to display mode
       const inputAfter = await page.getByTestId('time-input').query();
+
       expect(inputAfter).toBeNull();
     });
 
@@ -402,6 +422,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(10);
         expect(newTime.getMinutes()).toBe(30);
       });
@@ -425,6 +446,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(0);
       });
     });
@@ -445,6 +467,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(23);
         expect(newTime.getMinutes()).toBe(59);
       });
@@ -466,6 +489,7 @@ describe('EditableTimeDisplay', () => {
       await vi.waitFor(async () => {
         const timeValue = await page.getByTestId('time-value').element();
         const newTime = new Date(timeValue.textContent!);
+
         expect(newTime.getHours()).toBe(14);
         expect(newTime.getMinutes()).toBe(30);
       });

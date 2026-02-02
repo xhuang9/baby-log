@@ -117,7 +117,9 @@ describe('NotificationsContent', () => {
       // Wait for loading spinner to render
       const spinner = await vi.waitFor(() => {
         const element = page.getByTestId('loader').query();
-        if (!element) throw new Error('Loader not found');
+        if (!element) {
+          throw new Error('Loader not found');
+        }
         return element;
       }, { timeout: 3000 });
 
@@ -147,7 +149,9 @@ describe('NotificationsContent', () => {
       // Wait for bell icon to render
       const bellIcon = await vi.waitFor(() => {
         const elements = page.getByText('Bell').elements();
-        if (elements.length === 0) throw new Error('Bell icon not found');
+        if (elements.length === 0) {
+          throw new Error('Bell icon not found');
+        }
         return elements;
       }, { timeout: 3000 });
 

@@ -43,9 +43,17 @@ export function DeleteFoodDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete {foodName}?</AlertDialogTitle>
+          <AlertDialogTitle>
+            Delete
+            {foodName}
+            ?
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            This will remove {foodName} from your food types. It will not affect existing logs that already use this food.
+            This will remove
+            {' '}
+            {foodName}
+            {' '}
+            from your food types. It will not affect existing logs that already use this food.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -53,7 +61,7 @@ export function DeleteFoodDialog({
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isDeleting}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="text-destructive-foreground bg-destructive hover:bg-destructive/90"
           >
             {isDeleting ? 'Deleting...' : 'Delete'}
           </AlertDialogAction>

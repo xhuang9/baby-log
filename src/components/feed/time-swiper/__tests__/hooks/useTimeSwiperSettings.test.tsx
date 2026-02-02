@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 import { page } from 'vitest/browser';
 import { useTimeSwiperSettings } from '../../hooks/useTimeSwiperSettings';
@@ -128,6 +128,7 @@ describe('useTimeSwiperSettings', () => {
       // Wait for component to render with defaults
       await vi.waitFor(async () => {
         const use24Hour = await waitForElement('use24Hour');
+
         expect(use24Hour.textContent).toBe('false'); // Default
       });
     });
@@ -157,6 +158,7 @@ describe('useTimeSwiperSettings', () => {
       // Should migrate to swipeResistance: 'sticky'
       await vi.waitFor(async () => {
         const resistance = await waitForElement('swipeResistance');
+
         expect(resistance.textContent).toBe('sticky');
       });
     });
@@ -171,6 +173,7 @@ describe('useTimeSwiperSettings', () => {
 
       await vi.waitFor(async () => {
         const use24Hour = await waitForElement('use24Hour');
+
         expect(use24Hour.textContent).toBe('false'); // Default fallback
       });
     });
@@ -183,6 +186,7 @@ describe('useTimeSwiperSettings', () => {
       // Wait for initial load
       await vi.waitFor(async () => {
         const isDirty = await waitForElement('isDirty');
+
         expect(isDirty.textContent).toBe('false');
       });
 
@@ -192,6 +196,7 @@ describe('useTimeSwiperSettings', () => {
       // Should be dirty
       await vi.waitFor(async () => {
         const isDirty = await waitForElement('isDirty');
+
         expect(isDirty.textContent).toBe('true');
       });
     });
@@ -203,6 +208,7 @@ describe('useTimeSwiperSettings', () => {
 
       await vi.waitFor(async () => {
         const speed = await waitForElement('swipeSpeed');
+
         expect(speed.textContent).toBe('2');
       });
     });
@@ -239,7 +245,7 @@ describe('useTimeSwiperSettings', () => {
       await vi.waitFor(() => {
         expect(updateUIConfig).toHaveBeenCalledWith(
           1, // userId
-          { timeSwiper: expect.objectContaining({ use24Hour: true }) }
+          { timeSwiper: expect.objectContaining({ use24Hour: true }) },
         );
       });
     });
@@ -252,6 +258,7 @@ describe('useTimeSwiperSettings', () => {
 
       await vi.waitFor(async () => {
         const isOpen = await waitForElement('isOpen');
+
         expect(isOpen.textContent).toBe('true');
       });
 
@@ -263,6 +270,7 @@ describe('useTimeSwiperSettings', () => {
       // Should close
       await vi.waitFor(async () => {
         const isOpen = await waitForElement('isOpen');
+
         expect(isOpen.textContent).toBe('false');
       });
     });
@@ -275,6 +283,7 @@ describe('useTimeSwiperSettings', () => {
       // Wait for initial load
       await vi.waitFor(async () => {
         const isDirty = await waitForElement('isDirty');
+
         expect(isDirty.textContent).toBe('false');
       });
 
@@ -314,6 +323,7 @@ describe('useTimeSwiperSettings', () => {
 
       await vi.waitFor(async () => {
         const isDirty = await waitForElement('isDirty');
+
         expect(isDirty.textContent).toBe('true');
       });
 
@@ -323,6 +333,7 @@ describe('useTimeSwiperSettings', () => {
       // Should clear dirty flag
       await vi.waitFor(async () => {
         const isDirty = await waitForElement('isDirty');
+
         expect(isDirty.textContent).toBe('false');
       });
     });
@@ -341,6 +352,7 @@ describe('useTimeSwiperSettings', () => {
 
       await vi.waitFor(async () => {
         use24Hour = await waitForElement('use24Hour');
+
         expect(use24Hour.textContent).not.toBe(originalValue);
       });
 
@@ -350,6 +362,7 @@ describe('useTimeSwiperSettings', () => {
       // Should revert
       await vi.waitFor(async () => {
         use24Hour = await waitForElement('use24Hour');
+
         expect(use24Hour.textContent).toBe(originalValue);
       });
     });
@@ -362,6 +375,7 @@ describe('useTimeSwiperSettings', () => {
 
       await vi.waitFor(async () => {
         const isOpen = await waitForElement('isOpen');
+
         expect(isOpen.textContent).toBe('true');
       });
 
@@ -371,6 +385,7 @@ describe('useTimeSwiperSettings', () => {
       // Should close
       await vi.waitFor(async () => {
         const isOpen = await waitForElement('isOpen');
+
         expect(isOpen.textContent).toBe('false');
       });
     });
@@ -383,6 +398,7 @@ describe('useTimeSwiperSettings', () => {
 
       await vi.waitFor(async () => {
         const isDirty = await waitForElement('isDirty');
+
         expect(isDirty.textContent).toBe('true');
       });
 
@@ -392,6 +408,7 @@ describe('useTimeSwiperSettings', () => {
       // Should clear dirty flag
       await vi.waitFor(async () => {
         const isDirty = await waitForElement('isDirty');
+
         expect(isDirty.textContent).toBe('false');
       });
     });
@@ -413,6 +430,7 @@ describe('useTimeSwiperSettings', () => {
       await vi.waitFor(async () => {
         use24Hour = await waitForElement('use24Hour');
         resistance = await waitForElement('swipeResistance');
+
         expect(use24Hour.textContent).not.toBe(originalUse24Hour);
         expect(resistance.textContent).toBe('sticky');
       });
@@ -424,6 +442,7 @@ describe('useTimeSwiperSettings', () => {
       await vi.waitFor(async () => {
         use24Hour = await waitForElement('use24Hour');
         resistance = await waitForElement('swipeResistance');
+
         expect(use24Hour.textContent).toBe(originalUse24Hour);
         expect(resistance.textContent).toBe(originalResistance);
       });
@@ -438,6 +457,7 @@ describe('useTimeSwiperSettings', () => {
       await page.getByTestId('open-settings').click();
       await vi.waitFor(async () => {
         const isOpen = await waitForElement('isOpen');
+
         expect(isOpen.textContent).toBe('true');
       });
 
@@ -445,6 +465,7 @@ describe('useTimeSwiperSettings', () => {
       await page.getByTestId('close-settings').click();
       await vi.waitFor(async () => {
         const isOpen = await waitForElement('isOpen');
+
         expect(isOpen.textContent).toBe('false');
       });
     });
@@ -475,6 +496,7 @@ describe('useTimeSwiperSettings', () => {
       // magneticFeel: false should migrate to swipeResistance: 'default'
       await vi.waitFor(async () => {
         const resistance = await waitForElement('swipeResistance');
+
         expect(resistance.textContent).toBe('default');
       });
     });
@@ -504,6 +526,7 @@ describe('useTimeSwiperSettings', () => {
       // Should keep existing swipeResistance
       await vi.waitFor(async () => {
         const resistance = await waitForElement('swipeResistance');
+
         expect(resistance.textContent).toBe('smooth');
       });
     });

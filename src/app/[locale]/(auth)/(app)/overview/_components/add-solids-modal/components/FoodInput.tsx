@@ -31,7 +31,7 @@ export function FoodInput({ value, onChange, onAdd, disabled }: FoodInputProps) 
           value={value}
           onChange={e => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="text-base flex-1"
+          className="flex-1 text-base"
           autoComplete="off"
           disabled={disabled}
         />

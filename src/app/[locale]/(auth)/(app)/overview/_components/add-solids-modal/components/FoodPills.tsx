@@ -37,7 +37,7 @@ export function FoodPills({
       {foodTypes.map((foodType) => {
         const isSelected = safeSelectedIds.includes(foodType.id);
         return (
-          <div key={foodType.id} className="relative group">
+          <div key={foodType.id} className="group relative">
             <Button
               type="button"
               variant={isSelected ? 'default' : 'outline'}

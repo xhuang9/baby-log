@@ -58,7 +58,9 @@ export function EditSolidsModal({
   // Load hand mode preference
   useEffect(() => {
     async function loadHandMode() {
-      if (!user?.localId) return;
+      if (!user?.localId) {
+        return;
+      }
       try {
         const config = await getUIConfig(user.localId);
         setHandMode(config.data.handMode ?? 'right');
@@ -82,7 +84,9 @@ export function EditSolidsModal({
   // Food management handlers
   const handleAddFood = async () => {
     const name = foodInput.trim();
-    if (!name) return;
+    if (!name) {
+      return;
+    }
 
     const result = await createFood(name);
     if (result.success) {
@@ -103,14 +107,18 @@ export function EditSolidsModal({
 
   const handleDeleteFood = (id: string) => {
     const food = foodTypes.find(ft => ft.id === id);
-    if (!food) return;
+    if (!food) {
+      return;
+    }
 
     setFoodToDelete({ id, name: food.name });
     setDeleteDialogOpen(true);
   };
 
   const handleConfirmDeleteFood = async () => {
-    if (!foodToDelete) return;
+    if (!foodToDelete) {
+      return;
+    }
 
     await deleteFood(foodToDelete.id);
 

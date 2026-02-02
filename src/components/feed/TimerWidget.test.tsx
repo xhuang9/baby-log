@@ -16,7 +16,9 @@ import { TimerWidget } from './TimerWidget';
 async function waitForText(text: string) {
   return vi.waitFor(() => {
     const elements = page.getByText(text, { exact: false }).elements();
-    if (elements.length === 0) throw new Error(`Text "${text}" not found`);
+    if (elements.length === 0) {
+      throw new Error(`Text "${text}" not found`);
+    }
     return elements;
   }, { timeout: 3000 });
 }
@@ -24,7 +26,9 @@ async function waitForText(text: string) {
 async function waitForRole(role: string) {
   return vi.waitFor(() => {
     const elements = page.getByRole(role).elements();
-    if (elements.length === 0) throw new Error(`Role "${role}" not found`);
+    if (elements.length === 0) {
+      throw new Error(`Role "${role}" not found`);
+    }
     return elements;
   }, { timeout: 3000 });
 }
@@ -332,7 +336,7 @@ describe('TimerWidget', () => {
       render(<TimerWidget babyId={1} logType="feed" />);
 
       const addButtons = await waitForText('+1m');
-      await userEvent.click(addButtons[0]);
+      await userEvent.click(addButtons[0] as HTMLElement);
 
       expect(mockAdjustTimer).toHaveBeenCalledWith('feed-1', 60);
     });
@@ -341,7 +345,7 @@ describe('TimerWidget', () => {
       render(<TimerWidget babyId={1} logType="feed" />);
 
       const subtractButtons = await waitForText('-1m');
-      await userEvent.click(subtractButtons[0]);
+      await userEvent.click(subtractButtons[0] as HTMLElement);
 
       expect(mockAdjustTimer).toHaveBeenCalledWith('feed-1', -60);
     });

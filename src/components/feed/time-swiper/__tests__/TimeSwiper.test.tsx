@@ -55,7 +55,7 @@ vi.mock('lucide-react', () => ({
 }));
 
 // Utility functions for waiting on async element rendering
-async function waitForElement(testId: string) {
+async function waitForElement(testId: string): Promise<HTMLElement> {
   return vi.waitFor(async () => {
     const locator = page.getByTestId(testId);
     const element = await locator.element();
@@ -63,10 +63,10 @@ async function waitForElement(testId: string) {
       throw new Error(`Element with testId "${testId}" not found`);
     }
     return element;
-  }, { timeout: 3000 });
+  }, { timeout: 3000 }) as Promise<HTMLElement>;
 }
 
-async function waitForText(text: string | RegExp) {
+async function waitForText(text: string | RegExp): Promise<HTMLElement> {
   return vi.waitFor(async () => {
     const locator = page.getByText(text);
     const element = await locator.element();
@@ -74,7 +74,7 @@ async function waitForText(text: string | RegExp) {
       throw new Error(`Text "${text}" not found`);
     }
     return element;
-  }, { timeout: 3000 });
+  }, { timeout: 3000 }) as Promise<HTMLElement>;
 }
 
 /**
@@ -280,7 +280,7 @@ describe('TimeSwiper - Integration Tests', () => {
 
       // Select new date
       await vi.waitFor(async () => {
-        const selectBtn = await page.getByTestId('calendar-select').element();
+        const selectBtn = await page.getByTestId('calendar-select').element() as HTMLElement;
         await selectBtn.click();
       });
 
@@ -331,7 +331,7 @@ describe('TimeSwiper - Integration Tests', () => {
 
       // Button might be hidden or not rendered
       if (resetBtn) {
-        const element = await resetBtn.element();
+        const element = await (resetBtn as any).element() as HTMLElement;
 
         // Check if it's hidden
         expect(element.className).toContain('hidden');

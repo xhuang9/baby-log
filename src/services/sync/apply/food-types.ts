@@ -15,7 +15,7 @@ export async function applyFoodTypeSync(serverFoodTypes: Record<string, unknown>
     return;
   }
 
-  const localFoodTypes: LocalFoodType[] = serverFoodTypes.map((data) => ({
+  const localFoodTypes: LocalFoodType[] = serverFoodTypes.map(data => ({
     id: data.id as string,
     userId: data.userId as number,
     name: data.name as string,

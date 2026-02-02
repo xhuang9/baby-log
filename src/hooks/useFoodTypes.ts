@@ -24,7 +24,7 @@ export function useFoodTypes() {
         .equals(user.localId)
         .toArray();
     },
-    [user?.localId]
+    [user?.localId],
   );
 
   const createFood = async (name: string) => {

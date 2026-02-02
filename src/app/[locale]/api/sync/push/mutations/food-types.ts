@@ -28,8 +28,8 @@ export async function processFoodTypeMutation(
         .where(
           and(
             eq(foodTypesSchema.userId, userId),
-            sql`LOWER(${foodTypesSchema.name}) = LOWER(${payload.name as string})`
-          )
+            sql`LOWER(${foodTypesSchema.name}) = LOWER(${payload.name as string})`,
+          ),
         )
         .limit(1);
 
@@ -70,8 +70,8 @@ export async function processFoodTypeMutation(
         .where(
           and(
             eq(foodTypesSchema.id, foodTypeId),
-            eq(foodTypesSchema.userId, userId)
-          )
+            eq(foodTypesSchema.userId, userId),
+          ),
         )
         .limit(1);
 

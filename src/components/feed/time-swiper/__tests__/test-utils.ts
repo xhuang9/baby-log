@@ -5,10 +5,10 @@ import { vi } from 'vitest';
  * Wait for an element to be available in the DOM
  * Handles the async timing issue with vitest-browser-react
  */
-export async function waitForElement(testId: string) {
+export async function waitForElement(testId: string): Promise<HTMLElement> {
   return vi.waitFor(() => page.getByTestId(testId).element(), {
     timeout: 3000,
-  });
+  }) as Promise<HTMLElement>;
 }
 
 /**
