@@ -108,7 +108,7 @@ export function ActivityTile({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        'activity-tile',
+        'activity-tile activity-tile-card',
         activityClasses[activity],
         className,
       )}

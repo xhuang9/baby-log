@@ -42,17 +42,17 @@ const REACTIONS: ReactionConfig[] = [
     value: 'liked',
     label: 'Liked',
     icon: Smile,
-    bgSelected: 'bg-yellow-500',
-    textSelected: 'text-black',
-    iconColor: 'text-yellow-500',
+    bgSelected: 'bg-green-500',
+    textSelected: 'text-white',
+    iconColor: 'text-green-500',
   },
   {
     value: 'loved',
     label: 'Loved',
     icon: Heart,
-    bgSelected: 'bg-green-500',
+    bgSelected: 'bg-pink-500',
     textSelected: 'text-white',
-    iconColor: 'text-green-500',
+    iconColor: 'text-pink-500',
   },
 ];
 

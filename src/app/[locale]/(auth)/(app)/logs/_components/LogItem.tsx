@@ -145,13 +145,13 @@ export function LogItem({ log, onClick }: LogItemProps) {
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden rounded-lg"
+      className="activity-tile-card relative overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       {/* Delete button background (revealed on swipe) */}
-      <div className="absolute inset-0 flex items-center justify-end bg-destructive px-4">
+      <div className="absolute top-0 bottom-0 left-0 right-1 flex items-center justify-end bg-destructive px-4">
         <span className="text-sm font-semibold text-white">Delete</span>
       </div>
 
