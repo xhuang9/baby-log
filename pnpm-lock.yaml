@@ -81,7 +81,7 @@ importers:
         specifier: ^16.1.6
         version: 16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       next-intl:
-        specifier: ^4.8.2
+        specifier: ^4.8.1
         version: 4.8.2(next@16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
       next-pwa:
         specifier: ^5.6.0
@@ -139,19 +139,19 @@ importers:
         specifier: ^4.101.14
         version: 4.101.14(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@commitlint/cli':
-        specifier: ^20.4.1
+        specifier: ^20.4.0
         version: 20.4.1(@types/node@24.10.9)(typescript@5.9.3)
       '@commitlint/config-conventional':
-        specifier: ^20.4.1
+        specifier: ^20.4.0
         version: 20.4.1
       '@commitlint/prompt-cli':
-        specifier: ^20.4.1
+        specifier: ^20.4.0
         version: 20.4.1(@types/node@24.10.9)(typescript@5.9.3)
       '@electric-sql/pglite-socket':
         specifier: ^0.0.19
         version: 0.0.19(@electric-sql/pglite@0.3.14)
       '@eslint-react/eslint-plugin':
-        specifier: ^2.9.3
+        specifier: ^2.8.1
         version: 2.9.3(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
       '@lingual/i18n-check':
         specifier: ^0.8.19
@@ -184,7 +184,7 @@ importers:
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.10)
       '@vitejs/plugin-react':
-        specifier: ^5.1.3
+        specifier: ^5.1.2
         version: 5.1.3(vite@7.3.1(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.46.0)(yaml@2.8.2))
       '@vitest/browser':
         specifier: ^4.0.18
@@ -247,7 +247,7 @@ importers:
         specifier: ^0.11.0
         version: 0.11.0
       knip:
-        specifier: ^5.83.0
+        specifier: ^5.82.1
         version: 5.83.0(@types/node@24.10.9)(typescript@5.9.3)
       lefthook:
         specifier: ^2.0.16
@@ -268,7 +268,7 @@ importers:
         specifier: ^25.0.3
         version: 25.0.3(typescript@5.9.3)
       shadcn:
-        specifier: ^3.8.2
+        specifier: ^3.8.1
         version: 3.8.2(@types/node@24.10.9)(hono@4.11.7)(typescript@5.9.3)
       tailwindcss:
         specifier: ^4.1.18
