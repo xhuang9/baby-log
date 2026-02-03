@@ -7,12 +7,14 @@
 import type { Mutation, MutationResult } from '../types';
 import { processBabyMutation } from './baby';
 import { processFeedLogMutation } from './feed-log';
+import { processFoodTypeMutation } from './food-types';
 import { processNappyLogMutation } from './nappy-log';
 import { processSleepLogMutation } from './sleep-log';
 import { processSolidsLogMutation } from './solids-log';
 
 export { processBabyMutation } from './baby';
 export { processFeedLogMutation } from './feed-log';
+export { processFoodTypeMutation } from './food-types';
 export { processNappyLogMutation } from './nappy-log';
 export { processSleepLogMutation } from './sleep-log';
 export { processSolidsLogMutation } from './solids-log';
@@ -29,12 +31,18 @@ export async function processMutation(
 
   try {
     // Baby entities use entityId as the baby ID
+    // Food types are user-scoped, not baby-scoped
     const babyId = entityType === 'baby'
       ? Number.parseInt(entityId, 10)
-      : (payload.babyId as number | undefined);
+      : entityType === 'food_type'
+        ? undefined
+        : (payload.babyId as number | undefined);
 
     // Verify user has edit access
-    if (entityType === 'baby') {
+    if (entityType === 'food_type') {
+      // Food types don't require baby access check
+      return await processFoodTypeMutation(mutationId, entityId, op, payload, userId);
+    } else if (entityType === 'baby') {
       // For baby mutations, check if user owns the baby or has editor access
       if (op !== 'create' && babyId && !editableBabyIds.has(babyId)) {
         console.error('[SYNC] Baby mutation access denied:', {

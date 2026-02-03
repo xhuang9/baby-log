@@ -1,19 +1,26 @@
 ---
-last_verified_at: 2026-01-28T00:00:00Z
+last_verified_at: 2026-02-02T12:00:00Z
 source_paths:
   - src/models/Schema.ts
   - migrations/0012_fresh_speed.sql
+  - migrations/0017_parched_eternity.sql
   - src/actions/feedLogActions.ts
   - src/app/[locale]/api/sync/push/mutations/feed-log.ts
   - src/app/[locale]/api/sync/push/mutations/sleep-log.ts
   - src/app/[locale]/api/sync/push/mutations/nappy-log.ts
+  - src/app/[locale]/api/sync/push/mutations/solids-log.ts
+  - src/app/[locale]/api/sync/push/mutations/food-types.ts
 ---
 
 # UUID Migration for Log Entities
 
 ## Purpose
 
-Migrate feed_log, sleep_log, and nappy_log primary keys from auto-increment serial IDs to client-generated UUIDs (text columns). This fixes a pre-existing bug where the server ignored client-generated IDs, causing ID mismatches during sync and local-first operations.
+Migrate feed_log, sleep_log, nappy_log, solids_log, and food_types primary keys from text to native PostgreSQL `uuid` type. This provides better validation, storage efficiency (16 bytes vs ~36 bytes), and type-safe constraints at the database level.
+
+**Timeline**:
+1. **Migration 0012** (2026-01): Convert from auto-increment serial → text UUIDs (client-generated)
+2. **Migration 0017** (2026-02): Convert from text → native PostgreSQL uuid type
 
 ## The Pre-Existing Bug
 
@@ -29,20 +36,20 @@ Migrate feed_log, sleep_log, and nappy_log primary keys from auto-increment seri
 
 ## Implementation Details
 
-### Schema Changes
+### Schema Changes (Migration 0017)
 
-All log tables changed primary key columns from `serial` to `text`:
+All log tables changed primary key columns from `text` to native `uuid`:
 
 ```typescript
-// Before
+// Before (Migration 0012)
 export const feedLogSchema = pgTable('feed_log', {
-  id: serial('id').primaryKey(),  // Auto-increment
+  id: text('id').primaryKey(),    // Client-generated UUID (text type)
   // ...
 });
 
-// After
+// After (Migration 0017)
 export const feedLogSchema = pgTable('feed_log', {
-  id: text('id').primaryKey(),    // Client-generated UUID
+  id: uuid('id').primaryKey(),    // Native PostgreSQL uuid type
   // ...
 });
 ```
@@ -51,11 +58,12 @@ Applies to:
 - `feed_log` - Feed/nursing logs
 - `sleep_log` - Sleep logs
 - `nappy_log` - Nappy change logs
+- `solids_log` - Solids/food introduction logs
+- `food_types` - User-defined food type library
 
 ### Database Migration
 
-Migration `0012_fresh_speed.sql` applies the schema change:
-
+**Migration 0012** converts serial → text:
 ```sql
 ALTER TABLE "feed_log" ALTER COLUMN "id" SET DATA TYPE text;
 ALTER TABLE "nappy_log" ALTER COLUMN "id" SET DATA TYPE text;
@@ -63,7 +71,29 @@ ALTER TABLE "sleep_log" ALTER COLUMN "id" SET DATA TYPE text;
 ALTER TABLE "sync_events" ALTER COLUMN "entity_id" SET DATA TYPE text;
 ```
 
-**Important**: `sync_events.entity_id` also changed to `text` to support UUID references.
+**Migration 0017** converts text → native uuid:
+```sql
+-- Delete legacy data with invalid UUID format (pre-migration cleanup)
+DELETE FROM "feed_log" WHERE id !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';
+DELETE FROM "nappy_log" WHERE id !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';
+DELETE FROM "sleep_log" WHERE id !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';
+DELETE FROM "solids_log" WHERE id !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';
+
+-- Perform type conversion with explicit casting
+ALTER TABLE "feed_log" ALTER COLUMN "id" DROP DEFAULT;
+ALTER TABLE "feed_log" ALTER COLUMN "id" SET DATA TYPE uuid USING id::uuid;
+ALTER TABLE "nappy_log" ALTER COLUMN "id" DROP DEFAULT;
+ALTER TABLE "nappy_log" ALTER COLUMN "id" SET DATA TYPE uuid USING id::uuid;
+ALTER TABLE "sleep_log" ALTER COLUMN "id" DROP DEFAULT;
+ALTER TABLE "sleep_log" ALTER COLUMN "id" SET DATA TYPE uuid USING id::uuid;
+ALTER TABLE "solids_log" ALTER COLUMN "id" DROP DEFAULT;
+ALTER TABLE "solids_log" ALTER COLUMN "id" SET DATA TYPE uuid USING id::uuid;
+```
+
+**Important notes**:
+- Migration 0017 also creates the `food_types` table with native `uuid` primary key
+- `sync_events.entity_id` remains as `text` to support mixed types (integer baby IDs + UUID log IDs)
+- `solids_log.food_type_ids` remains as `text[]` (Drizzle limitation for UUID arrays)
 
 ### Client-Side Generation
 
@@ -101,17 +131,26 @@ Applied to `processFeedLogMutation()`, `processSleepLogMutation()`, `processNapp
 
 ## Benefits
 
+### From Migration 0012 (text UUIDs)
 - **Offline-first correctness**: Client and server IDs match immediately
 - **Simplified sync**: No ID mapping layer needed
 - **Consistent state**: IndexedDB reflects server record IDs exactly
 - **Easier debugging**: IDs are human-readable UUIDs, not opaque numbers
 
+### From Migration 0017 (native uuid type)
+- **Storage efficiency**: 16 bytes (uuid) vs ~36 bytes (text) per ID
+- **Database validation**: PostgreSQL automatically rejects invalid UUIDs at insert time
+- **Better indexing**: B-tree indexes on uuid are more efficient than text
+- **Type safety**: Stronger database-level constraints prevent invalid UUID values
+
 ## Gotchas
 
 - **UUID collision risk**: Extremely low (2^128 space), acceptable for this application
-- **Database indexing**: UUID indexes are slightly less efficient than numeric indexes, but acceptable for this scale
-- **Backward compatibility**: Existing numeric IDs are preserved; migration only affects new records
+- **Database indexing**: UUID indexes are slightly less efficient than integer indexes, but acceptable for this scale
+- **Data cleanup**: Migration 0017 deletes any records with invalid UUID format (preserves only valid UUIDs from clients)
+- **Type conversion**: Must use explicit `USING id::uuid` casting to convert from text to uuid in PostgreSQL
 - **Outbox replay**: Stored mutations still reference the original UUID payload, ensuring idempotent replays
+- **Mixed entity IDs**: `sync_events.entity_id` remains text because it references both integer baby IDs and UUID log IDs
 
 ## Related
 

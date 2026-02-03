@@ -65,7 +65,7 @@ export default async function DevPalettePage(props: {
               <ActivityTile
                 key={tile.activity}
                 title={tile.title}
-                subtitle={tile.subtitle}
+                statusText={tile.subtitle}
                 activity={tile.activity}
               />
             ))}

@@ -7,12 +7,14 @@
 import type { SyncChange } from '../types';
 import { applyBabyChange } from './baby';
 import { applyFeedLogChange } from './feed-log';
+import { applyFoodTypeChange } from './food-types';
 import { applyNappyLogChange } from './nappy-log';
 import { applySleepLogChange } from './sleep-log';
 import { applySolidsLogChange } from './solids-log';
 
 export { applyBabyChange } from './baby';
 export { applyFeedLogChange } from './feed-log';
+export { applyFoodTypeChange, applyFoodTypeSync } from './food-types';
 export { applyNappyLogChange } from './nappy-log';
 export { applySleepLogChange } from './sleep-log';
 export { applySolidsLogChange } from './solids-log';
@@ -29,6 +31,9 @@ export async function applyChange(change: SyncChange): Promise<void> {
       break;
     case 'feed_log':
       await applyFeedLogChange(op, id, data);
+      break;
+    case 'food_type':
+      await applyFoodTypeChange(op, String(id), data);
       break;
     case 'sleep_log':
       await applySleepLogChange(op, id, data);

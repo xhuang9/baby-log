@@ -94,6 +94,7 @@ export function ActivityTile({
       }, 1000);
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [timerElapsedBase, timerStartTime, isTimerRunning]);
 
   // Default action content is a plus icon
@@ -107,7 +108,7 @@ export function ActivityTile({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        'activity-tile',
+        'activity-tile activity-tile-card',
         activityClasses[activity],
         className,
       )}

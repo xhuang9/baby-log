@@ -12,6 +12,27 @@ import { page, userEvent } from 'vitest/browser';
 import { useTimerStore } from '@/stores/useTimerStore';
 import { TimerWidget } from './TimerWidget';
 
+// Utility to wait for elements
+async function waitForText(text: string) {
+  return vi.waitFor(() => {
+    const elements = page.getByText(text, { exact: false }).elements();
+    if (elements.length === 0) {
+      throw new Error(`Text "${text}" not found`);
+    }
+    return elements;
+  }, { timeout: 3000 });
+}
+
+async function waitForRole(role: string) {
+  return vi.waitFor(() => {
+    const elements = page.getByRole(role).elements();
+    if (elements.length === 0) {
+      throw new Error(`Role "${role}" not found`);
+    }
+    return elements;
+  }, { timeout: 3000 });
+}
+
 // Mock the stores
 vi.mock('@/stores/useTimerStore', () => ({
   useTimerStore: vi.fn(),
@@ -67,21 +88,21 @@ describe('TimerWidget', () => {
   });
 
   describe('initial render', () => {
-    it('should render timer display at 00:00:00', () => {
+    it('should render timer display at 00:00:00', async () => {
       render(<TimerWidget babyId={1} logType="feed" />);
 
-      // Check all time segments
-      const hours = page.getByText('00', { exact: false }).elements();
+      // Wait for time segments to render
+      const hours = await waitForText('00');
 
       expect(hours.length).toBeGreaterThan(0);
     });
 
-    it('should render play button when timer is not running', () => {
+    it('should render play button when timer is not running', async () => {
       render(<TimerWidget babyId={1} logType="feed" />);
 
-      const button = page.getByRole('button').elements()[0];
+      const buttons = await waitForRole('button');
 
-      expect(button).toBeTruthy();
+      expect(buttons[0]).toBeTruthy();
     });
 
     it('should render timer controls', () => {
@@ -158,7 +179,7 @@ describe('TimerWidget', () => {
       expect(page.getByText('05')).toBeTruthy(); // seconds
     });
 
-    it('should show pause button when timer is running', () => {
+    it('should show pause button when timer is running', async () => {
       vi.mocked(useTimerStore).mockImplementation((selector?: (state: TimerStore) => unknown) => {
         const mockState: TimerStore = {
           timers: {
@@ -185,9 +206,9 @@ describe('TimerWidget', () => {
       render(<TimerWidget babyId={1} logType="feed" />);
 
       // When running, should show pause icon (the button is still there but icon changes)
-      const button = page.getByRole('button').elements()[0];
+      const buttons = await waitForRole('button');
 
-      expect(button).toBeTruthy();
+      expect(buttons[0]).toBeTruthy();
     });
   });
 
@@ -195,8 +216,8 @@ describe('TimerWidget', () => {
     it('should start timer when play button is clicked', async () => {
       render(<TimerWidget babyId={1} logType="feed" />);
 
-      const button = page.getByRole('button').elements()[0];
-      await userEvent.click(button!);
+      const buttons = await waitForRole('button');
+      await userEvent.click(buttons[0]!);
 
       expect(mockStartTimer).toHaveBeenCalledWith('feed-1', 1, 'feed');
     });
@@ -227,8 +248,8 @@ describe('TimerWidget', () => {
 
       render(<TimerWidget babyId={1} logType="feed" />);
 
-      const button = page.getByRole('button').elements()[0];
-      await userEvent.click(button!);
+      const buttons = await waitForRole('button');
+      await userEvent.click(buttons[0]!);
 
       expect(mockPauseTimer).toHaveBeenCalledWith('feed-1');
     });
@@ -311,22 +332,22 @@ describe('TimerWidget', () => {
       expect(mockResetTimer).toHaveBeenCalledWith('feed-1');
     });
 
-    it('should adjust timer by +10s when clicked', async () => {
+    it('should adjust timer by +1m when clicked', async () => {
       render(<TimerWidget babyId={1} logType="feed" />);
 
-      const addButton = page.getByText('+10s');
-      await userEvent.click(addButton);
+      const addButtons = await waitForText('+1m');
+      await userEvent.click(addButtons[0] as HTMLElement);
 
-      expect(mockAdjustTimer).toHaveBeenCalledWith('feed-1', 10);
+      expect(mockAdjustTimer).toHaveBeenCalledWith('feed-1', 60);
     });
 
-    it('should adjust timer by -10s when clicked', async () => {
+    it('should adjust timer by -1m when clicked', async () => {
       render(<TimerWidget babyId={1} logType="feed" />);
 
-      const subtractButton = page.getByText('-10s');
-      await userEvent.click(subtractButton);
+      const subtractButtons = await waitForText('-1m');
+      await userEvent.click(subtractButtons[0] as HTMLElement);
 
-      expect(mockAdjustTimer).toHaveBeenCalledWith('feed-1', -10);
+      expect(mockAdjustTimer).toHaveBeenCalledWith('feed-1', -60);
     });
   });
 
@@ -334,8 +355,8 @@ describe('TimerWidget', () => {
     it('should use correct timer key for feed', async () => {
       render(<TimerWidget babyId={123} logType="feed" />);
 
-      const button = page.getByRole('button').elements()[0];
-      await userEvent.click(button!);
+      const buttons = await waitForRole('button');
+      await userEvent.click(buttons[0]!);
 
       expect(mockStartTimer).toHaveBeenCalledWith('feed-123', 123, 'feed');
     });
@@ -343,8 +364,8 @@ describe('TimerWidget', () => {
     it('should use correct timer key for sleep', async () => {
       render(<TimerWidget babyId={456} logType="sleep" />);
 
-      const button = page.getByRole('button').elements()[0];
-      await userEvent.click(button!);
+      const buttons = await waitForRole('button');
+      await userEvent.click(buttons[0]!);
 
       expect(mockStartTimer).toHaveBeenCalledWith('sleep-456', 456, 'sleep');
     });
@@ -352,8 +373,8 @@ describe('TimerWidget', () => {
     it('should use correct timer key for nappy', async () => {
       render(<TimerWidget babyId={789} logType="nappy" />);
 
-      const button = page.getByRole('button').elements()[0];
-      await userEvent.click(button!);
+      const buttons = await waitForRole('button');
+      await userEvent.click(buttons[0]!);
 
       expect(mockStartTimer).toHaveBeenCalledWith('nappy-789', 789, 'nappy');
     });

@@ -1,8 +1,10 @@
 ---
-last_verified_at: 2026-01-08T14:30:00Z
+last_verified_at: 2026-02-02T12:00:00Z
 source_paths:
   - src/models/Schema.ts
   - migrations/0005_real_masked_marvel.sql
+  - migrations/0012_fresh_speed.sql
+  - migrations/0017_parched_eternity.sql
 ---
 
 # Feed Log Database Schema
@@ -15,7 +17,7 @@ Database schema for tracking baby feeds with support for multiple feed methods, 
 
 ```typescript
 export const feedLogSchema = pgTable('feed_log', {
-  id: serial('id').primaryKey(),
+  id: uuid('id').primaryKey(), // Client-generated UUID (native PostgreSQL uuid type)
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
   loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
   method: text('method').notNull(), // 'breast' | 'bottle'
@@ -104,6 +106,7 @@ ALTER TABLE "feed_log" ADD CONSTRAINT "feed_log_logged_by_user_id_user_id_fk"
 - **No Edit History**: Updates to feed logs don't track changes (could add `editedAt`/`editedByUserId` later)
 - **Timezone Aware**: All timestamps use `withTimezone: true` for UTC storage
 - **Nullable Fields**: Many fields are nullable to support partial data entry
+- **UUID Primary Key**: ID is client-generated UUID (not auto-increment). See `database.uuid-migration.md` for migration details
 
 ## Related
 

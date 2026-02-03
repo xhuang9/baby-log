@@ -100,7 +100,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Run unit tests
-        uses: docker://mcr.microsoft.com/playwright:v1.57.0
+        uses: docker://mcr.microsoft.com/playwright:v1.58.1-noble
         with:
           args: npm run test -- --coverage
 
@@ -133,7 +133,7 @@ jobs:
           restore-nextjs-cache: true
 
       - name: Run E2E tests
-        uses: docker://mcr.microsoft.com/playwright:v1.57.0
+        uses: docker://mcr.microsoft.com/playwright:v1.58.1-noble
         with:
           args: sh -c "HOME=/root npm run test:e2e" # Set HOME to /root to avoid Playwright error with Firebox
         env:

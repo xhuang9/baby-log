@@ -1,5 +1,7 @@
-import { pgTable, serial, integer, timestamp, index, foreignKey, type AnyPgColumn, unique, text, boolean, jsonb, primaryKey, pgEnum } from "drizzle-orm/pg-core"
+import type { AnyPgColumn } from "drizzle-orm/pg-core"
+import { pgTable, serial, integer, timestamp, index, foreignKey,  unique, text, boolean, jsonb, primaryKey, pgEnum } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
+// import { type } from "os"
 
 export const accessLevelEnum = pgEnum("access_level_enum", ['owner', 'editor', 'viewer'])
 export const accessRequestStatusEnum = pgEnum("access_request_status_enum", ['pending', 'approved', 'rejected', 'canceled'])
@@ -39,26 +41,21 @@ export const babyMeasurements = pgTable("baby_measurements", {
 ]);
 
 export const user = pgTable("user", {
-	id: serial().primaryKey().notNull(),
+	id: serial('id').primaryKey().notNull(),
 	clerkId: text("clerk_id"),
 	locked: boolean().default(false),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }),
 	email: text(),
 	firstName: text("first_name"),
-	defaultBabyId: integer("default_baby_id"),
+	defaultBabyId: integer("default_baby_id").references((): AnyPgColumn => babies.id, { onDelete: "set null" }),
 }, (table) => [
-	foreignKey({
-			columns: [table.defaultBabyId],
-			foreignColumns: [babies.id],
-			name: "user_default_baby_id_babies_id_fk"
-		}).onDelete("set null"),
 	unique("user_clerk_id_unique").on(table.clerkId),
 ]);
 
 export const babies = pgTable("babies", {
-	id: serial().primaryKey().notNull(),
-	ownerUserId: integer("owner_user_id"),
+	id: serial('id').primaryKey().notNull(),
+	ownerUserId: integer("owner_user_id").references((): AnyPgColumn => user.id).notNull(),
 	name: text().notNull(),
 	birthDate: timestamp("birth_date", { mode: 'string' }),
 	archivedAt: timestamp("archived_at", { withTimezone: true, mode: 'string' }),
@@ -66,13 +63,7 @@ export const babies = pgTable("babies", {
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }),
 	gender: genderEnum(),
 	birthWeightG: integer("birth_weight_g"),
-}, (table) => [
-	foreignKey({
-			columns: [table.ownerUserId],
-			foreignColumns: [user.id],
-			name: "babies_owner_user_id_user_id_fk"
-		}),
-]);
+});
 
 export const babyAccessRequests = pgTable("baby_access_requests", {
 	id: serial().primaryKey().notNull(),
@@ -115,7 +106,7 @@ export const babyAccessRequests = pgTable("baby_access_requests", {
 ]);
 
 export const feedLog = pgTable("feed_log", {
-	id: text().default(nextval(\'feed_log_id_seq\'::regclass)).primaryKey().notNull(),
+	id: text().default(sql`nextval('feed_log_id_seq'::regclass)`).primaryKey().notNull(),
 	babyId: integer("baby_id").notNull(),
 	method: text().notNull(),
 	startedAt: timestamp("started_at", { withTimezone: true, mode: 'string' }).notNull(),
@@ -201,7 +192,7 @@ export const babyInvites = pgTable("baby_invites", {
 ]);
 
 export const nappyLog = pgTable("nappy_log", {
-	id: text().default(nextval(\'nappy_log_id_seq\'::regclass)).primaryKey().notNull(),
+	id: text().default(sql`nextval('nappy_log_id_seq'::regclass)`).primaryKey().notNull(),
 	babyId: integer("baby_id").notNull(),
 	loggedByUserId: integer("logged_by_user_id").notNull(),
 	type: nappyTypeEnum(),
@@ -226,7 +217,7 @@ export const nappyLog = pgTable("nappy_log", {
 ]);
 
 export const sleepLog = pgTable("sleep_log", {
-	id: text().default(nextval(\'sleep_log_id_seq\'::regclass)).primaryKey().notNull(),
+	id: text().default(sql`nextval('sleep_log_id_seq'::regclass)`).primaryKey().notNull(),
 	babyId: integer("baby_id").notNull(),
 	loggedByUserId: integer("logged_by_user_id").notNull(),
 	startedAt: timestamp("started_at", { withTimezone: true, mode: 'string' }).notNull(),

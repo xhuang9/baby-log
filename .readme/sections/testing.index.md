@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-17T09:12:39Z
+last_verified_at: 2026-02-02T00:00:00Z
 source_paths:
   - vitest.config.mts
   - playwright.config.ts
@@ -10,6 +10,7 @@ source_paths:
   - src/app/[locale]/api/sync/pull/route.test.ts
   - src/app/[locale]/api/sync/push/route.test.ts
   - src/services/sync-service.test.ts
+  - src/components/feed/time-swiper/__tests__/
 ---
 
 # Testing Overview
@@ -58,3 +59,7 @@ The testing setup is designed for both local development and CI environments.
 - `.readme/chunks/testing.checkly-monitoring.md`
   - Content: Checkly monitoring-as-code with `.check.e2e.ts` files for uptime monitoring
   - Read when: Setting up production monitoring, writing monitoring tests, or configuring Checkly
+
+- `.readme/chunks/testing.timeswiper-component.md`
+  - Content: Comprehensive test suite for TimeSwiper component and hooks using Vitest browser mode with test utilities, mocking patterns, and hook-level/component-level tests
+  - Read when: Writing TimeSwiper tests, implementing component testing patterns in browser mode, mocking complex dependencies, or testing pointer gesture interactions

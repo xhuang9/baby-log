@@ -113,6 +113,20 @@
       "when": 1769914363228,
       "tag": "0015_clear_black_crow",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1769921935267,
+      "tag": "0016_careless_viper",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1769954905830,
+      "tag": "0017_parched_eternity",
+      "breakpoints": true
     }
   ]
 }

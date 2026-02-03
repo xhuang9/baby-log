@@ -11,6 +11,7 @@ import { ActivityTypePills } from './ActivityTypePills';
 import { EditFeedModal } from './edit-modals/EditFeedModal';
 import { EditNappyModal } from './edit-modals/EditNappyModal';
 import { EditSleepModal } from './edit-modals/EditSleepModal';
+import { EditSolidsModal } from './edit-modals/EditSolidsModal';
 import { LogsFilters } from './LogsFilters';
 import { LogsList } from './LogsList';
 import { ActivityTimelineChart } from './timeline-chart';
@@ -207,6 +208,21 @@ export function LogsContent() {
             if (!open) {
               handleCloseEditModal();
             }
+          }}
+        />
+      )}
+
+      {editingLog?.type === 'solids' && (
+        <EditSolidsModal
+          solids={editingLog.data as import('@/lib/local-db').LocalSolidsLog}
+          open={Boolean(editingLog)}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleCloseEditModal();
+            }
+          }}
+          onSuccess={() => {
+            // UI will update automatically via useLiveQuery
           }}
         />
       )}

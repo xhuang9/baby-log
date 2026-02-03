@@ -71,7 +71,6 @@ export type LocalUser = {
 // ============================================================================
 
 export type HandMode = 'left' | 'right';
-export type ThemeMode = 'light' | 'dark' | 'system';
 export type DefaultLogView = 'all' | 'feed' | 'sleep';
 
 /**
@@ -86,7 +85,6 @@ export type TimerState = {
 };
 
 export type UIConfigData = {
-  theme?: ThemeMode;
   handMode?: HandMode;
   useMetric?: boolean; // true = metric (cm, kg, ml), false = imperial (inches, lbs, oz)
   defaultLogView?: DefaultLogView;
@@ -124,7 +122,6 @@ export type UIConfigData = {
  * Default values for UI config
  */
 export const DEFAULT_UI_CONFIG_DATA: UIConfigData = {
-  theme: 'system',
   handMode: 'right',
   useMetric: true, // Default to metric system
   defaultLogView: 'all',

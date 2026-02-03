@@ -3,6 +3,13 @@ import { render } from 'vitest-browser-react';
 import { page } from 'vitest/browser';
 import { useInitializeSleepForm } from './useInitializeSleepForm';
 
+// Utility to wait for element
+async function waitForElement(testId: string) {
+  return vi.waitFor(() => page.getByTestId(testId).element(), {
+    timeout: 3000,
+  });
+}
+
 // Mock dependencies - must not reference external variables
 vi.mock('@/lib/local-db/helpers/ui-config');
 
@@ -67,7 +74,7 @@ describe('useInitializeSleepForm', () => {
     );
 
     // Wait for effects to run
-    await page.getByTestId('initialized').element();
+    await waitForElement('initialized');
 
     expect(mockHydrate).toHaveBeenCalledWith(1);
   });
@@ -80,7 +87,7 @@ describe('useInitializeSleepForm', () => {
       />,
     );
 
-    await page.getByTestId('initialized').element();
+    await waitForElement('initialized');
 
     expect(mockHydrate).not.toHaveBeenCalled();
   });
@@ -97,7 +104,7 @@ describe('useInitializeSleepForm', () => {
       <TestWrapper isTimerHydrated={true} setHandMode={mockSetHandMode} />,
     );
 
-    await page.getByTestId('initialized').element();
+    await waitForElement('initialized');
 
     // Wait for async effect
     await vi.waitFor(() => {
@@ -117,7 +124,7 @@ describe('useInitializeSleepForm', () => {
       <TestWrapper isTimerHydrated={true} setHandMode={mockSetHandMode} />,
     );
 
-    await page.getByTestId('initialized').element();
+    await waitForElement('initialized');
 
     await vi.waitFor(() => {
       expect(mockSetHandMode).toHaveBeenCalledWith('right');
@@ -136,7 +143,7 @@ describe('useInitializeSleepForm', () => {
       <TestWrapper isTimerHydrated={true} setHandMode={mockSetHandMode} />,
     );
 
-    await page.getByTestId('initialized').element();
+    await waitForElement('initialized');
 
     await vi.waitFor(() => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(

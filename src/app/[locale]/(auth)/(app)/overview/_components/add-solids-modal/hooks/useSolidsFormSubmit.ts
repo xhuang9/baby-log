@@ -1,13 +1,15 @@
 'use client';
 
 import type { SolidsReaction } from '@/lib/local-db';
+import type { LocalFoodType } from '@/lib/local-db/types/food-types';
 import { useState } from 'react';
 import { createSolidsLog } from '@/services/operations/solids-log';
 
 type UseSolidsFormSubmitProps = {
   babyId: number;
   startTime: Date;
-  food: string;
+  selectedFoodIds: string[];
+  foodTypes: LocalFoodType[];
   reaction: SolidsReaction;
   notes: string;
   resetForm: () => void;
@@ -18,7 +20,8 @@ type UseSolidsFormSubmitProps = {
 export function useSolidsFormSubmit({
   babyId,
   startTime,
-  food,
+  selectedFoodIds,
+  foodTypes,
   reaction,
   notes,
   resetForm,
@@ -29,9 +32,9 @@ export function useSolidsFormSubmit({
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async () => {
-    // Validate food
-    if (!food.trim()) {
-      setError('Please enter a food name');
+    // Validate food selection
+    if (selectedFoodIds.length === 0) {
+      setError('Please select at least one food');
       return;
     }
 
@@ -39,9 +42,14 @@ export function useSolidsFormSubmit({
     setError(null);
 
     try {
+      // Build display text from selected food types
+      const selectedFoods = foodTypes.filter(ft => selectedFoodIds.includes(ft.id));
+      const foodDisplay = selectedFoods.map(ft => ft.name).join(', ');
+
       const result = await createSolidsLog({
         babyId,
-        food: food.trim(),
+        foodTypeIds: selectedFoodIds,
+        foodDisplay,
         reaction,
         startedAt: startTime,
         notes: notes.trim() || null,

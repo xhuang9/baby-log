@@ -97,6 +97,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
       {/* Unread indicator */}
       {isUnread && (
         <div
+          data-testid="unread-indicator"
           className="absolute top-3 right-3 size-2 rounded-full bg-primary"
           aria-hidden="true"
         />

@@ -90,13 +90,11 @@ export {
 // UI config operations
 export type {
   UpdateHandModeInput,
-  UpdateThemeInput,
   UpdateWidgetSettingsInput,
 } from './ui-config';
 
 export {
   updateHandMode,
-  updateTheme,
   updateUIConfigByKey,
   updateWidgetSettings,
 } from './ui-config';

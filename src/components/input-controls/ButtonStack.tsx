@@ -1,6 +1,6 @@
 'use client';
 
-import { MinusIcon, PlusIcon, Settings2Icon } from 'lucide-react';
+import { Minus, Plus, Settings2 } from 'lucide-react';
 import { useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -79,7 +79,7 @@ export function ButtonStack({
                     disabled={disabled}
                     className="h-10 w-10 rounded-xl border-border/50 bg-muted/30 text-foreground hover:bg-muted/50"
                   >
-                    <Settings2Icon className="h-4 w-4" />
+                    <Settings2 className="h-4 w-4" />
                   </Button>
                 )}
               />
@@ -95,7 +95,7 @@ export function ButtonStack({
               disabled={disabled}
               className="h-10 w-10 rounded-xl border-border/50 bg-muted/30 text-foreground hover:bg-muted/50"
             >
-              <Settings2Icon className="h-4 w-4" />
+              <Settings2 className="h-4 w-4" />
             </Button>
           )}
       <Button
@@ -108,7 +108,7 @@ export function ButtonStack({
         onPointerCancel={handlePointerUp}
         onPointerLeave={handlePointerLeave}
       >
-        <PlusIcon className="h-4 w-4" />
+        <Plus className="h-4 w-4" />
       </Button>
       <Button
         variant="outline"
@@ -120,7 +120,7 @@ export function ButtonStack({
         onPointerCancel={handlePointerUp}
         onPointerLeave={handlePointerLeave}
       >
-        <MinusIcon className="h-4 w-4" />
+        <Minus className="h-4 w-4" />
       </Button>
     </div>
   );

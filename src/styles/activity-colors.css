@@ -42,19 +42,22 @@
 }
 
 @layer components {
-  .activity-tile {
-    @apply flex w-full items-center justify-between border-l-4 p-4 text-left transition-colors;
-    /* Asymmetric border radius per Figma: small on left (3px), larger on right (10px) */
+  /* Shared shadow + border-radius for activity tile cards (used by overview tiles and log items) */
+  .activity-tile-card {
     border-radius: 3px 10px 10px 3px;
-    /* White background with subtle shadow */
-    background-color: var(--card);
     box-shadow: 0px 2px 4px 1px rgba(0, 0, 0, 0.08);
-    /* Accent color on left border */
-    border-left-color: var(--activity-tile-accent, var(--border));
   }
 
-  .dark .activity-tile {
+  .dark .activity-tile-card {
     box-shadow: 0px 2px 4px 1px rgba(0, 0, 0, 0.25);
+  }
+
+  .activity-tile {
+    @apply flex w-full items-center justify-between border-l-4 p-4 text-left transition-colors;
+    /* White background with subtle shadow */
+    background-color: var(--card);
+    /* Accent color on left border */
+    border-left-color: var(--activity-tile-accent, var(--border));
   }
 
   .activity-tile:hover:not(:disabled) {

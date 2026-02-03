@@ -1,5 +1,6 @@
 'use client';
 
+import type { ActivityType } from '@/app/[locale]/(auth)/(app)/overview/_components/ActivityTile';
 import type { UnifiedLog } from '@/lib/format-log';
 import { useCallback, useRef, useState } from 'react';
 import { ActivityTile } from '@/app/[locale]/(auth)/(app)/overview/_components/ActivityTile';
@@ -8,6 +9,21 @@ import { notifyToast } from '@/lib/notify';
 import { cn } from '@/lib/utils';
 import { deleteFeedLog } from '@/services/operations';
 
+const activityClasses = {
+  'feed': 'activity-tile--feed',
+  'sleep': 'activity-tile--sleep',
+  'nappy': 'activity-tile--nappy',
+  'solids': 'activity-tile--solids',
+  'bath': 'activity-tile--bath',
+  'tummy-time': 'activity-tile--tummy-time',
+  'story-time': 'activity-tile--story-time',
+  'screen-time': 'activity-tile--screen-time',
+  'skin-to-skin': 'activity-tile--skin-to-skin',
+  'outdoor-play': 'activity-tile--outdoor-play',
+  'indoor-play': 'activity-tile--indoor-play',
+  'brush-teeth': 'activity-tile--brush-teeth',
+} as const;
+
 export type LogItemProps = {
   log: UnifiedLog;
   onClick?: (log: UnifiedLog) => void;
@@ -15,9 +31,9 @@ export type LogItemProps = {
 
 /**
  * Log item tile for activity logs page
- * Displays a single activity log using ActivityTile component
+ * Displays a single activity log in compact one-line format
  * Supports swipe-to-delete on mobile: swipe left to fully reveal and delete
- * Uses compact one-line format with left/right columns
+ * Features left border with activity color and bold activity type
  */
 export function LogItem({ log, onClick }: LogItemProps) {
   const [swipeTranslate, setSwipeTranslate] = useState(0);
@@ -87,10 +103,9 @@ export function LogItem({ log, onClick }: LogItemProps) {
     return (
       <ActivityTile
         title={log.type}
-        subtitle={details}
-        activity={log.type}
+        statusText={details}
+        activity={log.type as ActivityType}
         onClick={() => onClick?.(log)}
-        layout="row"
       />
     );
   }
@@ -99,31 +114,44 @@ export function LogItem({ log, onClick }: LogItemProps) {
     return (
       <ActivityTile
         title={log.type}
-        subtitle={details}
-        activity={log.type}
+        statusText={details}
+        activity={log.type as ActivityType}
         onClick={() => onClick?.(log)}
-        layout="row"
       />
     );
   }
 
-  // Compact format with left/right columns + swipe-to-delete
-  const activityClassMap = {
-    feed: 'activity-tile--feed',
-    sleep: 'activity-tile--sleep',
-    nappy: 'activity-tile--nappy',
-  } as const;
+  const activityClass = activityClasses[log.type as keyof typeof activityClasses] || '';
+
+  // Extract subtype from parsed.left (first word before the dot)
+  // e.g., "Bottle · 120 ml" → subType: "Bottle", subDescription: "120 ml"
+  // e.g., "Breast · 38m · Left" → subType: "Breast", subDescription: "38m · Left"
+  const parts = parsed.left.split(' · ');
+  const subType = parts[0]; // e.g., "Bottle", "Breast", "Sleep"
+  const subDescription = parts.slice(1).join(' · '); // remaining parts
+
+  // Format caregiver label - max 10 characters with ellipsis
+  const displayCaregiver = log.caregiverLabel
+    ? log.caregiverLabel.length > 10
+      ? `${log.caregiverLabel.substring(0, 10)}...`
+      : log.caregiverLabel
+    : null;
+
+  // On sm+ screens, prepend caregiver to right side if available
+  const rightContent = displayCaregiver
+    ? `${displayCaregiver} · ${parsed.right}`
+    : parsed.right;
 
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden rounded-lg"
+      className="activity-tile-card relative overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       {/* Delete button background (revealed on swipe) */}
-      <div className="absolute inset-0 flex items-center justify-end bg-red-500 px-4">
+      <div className="absolute top-0 bottom-0 left-0 right-1 flex items-center justify-end bg-destructive px-4">
         <span className="text-sm font-semibold text-white">Delete</span>
       </div>
 
@@ -133,9 +161,8 @@ export function LogItem({ log, onClick }: LogItemProps) {
         onClick={() => onClick?.(log)}
         disabled={isDeleting}
         className={cn(
-          'activity-tile',
-          activityClassMap[log.type as keyof typeof activityClassMap],
-          'w-full text-left cursor-pointer flex justify-between font-mono text-sm py-2 px-3',
+          'activity-tile w-full text-left cursor-pointer flex items-center gap-3 px-3 py-2 text-sm',
+          activityClass,
           swipeTranslate === 0 && 'transition-transform duration-300 ease-out',
           isDeleting && 'opacity-50',
         )}
@@ -143,8 +170,17 @@ export function LogItem({ log, onClick }: LogItemProps) {
           transform: `translateX(${swipeTranslate}px)`,
         }}
       >
-        <span>{parsed.left}</span>
-        <span>{parsed.right}</span>
+        {/* Activity subtype - highlighted in activity color with activity-tile-title styling */}
+        <span className={cn('shrink-0 activity-tile-title text-base', activityClass)}>
+          {subType}
+        </span>
+
+        {/* Details - middle content */}
+        <span className="min-w-0 flex-1 truncate">{subDescription}</span>
+
+        {/* Right side - time info (with caregiver on sm+ screens) */}
+        <span className="hidden shrink-0 text-right sm:inline">{rightContent}</span>
+        <span className="shrink-0 text-right sm:hidden">{parsed.right}</span>
       </button>
     </div>
   );

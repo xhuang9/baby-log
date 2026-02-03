@@ -182,9 +182,14 @@ describe('NotificationItem', () => {
 
       render(<NotificationItem notification={notification} />);
 
-      // Unread indicator is a small dot with aria-hidden
-      // In vitest-browser-react, use document.querySelector
-      const unreadDot = document.querySelector('[aria-hidden="true"].size-2');
+      // Wait for the unread indicator to render
+      const unreadDot = await vi.waitFor(() => {
+        const element = page.getByTestId('unread-indicator').query();
+        if (!element) {
+          throw new Error('Unread indicator not found');
+        }
+        return element;
+      }, { timeout: 3000 });
 
       expect(unreadDot).toBeTruthy();
     });
@@ -289,11 +294,17 @@ describe('NotificationItem', () => {
 
       render(<NotificationItem notification={notification} />);
 
-      // Use document.querySelector in vitest-browser-react
-      const timeElement = document.querySelector('time');
+      // Wait for the time element to render
+      const timeElement = await vi.waitFor(() => {
+        const element = document.querySelector('time');
+        if (!element) {
+          throw new Error('Time element not found');
+        }
+        return element;
+      }, { timeout: 3000 });
 
       expect(timeElement).toBeTruthy();
-      expect(timeElement?.getAttribute('dateTime')).toBe(testDate.toISOString());
+      expect(timeElement.getAttribute('dateTime')).toBe(testDate.toISOString());
     });
 
     it('should show "Just now" for very recent notifications', async () => {

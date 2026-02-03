@@ -1,4 +1,4 @@
-import { boolean, index, integer, jsonb, pgEnum, pgTable, primaryKey, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { boolean, index, integer, jsonb, pgEnum, pgTable, primaryKey, serial, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 // This file defines the structure of your database tables using the Drizzle ORM.
 
@@ -116,7 +116,7 @@ export const userSchema = pgTable('user', {
 export const babiesSchema = pgTable('babies', {
   id: serial('id').primaryKey(),
   // @ts-expect-error - Circular reference is intentional in Drizzle
-  ownerUserId: integer('owner_user_id').references(() => userSchema.id),
+  ownerUserId: integer('owner_user_id').references(() => userSchema.id).notNull(),
   name: text('name').notNull(),
   birthDate: timestamp('birth_date', { mode: 'date' }),
   gender: genderEnum('gender'),
@@ -153,7 +153,7 @@ export const babyMeasurementsSchema = pgTable('baby_measurements', {
 ]);
 
 export const feedLogSchema = pgTable('feed_log', {
-  id: text('id').primaryKey(), // Client-generated UUID
+  id: uuid('id').primaryKey(), // Client-generated UUID
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
   loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
   method: text('method').notNull(), // e.g. breast, bottle
@@ -170,7 +170,7 @@ export const feedLogSchema = pgTable('feed_log', {
 ]);
 
 export const sleepLogSchema = pgTable('sleep_log', {
-  id: text('id').primaryKey(), // Client-generated UUID
+  id: uuid('id').primaryKey(), // Client-generated UUID
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
   loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
   startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
@@ -183,7 +183,7 @@ export const sleepLogSchema = pgTable('sleep_log', {
 ]);
 
 export const nappyLogSchema = pgTable('nappy_log', {
-  id: text('id').primaryKey(), // Client-generated UUID
+  id: uuid('id').primaryKey(), // Client-generated UUID
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
   loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
   type: nappyTypeEnum('type'), // wee, poo, mixed, dry, clean - nullable
@@ -196,11 +196,21 @@ export const nappyLogSchema = pgTable('nappy_log', {
   index('nappy_log_baby_started_at_idx').on(t.babyId, t.startedAt),
 ]);
 
+export const foodTypesSchema = pgTable('food_types', {
+  id: uuid('id').primaryKey(), // Client-generated UUID
+  userId: integer('user_id').references(() => userSchema.id, { onDelete: 'cascade' }).notNull(),
+  name: text('name').notNull(),
+  ...timestamps,
+}, t => [
+  index('food_types_user_id_idx').on(t.userId),
+]);
+
 export const solidsLogSchema = pgTable('solids_log', {
-  id: text('id').primaryKey(), // Client-generated UUID
+  id: uuid('id').primaryKey(), // Client-generated UUID
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
   loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
-  food: text('food').notNull(), // Plain text food name
+  food: text('food').notNull(), // Plain text food name (display: "Apple, Pear, Carrot")
+  foodTypeIds: text('food_type_ids').array().default([]), // Array of food type UUIDs
   reaction: solidsReactionEnum('reaction').notNull(), // allergic, hate, liked, loved
   startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
   notes: text('notes'),

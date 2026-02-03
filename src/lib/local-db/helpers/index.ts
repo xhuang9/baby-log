@@ -8,6 +8,7 @@ export * from './access-revoked';
 export * from './auth-session';
 export * from './baby';
 export * from './feed-logs';
+export * from './food-types';
 export * from './nappy-logs';
 export * from './notifications';
 export * from './outbox';

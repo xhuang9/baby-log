@@ -17,6 +17,7 @@
 
 import type { EntityTable } from 'dexie';
 import type { LocalBaby, LocalBabyAccess, LocalBabyInvite, LocalUIConfig, LocalUser } from './types/entities';
+import type { LocalFoodType } from './types/food-types';
 import type { LocalFeedLog, LocalNappyLog, LocalSleepLog, LocalSolidsLog } from './types/logs';
 import type { LocalNotification } from './types/notifications';
 import type { OutboxEntry } from './types/outbox';
@@ -40,6 +41,7 @@ class BabyLogDatabase extends Dexie {
   babyInvites!: EntityTable<LocalBabyInvite, 'id'>;
   users!: EntityTable<LocalUser, 'id'>;
   uiConfig!: EntityTable<LocalUIConfig, 'userId'>;
+  foodTypes!: EntityTable<LocalFoodType, 'id'>;
 
   // Sync management tables
   syncMeta!: EntityTable<SyncMeta, 'babyId'>;
@@ -113,6 +115,11 @@ class BabyLogDatabase extends Dexie {
     // Version 3: Add solids logs table
     this.version(3).stores({
       solidsLogs: 'id, babyId, startedAt, [babyId+startedAt]',
+    });
+
+    // Version 4: Add food types table
+    this.version(4).stores({
+      foodTypes: 'id, userId',
     });
   }
 }

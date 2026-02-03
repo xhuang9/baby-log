@@ -19,7 +19,7 @@ const NAPPY_TYPES: { value: NappyType; label: string }[] = [
 export function NappyTypeButtons({ value, onChange, handMode }: NappyTypeButtonsProps) {
   return (
     <FieldSection label="Type" handMode={handMode}>
-      <div className="flex flex-wrap justify-end gap-3">
+      <div className="grid w-fit grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:justify-end">
         {NAPPY_TYPES.map((type) => {
           const isSelected = value === type.value;
           return (

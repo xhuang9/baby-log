@@ -21,7 +21,11 @@ export function NotificationsContent() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        <div
+          role="status"
+          data-testid="loader"
+          className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent"
+        />
       </div>
     );
   }

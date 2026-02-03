@@ -10,7 +10,7 @@
  */
 
 import type { OperationResult } from './types';
-import type { HandMode, ThemeMode } from '@/lib/local-db';
+import type { HandMode } from '@/lib/local-db';
 import { updateUIConfig, updateUIConfigKey } from '@/lib/local-db';
 
 import { useUserStore } from '@/stores/useUserStore';
@@ -25,10 +25,6 @@ import {
 // Input Types
 // ============================================================================
 
-export type UpdateThemeInput = {
-  theme: ThemeMode;
-};
-
 export type UpdateHandModeInput = {
   handMode: HandMode;
 };
@@ -41,34 +37,6 @@ export type UpdateWidgetSettingsInput = {
 // ============================================================================
 // UI Config Operations
 // ============================================================================
-
-/**
- * Update theme setting
- */
-export async function updateTheme(
-  input: UpdateThemeInput,
-): Promise<OperationResult<void>> {
-  if (!isClientSide()) {
-    return failure('Client-only operation');
-  }
-
-  try {
-    // Get user context
-    const user = useUserStore.getState().user;
-    if (!user?.localId) {
-      return failure('Not authenticated');
-    }
-
-    // Update IndexedDB
-    await updateUIConfig(user.localId, { theme: input.theme });
-
-    return success(undefined);
-  } catch (error) {
-    return failure(
-      error instanceof Error ? error.message : 'Failed to update theme',
-    );
-  }
-}
 
 /**
  * Update hand mode setting

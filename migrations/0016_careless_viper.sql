@@ -1,0 +1,1 @@
+ALTER TABLE "babies" ALTER COLUMN "owner_user_id" SET NOT NULL;

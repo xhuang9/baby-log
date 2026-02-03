@@ -35,6 +35,7 @@ export async function processSolidsLogMutation(
         babyId,
         loggedByUserId: userId,
         food: payload.food as string,
+        foodTypeIds: (payload.foodTypeIds as string[]) ?? [],
         reaction: payload.reaction as SolidsReaction,
         startedAt: new Date(payload.startedAt as string),
         notes: payload.notes as string | null,
@@ -78,6 +79,7 @@ export async function processSolidsLogMutation(
       .update(solidsLogSchema)
       .set({
         food: payload.food as string,
+        foodTypeIds: (payload.foodTypeIds as string[]) ?? [],
         reaction: payload.reaction as SolidsReaction,
         startedAt: new Date(payload.startedAt as string),
         notes: payload.notes as string | null,

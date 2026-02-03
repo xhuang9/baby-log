@@ -124,6 +124,7 @@ export function EditableTimeDisplay({
       <div className={cn('relative', className)}>
         <input
           ref={inputRef}
+          data-testid="time-input"
           type="text"
           inputMode="text"
           value={inputValue}
@@ -144,10 +145,11 @@ export function EditableTimeDisplay({
   return (
     <button
       type="button"
+      data-testid="time-display"
       onClick={handleClick}
       className={cn(
         'relative cursor-text text-3xl font-semibold tracking-tight transition-colors',
-        dimmed ? 'text-primary hover:text-primary/80' : 'hover:opacity-85',
+        dimmed ? 'text-primary opacity-50' : 'hover:opacity-85',
         className,
       )}
     >
