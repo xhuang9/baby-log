@@ -21,15 +21,6 @@ export function DualTimeSwiper({
   const durationMinutes = Math.round(durationMs / (1000 * 60));
   const isInvalidDuration = durationMinutes < 0;
 
-  // Handle time change based on active tab
-  const handleTimeChange = useCallback((date: Date) => {
-    if (activeTab === 'start') {
-      onStartTimeChange(date);
-    } else {
-      onEndTimeChange(date);
-    }
-  }, [activeTab, onStartTimeChange, onEndTimeChange]);
-
   // Handle duration change - adjust START time, keep END fixed
   const handleDurationChange = useCallback((newMinutes: number) => {
     const newStartTime = new Date(endTime.getTime() - newMinutes * 60 * 1000);
@@ -43,8 +34,6 @@ export function DualTimeSwiper({
     onEndTimeChange(tempStart);
   }, [startTime, endTime, onStartTimeChange, onEndTimeChange]);
 
-  const currentValue = activeTab === 'start' ? startTime : endTime;
-
   return (
     <div className={cn('space-y-3', className)}>
       <TimeTabSelector
@@ -53,11 +42,20 @@ export function DualTimeSwiper({
         handMode={handMode}
       />
 
-      <TimeSwiper
-        value={currentValue}
-        onChange={handleTimeChange}
-        handMode={handMode}
-      />
+      <div style={{ display: activeTab === 'start' ? undefined : 'none' }}>
+        <TimeSwiper
+          value={startTime}
+          onChange={onStartTimeChange}
+          handMode={handMode}
+        />
+      </div>
+      <div style={{ display: activeTab === 'end' ? undefined : 'none' }}>
+        <TimeSwiper
+          value={endTime}
+          onChange={onEndTimeChange}
+          handMode={handMode}
+        />
+      </div>
 
       {/* Duration section - fixed height container to prevent layout shifts */}
       <div className="min-h-[100px]">

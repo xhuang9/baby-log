@@ -8,15 +8,11 @@ type UseTimeSwiperStateProps = {
   onChange: (date: Date) => void;
   dayOffset: number;
   setDayOffset: (offset: number) => void;
+  fixedBaseDate: Date;
 };
 
-export function useTimeSwiperState({ value, onChange, dayOffset, setDayOffset }: UseTimeSwiperStateProps) {
+export function useTimeSwiperState({ value, onChange, dayOffset, setDayOffset, fixedBaseDate }: UseTimeSwiperStateProps) {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [baseDate, setBaseDate] = useState(() => {
-    const d = new Date(value);
-    d.setHours(0, 0, 0, 0);
-    return d;
-  });
 
   // Update current time every 2 minutes
   useEffect(() => {
@@ -24,22 +20,15 @@ export function useTimeSwiperState({ value, onChange, dayOffset, setDayOffset }:
     return () => clearInterval(interval);
   }, []);
 
-  // Calculate if base date is today
-  const isToday = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const base = new Date(baseDate);
-    base.setHours(0, 0, 0, 0);
-    return today.getTime() === base.getTime();
-  }, [baseDate]);
+  const isToday = dayOffset === 0;
 
-  // Calculate display date: baseDate + dayOffset
+  // Calculate display date: fixedBaseDate + dayOffset + time
   const displayDate = useMemo(() => {
-    const result = new Date(baseDate);
+    const result = new Date(fixedBaseDate);
     result.setDate(result.getDate() + dayOffset);
     result.setHours(value.getHours(), value.getMinutes(), 0, 0);
     return result;
-  }, [baseDate, dayOffset, value]);
+  }, [fixedBaseDate, dayOffset, value]);
 
   // Date picker range (1 year back to tomorrow)
   const minSelectableDate = useMemo(() => {
@@ -61,40 +50,21 @@ export function useTimeSwiperState({ value, onChange, dayOffset, setDayOffset }:
 
   // Date picker handlers
   const handleDateSelect = useCallback((selectedDate: Date) => {
-    const newBaseDate = new Date(selectedDate);
-    newBaseDate.setHours(0, 0, 0, 0);
-    setBaseDate(newBaseDate);
-
-    const newValue = new Date(selectedDate);
-    newValue.setHours(value.getHours(), value.getMinutes(), 0, 0);
-    setDayOffset(0);
-    onChange(newValue);
-  }, [value, onChange, setDayOffset]);
+    const m = new Date(selectedDate);
+    m.setHours(0, 0, 0, 0);
+    const d = Math.round((m.getTime() - fixedBaseDate.getTime()) / 86_400_000);
+    setDayOffset(d);
+    const v = new Date(selectedDate);
+    v.setHours(value.getHours(), value.getMinutes(), 0, 0);
+    onChange(v);
+  }, [value, onChange, setDayOffset, fixedBaseDate]);
 
   const handleResetToNow = useCallback(() => {
     const now = new Date();
-    const todayBase = new Date(now);
-    todayBase.setHours(0, 0, 0, 0);
-
-    setCurrentTime(now); // Update current time to ensure "In future" check is accurate
-    setBaseDate(todayBase);
+    setCurrentTime(now);
     setDayOffset(0);
     onChange(now);
   }, [onChange, setDayOffset]);
-
-  // Back to today - only changes date, keeps current time
-  const handleBackToToday = useCallback(() => {
-    const todayBase = new Date();
-    todayBase.setHours(0, 0, 0, 0);
-
-    setBaseDate(todayBase);
-    setDayOffset(0);
-
-    // Keep current selected time, just change the date to today
-    const newValue = new Date(todayBase);
-    newValue.setHours(value.getHours(), value.getMinutes(), 0, 0);
-    onChange(newValue);
-  }, [value, onChange, setDayOffset]);
 
   return {
     currentTime,
@@ -105,6 +75,5 @@ export function useTimeSwiperState({ value, onChange, dayOffset, setDayOffset }:
     showDateRow,
     handleDateSelect,
     handleResetToNow,
-    handleBackToToday,
   };
 }
