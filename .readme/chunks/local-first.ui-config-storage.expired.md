@@ -17,9 +17,12 @@ source_paths:
   - src/app/[locale]/(auth)/(app)/settings/_components/HandPreferenceSetting.tsx
   - src/services/operations/ui-config.ts
 conversation_context: "Updated UI config storage docs after settings component refactor and operations-layer adoption for theme/hand."
+expired_reason: "entities.ts and operations/ui-config.ts modified"
 ---
 
 # UI Config Storage & Sync
+
+**⚠️ EXPIRED**: Awaiting refresh.
 
 ## Purpose
 Persistent storage system for user UI preferences (theme, hand mode, default views) with local-first architecture and per-key timestamp tracking for Last-Write-Wins (LWW) merge during sync.

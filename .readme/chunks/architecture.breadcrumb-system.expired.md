@@ -1,11 +1,14 @@
 ---
 last_verified_at: 2026-01-25T14:30:00Z
+expired_reason: "AppHeader.tsx modified"
 source_paths:
   - src/stores/useBreadcrumbStore.ts
   - src/components/navigation/AppHeader.tsx
 ---
 
 # Breadcrumb and Page Title System
+
+**⚠️ EXPIRED**: Awaiting refresh.
 
 ## Purpose
 Provides a Zustand-based global state system for displaying navigation breadcrumbs or page titles in the AppHeader, with intelligent mobile back button navigation.

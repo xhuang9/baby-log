@@ -55,14 +55,20 @@ The architecture emphasizes separation of concerns, performance-first patterns, 
   - Content: Strict TypeScript configuration with advanced safety checks
   - Read when: Understanding type errors, configuring strictness, or adding new compiler options
 
-- `.readme/chunks/architecture.breadcrumb-system.md`
+- `.readme/chunks/architecture.breadcrumb-system.expired.md` **[EXPIRED]**
   - Content: Zustand-based breadcrumb and page title system with hook-based state management, mobile back button integration, and intelligent navigation
   - Read when: Adding breadcrumbs or page titles to pages, understanding the useSetBreadcrumb/useSetPageTitle hooks, or working with AppHeader integration
+  - Status: Awaiting refresh (AppHeader.tsx modified)
 
-- `.readme/chunks/architecture.mobile-back-button.md`
+- `.readme/chunks/architecture.mobile-back-button.expired.md` **[EXPIRED]**
   - Content: Intelligent mobile back button navigation using breadcrumb hierarchy
   - Read when: Working with mobile navigation, understanding the back button logic, or debugging mobile header behavior
+  - Status: Awaiting refresh (AppHeader.tsx modified)
 
 - `.readme/chunks/ui-patterns.hold-action-hook.md`
   - Content: Reusable press-and-hold interaction hook with automatic repeat, cross-platform support (mouse/touch), and configurable delay/interval
   - Read when: Implementing hold-to-adjust interactions, numeric steppers, scroll buttons, or any UI requiring press-and-hold behavior
+
+- `.readme/chunks/components.modal-button-sizing.md`
+  - Content: Standardized modal button sizing (44px height, pill-shaped) for consistency across all activity modals
+  - Read when: Adding buttons to modals, ensuring button size consistency, or implementing modal action buttons

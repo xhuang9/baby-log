@@ -1,11 +1,14 @@
 ---
 last_verified_at: 2026-01-17T09:12:39Z
+expired_reason: "AppHeader.tsx modified"
 source_paths:
   - src/components/navigation/AppHeader.tsx
   - src/stores/useBreadcrumbStore.ts
 ---
 
 # Mobile Back Button Navigation
+
+**⚠️ EXPIRED**: Awaiting refresh.
 
 > Status: active
 > Last updated: 2026-01-17

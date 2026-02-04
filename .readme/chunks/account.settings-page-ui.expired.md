@@ -1,5 +1,6 @@
 ---
 last_verified_at: 2026-01-18T12:33:25Z
+expired_reason: "ThemeSetting.tsx modified"
 source_paths:
   - src/app/[locale]/(auth)/(app)/settings/page.tsx
   - src/app/[locale]/(auth)/(app)/settings/_components/SettingsContent.tsx
@@ -12,6 +13,8 @@ conversation_context: "Updated settings page UI documentation after moving setti
 ---
 
 # Settings Page UI
+
+**⚠️ EXPIRED**: Awaiting refresh.
 
 > Status: active
 > Last updated: 2026-01-18

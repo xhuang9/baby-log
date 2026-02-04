@@ -45,9 +45,10 @@ This is NOT standard Clerk behavior - it's a custom implementation designed for 
 
 ### Settings UI
 
-- `.readme/chunks/account.settings-page-ui.md`
+- `.readme/chunks/account.settings-page-ui.expired.md` **[EXPIRED]**
   - Content: Client-first settings page layout, accordion pattern, and local-first preferences UI
   - Read when: Updating settings layout, adding preference sections, or troubleshooting IndexedDB-backed settings
+  - Status: Awaiting refresh (ThemeSetting.tsx modified)
 
 - `.readme/chunks/account.widget-settings-architecture.md`
   - Content: Reusable hook pattern for widget-specific settings (TimeSwiper, AmountSlider), debounced vs immediate saves

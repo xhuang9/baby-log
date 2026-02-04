@@ -124,9 +124,10 @@ This project explicitly does NOT use `@tanstack/react-query-persist-client` beca
   - Content: Detailed operations layer pattern with standard 6-step flow, using nappy-log as reference implementation (validation, access control, IndexedDB write, outbox enqueue, background sync)
   - Read when: Creating new operations for activity types, understanding the full operations pattern, or refactoring UI mutations into operations layer
 
-- `.readme/chunks/local-first.ui-config-storage.md`
+- `.readme/chunks/local-first.ui-config-storage.expired.md` **[EXPIRED]**
   - Content: Persistent storage system for user UI preferences (theme, hand mode, TimeSwiper settings) with per-key timestamp tracking for LWW merge
   - Read when: Implementing settings UI, working with user preferences, understanding TimeSwiper persistence, or debugging "settings not loading" bug
+  - Status: Awaiting refresh (entities.ts and operations/ui-config.ts modified)
 
 - `.readme/chunks/local-first.store-hydration-pattern.md`
   - Content: Local-first store hydration flow with SyncProvider, dual persistence (sessionStorage + IndexedDB), and wait-for-hydration pattern

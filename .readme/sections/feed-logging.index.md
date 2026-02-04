@@ -146,6 +146,11 @@ This section documents the feed logging implementation including:
 - **Content**: User-created food type library for solids logging with offline-first create/delete operations, real-time React hook, and server sync
 - **Read when**: Building food type features, implementing solids logging, understanding the operations pattern, or working with useFoodTypes hook
 
+#### `chunks/solids.reaction-buttons.md`
+
+- **Content**: Visual feedback component for baby's reaction to solids (Liked/Loved) with semantic color coding
+- **Read when**: Working on solids logging modal, implementing reaction buttons, or changing reaction colors
+
 ### UI Patterns
 
 #### `chunks/ui-patterns.activity-modals.md`

@@ -117,6 +117,18 @@ Custom styles should be added to `components` layer to maintain proper cascade.
 2. Add to `@theme inline` block to expose to Tailwind
 3. Use semantic naming: `--color-{purpose}` not `--color-blue-500`
 
+## Chunks
+
+This section's detailed chunks are organized by topic. Use the "Read when" column to find relevant documentation quickly.
+
+| Chunk | Topic | Read when |
+|-------|-------|-----------|
+| `chunks/styling.dev-palette-page.md` | Dev page for previewing activity color palette | Testing colors, validating brand palette, checking contrast |
+| `chunks/styling.activity-tile-card.md` | Shared card styling pattern (shadow + border-radius) | Styling activity tiles, creating new card components, ensuring consistency |
+| `chunks/solids.reaction-buttons.md` | Reaction button colors (Liked/Loved) | Working on solids logging, changing reaction colors |
+| `chunks/components.modal-button-sizing.md` | Standard modal button sizing (44px height) | Adding buttons to modals, ensuring button consistency |
+| `chunks/log.swipe-delete-background.md` | Delete background containment fix (right-1 inset) | Building swipe-to-delete, fixing corner clipping issues |
+
 ## Reference Document
 
 Full brand research and rationale: `.readme/planning/brand-guideline.md`
