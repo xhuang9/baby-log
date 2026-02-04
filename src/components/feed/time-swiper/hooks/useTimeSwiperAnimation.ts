@@ -2,7 +2,7 @@
 
 import type { SwipeResistance } from '@/components/settings';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FUTURE_DAYS_LIMIT_PAST, FUTURE_DAYS_LIMIT_TODAY, HOUR_WIDTH, MAX_ANIMATION_DURATION, PAST_DAYS_LIMIT, TOTAL_WIDTH } from '../constants';
+import { FUTURE_DAYS_LIMIT_TODAY, HOUR_WIDTH, MAX_ANIMATION_DURATION, PAST_DAYS_LIMIT, TOTAL_WIDTH } from '../constants';
 
 /**
  * Resistance configuration for each level
@@ -19,7 +19,6 @@ const RESISTANCE_CONFIG: Record<SwipeResistance, { durationMult: number; duratio
 type UseTimeSwiperAnimationProps = {
   value: Date;
   onChange: (date: Date) => void;
-  isToday: boolean;
   swipeResistance: SwipeResistance;
   swipeSpeed: number;
 };
@@ -27,7 +26,6 @@ type UseTimeSwiperAnimationProps = {
 export function useTimeSwiperAnimation({
   value,
   onChange,
-  isToday,
   swipeResistance,
   swipeSpeed,
 }: UseTimeSwiperAnimationProps) {
@@ -42,8 +40,6 @@ export function useTimeSwiperAnimation({
   const dayOffsetRef = useRef(0);
 
   const [offset, setOffset] = useState(0);
-  const [dayOffset, setDayOffset] = useState(0);
-  const [atBoundary, setAtBoundary] = useState<'past' | 'future' | null>(null);
 
   // Fixed base date for stable calculations (computed once on mount)
   const [fixedBaseDate] = useState(() => {
@@ -52,16 +48,23 @@ export function useTimeSwiperAnimation({
     return base;
   });
 
+  const [dayOffset, setDayOffset] = useState(() => {
+    const m = new Date(value);
+    m.setHours(0, 0, 0, 0);
+    const computed = Math.round((m.getTime() - fixedBaseDate.getTime()) / 86_400_000);
+    dayOffsetRef.current = computed;
+    return computed;
+  });
+  const [atBoundary, setAtBoundary] = useState<'past' | 'future' | null>(null);
+
   // Refs for latest values in animation loop
   const onChangeRef = useRef(onChange);
   const swipeResistanceRef = useRef(swipeResistance);
-  const isTodayRef = useRef(isToday);
 
   useEffect(() => {
     onChangeRef.current = onChange;
     swipeResistanceRef.current = swipeResistance;
-    isTodayRef.current = isToday;
-  }, [onChange, swipeResistance, isToday]);
+  }, [onChange, swipeResistance]);
 
   // Date/offset conversions
   const dateToOffset = useCallback((date: Date): number => {
@@ -95,6 +98,21 @@ export function useTimeSwiperAnimation({
     }
   }, [value, dateToOffset]);
 
+  // Sync dayOffset when value changes externally (e.g. swap, duration edit)
+  useEffect(() => {
+    if (isDraggingRef.current || animationRef.current) return;
+    const m = new Date(value);
+    m.setHours(0, 0, 0, 0);
+    const expected = new Date(fixedBaseDate);
+    expected.setDate(expected.getDate() + dayOffsetRef.current);
+    if (m.getTime() !== expected.getTime()) {
+      const d = Math.round((m.getTime() - fixedBaseDate.getTime()) / 86_400_000);
+      dayOffsetRef.current = d;
+      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect, react-hooks/set-state-in-effect
+      setDayOffset(d);
+    }
+  }, [value, fixedBaseDate]);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -117,7 +135,7 @@ export function useTimeSwiperAnimation({
   const easeOutCubic = (t: number): number => 1 - (1 - t) ** 3;
 
   const checkDayCrossing = useCallback((_prevOffset: number, newOffset: number) => {
-    const futureLimit = isTodayRef.current ? FUTURE_DAYS_LIMIT_TODAY : FUTURE_DAYS_LIMIT_PAST;
+    const futureLimit = FUTURE_DAYS_LIMIT_TODAY;
 
     // Calculate how many days we've crossed based on raw offset
     let daysCrossed = 0;
@@ -286,6 +304,7 @@ export function useTimeSwiperAnimation({
     offset,
     dayOffset,
     atBoundary,
+    fixedBaseDate,
     dateToOffset,
     handlePointerDown,
     handlePointerMove,

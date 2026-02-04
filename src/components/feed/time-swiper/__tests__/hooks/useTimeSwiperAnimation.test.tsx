@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 import { useTimeSwiperAnimation } from '../../hooks/useTimeSwiperAnimation';
@@ -22,14 +22,10 @@ function TestWrapper({
   initialValue,
   swipeSpeed = 1.0,
   swipeResistance = 'default' as const,
-  initialDayOffset = 0,
-  isToday = true,
 }: {
   initialValue: Date;
   swipeSpeed?: number;
   swipeResistance?: 'smooth' | 'default' | 'sticky';
-  initialDayOffset?: number;
-  isToday?: boolean;
 }) {
   const [value, setValue] = useState(initialValue);
 
@@ -41,18 +37,12 @@ function TestWrapper({
     handlePointerMove,
     handlePointerUp,
     adjustTimeByMinutes,
-    setDayOffset,
   } = useTimeSwiperAnimation({
     value,
     onChange: setValue,
     swipeSpeed,
     swipeResistance,
-    isToday,
   });
-
-  useEffect(() => {
-    setDayOffset(initialDayOffset);
-  }, [initialDayOffset, setDayOffset]);
 
   return (
     <div>
@@ -315,7 +305,7 @@ describe('useTimeSwiperAnimation', () => {
       // Start tomorrow at 11:58 PM (already at max future for today)
       const tomorrow = new Date(2024, 5, 16, 23, 58, 0, 0); // Local time
 
-      render(<TestWrapper initialValue={tomorrow} initialDayOffset={1} isToday={true} />);
+      render(<TestWrapper initialValue={tomorrow} />);
 
       const adjustPlus = await waitForElement('adjust-plus');
 
@@ -340,7 +330,6 @@ describe('useTimeSwiperAnimation', () => {
       render(
         <TestWrapper
           initialValue={new Date(2024, 5, 8, 0, 2, 0, 0)}
-          initialDayOffset={-7}
         />,
       );
 

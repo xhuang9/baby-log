@@ -31,6 +31,7 @@ export function TimeSwiper({ value, onChange, handMode = 'right', className }: T
     offset,
     dayOffset,
     atBoundary,
+    fixedBaseDate,
     dateToOffset,
     handlePointerDown,
     handlePointerMove,
@@ -41,7 +42,6 @@ export function TimeSwiper({ value, onChange, handMode = 'right', className }: T
   } = useTimeSwiperAnimation({
     value,
     onChange,
-    isToday: true, // Will be updated by state hook
     swipeResistance: settings.swipeResistance,
     swipeSpeed: settings.swipeSpeed,
   });
@@ -63,6 +63,7 @@ export function TimeSwiper({ value, onChange, handMode = 'right', className }: T
       dayOffsetRef.current = offset;
       setDayOffset(offset);
     },
+    fixedBaseDate,
   });
 
   // Press-and-hold for +/- buttons
@@ -88,7 +89,7 @@ export function TimeSwiper({ value, onChange, handMode = 'right', className }: T
 
     const updateWidth = () => {
       // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
-      setContainerWidth(container.clientWidth);
+      if (container.clientWidth > 0) setContainerWidth(container.clientWidth);
     };
     updateWidth();
 
