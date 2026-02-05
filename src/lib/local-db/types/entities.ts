@@ -113,6 +113,14 @@ export type UIConfigData = {
     dragStep?: number;
     startOnLeft?: boolean;
   };
+  pumpingAmount?: {
+    defaultAmountMl?: number;
+    maxAmountMl?: number;
+    maxTotalMl?: number;
+    increment?: number;
+    dragStep?: number;
+    startOnLeft?: boolean;
+  };
   timers?: Record<string, TimerState>; // Persistent timer state per activity
   // Allow additional keys for future extensibility
   [key: string]: unknown;

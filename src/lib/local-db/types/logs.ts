@@ -85,3 +85,38 @@ export type LocalSolidsLog = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+// ============================================================================
+// Pumping Log Types
+// ============================================================================
+
+export type LocalPumpingLog = {
+  id: string; // UUID - client-generated for idempotent creates
+  babyId: number;
+  loggedByUserId: number;
+  startedAt: Date;
+  endedAt: Date | null;
+  leftMl: number | null; // null when Total mode was used
+  rightMl: number | null; // null when Total mode was used
+  totalMl: number; // always set (L+R sum or user-entered total)
+  notes: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+// ============================================================================
+// Growth Log Types
+// ============================================================================
+
+export type LocalGrowthLog = {
+  id: string; // UUID - client-generated for idempotent creates
+  babyId: number;
+  loggedByUserId: number;
+  startedAt: Date; // measurement date/time
+  weightG: number | null; // weight in grams - nullable
+  heightMm: number | null; // height in millimeters - nullable
+  headCircumferenceMm: number | null; // head circumference in millimeters - nullable
+  notes: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};

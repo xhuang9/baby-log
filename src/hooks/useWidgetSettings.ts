@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { getUIConfig, updateUIConfig } from '@/lib/local-db/helpers/ui-config';
 import { useUserStore } from '@/stores/useUserStore';
 
-type SettingsKey = 'timeSwiper' | 'amountSlider';
+type SettingsKey = 'timeSwiper' | 'amountSlider' | 'pumpingAmount';
 
 type SettingsResult<T> = {
   settings: T;

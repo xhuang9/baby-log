@@ -127,6 +127,20 @@
       "when": 1769954905830,
       "tag": "0017_parched_eternity",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1770176426168,
+      "tag": "0018_tough_mercury",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1770195329459,
+      "tag": "0019_sloppy_thundra",
+      "breakpoints": true
     }
   ]
 }

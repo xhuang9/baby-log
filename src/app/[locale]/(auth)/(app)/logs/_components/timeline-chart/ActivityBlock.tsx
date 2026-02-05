@@ -1,7 +1,7 @@
 'use client';
 
 import type { UnifiedLog } from '@/lib/format-log';
-import type { LocalFeedLog, LocalNappyLog, LocalSleepLog } from '@/lib/local-db';
+import type { LocalFeedLog, LocalGrowthLog, LocalNappyLog, LocalSleepLog } from '@/lib/local-db';
 import { formatDuration } from '@/lib/format-log';
 import { cn } from '@/lib/utils';
 
@@ -27,6 +27,15 @@ function getActivityClass(log: UnifiedLog): string {
   }
   if (log.type === 'nappy') {
     return 'activity-block--nappy';
+  }
+  if (log.type === 'solids') {
+    return 'activity-block--solids';
+  }
+  if (log.type === 'pumping') {
+    return 'activity-block--pumping';
+  }
+  if (log.type === 'growth') {
+    return 'activity-block--growth';
   }
   return '';
 }
@@ -64,6 +73,31 @@ function getActivityLabel(log: UnifiedLog): { primary: string; secondary?: strin
       : 'Nappy';
     return {
       primary: typeLabel,
+    };
+  }
+
+  if (log.type === 'solids') {
+    return { primary: 'Solids' };
+  }
+
+  if (log.type === 'pumping') {
+    return { primary: 'Pumping' };
+  }
+
+  if (log.type === 'growth') {
+    const growth = log.data as LocalGrowthLog;
+    const parts: string[] = [];
+    if (growth.weightG != null) {
+      const weightKg = (growth.weightG / 1000).toFixed(2).replace(/\.?0+$/, '');
+      parts.push(`${weightKg}kg`);
+    }
+    if (growth.heightMm != null) {
+      const heightCm = (growth.heightMm / 10).toFixed(1).replace(/\.0$/, '');
+      parts.push(`${heightCm}cm`);
+    }
+    return {
+      primary: 'Growth',
+      secondary: parts.length > 0 ? parts.join(', ') : undefined,
     };
   }
 

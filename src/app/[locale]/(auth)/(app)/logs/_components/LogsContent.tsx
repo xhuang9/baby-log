@@ -9,7 +9,9 @@ import { ACTIVITY_TYPES, useLogsFilters } from '@/hooks/useLogsFilters';
 import { localDb } from '@/lib/local-db';
 import { ActivityTypePills } from './ActivityTypePills';
 import { EditFeedModal } from './edit-modals/EditFeedModal';
+import { EditGrowthModal } from './edit-modals/EditGrowthModal';
 import { EditNappyModal } from './edit-modals/EditNappyModal';
+import { EditPumpingModal } from './edit-modals/EditPumpingModal';
 import { EditSleepModal } from './edit-modals/EditSleepModal';
 import { EditSolidsModal } from './edit-modals/EditSolidsModal';
 import { LogsFilters } from './LogsFilters';
@@ -223,6 +225,30 @@ export function LogsContent() {
           }}
           onSuccess={() => {
             // UI will update automatically via useLiveQuery
+          }}
+        />
+      )}
+
+      {editingLog?.type === 'pumping' && (
+        <EditPumpingModal
+          pumping={editingLog.data as import('@/lib/local-db').LocalPumpingLog}
+          open={Boolean(editingLog)}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleCloseEditModal();
+            }
+          }}
+        />
+      )}
+
+      {editingLog?.type === 'growth' && (
+        <EditGrowthModal
+          growth={editingLog.data as import('@/lib/local-db').LocalGrowthLog}
+          open={Boolean(editingLog)}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleCloseEditModal();
+            }
           }}
         />
       )}

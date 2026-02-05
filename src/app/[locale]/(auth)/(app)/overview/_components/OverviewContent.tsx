@@ -7,7 +7,9 @@ import { useEffect } from 'react';
 import { localDb } from '@/lib/local-db/database';
 import { ActivityTile } from './ActivityTile';
 import { FeedTile } from './FeedTile';
+import { GrowthTile } from './GrowthTile';
 import { NappyTile } from './NappyTile';
+import { PumpingTile } from './PumpingTile';
 import { SleepTile } from './SleepTile';
 import { SolidsTile } from './SolidsTile';
 
@@ -198,8 +200,80 @@ export function OverviewContent({ locale }: OverviewContentProps) {
     };
   }, [babyId]);
 
+  // Read latest pumping from IndexedDB with caregiver info
+  // Only consider past logs (startedAt <= now) for "latest" display
+  const latestPumpingData = useLiveQuery(async () => {
+    if (!babyId) {
+      return null;
+    }
+    const now = new Date();
+    const pumps = await localDb.pumpingLogs
+      .where('babyId')
+      .equals(babyId)
+      .and(log => log.startedAt <= now) // Filter out future logs
+      .toArray();
+
+    if (pumps.length === 0) {
+      return null;
+    }
+
+    // Sort descending by startedAt (newest first)
+    pumps.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
+    const latestPump = pumps[0];
+    if (!latestPump) {
+      return null;
+    }
+
+    // Get caregiver label from babyAccess
+    const access = await localDb.babyAccess
+      .where('[userId+babyId]')
+      .equals([latestPump.loggedByUserId, babyId])
+      .first();
+
+    return {
+      ...latestPump,
+      caregiverLabel: access?.caregiverLabel ?? null,
+    };
+  }, [babyId]);
+
+  // Read latest growth from IndexedDB with caregiver info
+  // Only consider past logs (startedAt <= now) for "latest" display
+  const latestGrowthData = useLiveQuery(async () => {
+    if (!babyId) {
+      return null;
+    }
+    const now = new Date();
+    const growths = await localDb.growthLogs
+      .where('babyId')
+      .equals(babyId)
+      .and(log => log.startedAt <= now) // Filter out future logs
+      .toArray();
+
+    if (growths.length === 0) {
+      return null;
+    }
+
+    // Sort descending by startedAt (newest first)
+    growths.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
+    const latestGrowth = growths[0];
+    if (!latestGrowth) {
+      return null;
+    }
+
+    // Get caregiver label from babyAccess
+    const access = await localDb.babyAccess
+      .where('[userId+babyId]')
+      .equals([latestGrowth.loggedByUserId, babyId])
+      .first();
+
+    return {
+      ...latestGrowth,
+      caregiverLabel: access?.caregiverLabel ?? null,
+    };
+  }, [babyId]);
+
   // Loading state while Dexie initializes
-  if (userData === undefined || latestFeedData === undefined || latestSleepData === undefined || latestNappyData === undefined || latestSolidsData === undefined) {
+  if (userData === undefined || latestFeedData === undefined || latestSleepData === undefined || latestNappyData === undefined || latestSolidsData === undefined || latestPumpingData === undefined || latestGrowthData === undefined) {
     return <OverviewSkeleton />;
   }
 
@@ -234,6 +308,8 @@ export function OverviewContent({ locale }: OverviewContentProps) {
       <SleepTile babyId={babyId} latestSleep={latestSleepData} />
       <NappyTile babyId={babyId} latestNappy={latestNappyData} />
       <SolidsTile babyId={babyId} latestSolids={latestSolidsData} />
+      <PumpingTile babyId={babyId} latestPumping={latestPumpingData} />
+      <GrowthTile babyId={babyId} latestGrowth={latestGrowthData} />
       <ActivityTile title="Bath" statusText="Coming soon" activity="bath" disabled />
     </div>
   );
@@ -242,7 +318,7 @@ export function OverviewContent({ locale }: OverviewContentProps) {
 function OverviewSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-      {[...Array.from({ length: 5 })].map((_, i) => (
+      {[...Array.from({ length: 6 })].map((_, i) => (
         <div key={i} className="h-32 animate-pulse rounded-lg bg-muted" />
       ))}
     </div>

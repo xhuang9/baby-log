@@ -10,6 +10,7 @@ import { localDb } from '@/lib/local-db/database';
 import { AmountSliderSettings } from './AmountSliderSettings';
 import { BabiesList } from './BabiesList';
 import { HandPreferenceSetting } from './HandPreferenceSetting';
+import { PumpingAmountSettings } from './PumpingAmountSettings';
 import { ThemeSetting } from './ThemeSetting';
 import { TimeSwiperSettings } from './TimeSwiperSettings';
 
@@ -29,7 +30,8 @@ export function SettingsContent(props: {
   const { locale } = props;
   const { user } = useUser();
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [showAmountSlider, setShowAmountSlider] = useState(false);
+  const [showFeedAmount, setShowFeedAmount] = useState(false);
+  const [showPumpingAmount, setShowPumpingAmount] = useState(false);
 
   // Read babies from IndexedDB
   const babies = useLiveQuery(async (): Promise<BabyInfo[]> => {
@@ -124,21 +126,40 @@ export function SettingsContent(props: {
             )}
           </div>
 
-          {/* Amount Slider Accordion */}
+          {/* Feed Amount Accordion */}
           <div>
             <button
               type="button"
-              onClick={() => setShowAmountSlider(!showAmountSlider)}
+              onClick={() => setShowFeedAmount(!showFeedAmount)}
               className="flex w-full items-center justify-between p-4 text-left text-sm font-medium transition-colors hover:bg-muted/50"
             >
-              <span>Amount Slider</span>
-              {showAmountSlider
+              <span>Feed Amount</span>
+              {showFeedAmount
                 ? <ChevronUp className="size-4 text-muted-foreground" />
                 : <ChevronDown className="size-4 text-muted-foreground" />}
             </button>
-            {showAmountSlider && (
+            {showFeedAmount && (
               <div className="border-t p-4">
                 <AmountSliderSettings />
+              </div>
+            )}
+          </div>
+
+          {/* Pumping Amount Accordion */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setShowPumpingAmount(!showPumpingAmount)}
+              className="flex w-full items-center justify-between p-4 text-left text-sm font-medium transition-colors hover:bg-muted/50"
+            >
+              <span>Pumping Amount</span>
+              {showPumpingAmount
+                ? <ChevronUp className="size-4 text-muted-foreground" />
+                : <ChevronDown className="size-4 text-muted-foreground" />}
+            </button>
+            {showPumpingAmount && (
+              <div className="border-t p-4">
+                <PumpingAmountSettings />
               </div>
             )}
           </div>

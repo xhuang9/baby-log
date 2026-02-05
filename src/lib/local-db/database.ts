@@ -18,7 +18,7 @@
 import type { EntityTable } from 'dexie';
 import type { LocalBaby, LocalBabyAccess, LocalBabyInvite, LocalUIConfig, LocalUser } from './types/entities';
 import type { LocalFoodType } from './types/food-types';
-import type { LocalFeedLog, LocalNappyLog, LocalSleepLog, LocalSolidsLog } from './types/logs';
+import type { LocalFeedLog, LocalGrowthLog, LocalNappyLog, LocalPumpingLog, LocalSleepLog, LocalSolidsLog } from './types/logs';
 import type { LocalNotification } from './types/notifications';
 import type { OutboxEntry } from './types/outbox';
 import type { AuthSession, LocalSyncStatus, SyncMeta } from './types/sync';
@@ -34,6 +34,8 @@ class BabyLogDatabase extends Dexie {
   sleepLogs!: EntityTable<LocalSleepLog, 'id'>;
   nappyLogs!: EntityTable<LocalNappyLog, 'id'>;
   solidsLogs!: EntityTable<LocalSolidsLog, 'id'>;
+  pumpingLogs!: EntityTable<LocalPumpingLog, 'id'>;
+  growthLogs!: EntityTable<LocalGrowthLog, 'id'>;
 
   // Entity tables
   babies!: EntityTable<LocalBaby, 'id'>;
@@ -120,6 +122,16 @@ class BabyLogDatabase extends Dexie {
     // Version 4: Add food types table
     this.version(4).stores({
       foodTypes: 'id, userId',
+    });
+
+    // Version 5: Add pumping logs table
+    this.version(5).stores({
+      pumpingLogs: 'id, babyId, startedAt, [babyId+startedAt]',
+    });
+
+    // Version 6: Add growth logs table
+    this.version(6).stores({
+      growthLogs: 'id, babyId, startedAt, [babyId+startedAt]',
     });
   }
 }

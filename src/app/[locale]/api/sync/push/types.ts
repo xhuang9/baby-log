@@ -5,7 +5,7 @@
  */
 
 export type MutationOp = 'create' | 'update' | 'delete';
-export type EntityType = 'baby' | 'feed_log' | 'sleep_log' | 'nappy_log' | 'solids_log' | 'food_type';
+export type EntityType = 'baby' | 'feed_log' | 'sleep_log' | 'nappy_log' | 'solids_log' | 'pumping_log' | 'growth_log' | 'food_type';
 
 export type Mutation = {
   mutationId: string;

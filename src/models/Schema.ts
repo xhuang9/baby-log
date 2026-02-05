@@ -219,6 +219,35 @@ export const solidsLogSchema = pgTable('solids_log', {
   index('solids_log_baby_started_at_idx').on(t.babyId, t.startedAt),
 ]);
 
+export const pumpingLogSchema = pgTable('pumping_log', {
+  id: uuid('id').primaryKey(), // Client-generated UUID
+  babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
+  loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
+  endedAt: timestamp('ended_at', { withTimezone: true }),
+  leftMl: integer('left_ml'),
+  rightMl: integer('right_ml'),
+  totalMl: integer('total_ml').notNull(),
+  notes: text('notes'),
+  ...timestamps,
+}, t => [
+  index('pumping_log_baby_started_at_idx').on(t.babyId, t.startedAt),
+]);
+
+export const growthLogSchema = pgTable('growth_log', {
+  id: uuid('id').primaryKey(), // Client-generated UUID
+  babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
+  loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+  weightG: integer('weight_g'), // Weight in grams - nullable
+  heightMm: integer('height_mm'), // Height in millimeters - nullable
+  headCircumferenceMm: integer('head_circumference_mm'), // Head circumference in millimeters - nullable
+  notes: text('notes'),
+  ...timestamps,
+}, t => [
+  index('growth_log_baby_started_at_idx').on(t.babyId, t.startedAt),
+]);
+
 export const babyInvitesSchema = pgTable('baby_invites', {
   id: serial('id').primaryKey(),
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),

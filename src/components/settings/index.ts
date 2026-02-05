@@ -5,6 +5,12 @@ export {
 } from './AmountSliderSettingsPanel';
 
 export {
+  DEFAULT_PUMPING_AMOUNT_SETTINGS,
+  PumpingAmountSettingsPanel,
+  type PumpingAmountSettingsState,
+} from './PumpingAmountSettingsPanel';
+
+export {
   DEFAULT_TIME_SWIPER_SETTINGS,
   type SwipeResistance,
   TimeSwiperSettingsPanel,
