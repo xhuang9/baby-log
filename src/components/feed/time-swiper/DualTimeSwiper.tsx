@@ -1,9 +1,9 @@
 'use client';
 
-import type { DualTimeSwiperProps, TimeTab } from './types';
-import { useCallback, useState } from 'react';
+import type { DualTimeSwiperProps } from './types';
+import { useCallback } from 'react';
 import { cn } from '@/lib/utils';
-import { EditableDurationInput, TimeTabSelector } from './components';
+import { EditableDurationInput } from './components';
 import { TimeSwiper } from './TimeSwiper';
 
 export function DualTimeSwiper({
@@ -14,12 +14,9 @@ export function DualTimeSwiper({
   handMode = 'right',
   className,
 }: DualTimeSwiperProps) {
-  const [activeTab, setActiveTab] = useState<TimeTab>('start');
-
-  // Calculate duration in minutes
+  // Calculate duration in minutes (always positive now due to push behavior)
   const durationMs = endTime.getTime() - startTime.getTime();
-  const durationMinutes = Math.round(durationMs / (1000 * 60));
-  const isInvalidDuration = durationMinutes < 0;
+  const durationMinutes = Math.max(0, Math.round(durationMs / (1000 * 60)));
 
   // Handle duration change - adjust START time, keep END fixed
   const handleDurationChange = useCallback((newMinutes: number) => {
@@ -27,68 +24,58 @@ export function DualTimeSwiper({
     onStartTimeChange(newStartTime);
   }, [endTime, onStartTimeChange]);
 
-  // Swap start and end times
-  const handleSwapTimes = useCallback(() => {
-    const tempStart = new Date(startTime);
-    onStartTimeChange(endTime);
-    onEndTimeChange(tempStart);
-  }, [startTime, endTime, onStartTimeChange, onEndTimeChange]);
+  // When start time changes, push end time forward if needed
+  const handleStartTimeChange = useCallback((newStartTime: Date) => {
+    onStartTimeChange(newStartTime);
+
+    // If start time would exceed end time, push end time forward (duration = 0)
+    if (newStartTime.getTime() > endTime.getTime()) {
+      onEndTimeChange(new Date(newStartTime));
+    }
+  }, [endTime, onStartTimeChange, onEndTimeChange]);
+
+  // When end time changes, push start time backward if needed
+  const handleEndTimeChange = useCallback((newEndTime: Date) => {
+    onEndTimeChange(newEndTime);
+
+    // If end time would go before start time, push start time backward (duration = 0)
+    if (newEndTime.getTime() < startTime.getTime()) {
+      onStartTimeChange(new Date(newEndTime));
+    }
+  }, [startTime, onStartTimeChange, onEndTimeChange]);
 
   return (
-    <div className={cn('space-y-3', className)}>
-      <TimeTabSelector
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        handMode={handMode}
-      />
-
-      <div style={{ display: activeTab === 'start' ? undefined : 'none' }}>
+    <div className={cn('space-y-6', className)}>
+      {/* Start Time Section */}
+      <div className="space-y-3">
+        <span className="text-sm text-muted-foreground">Start time</span>
         <TimeSwiper
           value={startTime}
-          onChange={onStartTimeChange}
+          onChange={handleStartTimeChange}
           handMode={handMode}
         />
       </div>
-      <div style={{ display: activeTab === 'end' ? undefined : 'none' }}>
+
+      {/* End Time Section */}
+      <div className="space-y-3">
+        <span className="text-sm text-muted-foreground">End time</span>
         <TimeSwiper
           value={endTime}
-          onChange={onEndTimeChange}
+          onChange={handleEndTimeChange}
           handMode={handMode}
         />
       </div>
 
-      {/* Duration section - fixed height container to prevent layout shifts */}
-      <div className="min-h-[100px]">
-        {/* Duration row - always visible */}
-        <div className="flex items-center justify-center gap-2">
-          <span className="text-base font-medium text-muted-foreground">Duration</span>
+      {/* Duration Section - pill button style with editable input */}
+      <div className="flex items-center justify-center py-2">
+        <div className="flex items-center gap-1 rounded-full border border-border bg-muted/30 px-5 py-2">
+          <span className="text-sm text-muted-foreground">Duration:</span>
           <EditableDurationInput
-            durationMinutes={isInvalidDuration ? 0 : durationMinutes}
+            durationMinutes={durationMinutes}
             onDurationChange={handleDurationChange}
-            showDash={isInvalidDuration}
+            className="text-base font-semibold"
           />
         </div>
-
-        {/* Error messages - only when invalid */}
-        {isInvalidDuration && (
-          <div className="mt-3 flex justify-center">
-            <div className="flex flex-col items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-center">
-              <p className="text-sm font-medium text-destructive">
-                End time can&apos;t be earlier than start time.
-              </p>
-              <p className="text-xs text-muted-foreground">
-                If this crossed midnight, adjust the times so End is after Start.
-              </p>
-              <button
-                type="button"
-                onClick={handleSwapTimes}
-                className="mt-1 rounded-md bg-background px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted"
-              >
-                Swap times
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -8,14 +8,18 @@ import type { Mutation, MutationResult } from '../types';
 import { processBabyMutation } from './baby';
 import { processFeedLogMutation } from './feed-log';
 import { processFoodTypeMutation } from './food-types';
+import { processGrowthLogMutation } from './growth-log';
 import { processNappyLogMutation } from './nappy-log';
+import { processPumpingLogMutation } from './pumping-log';
 import { processSleepLogMutation } from './sleep-log';
 import { processSolidsLogMutation } from './solids-log';
 
 export { processBabyMutation } from './baby';
 export { processFeedLogMutation } from './feed-log';
 export { processFoodTypeMutation } from './food-types';
+export { processGrowthLogMutation } from './growth-log';
 export { processNappyLogMutation } from './nappy-log';
+export { processPumpingLogMutation } from './pumping-log';
 export { processSleepLogMutation } from './sleep-log';
 export { processSolidsLogMutation } from './solids-log';
 
@@ -77,6 +81,10 @@ export async function processMutation(
         return await processNappyLogMutation(mutationId, entityId, op, payload, userId, babyId);
       case 'solids_log':
         return await processSolidsLogMutation(mutationId, entityId, op, payload, userId, babyId);
+      case 'pumping_log':
+        return await processPumpingLogMutation(mutationId, entityId, op, payload, userId, babyId);
+      case 'growth_log':
+        return await processGrowthLogMutation(mutationId, entityId, op, payload, userId, babyId);
       default:
         return {
           mutationId,

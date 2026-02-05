@@ -1,8 +1,8 @@
 'use client';
 
 import type { UnifiedLog } from '@/lib/format-log';
-import type { LocalFeedLog, LocalNappyLog, LocalSleepLog, LocalSolidsLog } from '@/lib/local-db';
-import { Apple, Baby, ChevronRight, Moon, MousePointerClick } from 'lucide-react';
+import type { LocalFeedLog, LocalGrowthLog, LocalNappyLog, LocalSleepLog, LocalSolidsLog } from '@/lib/local-db';
+import { Apple, Baby, ChevronRight, Moon, MousePointerClick, Ruler } from 'lucide-react';
 import { formatDuration } from '@/lib/format-log';
 import { cn } from '@/lib/utils';
 
@@ -25,7 +25,7 @@ function formatTime(date: Date): string {
 /**
  * Get icon for activity type
  */
-function ActivityIcon({ type }: { type: 'feed' | 'sleep' | 'nappy' | 'solids' }) {
+function ActivityIcon({ type }: { type: 'feed' | 'sleep' | 'nappy' | 'solids' | 'pumping' | 'growth' }) {
   if (type === 'sleep') {
     return <Moon className="h-5 w-5" />;
   }
@@ -34,6 +34,9 @@ function ActivityIcon({ type }: { type: 'feed' | 'sleep' | 'nappy' | 'solids' })
   }
   if (type === 'solids') {
     return <Apple className="h-5 w-5" />;
+  }
+  if (type === 'growth') {
+    return <Ruler className="h-5 w-5" />;
   }
   return <Baby className="h-5 w-5" />;
 }
@@ -66,6 +69,24 @@ function getActivityTitle(log: UnifiedLog): string {
     return `${reactionLabel} ${solids.food}`;
   }
 
+  if (log.type === 'growth') {
+    const growth = log.data as LocalGrowthLog;
+    const parts: string[] = [];
+    if (growth.heightMm != null) {
+      const heightCm = (growth.heightMm / 10).toFixed(1).replace(/\.0$/, '');
+      parts.push(`${heightCm}cm`);
+    }
+    if (growth.weightG != null) {
+      const weightKg = (growth.weightG / 1000).toFixed(2).replace(/\.?0+$/, '');
+      parts.push(`${weightKg}kg`);
+    }
+    if (growth.headCircumferenceMm != null) {
+      const headCm = (growth.headCircumferenceMm / 10).toFixed(1).replace(/\.0$/, '');
+      parts.push(`${headCm}cm head`);
+    }
+    return parts.length > 0 ? parts.join(' - ') : 'Growth';
+  }
+
   return 'Sleep';
 }
 
@@ -87,6 +108,10 @@ function getDurationText(log: UnifiedLog): string {
     return ''; // Nappy logs don't have duration
   }
 
+  if (log.type === 'growth') {
+    return ''; // Growth logs don't have duration
+  }
+
   return '';
 }
 
@@ -96,8 +121,8 @@ function getDurationText(log: UnifiedLog): string {
 function getTimeRange(log: UnifiedLog): string {
   const start = formatTime(log.startedAt);
 
-  // Nappy logs don't have end time
-  if (log.type === 'nappy') {
+  // Nappy and growth logs don't have end time
+  if (log.type === 'nappy' || log.type === 'growth') {
     return start;
   }
 
@@ -139,12 +164,8 @@ export function SelectedActivityDetail({
               'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
             )}
             style={{
-              backgroundColor: log.type === 'sleep'
-                ? 'color-mix(in oklab, var(--color-activity-sleep-background) 20%, transparent)'
-                : 'color-mix(in oklab, var(--color-activity-feed-background) 20%, transparent)',
-              color: log.type === 'sleep'
-                ? 'var(--color-activity-sleep-background)'
-                : 'var(--color-activity-feed-background)',
+              backgroundColor: `color-mix(in oklab, var(--color-activity-${log.type}-background) 20%, transparent)`,
+              color: `var(--color-activity-${log.type}-background)`,
             }}
           >
             <ActivityIcon type={log.type} />

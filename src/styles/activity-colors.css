@@ -28,6 +28,9 @@
   /* Screen time - tech/neutral, slate (Tailwind slate). */
   --color-activity-screen-time-background: var(--color-slate-500);
 
+  /* Pumping - breast pump, soft fuchsia/magenta. */
+  --color-activity-pumping-background: oklch(0.68 0.13 330);
+
   /* Skin-to-skin - warmth/care, rose (Tailwind rose). */
   --color-activity-skin-to-skin-background: var(--color-pink-500);
 
@@ -39,6 +42,9 @@
 
   /* Brush teeth - fresh/minty, cyan (Tailwind cyan). */
   --color-activity-brush-teeth-background: var(--color-cyan-500);
+
+  /* Growth - health/development, emerald (Tailwind emerald). */
+  --color-activity-growth-background: var(--color-emerald-500);
 }
 
 @layer components {
@@ -113,6 +119,10 @@
     --activity-tile-accent: var(--color-activity-solids-background);
   }
 
+  .activity-tile--pumping {
+    --activity-tile-accent: var(--color-activity-pumping-background);
+  }
+
   .activity-tile--bath {
     --activity-tile-accent: var(--color-activity-bath-background);
   }
@@ -145,6 +155,10 @@
     --activity-tile-accent: var(--color-activity-brush-teeth-background);
   }
 
+  .activity-tile--growth {
+    --activity-tile-accent: var(--color-activity-growth-background);
+  }
+
   /* Timeline chart activity blocks */
   .activity-block {
     @apply absolute left-0.5 right-0.5 cursor-pointer overflow-hidden rounded text-left transition-opacity;
@@ -168,6 +182,10 @@
 
   .activity-block--solids {
     background-color: var(--color-activity-solids-background);
+  }
+
+  .activity-block--pumping {
+    background-color: var(--color-activity-pumping-background);
   }
 
   .activity-block--bath {
@@ -200,5 +218,9 @@
 
   .activity-block--brush-teeth {
     background-color: var(--color-activity-brush-teeth-background);
+  }
+
+  .activity-block--growth {
+    background-color: var(--color-activity-growth-background);
   }
 }

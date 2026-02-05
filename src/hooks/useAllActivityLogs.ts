@@ -5,7 +5,9 @@ import type { UnifiedLog } from '@/lib/format-log';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { localDb } from '@/lib/local-db';
 import { useFeedLogsByDateRange } from './useFeedLogs';
+import { useGrowthLogsByDateRange } from './useGrowthLogs';
 import { useNappyLogsByDateRange } from './useNappyLogs';
+import { usePumpingLogsByDateRange } from './usePumpingLogs';
 import { useSleepLogsByDateRange } from './useSleepLogs';
 import { useSolidsLogsByDateRange } from './useSolidsLogs';
 
@@ -50,6 +52,18 @@ export function useAllActivityLogs(
     endDate,
   );
 
+  const pumps = usePumpingLogsByDateRange(
+    activeTypes.includes('pumping') ? babyId : null,
+    startDate,
+    endDate,
+  );
+
+  const growths = useGrowthLogsByDateRange(
+    activeTypes.includes('growth') ? babyId : null,
+    startDate,
+    endDate,
+  );
+
   // Merge and enrich with caregiver data
   const allLogs = useLiveQuery(
     async () => {
@@ -57,12 +71,14 @@ export function useAllActivityLogs(
         return [];
       }
 
-      // If any feed/sleep/nappy/solids queries are loading (undefined), return undefined
+      // If any feed/sleep/nappy/solids/pumping/growth queries are loading (undefined), return undefined
       if (
         (activeTypes.includes('feed') && feeds === undefined)
         || (activeTypes.includes('sleep') && sleeps === undefined)
         || (activeTypes.includes('nappy') && nappies === undefined)
         || (activeTypes.includes('solids') && solids === undefined)
+        || (activeTypes.includes('pumping') && pumps === undefined)
+        || (activeTypes.includes('growth') && growths === undefined)
       ) {
         return undefined;
       }
@@ -87,6 +103,16 @@ export function useAllActivityLogs(
       if (solids) {
         for (const solid of solids) {
           userIds.add(solid.loggedByUserId);
+        }
+      }
+      if (pumps) {
+        for (const pump of pumps) {
+          userIds.add(pump.loggedByUserId);
+        }
+      }
+      if (growths) {
+        for (const growth of growths) {
+          userIds.add(growth.loggedByUserId);
         }
       }
 
@@ -162,10 +188,38 @@ export function useAllActivityLogs(
         }
       }
 
+      // Transform pumping logs
+      if (pumps) {
+        for (const pump of pumps) {
+          unified.push({
+            id: pump.id,
+            type: 'pumping',
+            babyId: pump.babyId,
+            startedAt: pump.startedAt,
+            caregiverLabel: accessMap.get(pump.loggedByUserId) ?? null,
+            data: pump,
+          });
+        }
+      }
+
+      // Transform growth logs
+      if (growths) {
+        for (const growth of growths) {
+          unified.push({
+            id: growth.id,
+            type: 'growth',
+            babyId: growth.babyId,
+            startedAt: growth.startedAt,
+            caregiverLabel: accessMap.get(growth.loggedByUserId) ?? null,
+            data: growth,
+          });
+        }
+      }
+
       // Sort DESC by startedAt (newest first)
       return unified.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
     },
-    [babyId, feeds, sleeps, nappies, solids, activeTypes.join(',')],
+    [babyId, feeds, sleeps, nappies, solids, pumps, growths, activeTypes.join(',')],
     undefined,
   );
 

@@ -1,6 +1,6 @@
 'use client';
 
-import type { LocalFeedLog, LocalNappyLog, LocalSleepLog, LocalSolidsLog } from '@/lib/local-db';
+import type { LocalFeedLog, LocalGrowthLog, LocalNappyLog, LocalPumpingLog, LocalSleepLog, LocalSolidsLog } from '@/lib/local-db';
 
 // Re-export from activity-modals for convenience
 export { formatDuration as formatDurationFromMinutes } from '@/components/activity-modals/utils';
@@ -96,11 +96,11 @@ export function formatTimeSwiperDate(date: Date, currentTime: Date): string {
  */
 export type UnifiedLog = {
   id: string;
-  type: 'feed' | 'sleep' | 'nappy' | 'solids';
+  type: 'feed' | 'sleep' | 'nappy' | 'solids' | 'pumping' | 'growth';
   babyId: number;
   startedAt: Date;
   caregiverLabel: string | null;
-  data: LocalFeedLog | LocalSleepLog | LocalNappyLog | LocalSolidsLog;
+  data: LocalFeedLog | LocalSleepLog | LocalNappyLog | LocalSolidsLog | LocalPumpingLog | LocalGrowthLog;
 };
 
 /**
@@ -190,6 +190,34 @@ export function formatLogSubtitle(log: UnifiedLog): string {
     return JSON.stringify({ left: leftPart, right: rightPart });
   }
 
+  if (log.type === 'pumping') {
+    const pumping = log.data as LocalPumpingLog;
+    const amountLabel = pumping.leftMl != null && pumping.rightMl != null
+      ? `${pumping.leftMl}ml(L), ${pumping.rightMl}ml(R)`
+      : `${pumping.totalMl}ml`;
+    const leftPart = `Pumping · ${amountLabel}`;
+    return JSON.stringify({ left: leftPart, right: rightPart });
+  }
+
+  if (log.type === 'growth') {
+    const growth = log.data as LocalGrowthLog;
+    const parts: string[] = [];
+    if (growth.heightMm != null) {
+      const heightCm = (growth.heightMm / 10).toFixed(1).replace(/\.0$/, '');
+      parts.push(`${heightCm}cm`);
+    }
+    if (growth.weightG != null) {
+      const weightKg = (growth.weightG / 1000).toFixed(2).replace(/\.?0+$/, '');
+      parts.push(`${weightKg}kg`);
+    }
+    if (growth.headCircumferenceMm != null) {
+      const headCm = (growth.headCircumferenceMm / 10).toFixed(1).replace(/\.0$/, '');
+      parts.push(`${headCm}cm head`);
+    }
+    const leftPart = `Growth · ${parts.join(' - ') || 'Measured'}`;
+    return JSON.stringify({ left: leftPart, right: rightPart });
+  }
+
   return '';
 }
 
@@ -231,6 +259,32 @@ export function formatLogSubtitleExpanded(log: UnifiedLog): string {
     const solids = log.data as LocalSolidsLog;
     const reactionLabel = solids.reaction.charAt(0).toUpperCase() + solids.reaction.slice(1);
     return `${timeAgo} - ${reactionLabel} ${solids.food}${caregiver}`;
+  }
+
+  if (log.type === 'pumping') {
+    const pumping = log.data as LocalPumpingLog;
+    const amountLabel = pumping.leftMl != null && pumping.rightMl != null
+      ? `${pumping.leftMl}ml(L), ${pumping.rightMl}ml(R)`
+      : `${pumping.totalMl}ml`;
+    return `${timeAgo} - ${amountLabel}${caregiver}`;
+  }
+
+  if (log.type === 'growth') {
+    const growth = log.data as LocalGrowthLog;
+    const parts: string[] = [];
+    if (growth.heightMm != null) {
+      const heightCm = (growth.heightMm / 10).toFixed(1).replace(/\.0$/, '');
+      parts.push(`${heightCm}cm`);
+    }
+    if (growth.weightG != null) {
+      const weightKg = (growth.weightG / 1000).toFixed(2).replace(/\.?0+$/, '');
+      parts.push(`${weightKg}kg`);
+    }
+    if (growth.headCircumferenceMm != null) {
+      const headCm = (growth.headCircumferenceMm / 10).toFixed(1).replace(/\.0$/, '');
+      parts.push(`${headCm}cm head`);
+    }
+    return `${timeAgo} - ${parts.join(' - ') || 'Measured'}${caregiver}`;
   }
 
   return timeAgo;

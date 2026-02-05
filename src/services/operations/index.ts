@@ -39,6 +39,18 @@ export {
   updateFeedLog,
 } from './feed-log';
 
+// Growth log operations
+export type {
+  CreateGrowthLogInput,
+  UpdateGrowthLogInput,
+} from './growth-log';
+
+export {
+  createGrowthLog,
+  deleteGrowthLog,
+  updateGrowthLog,
+} from './growth-log';
+
 // Nappy log operations
 export type {
   CreateNappyLogInput,
@@ -47,6 +59,18 @@ export type {
 export {
   createNappyLog,
 } from './nappy-log';
+
+// Pumping log operations
+export type {
+  CreatePumpingLogInput,
+  UpdatePumpingLogInput,
+} from './pumping-log';
+
+export {
+  createPumpingLog,
+  deletePumpingLog,
+  updatePumpingLog,
+} from './pumping-log';
 
 // Sleep log operations
 export type {

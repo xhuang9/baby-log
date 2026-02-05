@@ -13,8 +13,6 @@ export type TickMark = {
   label: string | null;
 };
 
-export type TimeTab = 'start' | 'end';
-
 export type DualTimeSwiperProps = {
   startTime: Date;
   onStartTimeChange: (date: Date) => void;

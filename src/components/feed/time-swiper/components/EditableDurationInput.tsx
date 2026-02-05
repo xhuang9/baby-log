@@ -8,6 +8,7 @@ type EditableDurationInputProps = {
   durationMinutes: number;
   onDurationChange: (minutes: number) => void;
   showDash?: boolean;
+  showUnderline?: boolean;
   className?: string;
 };
 
@@ -15,6 +16,7 @@ export function EditableDurationInput({
   durationMinutes,
   onDurationChange,
   showDash = false,
+  showUnderline = false,
   className,
 }: EditableDurationInputProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -59,10 +61,10 @@ export function EditableDurationInput({
     parseAndApply();
   }, [parseAndApply]);
 
-  // Format duration for display
+  // Format duration for display (shorter format: "30m" or "1h 30m")
   const formatDisplayDuration = (minutes: number): string => {
     if (minutes < 60) {
-      return `${minutes} min`;
+      return `${minutes}m`;
     }
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
@@ -82,10 +84,10 @@ export function EditableDurationInput({
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
             placeholder="0"
-            className="w-6 bg-transparent text-center text-base font-medium outline-none placeholder:text-muted-foreground/50"
+            className="w-6 bg-transparent text-center font-semibold outline-none placeholder:text-muted-foreground/50"
             maxLength={2}
           />
-          <span className="text-base font-medium text-muted-foreground">h</span>
+          <span className="font-semibold text-muted-foreground">h</span>
         </div>
         <div className="flex items-baseline gap-0.5">
           <input
@@ -97,13 +99,15 @@ export function EditableDurationInput({
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
             placeholder="0"
-            className="w-6 bg-transparent text-center text-base font-medium outline-none placeholder:text-muted-foreground/50"
+            className="w-6 bg-transparent text-center font-semibold outline-none placeholder:text-muted-foreground/50"
             maxLength={2}
           />
-          <span className="text-base font-medium text-muted-foreground">m</span>
+          <span className="font-semibold text-muted-foreground">m</span>
         </div>
-        {/* Underline for edit mode */}
-        <div className="absolute inset-x-0 -bottom-0.5 h-px bg-primary/50" />
+        {/* Underline for edit mode - only show if enabled */}
+        {showUnderline && (
+          <div className="absolute inset-x-0 -bottom-0.5 h-px bg-primary/50" />
+        )}
       </div>
     );
   }
@@ -113,12 +117,15 @@ export function EditableDurationInput({
       type="button"
       onClick={startEditing}
       className={cn(
-        'relative cursor-text text-base font-medium text-muted-foreground transition-colors hover:text-foreground',
+        'relative cursor-text font-semibold transition-colors hover:text-foreground',
         className,
       )}
     >
       {showDash ? '—' : formatDisplayDuration(durationMinutes)}
-      <div className="absolute inset-x-0 -bottom-0.5 h-px bg-foreground/20" />
+      {/* Underline - only show if enabled */}
+      {showUnderline && (
+        <div className="absolute inset-x-0 -bottom-0.5 h-px bg-foreground/20" />
+      )}
     </button>
   );
 }

@@ -10,6 +10,8 @@ const activityClasses = {
   'sleep': 'activity-tile--sleep',
   'nappy': 'activity-tile--nappy',
   'solids': 'activity-tile--solids',
+  'pumping': 'activity-tile--pumping',
+  'growth': 'activity-tile--growth',
   'bath': 'activity-tile--bath',
   'tummy-time': 'activity-tile--tummy-time',
   'story-time': 'activity-tile--story-time',

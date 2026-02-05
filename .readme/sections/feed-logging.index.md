@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-02-02T00:00:00Z
+last_verified_at: 2026-02-04T15:45:00Z
 source_paths:
   - src/actions/feedLogActions.ts
   - src/models/Schema.ts
@@ -11,10 +11,15 @@ source_paths:
   - src/hooks/useFoodTypes.ts
   - src/app/[locale]/api/sync/push/mutations/nappy-log.ts
   - src/app/[locale]/api/sync/push/mutations/food-types.ts
+  - src/app/[locale]/api/sync/push/mutations/pumping-log.ts
   - src/lib/local-db/nappy-logs.ts
   - src/lib/local-db/types/food-types.ts
+  - src/lib/local-db/types/logs.ts
   - src/lib/local-db/helpers/food-types.ts
+  - src/lib/local-db/helpers/pumping-logs.ts
   - src/services/operations/food-types.ts
+  - src/services/operations/pumping-log.ts
+  - src/services/sync/apply/pumping-log.ts
   - src/app/[locale]/(auth)/(app)/logs/_components/NappyTile.tsx
   - src/app/[locale]/(auth)/(app)/logs/_components/NappyLogModal.tsx
 ---
@@ -87,6 +92,28 @@ This section documents the feed logging implementation including:
 
 - **Content**: DualTimeSwiper component for breast feed logging with tab-based time switching, inline duration editing, hand-mode layout, and invalid duration error handling
 - **Read when**: Implementing breast feed time input, understanding tab-based switching patterns, working with inline editable inputs, or implementing similar time range pickers with duration display
+
+#### `chunks/feed-logging.timeswiper-state-isolation.md`
+
+- **Content**: TimeSwiper state isolation pattern (February 2026) - refactor to render independent TimeSwiper instances per tab instead of toggling a single instance, eliminating state bleed bugs
+- **Read when**: Understanding the TimeSwiper architecture post-February 2026, debugging state synchronization issues, implementing features that interact with time picking, or learning patterns for isolated component state in toggled UI
+
+### Pumping Logging
+
+#### `chunks/feed-logging.pumping-log-feature.md`
+
+- **Content**: Complete pumping log implementation with UUID keys, dual amount modes (left/right or total), time range capture, local-first operations, and sync handlers
+- **Read when**: Building pumping features, understanding the database schema, working with operations layer, or implementing similar two-phase or dual-mode tracking features
+
+#### `chunks/feed-logging.pumping-modal.md`
+
+- **Content**: AddPumpingModal component with DualTimeSwiper, AmountModeToggle, side toggle, PumpingAmountSwiper, and hook-based state management
+- **Read when**: Building pumping UI, understanding modal orchestration patterns, working with amount mode switching, or implementing similar dual-mode input modals
+
+#### `chunks/feed-logging.pumping-amount-swiper.md`
+
+- **Content**: PumpingAmountSwiper component with visual swiper, settings popover, hand-mode support, and mode-specific settings (per-side vs. total)
+- **Read when**: Implementing pumping amount input, understanding settings integration, or building similar configurable swiper components
 
 ### Timer System
 
