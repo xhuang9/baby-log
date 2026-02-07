@@ -1,6 +1,7 @@
 'use client';
 
 import type { MedicationUnit } from '@/lib/local-db';
+import { useRef } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +11,7 @@ import {
   getHelperText,
   getMinForUnit,
   getStepForUnit,
+  isLiquidUnit,
   LIQUID_MEDICATION_UNITS,
   NON_LIQUID_MEDICATION_UNITS,
 } from '@/lib/medication-units';
@@ -35,6 +37,17 @@ export function AmountInput({
   const step = getStepForUnit(unit);
   const minValue = getMinForUnit(unit);
 
+  // Track separate amounts for liquid and non-liquid groups
+  const liquidAmountRef = useRef<number>(isLiquidUnit(unit) ? amount : 1);
+  const nonLiquidAmountRef = useRef<number>(!isLiquidUnit(unit) ? amount : 1);
+
+  // Keep refs in sync when amount changes within the same group
+  if (isLiquidUnit(unit)) {
+    liquidAmountRef.current = amount;
+  } else {
+    nonLiquidAmountRef.current = amount;
+  }
+
   const handleDecrement = () => {
     const newAmount = Math.max(minValue, amount - step);
     onAmountChange(newAmount);
@@ -56,10 +69,20 @@ export function AmountInput({
       return;
     }
 
-    // Convert amount when switching between units
-    const convertedAmount = convertOnUnitSwitch(amount, unit, newUnit);
-    onAmountChange(convertedAmount);
-    onUnitChange(newUnit);
+    const wasLiquid = isLiquidUnit(unit);
+    const nowLiquid = isLiquidUnit(newUnit);
+
+    if (wasLiquid !== nowLiquid) {
+      // Switching between groups — restore the other group's saved amount
+      const restoredAmount = nowLiquid ? liquidAmountRef.current : nonLiquidAmountRef.current;
+      onAmountChange(restoredAmount);
+      onUnitChange(newUnit);
+    } else {
+      // Same group — convert between liquid units, or keep value for non-liquid
+      const convertedAmount = convertOnUnitSwitch(amount, unit, newUnit);
+      onAmountChange(convertedAmount);
+      onUnitChange(newUnit);
+    }
   };
 
   // Get helper text based on unit type
