@@ -1,8 +1,7 @@
 {
-  "name": "next-js-boilerplate",
+  "name": "baby-log",
   "version": "0.4.1",
-  "packageManager": "pnpm@10.28.2+sha512.41872f037ad22f7348e3b1debbaf7e867cfd448f2726d9cf74c08f19507c31d2c8e7a11525b983febc2df640b5438dee6023ebb1f84ed43cc2d654d2bc326264",
-  "author": "Ixartz (https://github.com/ixartz)",
+  "author": "Parry Huang (https://github.com/xhuang9)",
   "engines": {
     "node": ">=22 <25"
   },
@@ -25,8 +24,8 @@
     "commit": "commit",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "db-remote:neon": "npx get-db --yes --env .env.local --ref nextjs-boilerplate",
-    "neon:claim": "npx get-db claim --env .env.local --ref nextjs-boilerplate",
+    "db-remote:neon": "npx get-db --yes --env .env.local --ref baby-log",
+    "neon:claim": "npx get-db claim --env .env.local --ref baby-log",
     "db-server:file": "pglite-server --db=local.db --run 'npm run db:migrate'",
     "db-server:memory": "pglite-server --run 'npm run db:migrate'",
     "db:generate:named": "drizzle-kit generate --name",
