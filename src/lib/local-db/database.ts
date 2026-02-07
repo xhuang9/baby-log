@@ -18,7 +18,7 @@
 import type { EntityTable } from 'dexie';
 import type { LocalBaby, LocalBabyAccess, LocalBabyInvite, LocalUIConfig, LocalUser } from './types/entities';
 import type { LocalFoodType } from './types/food-types';
-import type { LocalBathLog, LocalFeedLog, LocalGrowthLog, LocalMedicationLog, LocalNappyLog, LocalPumpingLog, LocalSleepLog, LocalSolidsLog } from './types/logs';
+import type { LocalActivityLog, LocalBathLog, LocalFeedLog, LocalGrowthLog, LocalMedicationLog, LocalNappyLog, LocalPumpingLog, LocalSleepLog, LocalSolidsLog } from './types/logs';
 import type { LocalMedicationType } from './types/medication-types';
 import type { LocalNotification } from './types/notifications';
 import type { OutboxEntry } from './types/outbox';
@@ -39,6 +39,7 @@ class BabyLogDatabase extends Dexie {
   growthLogs!: EntityTable<LocalGrowthLog, 'id'>;
   bathLogs!: EntityTable<LocalBathLog, 'id'>;
   medicationLogs!: EntityTable<LocalMedicationLog, 'id'>;
+  activityLogs!: EntityTable<LocalActivityLog, 'id'>;
 
   // Entity tables
   babies!: EntityTable<LocalBaby, 'id'>;
@@ -147,6 +148,11 @@ class BabyLogDatabase extends Dexie {
     this.version(8).stores({
       medicationLogs: 'id, babyId, startedAt, [babyId+startedAt]',
       medicationTypes: 'id, userId, [userId+name]',
+    });
+
+    // Version 9: Add activity logs table
+    this.version(9).stores({
+      activityLogs: 'id, babyId, startedAt, [babyId+startedAt]',
     });
   }
 }

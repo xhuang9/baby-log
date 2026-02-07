@@ -4,6 +4,7 @@
  * Export all entity serializers.
  */
 
+export { serializeActivityLog } from './activity-log';
 export { serializeBaby } from './baby';
 export { serializeBathLog } from './bath-log';
 export { serializeFeedLog } from './feed-log';

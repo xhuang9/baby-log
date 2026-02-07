@@ -48,6 +48,9 @@
 
   /* Medication - health/clinical, red (Tailwind red). */
   --color-activity-medication-background: var(--color-red-400);
+
+  /* Activity (general) - engagement/play, purple (Tailwind purple). */
+  --color-activity-activity-background: var(--color-purple-500);
 }
 
 @layer components {
@@ -166,6 +169,10 @@
     --activity-tile-accent: var(--color-activity-medication-background);
   }
 
+  .activity-tile--activity {
+    --activity-tile-accent: var(--color-activity-activity-background);
+  }
+
   /* Timeline chart activity blocks */
   .activity-block {
     @apply absolute left-0.5 right-0.5 cursor-pointer overflow-hidden rounded text-left transition-opacity;
@@ -235,6 +242,10 @@
     background-color: var(--color-activity-medication-background);
   }
 
+  .activity-block--activity {
+    background-color: var(--color-activity-activity-background);
+  }
+
   /* Activity filter pill classes (for selected state) */
   .activity-pill--feed {
     background-color: var(--color-activity-feed-background);
@@ -266,5 +277,9 @@
 
   .activity-pill--medication {
     background-color: var(--color-activity-medication-background);
+  }
+
+  .activity-pill--activity {
+    background-color: var(--color-activity-activity-background);
   }
 }

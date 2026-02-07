@@ -5,8 +5,10 @@
  */
 
 import type {
+  ActivityLogCategory,
   FeedMethod,
   FeedSide,
+  LocalActivityLog,
   LocalBaby,
   LocalBabyAccess,
   LocalFeedLog,
@@ -19,6 +21,7 @@ import type {
   SolidsReaction,
 } from '@/lib/local-db';
 import {
+  saveActivityLogs,
   saveBabies,
   saveBabyAccess,
   saveFeedLogs,
@@ -112,6 +115,20 @@ export async function applyServerData(
       updatedAt: new Date(serverData.updatedAt as string),
     };
     await saveSolidsLogs([solidsLog]);
+  } else if ('activityType' in serverData) {
+    // Activity log
+    const activityLog: LocalActivityLog = {
+      id: serverData.id as string,
+      babyId: serverData.babyId as number,
+      loggedByUserId: serverData.loggedByUserId as number,
+      activityType: serverData.activityType as ActivityLogCategory,
+      startedAt: new Date(serverData.startedAt as string),
+      endedAt: serverData.endedAt ? new Date(serverData.endedAt as string) : null,
+      notes: (serverData.notes as string) ?? null,
+      createdAt: new Date(serverData.createdAt as string),
+      updatedAt: new Date(serverData.updatedAt as string),
+    };
+    await saveActivityLogs([activityLog]);
   } else if ('startedAt' in serverData && 'endedAt' in serverData) {
     // Sleep log
     const sleepLog: LocalSleepLog = {

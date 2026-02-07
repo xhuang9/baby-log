@@ -259,6 +259,27 @@ export const bathLogSchema = pgTable('bath_log', {
   index('bath_log_baby_started_at_idx').on(t.babyId, t.startedAt),
 ]);
 
+export const activityLogTypeEnum = pgEnum('activity_log_type_enum', [
+  'tummy_time',
+  'indoor_play',
+  'outdoor_play',
+  'screen_time',
+  'other',
+]);
+
+export const activityLogSchema = pgTable('activity_log', {
+  id: uuid('id').primaryKey(),
+  babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
+  loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
+  activityType: activityLogTypeEnum('activity_type').notNull(),
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
+  endedAt: timestamp('ended_at', { withTimezone: true }),
+  notes: text('notes'),
+  ...timestamps,
+}, t => [
+  index('activity_log_baby_started_at_idx').on(t.babyId, t.startedAt),
+]);
+
 export const babyInvitesSchema = pgTable('baby_invites', {
   id: serial('id').primaryKey(),
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),

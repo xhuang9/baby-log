@@ -5,6 +5,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { localDb } from '@/lib/local-db/database';
+import { ActivityLogTile } from './ActivityLogTile';
 import { BathTile } from './BathTile';
 import { FeedTile } from './FeedTile';
 import { GrowthTile } from './GrowthTile';
@@ -345,8 +346,44 @@ export function OverviewContent({ locale }: OverviewContentProps) {
     };
   }, [babyId]);
 
+  // Read latest activity from IndexedDB with caregiver info
+  // Only consider past logs (startedAt <= now) for "latest" display
+  const latestActivityData = useLiveQuery(async () => {
+    if (!babyId) {
+      return null;
+    }
+    const now = new Date();
+    const activities = await localDb.activityLogs
+      .where('babyId')
+      .equals(babyId)
+      .and(log => log.startedAt <= now)
+      .toArray();
+
+    if (activities.length === 0) {
+      return null;
+    }
+
+    // Sort descending by startedAt (newest first)
+    activities.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
+    const latestActivity = activities[0];
+    if (!latestActivity) {
+      return null;
+    }
+
+    // Get caregiver label from babyAccess
+    const access = await localDb.babyAccess
+      .where('[userId+babyId]')
+      .equals([latestActivity.loggedByUserId, babyId])
+      .first();
+
+    return {
+      ...latestActivity,
+      caregiverLabel: access?.caregiverLabel ?? null,
+    };
+  }, [babyId]);
+
   // Loading state while Dexie initializes
-  if (userData === undefined || latestFeedData === undefined || latestSleepData === undefined || latestNappyData === undefined || latestSolidsData === undefined || latestPumpingData === undefined || latestGrowthData === undefined || latestBathData === undefined || latestMedicationData === undefined) {
+  if (userData === undefined || latestFeedData === undefined || latestSleepData === undefined || latestNappyData === undefined || latestSolidsData === undefined || latestPumpingData === undefined || latestGrowthData === undefined || latestBathData === undefined || latestMedicationData === undefined || latestActivityData === undefined) {
     return <OverviewSkeleton />;
   }
 
@@ -385,6 +422,7 @@ export function OverviewContent({ locale }: OverviewContentProps) {
       <GrowthTile babyId={babyId} latestGrowth={latestGrowthData} />
       <BathTile babyId={babyId} latestBath={latestBathData} />
       <MedicationTile babyId={babyId} latestMedication={latestMedicationData} />
+      <ActivityLogTile babyId={babyId} latestActivity={latestActivityData} />
     </div>
   );
 }

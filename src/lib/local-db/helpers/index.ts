@@ -5,6 +5,7 @@
  */
 
 export * from './access-revoked';
+export * from './activity-logs';
 export * from './auth-session';
 export * from './baby';
 export * from './bath-logs';
