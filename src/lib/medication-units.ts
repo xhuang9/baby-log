@@ -1,8 +1,7 @@
 /**
  * Medication Unit Conversion Utilities
  *
- * Standard conversions (per user specification):
- * - 1 tbsp = 3 tsp = 15 ml = 60 drops
+ * Standard conversions:
  * - 1 tsp = 5 ml = 20 drops
  * - 1 ml = 4 drops
  */
@@ -17,7 +16,7 @@ const TO_ML: Partial<Record<MedicationUnit, number>> = {
   ml: 1,
   drops: 0.25, // 1 drop = 0.25 ml (4 drops = 1 ml)
   tsp: 5, // 1 tsp = 5 ml
-  tbsp: 15, // 1 tbsp = 15 ml
+  tbsp: 15, // 1 tbsp = 15 ml (kept for backwards compat)
 };
 
 // Conversion factors from ml - only for liquid units
@@ -25,7 +24,7 @@ const FROM_ML: Partial<Record<MedicationUnit, number>> = {
   ml: 1,
   drops: 4, // 1 ml = 4 drops
   tsp: 0.2, // 1 ml = 0.2 tsp
-  tbsp: 1 / 15, // 1 ml = 1/15 tbsp
+  tbsp: 1 / 15, // 1 ml = 1/15 tbsp (kept for backwards compat)
 };
 
 /**
