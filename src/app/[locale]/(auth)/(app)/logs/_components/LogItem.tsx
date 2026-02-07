@@ -17,6 +17,7 @@ const activityClasses = {
   'pumping': 'activity-tile--pumping',
   'growth': 'activity-tile--growth',
   'bath': 'activity-tile--bath',
+  'medication': 'activity-tile--medication',
   'tummy-time': 'activity-tile--tummy-time',
   'story-time': 'activity-tile--story-time',
   'screen-time': 'activity-tile--screen-time',
@@ -153,7 +154,7 @@ export function LogItem({ log, onClick }: LogItemProps) {
       onTouchEnd={handleTouchEnd}
     >
       {/* Delete button background (revealed on swipe) */}
-      <div className="absolute top-0 bottom-0 left-0 right-1 flex items-center justify-end bg-destructive px-4">
+      <div className="absolute top-0 right-1 bottom-0 left-0 flex items-center justify-end bg-destructive px-4">
         <span className="text-sm font-semibold text-white">Delete</span>
       </div>
 

@@ -1,5 +1,6 @@
 ---
 last_verified_at: 2026-01-25T14:30:00Z
+expired_reason: "Modified: LogsContent.tsx, LogItem.tsx"
 source_paths:
   - src/app/[locale]/(auth)/(app)/logs/page.tsx
   - src/app/[locale]/(auth)/(app)/logs/_components/LogsContent.tsx
@@ -9,6 +10,8 @@ source_paths:
   - src/app/[locale]/(auth)/(app)/logs/_components/EmptyState.tsx
   - src/app/[locale]/(auth)/(app)/logs/_components/edit-modals/
 ---
+
+**⚠️ EXPIRED**: Awaiting refresh.
 
 # Activity Logs Page
 

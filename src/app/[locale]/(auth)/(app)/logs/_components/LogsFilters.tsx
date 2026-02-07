@@ -14,6 +14,17 @@ import {
   TIME_RANGE_OPTIONS,
 } from '@/hooks/useLogsFilters';
 
+const activityPillClasses: Record<ActivityType, string> = {
+  feed: 'activity-pill--feed',
+  sleep: 'activity-pill--sleep',
+  nappy: 'activity-pill--nappy',
+  solids: 'activity-pill--solids',
+  pumping: 'activity-pill--pumping',
+  growth: 'activity-pill--growth',
+  bath: 'activity-pill--bath',
+  medication: 'activity-pill--medication',
+};
+
 export type LogsFiltersProps = {
   activeTypes: ActivityType[];
   setActiveTypes: (types: ActivityType[]) => void;
@@ -95,6 +106,7 @@ export function LogsFilters({
             key={value}
             variant={isSelected ? 'default' : 'outline'}
             size="sm"
+            className={isSelected ? activityPillClasses[value] : undefined}
             onClick={() => handleTypeClick(value)}
           >
             {label}

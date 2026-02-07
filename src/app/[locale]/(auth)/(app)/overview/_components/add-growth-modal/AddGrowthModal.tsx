@@ -2,6 +2,8 @@
 
 import type { AddGrowthModalProps } from './types';
 import { ChevronLeftIcon } from 'lucide-react';
+import { useMemo } from 'react';
+import { getBirthDateForCalculation } from '@/app/[locale]/(auth)/(app)/logs/_components/growth-charts/utils';
 import { TimeSwiper } from '@/components/feed/TimeSwiper';
 import { FormFooter, NotesField, SectionDivider } from '@/components/input-controls';
 import { Button } from '@/components/ui/button';
@@ -15,7 +17,11 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import { calculateAgeInMonths } from '@/lib/growth-calculations';
+import { calculatePercentile } from '@/lib/percentile-calculations';
+import { PercentileIndicator } from './components';
 import {
+  useBabyData,
   useGrowthFormState,
   useGrowthFormSubmit,
   useInitializeGrowthForm,
@@ -47,6 +53,9 @@ export function AddGrowthModal({
     onSuccess,
     onClose: () => onOpenChange(false),
   });
+
+  // 3b. Fetch baby data for percentile calculations
+  const { baby, userCreatedAt, isLoading: isBabyLoading } = useBabyData(babyId);
 
   // 4. Input handlers - parse numeric values, handle units
   const handleWeightChange = (value: string) => {
@@ -91,6 +100,67 @@ export function AddGrowthModal({
   const displayWeight = state.weightG != null ? (state.weightG / 1000).toString() : '';
   const displayHeight = state.heightMm != null ? (state.heightMm / 10).toString() : '';
   const displayHead = state.headCircumferenceMm != null ? (state.headCircumferenceMm / 10).toString() : '';
+
+  // Calculate percentiles as derived values
+  const weightPercentile = useMemo(() => {
+    if (!baby || !state.weightG || isBabyLoading) {
+      return null;
+    }
+
+    const birthInfo = getBirthDateForCalculation(baby, userCreatedAt);
+    if (!birthInfo) {
+      return null;
+    }
+
+    const ageInMonths = calculateAgeInMonths(birthInfo.birthDate, state.startTime);
+
+    return calculatePercentile({
+      value: state.weightG / 1000, // g to kg
+      metric: 'weight',
+      gender: baby.gender,
+      ageInMonths,
+    });
+  }, [baby, state.weightG, state.startTime, userCreatedAt, isBabyLoading]);
+
+  const heightPercentile = useMemo(() => {
+    if (!baby || !state.heightMm || isBabyLoading) {
+      return null;
+    }
+
+    const birthInfo = getBirthDateForCalculation(baby, userCreatedAt);
+    if (!birthInfo) {
+      return null;
+    }
+
+    const ageInMonths = calculateAgeInMonths(birthInfo.birthDate, state.startTime);
+
+    return calculatePercentile({
+      value: state.heightMm / 10, // mm to cm
+      metric: 'length',
+      gender: baby.gender,
+      ageInMonths,
+    });
+  }, [baby, state.heightMm, state.startTime, userCreatedAt, isBabyLoading]);
+
+  const headPercentile = useMemo(() => {
+    if (!baby || !state.headCircumferenceMm || isBabyLoading) {
+      return null;
+    }
+
+    const birthInfo = getBirthDateForCalculation(baby, userCreatedAt);
+    if (!birthInfo) {
+      return null;
+    }
+
+    const ageInMonths = calculateAgeInMonths(birthInfo.birthDate, state.startTime);
+
+    return calculatePercentile({
+      value: state.headCircumferenceMm / 10, // mm to cm
+      metric: 'head',
+      gender: baby.gender,
+      ageInMonths,
+    });
+  }, [baby, state.headCircumferenceMm, state.startTime, userCreatedAt, isBabyLoading]);
 
   // 6. Render
   return (
@@ -157,6 +227,9 @@ export function AddGrowthModal({
                   kg
                 </span>
               </div>
+              <div className="w-14 text-right">
+                {weightPercentile && <PercentileIndicator percentileLabel={weightPercentile} />}
+              </div>
             </div>
 
             {/* Height */}
@@ -177,11 +250,14 @@ export function AddGrowthModal({
                   cm
                 </span>
               </div>
+              <div className="w-14 text-right">
+                {heightPercentile && <PercentileIndicator percentileLabel={heightPercentile} />}
+              </div>
             </div>
 
             {/* Head Circumference */}
             <div className="flex items-center gap-3">
-              <Label className="w-24 shrink-0">Head</Label>
+              <Label className="w-24 shrink-0">Head Circ.</Label>
               <div className="relative flex-1">
                 <Input
                   type="number"
@@ -196,6 +272,9 @@ export function AddGrowthModal({
                 <span className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-muted-foreground">
                   cm
                 </span>
+              </div>
+              <div className="w-14 text-right">
+                {headPercentile && <PercentileIndicator percentileLabel={headPercentile} />}
               </div>
             </div>
           </div>

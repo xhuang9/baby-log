@@ -67,9 +67,18 @@ export function NewBabyForm(props: {
     }
 
     try {
+      // Parse date as local time, not UTC
+      let parsedBirthDate: Date | null = null;
+      if (birthDate) {
+        const parts = birthDate.split('-').map(Number);
+        if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
+          parsedBirthDate = new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+      }
+
       const result = await createBaby({
         name: name.trim(),
-        birthDate: birthDate ? new Date(birthDate) : null,
+        birthDate: parsedBirthDate,
         gender: gender === 'unknown' ? null : gender,
         birthWeightG: birthWeightG ? Number.parseInt(birthWeightG, 10) : null,
         caregiverLabel: caregiverLabel.trim() || 'Parent',

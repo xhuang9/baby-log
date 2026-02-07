@@ -1,9 +1,12 @@
 ---
 last_verified_at: 2026-01-25T12:00:00Z
+expired_reason: "Modified: LogItem.tsx"
 source_paths:
   - src/lib/format-log.ts
   - src/app/[locale]/(auth)/(app)/logs/_components/LogItem.tsx
 ---
+
+**⚠️ EXPIRED**: Awaiting refresh.
 
 # Log Formatting & Display
 

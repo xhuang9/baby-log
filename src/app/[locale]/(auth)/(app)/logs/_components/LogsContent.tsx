@@ -8,17 +8,20 @@ import { useAllActivityLogs } from '@/hooks/useAllActivityLogs';
 import { ACTIVITY_TYPES, useLogsFilters } from '@/hooks/useLogsFilters';
 import { localDb } from '@/lib/local-db';
 import { ActivityTypePills } from './ActivityTypePills';
+import { EditBathModal } from './edit-modals/EditBathModal';
 import { EditFeedModal } from './edit-modals/EditFeedModal';
 import { EditGrowthModal } from './edit-modals/EditGrowthModal';
+import { EditMedicationModal } from './edit-modals/EditMedicationModal';
 import { EditNappyModal } from './edit-modals/EditNappyModal';
 import { EditPumpingModal } from './edit-modals/EditPumpingModal';
 import { EditSleepModal } from './edit-modals/EditSleepModal';
 import { EditSolidsModal } from './edit-modals/EditSolidsModal';
+import { GrowthChartsContent } from './growth-charts';
 import { LogsFilters } from './LogsFilters';
 import { LogsList } from './LogsList';
 import { ActivityTimelineChart } from './timeline-chart';
 
-export type LogsViewTab = 'listing' | 'today' | 'week';
+export type LogsViewTab = 'listing' | 'today' | 'week' | 'growth';
 
 /**
  * Main orchestrator component for the activity logs page
@@ -116,6 +119,9 @@ export function LogsContent() {
           <TabsTrigger value="week" className="flex-1">
             Week
           </TabsTrigger>
+          <TabsTrigger value="growth" className="flex-1">
+            Growth
+          </TabsTrigger>
         </TabsList>
 
         {/* Listing View */}
@@ -174,6 +180,11 @@ export function LogsContent() {
               />
             </>
           )}
+        </TabsContent>
+
+        {/* Growth View - lazy render only after first visit */}
+        <TabsContent value="growth" className="flex min-h-0 flex-1 flex-col gap-3 md:gap-4">
+          {visitedTabs.has('growth') && <GrowthChartsContent babyId={babyId} />}
         </TabsContent>
       </Tabs>
 
@@ -244,6 +255,30 @@ export function LogsContent() {
       {editingLog?.type === 'growth' && (
         <EditGrowthModal
           growth={editingLog.data as import('@/lib/local-db').LocalGrowthLog}
+          open={Boolean(editingLog)}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleCloseEditModal();
+            }
+          }}
+        />
+      )}
+
+      {editingLog?.type === 'bath' && (
+        <EditBathModal
+          bath={editingLog.data as import('@/lib/local-db').LocalBathLog}
+          open={Boolean(editingLog)}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleCloseEditModal();
+            }
+          }}
+        />
+      )}
+
+      {editingLog?.type === 'medication' && (
+        <EditMedicationModal
+          medication={editingLog.data as import('@/lib/local-db').LocalMedicationLog}
           open={Boolean(editingLog)}
           onOpenChange={(open) => {
             if (!open) {

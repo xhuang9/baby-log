@@ -56,3 +56,9 @@ This project has a **brand guideline** optimized for new parents - calming paste
 - Activity types have dedicated color tokens in `activity-colors.css`
 
 For complete navigation: `.readme/index.root.md`
+
+## Project Skills
+
+| Skill | Use when |
+|-------|----------|
+| `/add-log-type` | Adding a new activity log type (database, sync, operations, UI) |

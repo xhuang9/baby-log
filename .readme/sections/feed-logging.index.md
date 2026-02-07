@@ -139,20 +139,34 @@ This section documents the feed logging implementation including:
 
 ### Activity Logs Page
 
-#### `chunks/feed-logging.activity-logs-page.md`
+#### `chunks/feed-logging.activity-logs-page.md` [EXPIRED]
 
 - **Content**: Complete logs page implementation with filtering, view modes, unified log querying, date grouping, edit/delete modal integration, and mobile swipe-to-delete gesture
 - **Read when**: Building the logs feature, implementing filter state with URL sync, understanding date grouping and view modes, working with edit modals, or implementing swipe gestures on mobile
+- **Status**: Expired (LogsContent.tsx, LogItem.tsx modified on 2026-02-06). Refresh to check for changes in growth chart addition and other recent modifications.
 
 #### `chunks/feed-logging.edit-delete-operations.md`
 
 - **Content**: Edit/delete operations layer for feed and sleep logs with local-first sync pattern, access control, and error handling
 - **Read when**: Implementing edit/delete flows, understanding operations pattern, working with outbox sync, or handling edit/delete in modal components
 
-#### `chunks/feed-logging.log-formatting.md`
+#### `chunks/feed-logging.log-formatting.md` [EXPIRED]
 
 - **Content**: Formatting utilities for dates (relative), durations, times, and structured log display with left/right columns for efficient scanning
 - **Read when**: Working with log display, implementing formatting logic, understanding LogItem parsing, or extending formatting for new activity types
+- **Status**: Expired (LogItem.tsx modified on 2026-02-06). Refresh to check for changes.
+
+### Growth Charts
+
+#### `chunks/feed-logging.growth-percentile-indicators.md`
+
+- **Content**: Real-time WHO percentile bracket indicators in AddGrowthModal with age calculation, gender validation, IndexedDB baby data integration, and layout stability patterns
+- **Read when**: Working with growth measurements, understanding percentile calculations, implementing live percentile feedback, debugging age/gender validation, or extending growth tracking features
+
+#### `chunks/feed-logging.growth-charts-recharts.md`
+
+- **Content**: Recharts LineChart configuration with Y-axis smart tick rounding (target ~6 ticks), X-axis month coverage (0-24), tooltip label fixing (payload month extraction), percentile line styling, and responsive layout
+- **Read when**: Building growth chart visualization, understanding Recharts axis configuration, fixing tooltip label issues, or implementing similar multi-line chart patterns with custom axis intervals
 
 ### Nappy Logging
 

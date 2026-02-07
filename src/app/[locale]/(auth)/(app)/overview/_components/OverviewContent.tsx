@@ -5,9 +5,10 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { localDb } from '@/lib/local-db/database';
-import { ActivityTile } from './ActivityTile';
+import { BathTile } from './BathTile';
 import { FeedTile } from './FeedTile';
 import { GrowthTile } from './GrowthTile';
+import { MedicationTile } from './MedicationTile';
 import { NappyTile } from './NappyTile';
 import { PumpingTile } from './PumpingTile';
 import { SleepTile } from './SleepTile';
@@ -272,8 +273,80 @@ export function OverviewContent({ locale }: OverviewContentProps) {
     };
   }, [babyId]);
 
+  // Read latest bath from IndexedDB with caregiver info
+  // Only consider past logs (startedAt <= now) for "latest" display
+  const latestBathData = useLiveQuery(async () => {
+    if (!babyId) {
+      return null;
+    }
+    const now = new Date();
+    const baths = await localDb.bathLogs
+      .where('babyId')
+      .equals(babyId)
+      .and(log => log.startedAt <= now) // Filter out future logs
+      .toArray();
+
+    if (baths.length === 0) {
+      return null;
+    }
+
+    // Sort descending by startedAt (newest first)
+    baths.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
+    const latestBath = baths[0];
+    if (!latestBath) {
+      return null;
+    }
+
+    // Get caregiver label from babyAccess
+    const access = await localDb.babyAccess
+      .where('[userId+babyId]')
+      .equals([latestBath.loggedByUserId, babyId])
+      .first();
+
+    return {
+      ...latestBath,
+      caregiverLabel: access?.caregiverLabel ?? null,
+    };
+  }, [babyId]);
+
+  // Read latest medication from IndexedDB with caregiver info
+  // Only consider past logs (startedAt <= now) for "latest" display
+  const latestMedicationData = useLiveQuery(async () => {
+    if (!babyId) {
+      return null;
+    }
+    const now = new Date();
+    const medications = await localDb.medicationLogs
+      .where('babyId')
+      .equals(babyId)
+      .and(log => log.startedAt <= now) // Filter out future logs
+      .toArray();
+
+    if (medications.length === 0) {
+      return null;
+    }
+
+    // Sort descending by startedAt (newest first)
+    medications.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
+    const latestMedication = medications[0];
+    if (!latestMedication) {
+      return null;
+    }
+
+    // Get caregiver label from babyAccess
+    const access = await localDb.babyAccess
+      .where('[userId+babyId]')
+      .equals([latestMedication.loggedByUserId, babyId])
+      .first();
+
+    return {
+      ...latestMedication,
+      caregiverLabel: access?.caregiverLabel ?? null,
+    };
+  }, [babyId]);
+
   // Loading state while Dexie initializes
-  if (userData === undefined || latestFeedData === undefined || latestSleepData === undefined || latestNappyData === undefined || latestSolidsData === undefined || latestPumpingData === undefined || latestGrowthData === undefined) {
+  if (userData === undefined || latestFeedData === undefined || latestSleepData === undefined || latestNappyData === undefined || latestSolidsData === undefined || latestPumpingData === undefined || latestGrowthData === undefined || latestBathData === undefined || latestMedicationData === undefined) {
     return <OverviewSkeleton />;
   }
 
@@ -310,7 +383,8 @@ export function OverviewContent({ locale }: OverviewContentProps) {
       <SolidsTile babyId={babyId} latestSolids={latestSolidsData} />
       <PumpingTile babyId={babyId} latestPumping={latestPumpingData} />
       <GrowthTile babyId={babyId} latestGrowth={latestGrowthData} />
-      <ActivityTile title="Bath" statusText="Coming soon" activity="bath" disabled />
+      <BathTile babyId={babyId} latestBath={latestBathData} />
+      <MedicationTile babyId={babyId} latestMedication={latestMedicationData} />
     </div>
   );
 }

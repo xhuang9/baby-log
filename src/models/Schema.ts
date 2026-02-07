@@ -248,6 +248,17 @@ export const growthLogSchema = pgTable('growth_log', {
   index('growth_log_baby_started_at_idx').on(t.babyId, t.startedAt),
 ]);
 
+export const bathLogSchema = pgTable('bath_log', {
+  id: uuid('id').primaryKey(), // Client-generated UUID
+  babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
+  loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
+  notes: text('notes'),
+  ...timestamps,
+}, t => [
+  index('bath_log_baby_started_at_idx').on(t.babyId, t.startedAt),
+]);
+
 export const babyInvitesSchema = pgTable('baby_invites', {
   id: serial('id').primaryKey(),
   babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),

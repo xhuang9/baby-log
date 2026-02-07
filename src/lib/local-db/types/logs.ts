@@ -120,3 +120,37 @@ export type LocalGrowthLog = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+// ============================================================================
+// Bath Log Types
+// ============================================================================
+
+export type LocalBathLog = {
+  id: string; // UUID - client-generated for idempotent creates
+  babyId: number;
+  loggedByUserId: number;
+  startedAt: Date;
+  notes: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+// ============================================================================
+// Medication Log Types
+// ============================================================================
+
+export type MedicationUnit = 'ml' | 'drops' | 'tsp' | 'tbsp' | 'tablet' | 'capsule' | 'sachet';
+
+export type LocalMedicationLog = {
+  id: string; // UUID - client-generated for idempotent creates
+  babyId: number;
+  loggedByUserId: number;
+  medicationType: string; // Display text: "Tylenol"
+  medicationTypeId: string; // UUID reference to medication type
+  amount: number; // Numeric amount
+  unit: MedicationUnit; // 'ml' | 'drops' | 'tsp'
+  startedAt: Date; // instant event, no endedAt
+  notes: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};

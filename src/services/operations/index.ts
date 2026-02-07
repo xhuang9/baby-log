@@ -27,6 +27,18 @@ export {
   updateBabyProfile,
 } from './baby/index';
 
+// Bath log operations
+export type {
+  CreateBathLogInput,
+  UpdateBathLogInput,
+} from './bath-log';
+
+export {
+  createBathLog,
+  deleteBathLog,
+  updateBathLog,
+} from './bath-log';
+
 // Feed log operations
 export type {
   CreateFeedLogInput,
@@ -50,6 +62,28 @@ export {
   deleteGrowthLog,
   updateGrowthLog,
 } from './growth-log';
+
+// Medication log operations
+export type {
+  CreateMedicationLogInput,
+  UpdateMedicationLogInput,
+} from './medication-log';
+
+export {
+  createMedicationLog,
+  deleteMedicationLog,
+  updateMedicationLog,
+} from './medication-log';
+
+// Medication type operations
+export type {
+  CreateMedicationTypeInput,
+} from './medication-types';
+
+export {
+  createMedicationType,
+  deleteMedicationType,
+} from './medication-types';
 
 // Nappy log operations
 export type {

@@ -1,7 +1,7 @@
 'use client';
 
-import type { PumpingAmountSettingsState } from '@/components/settings/PumpingAmountSettingsPanel';
 import type { PumpingAmountMode } from '../hooks/usePumpingFormState';
+import type { PumpingAmountSettingsState } from '@/components/settings/PumpingAmountSettingsPanel';
 import { PillTabs, PillTabsList, PillTabsTrigger } from '@/components/custom-ui';
 import { cn } from '@/lib/utils';
 import { PumpingAmountSwiper } from './PumpingAmountSwiper';

@@ -9,7 +9,7 @@ export type PumpingAmountMode = 'leftRight' | 'total';
 export function usePumpingFormState() {
   const [startTime, setStartTime] = useState(() => new Date());
   const [endTime, setEndTime] = useState(() => new Date());
-  const [mode, setMode] = useState<PumpingAmountMode>('leftRight');
+  const [mode, setMode] = useState<PumpingAmountMode>('total');
   const [leftMl, setLeftMl] = useState(30);
   const [rightMl, setRightMl] = useState(30);
   const [totalMl, setTotalMl] = useState(30);
@@ -21,7 +21,7 @@ export function usePumpingFormState() {
   const resetForm = () => {
     setStartTime(new Date());
     setEndTime(new Date());
-    setMode('leftRight');
+    setMode('total');
     setLeftMl(pumpingSettings.defaultAmountMl);
     setRightMl(pumpingSettings.defaultAmountMl);
     setTotalMl(pumpingSettings.defaultAmountMl);

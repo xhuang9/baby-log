@@ -18,7 +18,8 @@
 import type { EntityTable } from 'dexie';
 import type { LocalBaby, LocalBabyAccess, LocalBabyInvite, LocalUIConfig, LocalUser } from './types/entities';
 import type { LocalFoodType } from './types/food-types';
-import type { LocalFeedLog, LocalGrowthLog, LocalNappyLog, LocalPumpingLog, LocalSleepLog, LocalSolidsLog } from './types/logs';
+import type { LocalBathLog, LocalFeedLog, LocalGrowthLog, LocalMedicationLog, LocalNappyLog, LocalPumpingLog, LocalSleepLog, LocalSolidsLog } from './types/logs';
+import type { LocalMedicationType } from './types/medication-types';
 import type { LocalNotification } from './types/notifications';
 import type { OutboxEntry } from './types/outbox';
 import type { AuthSession, LocalSyncStatus, SyncMeta } from './types/sync';
@@ -36,6 +37,8 @@ class BabyLogDatabase extends Dexie {
   solidsLogs!: EntityTable<LocalSolidsLog, 'id'>;
   pumpingLogs!: EntityTable<LocalPumpingLog, 'id'>;
   growthLogs!: EntityTable<LocalGrowthLog, 'id'>;
+  bathLogs!: EntityTable<LocalBathLog, 'id'>;
+  medicationLogs!: EntityTable<LocalMedicationLog, 'id'>;
 
   // Entity tables
   babies!: EntityTable<LocalBaby, 'id'>;
@@ -44,6 +47,7 @@ class BabyLogDatabase extends Dexie {
   users!: EntityTable<LocalUser, 'id'>;
   uiConfig!: EntityTable<LocalUIConfig, 'userId'>;
   foodTypes!: EntityTable<LocalFoodType, 'id'>;
+  medicationTypes!: EntityTable<LocalMedicationType, 'id'>;
 
   // Sync management tables
   syncMeta!: EntityTable<SyncMeta, 'babyId'>;
@@ -132,6 +136,17 @@ class BabyLogDatabase extends Dexie {
     // Version 6: Add growth logs table
     this.version(6).stores({
       growthLogs: 'id, babyId, startedAt, [babyId+startedAt]',
+    });
+
+    // Version 7: Add bath logs table
+    this.version(7).stores({
+      bathLogs: 'id, babyId, startedAt, [babyId+startedAt]',
+    });
+
+    // Version 8: Add medication logs and medication types tables
+    this.version(8).stores({
+      medicationLogs: 'id, babyId, startedAt, [babyId+startedAt]',
+      medicationTypes: 'id, userId, [userId+name]',
     });
   }
 }

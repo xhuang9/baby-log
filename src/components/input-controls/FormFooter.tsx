@@ -56,7 +56,7 @@ export function FormFooter({
       variant="secondary"
       type="button"
       onClick={onSecondary}
-      disabled={disabled || isLoading}
+      disabled={isLoading}
     >
       {secondaryLabel}
     </BaseButton>

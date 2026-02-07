@@ -51,13 +51,16 @@ export function EditBabyForm(props: {
     };
   }, [user?.localId]);
 
-  // Format date for input field (YYYY-MM-DD)
+  // Format date for input field (YYYY-MM-DD) - use local date, not UTC
   const formatDateForInput = (date: Date | null) => {
     if (!date) {
       return '';
     }
     const d = new Date(date);
-    return d.toISOString().split('T')[0] ?? '';
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   const [name, setName] = useState(initialData.name);
@@ -95,9 +98,18 @@ export function EditBabyForm(props: {
     }
 
     try {
+      // Parse date as local time, not UTC
+      let parsedBirthDate: Date | null = null;
+      if (birthDate) {
+        const parts = birthDate.split('-').map(Number);
+        if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
+          parsedBirthDate = new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+      }
+
       const result = await updateBabyProfile(babyId, {
         name: name.trim(),
-        birthDate: birthDate ? new Date(birthDate) : null,
+        birthDate: parsedBirthDate,
         gender: gender === 'unknown' ? null : gender,
         birthWeightG: birthWeightG ? Number.parseInt(birthWeightG, 10) : null,
         caregiverLabel: caregiverLabel.trim() || 'Parent',
