@@ -1,9 +1,13 @@
 ---
-last_verified_at: 2026-01-29T00:00:00Z
+last_verified_at: 2026-02-07T00:00:00Z
 source_paths:
   - src/components/activity-modals/
   - src/app/[locale]/(auth)/(app)/overview/_components/add-feed-modal/
   - src/app/[locale]/(auth)/(app)/overview/_components/add-sleep-modal/
+  - src/app/[locale]/(auth)/(app)/overview/_components/add-solids-modal/
+  - src/app/[locale]/(auth)/(app)/overview/_components/add-growth-modal/
+  - src/app/[locale]/(auth)/(app)/overview/_components/add-medication-modal/
+  - src/app/[locale]/(auth)/(app)/overview/_components/add-pumping-modal/
 ---
 
 # Activity Modal Pattern
@@ -163,12 +167,15 @@ export function useInitializeSleepForm({
 ```
 
 #### `use{Activity}FormSubmit` - Validation & Persistence
-- Validates form inputs
+- **Computes and exposes `isValid`** - Single source of truth for form validation
+- Validates form inputs based on activity-specific rules
 - Handles timer vs manual mode logic
 - **Reactively tracks timer state** for button enable/disable (timer mode only)
 - Calls operations layer for persistence
 - Manages loading state and errors
 - Triggers callbacks on success
+
+**See** `.readme/chunks/ui-patterns.modal-validation.md` for detailed validation pattern across all modals.
 
 Example (Sleep with Timer Validation):
 ```typescript
@@ -254,7 +261,7 @@ export function useSleepFormSubmit(options: UseSleepFormSubmitOptions) {
     }
   };
 
-  return { handleSubmit, isSubmitting, error, canSave };
+  return { handleSubmit, isSubmitting, error, isValid: canSave };
 }
 ```
 
@@ -286,7 +293,7 @@ export function AddSleepModal({
   });
 
   // 4. Submit logic with reactive timer validation
-  const { handleSubmit, isSubmitting, error, canSave } = useSleepFormSubmit({
+  const { handleSubmit, isSubmitting, error, isValid } = useSleepFormSubmit({
     babyId,
     inputMode: state.inputMode,
     startTime: state.startTime,
@@ -331,12 +338,13 @@ export function AddSleepModal({
         {/* Error display */}
         {error && <ErrorMessage>{error}</ErrorMessage>}
         {/* Footer with reactive save button */}
-        <Button
-          onClick={handleSubmit}
-          disabled={!canSave || isSubmitting}
-        >
-          {isSubmitting ? 'Saving...' : 'Save'}
-        </Button>
+        <FormFooter
+          onPrimary={handleSubmit}
+          primaryLabel="Save"
+          disabled={!isValid}
+          isLoading={isSubmitting}
+          handMode={state.handMode}
+        />
       </SheetContent>
     </Sheet>
   );
@@ -606,7 +614,39 @@ if (duration <= 0) {
 }
 ```
 
-### 6. Timer Mode Validation: Reactive Button State
+### 6. Modal Validation Pattern
+**Issue:** Validation logic was duplicated between button disable state and submit handlers
+**Solution:** Submit hooks compute and expose `isValid`, orchestrators pass `disabled={!isValid}` to FormFooter
+```typescript
+// In submit hook
+export function useFeedFormSubmit(options) {
+  // Compute validation
+  const isValid = /* validation logic based on props */;
+
+  const handleSubmit = async () => {
+    // ... submission logic
+  };
+
+  return { handleSubmit, isSubmitting, error, isValid };
+}
+
+// In orchestrator
+export function AddFeedModal({ ... }) {
+  const { handleSubmit, isSubmitting, error, isValid } = useFeedFormSubmit({ ... });
+
+  return (
+    <FormFooter
+      onPrimary={handleSubmit}
+      disabled={!isValid}  // ← Single source of truth
+      isLoading={isSubmitting}
+    />
+  );
+}
+```
+
+**See** `.readme/chunks/ui-patterns.modal-validation.md` for complete pattern documentation across all 5 modals.
+
+### 7. Timer Mode Validation: Reactive Button State
 **Issue:** Save button should be disabled until user records ≥60 seconds on timer
 **Solution:** Use Zustand subscriber pattern to reactively track timer state
 ```typescript
@@ -679,7 +719,7 @@ export function AddSleepModal({ babyId, open, onOpenChange, onSuccess }) {
 
   useInitializeSleepForm({ isTimerHydrated: isHydrated, setHandMode: actions.setHandMode });
 
-  const { handleSubmit, isSubmitting, error } = useSleepFormSubmit({
+  const { handleSubmit, isSubmitting, error, isValid } = useSleepFormSubmit({
     babyId, inputMode: state.inputMode, startTime: state.startTime,
     endTime: state.endTime, prepareTimerSave, completeTimerSave,
     resetForm: actions.resetForm, onSuccess, onClose: () => onOpenChange(false),

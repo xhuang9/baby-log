@@ -1,5 +1,5 @@
 ---
-last_verified_at: 2026-01-20T00:00:00Z
+last_verified_at: 2026-02-07T00:00:00Z
 source_paths:
   - src/app/[locale]/
   - src/lib/
@@ -72,3 +72,7 @@ The architecture emphasizes separation of concerns, performance-first patterns, 
 - `.readme/chunks/components.modal-button-sizing.md`
   - Content: Standardized modal button sizing (44px height, pill-shaped) for consistency across all activity modals
   - Read when: Adding buttons to modals, ensuring button size consistency, or implementing modal action buttons
+
+- `.readme/chunks/ui-patterns.modal-validation.md`
+  - Content: Modal validation pattern where submit hooks compute and expose `isValid`, orchestrators pass `disabled={!isValid}` to FormFooter
+  - Read when: Adding validation to modals, implementing form validation, understanding why orchestrators don't contain inline validation, or adding new activity modals
