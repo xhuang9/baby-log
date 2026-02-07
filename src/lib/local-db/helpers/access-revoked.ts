@@ -20,6 +20,15 @@ export async function clearRevokedBabyData(babyId: number, userId: number): Prom
     localDb.feedLogs,
     localDb.sleepLogs,
     localDb.nappyLogs,
+    localDb.solidsLogs,
+    localDb.pumpingLogs,
+    localDb.growthLogs,
+    localDb.bathLogs,
+    localDb.medicationLogs,
+    localDb.activityLogs,
+    localDb.babyInvites,
+    localDb.foodTypes,
+    localDb.syncMeta,
     localDb.outbox,
   ], async () => {
     // Remove baby access record
@@ -48,18 +57,29 @@ export async function clearRevokedBabyData(babyId: number, userId: number): Prom
       await localDb.feedLogs.where('babyId').equals(babyId).delete();
       await localDb.sleepLogs.where('babyId').equals(babyId).delete();
       await localDb.nappyLogs.where('babyId').equals(babyId).delete();
+      await localDb.solidsLogs.where('babyId').equals(babyId).delete();
+      await localDb.pumpingLogs.where('babyId').equals(babyId).delete();
+      await localDb.growthLogs.where('babyId').equals(babyId).delete();
+      await localDb.bathLogs.where('babyId').equals(babyId).delete();
+      await localDb.medicationLogs.where('babyId').equals(babyId).delete();
+      await localDb.activityLogs.where('babyId').equals(babyId).delete();
+      await localDb.babyInvites.where('babyId').equals(babyId).delete();
+      await localDb.syncMeta.delete(babyId);
       // eslint-disable-next-line no-console -- Debug logging for access revocation
       console.log(`[Access Revoked] Deleted all logs for baby`);
     }
 
     // Delete all pending mutations for this baby
+    const allLogEntityTypes = [
+      'feed_log', 'sleep_log', 'nappy_log', 'solids_log',
+      'pumping_log', 'growth_log', 'bath_log', 'medication_log', 'activity_log',
+    ];
     const deletedMutations = await localDb.outbox
       .filter((m) => {
         if (m.entityType === 'baby' && m.entityId === String(babyId)) {
           return true;
         }
-        if (['feed_log', 'sleep_log', 'nappy_log'].includes(m.entityType)) {
-          // Check if the mutation is for this baby
+        if (allLogEntityTypes.includes(m.entityType)) {
           const payload = m.payload as { babyId?: number };
           return payload.babyId === babyId;
         }
@@ -97,7 +117,11 @@ export async function getAccessDeniedMutations(babyId: number): Promise<{
         return true;
       }
 
-      if (['feed_log', 'sleep_log', 'nappy_log'].includes(m.entityType)) {
+      const allLogEntityTypes = [
+        'feed_log', 'sleep_log', 'nappy_log', 'solids_log',
+        'pumping_log', 'growth_log', 'bath_log', 'medication_log', 'activity_log',
+      ];
+      if (allLogEntityTypes.includes(m.entityType)) {
         const payload = m.payload as { babyId?: number };
         return payload.babyId === babyId;
       }
