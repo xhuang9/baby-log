@@ -84,7 +84,7 @@ export function ReactionButtons({ value, onChange, handMode = 'right' }: Reactio
                 ],
               )}
             >
-              <Icon className={cn('h-4 w-4', !isSelected && reaction.iconColor)} />
+              <Icon className={cn('h-4 w-4', !isSelected && reaction.iconColor)} fill="currentColor" />
               <span>{reaction.label}</span>
             </Button>
           );
