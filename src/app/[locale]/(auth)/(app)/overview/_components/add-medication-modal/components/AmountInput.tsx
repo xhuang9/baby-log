@@ -51,7 +51,9 @@ export function AmountInput({
   };
 
   const handleUnitChange = (newUnit: MedicationUnit) => {
-    if (newUnit === unit) return;
+    if (newUnit === unit) {
+      return;
+    }
 
     // Convert amount when switching between units
     const convertedAmount = convertOnUnitSwitch(amount, unit, newUnit);
@@ -129,7 +131,7 @@ export function AmountInput({
       )}
 
       {/* Helper text */}
-      <div className="text-xs text-muted-foreground space-y-0.5">
+      <div className="space-y-0.5 text-xs text-muted-foreground">
         <p>{helperText.primary}</p>
         {helperText.secondary && (
           <p className="text-muted-foreground/70">{helperText.secondary}</p>

@@ -1,7 +1,7 @@
 'use client';
 
-import type { PumpingAmountSettingsState } from '@/components/settings/PumpingAmountSettingsPanel';
 import type { AddPumpingModalProps } from './types';
+import type { PumpingAmountSettingsState } from '@/components/settings/PumpingAmountSettingsPanel';
 import { ChevronLeftIcon } from 'lucide-react';
 import { useCallback } from 'react';
 import { toast } from 'sonner';

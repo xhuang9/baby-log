@@ -93,14 +93,16 @@ export function useTimeSwiperAnimation({
     if (!isDraggingRef.current && !animationRef.current) {
       const newOffset = dateToOffset(value);
       offsetRef.current = newOffset;
-      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect, react-hooks/set-state-in-effect
+      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
       setOffset(newOffset);
     }
   }, [value, dateToOffset]);
 
   // Sync dayOffset when value changes externally (e.g. swap, duration edit)
   useEffect(() => {
-    if (isDraggingRef.current || animationRef.current) return;
+    if (isDraggingRef.current || animationRef.current) {
+      return;
+    }
     const m = new Date(value);
     m.setHours(0, 0, 0, 0);
     const expected = new Date(fixedBaseDate);
@@ -108,7 +110,7 @@ export function useTimeSwiperAnimation({
     if (m.getTime() !== expected.getTime()) {
       const d = Math.round((m.getTime() - fixedBaseDate.getTime()) / 86_400_000);
       dayOffsetRef.current = d;
-      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect, react-hooks/set-state-in-effect
+      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
       setDayOffset(d);
     }
   }, [value, fixedBaseDate]);

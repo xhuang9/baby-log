@@ -32,7 +32,9 @@ function TestWrapper({
   const [currentValue, setCurrentValue] = useState(value);
 
   const [resolvedFixedBaseDate] = useState(() => {
-    if (fixedBaseDate) return fixedBaseDate;
+    if (fixedBaseDate) {
+      return fixedBaseDate;
+    }
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     return d;
@@ -312,6 +314,7 @@ describe('useTimeSwiperState - "In future" detection', () => {
         const currentTimeValue = new Date(currentTime.textContent!);
 
         const timeDiff = Math.abs(displayDateValue.getTime() - currentTimeValue.getTime());
+
         expect(timeDiff).toBeLessThan(1000);
       });
     });

@@ -88,8 +88,9 @@ export function TimeSwiper({ value, onChange, handMode = 'right', className }: T
     }
 
     const updateWidth = () => {
-      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
-      if (container.clientWidth > 0) setContainerWidth(container.clientWidth);
+      if (container.clientWidth > 0) {
+        setContainerWidth(container.clientWidth);
+      }
     };
     updateWidth();
 
