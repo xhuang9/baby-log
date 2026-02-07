@@ -158,3 +158,58 @@
   opacity: 1;
   background: var(--muted) !important;
 }
+
+/* Recharts Chart Styling */
+.recharts-wrapper {
+  /* Axis tick text */
+  & .recharts-cartesian-axis-tick text {
+    fill: var(--muted-foreground);
+  }
+
+  /* Grid lines with #ccc stroke */
+  & .recharts-cartesian-grid line[stroke='#ccc'] {
+    stroke: color-mix(in oklch, var(--border) 50%, transparent);
+  }
+
+  /* Tooltip cursor */
+  & .recharts-curve.recharts-tooltip-cursor {
+    stroke: var(--border);
+  }
+
+  /* Polar grid */
+  & .recharts-polar-grid [stroke='#ccc'] {
+    stroke: var(--border);
+  }
+
+  /* Radial bar background */
+  & .recharts-radial-bar-background-sector {
+    fill: var(--muted);
+  }
+
+  /* Rectangle tooltip cursor */
+  & .recharts-rectangle.recharts-tooltip-cursor {
+    fill: var(--muted);
+  }
+
+  /* Reference line */
+  & .recharts-reference-line [stroke='#ccc'] {
+    stroke: var(--border);
+  }
+
+  /* Dots with white stroke */
+  & .recharts-dot[stroke='#fff'] {
+    stroke: transparent;
+  }
+
+  /* Layers and sectors outline */
+  & .recharts-layer,
+  & .recharts-sector,
+  & .recharts-surface {
+    outline: none;
+  }
+
+  /* Sectors with white stroke */
+  & .recharts-sector[stroke='#fff'] {
+    stroke: transparent;
+  }
+}

@@ -1,0 +1,3157 @@
+{
+  "_meta": {
+    "source": "CDC WHO growth chart data files",
+    "z_scores": {
+      "3rd": -1.88079361,
+      "15th": -1.03643339,
+      "50th": 0.0,
+      "85th": 1.03643339,
+      "97th": 1.88079361
+    },
+    "percentiles": {
+      "3rd": 0.03,
+      "15th": 0.15,
+      "50th": 0.5,
+      "85th": 0.85,
+      "97th": 0.97
+    }
+  },
+  "cht-lfa-girls-p-0-2": {
+    "source_csv": "WHO-Girls-Length-for-age-Percentiles.csv",
+    "sex": "female",
+    "metric": "length_for_age",
+    "unit": "cm",
+    "age_unit": "months",
+    "age_range_months": [
+      0,
+      24
+    ],
+    "percentiles": {
+      "3rd": [
+        {
+          "month": 0,
+          "value": 45.6443
+        },
+        {
+          "month": 1,
+          "value": 50.0117
+        },
+        {
+          "month": 2,
+          "value": 53.2377
+        },
+        {
+          "month": 3,
+          "value": 55.8437
+        },
+        {
+          "month": 4,
+          "value": 58.019
+        },
+        {
+          "month": 5,
+          "value": 59.8597
+        },
+        {
+          "month": 6,
+          "value": 61.4685
+        },
+        {
+          "month": 7,
+          "value": 62.9326
+        },
+        {
+          "month": 8,
+          "value": 64.3017
+        },
+        {
+          "month": 9,
+          "value": 65.6
+        },
+        {
+          "month": 10,
+          "value": 66.8408
+        },
+        {
+          "month": 11,
+          "value": 68.0299
+        },
+        {
+          "month": 12,
+          "value": 69.172
+        },
+        {
+          "month": 13,
+          "value": 70.2719
+        },
+        {
+          "month": 14,
+          "value": 71.3336
+        },
+        {
+          "month": 15,
+          "value": 72.358
+        },
+        {
+          "month": 16,
+          "value": 73.3498
+        },
+        {
+          "month": 17,
+          "value": 74.3126
+        },
+        {
+          "month": 18,
+          "value": 75.2463
+        },
+        {
+          "month": 19,
+          "value": 76.1544
+        },
+        {
+          "month": 20,
+          "value": 77.037
+        },
+        {
+          "month": 21,
+          "value": 77.8967
+        },
+        {
+          "month": 22,
+          "value": 78.7356
+        },
+        {
+          "month": 23,
+          "value": 79.5512
+        },
+        {
+          "month": 24,
+          "value": 80.3465
+        }
+      ],
+      "15th": [
+        {
+          "month": 0,
+          "value": 47.2171
+        },
+        {
+          "month": 1,
+          "value": 51.6618
+        },
+        {
+          "month": 2,
+          "value": 54.957
+        },
+        {
+          "month": 3,
+          "value": 57.6211
+        },
+        {
+          "month": 4,
+          "value": 59.8466
+        },
+        {
+          "month": 5,
+          "value": 61.732
+        },
+        {
+          "month": 6,
+          "value": 63.3821
+        },
+        {
+          "month": 7,
+          "value": 64.8876
+        },
+        {
+          "month": 8,
+          "value": 66.2986
+        },
+        {
+          "month": 9,
+          "value": 67.6397
+        },
+        {
+          "month": 10,
+          "value": 68.9243
+        },
+        {
+          "month": 11,
+          "value": 70.1584
+        },
+        {
+          "month": 12,
+          "value": 71.3462
+        },
+        {
+          "month": 13,
+          "value": 72.4922
+        },
+        {
+          "month": 14,
+          "value": 73.5999
+        },
+        {
+          "month": 15,
+          "value": 74.6709
+        },
+        {
+          "month": 16,
+          "value": 75.7093
+        },
+        {
+          "month": 17,
+          "value": 76.7182
+        },
+        {
+          "month": 18,
+          "value": 77.6982
+        },
+        {
+          "month": 19,
+          "value": 78.6522
+        },
+        {
+          "month": 20,
+          "value": 79.5809
+        },
+        {
+          "month": 21,
+          "value": 80.4865
+        },
+        {
+          "month": 22,
+          "value": 81.3701
+        },
+        {
+          "month": 23,
+          "value": 82.2309
+        },
+        {
+          "month": 24,
+          "value": 83.071
+        }
+      ],
+      "50th": [
+        {
+          "month": 0,
+          "value": 49.1477
+        },
+        {
+          "month": 1,
+          "value": 53.6872
+        },
+        {
+          "month": 2,
+          "value": 57.0673
+        },
+        {
+          "month": 3,
+          "value": 59.8029
+        },
+        {
+          "month": 4,
+          "value": 62.0899
+        },
+        {
+          "month": 5,
+          "value": 64.0301
+        },
+        {
+          "month": 6,
+          "value": 65.7311
+        },
+        {
+          "month": 7,
+          "value": 67.2873
+        },
+        {
+          "month": 8,
+          "value": 68.7498
+        },
+        {
+          "month": 9,
+          "value": 70.1435
+        },
+        {
+          "month": 10,
+          "value": 71.4818
+        },
+        {
+          "month": 11,
+          "value": 72.771
+        },
+        {
+          "month": 12,
+          "value": 74.015
+        },
+        {
+          "month": 13,
+          "value": 75.2176
+        },
+        {
+          "month": 14,
+          "value": 76.3817
+        },
+        {
+          "month": 15,
+          "value": 77.5099
+        },
+        {
+          "month": 16,
+          "value": 78.6055
+        },
+        {
+          "month": 17,
+          "value": 79.671
+        },
+        {
+          "month": 18,
+          "value": 80.7079
+        },
+        {
+          "month": 19,
+          "value": 81.7182
+        },
+        {
+          "month": 20,
+          "value": 82.7036
+        },
+        {
+          "month": 21,
+          "value": 83.6654
+        },
+        {
+          "month": 22,
+          "value": 84.604
+        },
+        {
+          "month": 23,
+          "value": 85.5202
+        },
+        {
+          "month": 24,
+          "value": 86.4153
+        }
+      ],
+      "85th": [
+        {
+          "month": 0,
+          "value": 51.0783
+        },
+        {
+          "month": 1,
+          "value": 55.7126
+        },
+        {
+          "month": 2,
+          "value": 59.1776
+        },
+        {
+          "month": 3,
+          "value": 61.9847
+        },
+        {
+          "month": 4,
+          "value": 64.3332
+        },
+        {
+          "month": 5,
+          "value": 66.3282
+        },
+        {
+          "month": 6,
+          "value": 68.0801
+        },
+        {
+          "month": 7,
+          "value": 69.687
+        },
+        {
+          "month": 8,
+          "value": 71.201
+        },
+        {
+          "month": 9,
+          "value": 72.6473
+        },
+        {
+          "month": 10,
+          "value": 74.0393
+        },
+        {
+          "month": 11,
+          "value": 75.3836
+        },
+        {
+          "month": 12,
+          "value": 76.6838
+        },
+        {
+          "month": 13,
+          "value": 77.943
+        },
+        {
+          "month": 14,
+          "value": 79.1635
+        },
+        {
+          "month": 15,
+          "value": 80.3489
+        },
+        {
+          "month": 16,
+          "value": 81.5017
+        },
+        {
+          "month": 17,
+          "value": 82.6238
+        },
+        {
+          "month": 18,
+          "value": 83.7176
+        },
+        {
+          "month": 19,
+          "value": 84.7842
+        },
+        {
+          "month": 20,
+          "value": 85.8263
+        },
+        {
+          "month": 21,
+          "value": 86.8443
+        },
+        {
+          "month": 22,
+          "value": 87.8379
+        },
+        {
+          "month": 23,
+          "value": 88.8095
+        },
+        {
+          "month": 24,
+          "value": 89.7596
+        }
+      ],
+      "97th": [
+        {
+          "month": 0,
+          "value": 52.6511
+        },
+        {
+          "month": 1,
+          "value": 57.3627
+        },
+        {
+          "month": 2,
+          "value": 60.8969
+        },
+        {
+          "month": 3,
+          "value": 63.7621
+        },
+        {
+          "month": 4,
+          "value": 66.1608
+        },
+        {
+          "month": 5,
+          "value": 68.2005
+        },
+        {
+          "month": 6,
+          "value": 69.9937
+        },
+        {
+          "month": 7,
+          "value": 71.642
+        },
+        {
+          "month": 8,
+          "value": 73.1979
+        },
+        {
+          "month": 9,
+          "value": 74.687
+        },
+        {
+          "month": 10,
+          "value": 76.1228
+        },
+        {
+          "month": 11,
+          "value": 77.5121
+        },
+        {
+          "month": 12,
+          "value": 78.858
+        },
+        {
+          "month": 13,
+          "value": 80.1633
+        },
+        {
+          "month": 14,
+          "value": 81.4298
+        },
+        {
+          "month": 15,
+          "value": 82.6618
+        },
+        {
+          "month": 16,
+          "value": 83.8612
+        },
+        {
+          "month": 17,
+          "value": 85.0294
+        },
+        {
+          "month": 18,
+          "value": 86.1695
+        },
+        {
+          "month": 19,
+          "value": 87.282
+        },
+        {
+          "month": 20,
+          "value": 88.3702
+        },
+        {
+          "month": 21,
+          "value": 89.4341
+        },
+        {
+          "month": 22,
+          "value": 90.4724
+        },
+        {
+          "month": 23,
+          "value": 91.4892
+        },
+        {
+          "month": 24,
+          "value": 92.4841
+        }
+      ]
+    }
+  },
+  "cht-lfa-boys-p-0-2": {
+    "source_csv": "WHO-Boys-Length-for-age-Percentiles.csv",
+    "sex": "male",
+    "metric": "length_for_age",
+    "unit": "cm",
+    "age_unit": "months",
+    "age_range_months": [
+      0,
+      24
+    ],
+    "percentiles": {
+      "3rd": [
+        {
+          "month": 0,
+          "value": 46.3237
+        },
+        {
+          "month": 1,
+          "value": 51.0633
+        },
+        {
+          "month": 2,
+          "value": 54.6624
+        },
+        {
+          "month": 3,
+          "value": 57.5842
+        },
+        {
+          "month": 4,
+          "value": 59.9725
+        },
+        {
+          "month": 5,
+          "value": 61.9313
+        },
+        {
+          "month": 6,
+          "value": 63.5982
+        },
+        {
+          "month": 7,
+          "value": 65.0812
+        },
+        {
+          "month": 8,
+          "value": 66.4513
+        },
+        {
+          "month": 9,
+          "value": 67.7496
+        },
+        {
+          "month": 10,
+          "value": 68.9838
+        },
+        {
+          "month": 11,
+          "value": 70.1578
+        },
+        {
+          "month": 12,
+          "value": 71.2796
+        },
+        {
+          "month": 13,
+          "value": 72.3558
+        },
+        {
+          "month": 14,
+          "value": 73.3904
+        },
+        {
+          "month": 15,
+          "value": 74.3868
+        },
+        {
+          "month": 16,
+          "value": 75.3506
+        },
+        {
+          "month": 17,
+          "value": 76.2823
+        },
+        {
+          "month": 18,
+          "value": 77.1857
+        },
+        {
+          "month": 19,
+          "value": 78.0596
+        },
+        {
+          "month": 20,
+          "value": 78.9071
+        },
+        {
+          "month": 21,
+          "value": 79.7291
+        },
+        {
+          "month": 22,
+          "value": 80.529
+        },
+        {
+          "month": 23,
+          "value": 81.3078
+        },
+        {
+          "month": 24,
+          "value": 82.07
+        }
+      ],
+      "15th": [
+        {
+          "month": 0,
+          "value": 47.9221
+        },
+        {
+          "month": 1,
+          "value": 52.7069
+        },
+        {
+          "month": 2,
+          "value": 56.3515
+        },
+        {
+          "month": 3,
+          "value": 59.3104
+        },
+        {
+          "month": 4,
+          "value": 61.7294
+        },
+        {
+          "month": 5,
+          "value": 63.7142
+        },
+        {
+          "month": 6,
+          "value": 65.4053
+        },
+        {
+          "month": 7,
+          "value": 66.9143
+        },
+        {
+          "month": 8,
+          "value": 68.3135
+        },
+        {
+          "month": 9,
+          "value": 69.6437
+        },
+        {
+          "month": 10,
+          "value": 70.913
+        },
+        {
+          "month": 11,
+          "value": 72.1246
+        },
+        {
+          "month": 12,
+          "value": 73.286
+        },
+        {
+          "month": 13,
+          "value": 74.4042
+        },
+        {
+          "month": 14,
+          "value": 75.4821
+        },
+        {
+          "month": 15,
+          "value": 76.5233
+        },
+        {
+          "month": 16,
+          "value": 77.5327
+        },
+        {
+          "month": 17,
+          "value": 78.5119
+        },
+        {
+          "month": 18,
+          "value": 79.4632
+        },
+        {
+          "month": 19,
+          "value": 80.3861
+        },
+        {
+          "month": 20,
+          "value": 81.2831
+        },
+        {
+          "month": 21,
+          "value": 82.1559
+        },
+        {
+          "month": 22,
+          "value": 83.0066
+        },
+        {
+          "month": 23,
+          "value": 83.8368
+        },
+        {
+          "month": 24,
+          "value": 84.6497
+        }
+      ],
+      "50th": [
+        {
+          "month": 0,
+          "value": 49.8842
+        },
+        {
+          "month": 1,
+          "value": 54.7244
+        },
+        {
+          "month": 2,
+          "value": 58.4249
+        },
+        {
+          "month": 3,
+          "value": 61.4292
+        },
+        {
+          "month": 4,
+          "value": 63.886
+        },
+        {
+          "month": 5,
+          "value": 65.9026
+        },
+        {
+          "month": 6,
+          "value": 67.6236
+        },
+        {
+          "month": 7,
+          "value": 69.1645
+        },
+        {
+          "month": 8,
+          "value": 70.5994
+        },
+        {
+          "month": 9,
+          "value": 71.9687
+        },
+        {
+          "month": 10,
+          "value": 73.2812
+        },
+        {
+          "month": 11,
+          "value": 74.5388
+        },
+        {
+          "month": 12,
+          "value": 75.7488
+        },
+        {
+          "month": 13,
+          "value": 76.9186
+        },
+        {
+          "month": 14,
+          "value": 78.0497
+        },
+        {
+          "month": 15,
+          "value": 79.1458
+        },
+        {
+          "month": 16,
+          "value": 80.2113
+        },
+        {
+          "month": 17,
+          "value": 81.2487
+        },
+        {
+          "month": 18,
+          "value": 82.2587
+        },
+        {
+          "month": 19,
+          "value": 83.2418
+        },
+        {
+          "month": 20,
+          "value": 84.1996
+        },
+        {
+          "month": 21,
+          "value": 85.1348
+        },
+        {
+          "month": 22,
+          "value": 86.0477
+        },
+        {
+          "month": 23,
+          "value": 86.941
+        },
+        {
+          "month": 24,
+          "value": 87.8161
+        }
+      ],
+      "85th": [
+        {
+          "month": 0,
+          "value": 51.8463
+        },
+        {
+          "month": 1,
+          "value": 56.7419
+        },
+        {
+          "month": 2,
+          "value": 60.4983
+        },
+        {
+          "month": 3,
+          "value": 63.548
+        },
+        {
+          "month": 4,
+          "value": 66.0426
+        },
+        {
+          "month": 5,
+          "value": 68.091
+        },
+        {
+          "month": 6,
+          "value": 69.8419
+        },
+        {
+          "month": 7,
+          "value": 71.4147
+        },
+        {
+          "month": 8,
+          "value": 72.8853
+        },
+        {
+          "month": 9,
+          "value": 74.2937
+        },
+        {
+          "month": 10,
+          "value": 75.6494
+        },
+        {
+          "month": 11,
+          "value": 76.953
+        },
+        {
+          "month": 12,
+          "value": 78.2116
+        },
+        {
+          "month": 13,
+          "value": 79.433
+        },
+        {
+          "month": 14,
+          "value": 80.6173
+        },
+        {
+          "month": 15,
+          "value": 81.7683
+        },
+        {
+          "month": 16,
+          "value": 82.8899
+        },
+        {
+          "month": 17,
+          "value": 83.9855
+        },
+        {
+          "month": 18,
+          "value": 85.0542
+        },
+        {
+          "month": 19,
+          "value": 86.0975
+        },
+        {
+          "month": 20,
+          "value": 87.1161
+        },
+        {
+          "month": 21,
+          "value": 88.1137
+        },
+        {
+          "month": 22,
+          "value": 89.0888
+        },
+        {
+          "month": 23,
+          "value": 90.0452
+        },
+        {
+          "month": 24,
+          "value": 90.9825
+        }
+      ],
+      "97th": [
+        {
+          "month": 0,
+          "value": 53.4447
+        },
+        {
+          "month": 1,
+          "value": 58.3855
+        },
+        {
+          "month": 2,
+          "value": 62.1874
+        },
+        {
+          "month": 3,
+          "value": 65.2742
+        },
+        {
+          "month": 4,
+          "value": 67.7995
+        },
+        {
+          "month": 5,
+          "value": 69.8739
+        },
+        {
+          "month": 6,
+          "value": 71.649
+        },
+        {
+          "month": 7,
+          "value": 73.2478
+        },
+        {
+          "month": 8,
+          "value": 74.7475
+        },
+        {
+          "month": 9,
+          "value": 76.1878
+        },
+        {
+          "month": 10,
+          "value": 77.5786
+        },
+        {
+          "month": 11,
+          "value": 78.9198
+        },
+        {
+          "month": 12,
+          "value": 80.218
+        },
+        {
+          "month": 13,
+          "value": 81.4814
+        },
+        {
+          "month": 14,
+          "value": 82.709
+        },
+        {
+          "month": 15,
+          "value": 83.9048
+        },
+        {
+          "month": 16,
+          "value": 85.072
+        },
+        {
+          "month": 17,
+          "value": 86.2151
+        },
+        {
+          "month": 18,
+          "value": 87.3317
+        },
+        {
+          "month": 19,
+          "value": 88.424
+        },
+        {
+          "month": 20,
+          "value": 89.4921
+        },
+        {
+          "month": 21,
+          "value": 90.5405
+        },
+        {
+          "month": 22,
+          "value": 91.5664
+        },
+        {
+          "month": 23,
+          "value": 92.5742
+        },
+        {
+          "month": 24,
+          "value": 93.5622
+        }
+      ]
+    }
+  },
+  "cht-wfa-girls-p-0-2": {
+    "source_csv": "WHO-Girls-Weight-for-age-Percentiles.csv",
+    "sex": "female",
+    "metric": "weight_for_age",
+    "unit": "kg",
+    "age_unit": "months",
+    "age_range_months": [
+      0,
+      24
+    ],
+    "percentiles": {
+      "3rd": [
+        {
+          "month": 0,
+          "value": 2.4403
+        },
+        {
+          "month": 1,
+          "value": 3.2157
+        },
+        {
+          "month": 2,
+          "value": 4.0041
+        },
+        {
+          "month": 3,
+          "value": 4.6055
+        },
+        {
+          "month": 4,
+          "value": 5.0879
+        },
+        {
+          "month": 5,
+          "value": 5.4827
+        },
+        {
+          "month": 6,
+          "value": 5.8119
+        },
+        {
+          "month": 7,
+          "value": 6.0941
+        },
+        {
+          "month": 8,
+          "value": 6.3422
+        },
+        {
+          "month": 9,
+          "value": 6.5644
+        },
+        {
+          "month": 10,
+          "value": 6.768
+        },
+        {
+          "month": 11,
+          "value": 6.9589
+        },
+        {
+          "month": 12,
+          "value": 7.1416
+        },
+        {
+          "month": 13,
+          "value": 7.3191
+        },
+        {
+          "month": 14,
+          "value": 7.4931
+        },
+        {
+          "month": 15,
+          "value": 7.6651
+        },
+        {
+          "month": 16,
+          "value": 7.8353
+        },
+        {
+          "month": 17,
+          "value": 8.0044
+        },
+        {
+          "month": 18,
+          "value": 8.1723
+        },
+        {
+          "month": 19,
+          "value": 8.3388
+        },
+        {
+          "month": 20,
+          "value": 8.5043
+        },
+        {
+          "month": 21,
+          "value": 8.6689
+        },
+        {
+          "month": 22,
+          "value": 8.8333
+        },
+        {
+          "month": 23,
+          "value": 8.9973
+        },
+        {
+          "month": 24,
+          "value": 9.1614
+        }
+      ],
+      "15th": [
+        {
+          "month": 0,
+          "value": 2.7788
+        },
+        {
+          "month": 1,
+          "value": 3.6257
+        },
+        {
+          "month": 2,
+          "value": 4.4778
+        },
+        {
+          "month": 3,
+          "value": 5.1274
+        },
+        {
+          "month": 4,
+          "value": 5.6491
+        },
+        {
+          "month": 5,
+          "value": 6.0766
+        },
+        {
+          "month": 6,
+          "value": 6.4339
+        },
+        {
+          "month": 7,
+          "value": 6.7415
+        },
+        {
+          "month": 8,
+          "value": 7.0131
+        },
+        {
+          "month": 9,
+          "value": 7.2571
+        },
+        {
+          "month": 10,
+          "value": 7.481
+        },
+        {
+          "month": 11,
+          "value": 7.6912
+        },
+        {
+          "month": 12,
+          "value": 7.8924
+        },
+        {
+          "month": 13,
+          "value": 8.0877
+        },
+        {
+          "month": 14,
+          "value": 8.279
+        },
+        {
+          "month": 15,
+          "value": 8.4678
+        },
+        {
+          "month": 16,
+          "value": 8.6547
+        },
+        {
+          "month": 17,
+          "value": 8.8405
+        },
+        {
+          "month": 18,
+          "value": 9.025
+        },
+        {
+          "month": 19,
+          "value": 9.2082
+        },
+        {
+          "month": 20,
+          "value": 9.3905
+        },
+        {
+          "month": 21,
+          "value": 9.5724
+        },
+        {
+          "month": 22,
+          "value": 9.7542
+        },
+        {
+          "month": 23,
+          "value": 9.936
+        },
+        {
+          "month": 24,
+          "value": 10.1182
+        }
+      ],
+      "50th": [
+        {
+          "month": 0,
+          "value": 3.2322
+        },
+        {
+          "month": 1,
+          "value": 4.1873
+        },
+        {
+          "month": 2,
+          "value": 5.1282
+        },
+        {
+          "month": 3,
+          "value": 5.8458
+        },
+        {
+          "month": 4,
+          "value": 6.4237
+        },
+        {
+          "month": 5,
+          "value": 6.8985
+        },
+        {
+          "month": 6,
+          "value": 7.297
+        },
+        {
+          "month": 7,
+          "value": 7.6422
+        },
+        {
+          "month": 8,
+          "value": 7.9487
+        },
+        {
+          "month": 9,
+          "value": 8.2254
+        },
+        {
+          "month": 10,
+          "value": 8.48
+        },
+        {
+          "month": 11,
+          "value": 8.7192
+        },
+        {
+          "month": 12,
+          "value": 8.9481
+        },
+        {
+          "month": 13,
+          "value": 9.1699
+        },
+        {
+          "month": 14,
+          "value": 9.387
+        },
+        {
+          "month": 15,
+          "value": 9.6008
+        },
+        {
+          "month": 16,
+          "value": 9.8124
+        },
+        {
+          "month": 17,
+          "value": 10.0226
+        },
+        {
+          "month": 18,
+          "value": 10.2315
+        },
+        {
+          "month": 19,
+          "value": 10.4393
+        },
+        {
+          "month": 20,
+          "value": 10.6464
+        },
+        {
+          "month": 21,
+          "value": 10.8534
+        },
+        {
+          "month": 22,
+          "value": 11.0608
+        },
+        {
+          "month": 23,
+          "value": 11.2688
+        },
+        {
+          "month": 24,
+          "value": 11.4775
+        }
+      ],
+      "85th": [
+        {
+          "month": 0,
+          "value": 3.7288
+        },
+        {
+          "month": 1,
+          "value": 4.8191
+        },
+        {
+          "month": 2,
+          "value": 5.8628
+        },
+        {
+          "month": 3,
+          "value": 6.6603
+        },
+        {
+          "month": 4,
+          "value": 7.3051
+        },
+        {
+          "month": 5,
+          "value": 7.8371
+        },
+        {
+          "month": 6,
+          "value": 8.2859
+        },
+        {
+          "month": 7,
+          "value": 8.6775
+        },
+        {
+          "month": 8,
+          "value": 9.0277
+        },
+        {
+          "month": 9,
+          "value": 9.3454
+        },
+        {
+          "month": 10,
+          "value": 9.6386
+        },
+        {
+          "month": 11,
+          "value": 9.9144
+        },
+        {
+          "month": 12,
+          "value": 10.1783
+        },
+        {
+          "month": 13,
+          "value": 10.4334
+        },
+        {
+          "month": 14,
+          "value": 10.6828
+        },
+        {
+          "month": 15,
+          "value": 10.9276
+        },
+        {
+          "month": 16,
+          "value": 11.1698
+        },
+        {
+          "month": 17,
+          "value": 11.4103
+        },
+        {
+          "month": 18,
+          "value": 11.6492
+        },
+        {
+          "month": 19,
+          "value": 11.8873
+        },
+        {
+          "month": 20,
+          "value": 12.1247
+        },
+        {
+          "month": 21,
+          "value": 12.3626
+        },
+        {
+          "month": 22,
+          "value": 12.6014
+        },
+        {
+          "month": 23,
+          "value": 12.8415
+        },
+        {
+          "month": 24,
+          "value": 13.0827
+        }
+      ],
+      "97th": [
+        {
+          "month": 0,
+          "value": 4.1662
+        },
+        {
+          "month": 1,
+          "value": 5.3905
+        },
+        {
+          "month": 2,
+          "value": 6.5301
+        },
+        {
+          "month": 3,
+          "value": 7.4034
+        },
+        {
+          "month": 4,
+          "value": 8.1123
+        },
+        {
+          "month": 5,
+          "value": 8.6999
+        },
+        {
+          "month": 6,
+          "value": 9.1982
+        },
+        {
+          "month": 7,
+          "value": 9.6359
+        },
+        {
+          "month": 8,
+          "value": 10.0298
+        },
+        {
+          "month": 9,
+          "value": 10.3888
+        },
+        {
+          "month": 10,
+          "value": 10.7211
+        },
+        {
+          "month": 11,
+          "value": 11.034
+        },
+        {
+          "month": 12,
+          "value": 11.3332
+        },
+        {
+          "month": 13,
+          "value": 11.622
+        },
+        {
+          "month": 14,
+          "value": 11.9039
+        },
+        {
+          "month": 15,
+          "value": 12.1799
+        },
+        {
+          "month": 16,
+          "value": 12.4527
+        },
+        {
+          "month": 17,
+          "value": 12.7234
+        },
+        {
+          "month": 18,
+          "value": 12.9922
+        },
+        {
+          "month": 19,
+          "value": 13.2602
+        },
+        {
+          "month": 20,
+          "value": 13.5277
+        },
+        {
+          "month": 21,
+          "value": 13.7962
+        },
+        {
+          "month": 22,
+          "value": 14.0661
+        },
+        {
+          "month": 23,
+          "value": 14.3378
+        },
+        {
+          "month": 24,
+          "value": 14.6112
+        }
+      ]
+    }
+  },
+  "cht-wfa-boys-p-0-2": {
+    "source_csv": "WHO-Boys-Weight-for-age-Percentiles.csv",
+    "sex": "male",
+    "metric": "weight_for_age",
+    "unit": "kg",
+    "age_unit": "months",
+    "age_range_months": [
+      0,
+      24
+    ],
+    "percentiles": {
+      "3rd": [
+        {
+          "month": 0,
+          "value": 2.5073
+        },
+        {
+          "month": 1,
+          "value": 3.449
+        },
+        {
+          "month": 2,
+          "value": 4.3863
+        },
+        {
+          "month": 3,
+          "value": 5.092
+        },
+        {
+          "month": 4,
+          "value": 5.6396
+        },
+        {
+          "month": 5,
+          "value": 6.0789
+        },
+        {
+          "month": 6,
+          "value": 6.4388
+        },
+        {
+          "month": 7,
+          "value": 6.7425
+        },
+        {
+          "month": 8,
+          "value": 7.0054
+        },
+        {
+          "month": 9,
+          "value": 7.24
+        },
+        {
+          "month": 10,
+          "value": 7.4544
+        },
+        {
+          "month": 11,
+          "value": 7.6548
+        },
+        {
+          "month": 12,
+          "value": 7.8451
+        },
+        {
+          "month": 13,
+          "value": 8.0274
+        },
+        {
+          "month": 14,
+          "value": 8.2037
+        },
+        {
+          "month": 15,
+          "value": 8.3753
+        },
+        {
+          "month": 16,
+          "value": 8.5433
+        },
+        {
+          "month": 17,
+          "value": 8.7081
+        },
+        {
+          "month": 18,
+          "value": 8.8702
+        },
+        {
+          "month": 19,
+          "value": 9.0296
+        },
+        {
+          "month": 20,
+          "value": 9.1874
+        },
+        {
+          "month": 21,
+          "value": 9.3437
+        },
+        {
+          "month": 22,
+          "value": 9.4987
+        },
+        {
+          "month": 23,
+          "value": 9.6524
+        },
+        {
+          "month": 24,
+          "value": 9.8048
+        }
+      ],
+      "15th": [
+        {
+          "month": 0,
+          "value": 2.8645
+        },
+        {
+          "month": 1,
+          "value": 3.8826
+        },
+        {
+          "month": 2,
+          "value": 4.8887
+        },
+        {
+          "month": 3,
+          "value": 5.6391
+        },
+        {
+          "month": 4,
+          "value": 6.2207
+        },
+        {
+          "month": 5,
+          "value": 6.6895
+        },
+        {
+          "month": 6,
+          "value": 7.0764
+        },
+        {
+          "month": 7,
+          "value": 7.4051
+        },
+        {
+          "month": 8,
+          "value": 7.6912
+        },
+        {
+          "month": 9,
+          "value": 7.9474
+        },
+        {
+          "month": 10,
+          "value": 8.1823
+        },
+        {
+          "month": 11,
+          "value": 8.4023
+        },
+        {
+          "month": 12,
+          "value": 8.6115
+        },
+        {
+          "month": 13,
+          "value": 8.8123
+        },
+        {
+          "month": 14,
+          "value": 9.0069
+        },
+        {
+          "month": 15,
+          "value": 9.1967
+        },
+        {
+          "month": 16,
+          "value": 9.3829
+        },
+        {
+          "month": 17,
+          "value": 9.566
+        },
+        {
+          "month": 18,
+          "value": 9.7465
+        },
+        {
+          "month": 19,
+          "value": 9.9245
+        },
+        {
+          "month": 20,
+          "value": 10.101
+        },
+        {
+          "month": 21,
+          "value": 10.2762
+        },
+        {
+          "month": 22,
+          "value": 10.4504
+        },
+        {
+          "month": 23,
+          "value": 10.6236
+        },
+        {
+          "month": 24,
+          "value": 10.7955
+        }
+      ],
+      "50th": [
+        {
+          "month": 0,
+          "value": 3.3464
+        },
+        {
+          "month": 1,
+          "value": 4.4709
+        },
+        {
+          "month": 2,
+          "value": 5.5675
+        },
+        {
+          "month": 3,
+          "value": 6.3762
+        },
+        {
+          "month": 4,
+          "value": 7.0023
+        },
+        {
+          "month": 5,
+          "value": 7.5105
+        },
+        {
+          "month": 6,
+          "value": 7.934
+        },
+        {
+          "month": 7,
+          "value": 8.297
+        },
+        {
+          "month": 8,
+          "value": 8.6151
+        },
+        {
+          "month": 9,
+          "value": 8.9014
+        },
+        {
+          "month": 10,
+          "value": 9.1649
+        },
+        {
+          "month": 11,
+          "value": 9.4122
+        },
+        {
+          "month": 12,
+          "value": 9.6479
+        },
+        {
+          "month": 13,
+          "value": 9.8749
+        },
+        {
+          "month": 14,
+          "value": 10.0953
+        },
+        {
+          "month": 15,
+          "value": 10.3108
+        },
+        {
+          "month": 16,
+          "value": 10.5228
+        },
+        {
+          "month": 17,
+          "value": 10.7319
+        },
+        {
+          "month": 18,
+          "value": 10.9385
+        },
+        {
+          "month": 19,
+          "value": 11.143
+        },
+        {
+          "month": 20,
+          "value": 11.3462
+        },
+        {
+          "month": 21,
+          "value": 11.5486
+        },
+        {
+          "month": 22,
+          "value": 11.7504
+        },
+        {
+          "month": 23,
+          "value": 11.9514
+        },
+        {
+          "month": 24,
+          "value": 12.1515
+        }
+      ],
+      "85th": [
+        {
+          "month": 0,
+          "value": 3.8782
+        },
+        {
+          "month": 1,
+          "value": 5.1256
+        },
+        {
+          "month": 2,
+          "value": 6.32
+        },
+        {
+          "month": 3,
+          "value": 7.1911
+        },
+        {
+          "month": 4,
+          "value": 7.8653
+        },
+        {
+          "month": 5,
+          "value": 8.4168
+        },
+        {
+          "month": 6,
+          "value": 8.8811
+        },
+        {
+          "month": 7,
+          "value": 9.2828
+        },
+        {
+          "month": 8,
+          "value": 9.6375
+        },
+        {
+          "month": 9,
+          "value": 9.9583
+        },
+        {
+          "month": 10,
+          "value": 10.2547
+        },
+        {
+          "month": 11,
+          "value": 10.5337
+        },
+        {
+          "month": 12,
+          "value": 10.8001
+        },
+        {
+          "month": 13,
+          "value": 11.0576
+        },
+        {
+          "month": 14,
+          "value": 11.3081
+        },
+        {
+          "month": 15,
+          "value": 11.5537
+        },
+        {
+          "month": 16,
+          "value": 11.7959
+        },
+        {
+          "month": 17,
+          "value": 12.0356
+        },
+        {
+          "month": 18,
+          "value": 12.2729
+        },
+        {
+          "month": 19,
+          "value": 12.5086
+        },
+        {
+          "month": 20,
+          "value": 12.7435
+        },
+        {
+          "month": 21,
+          "value": 12.978
+        },
+        {
+          "month": 22,
+          "value": 13.2126
+        },
+        {
+          "month": 23,
+          "value": 13.4468
+        },
+        {
+          "month": 24,
+          "value": 13.6805
+        }
+      ],
+      "97th": [
+        {
+          "month": 0,
+          "value": 4.3499
+        },
+        {
+          "month": 1,
+          "value": 5.7116
+        },
+        {
+          "month": 2,
+          "value": 6.9915
+        },
+        {
+          "month": 3,
+          "value": 7.917
+        },
+        {
+          "month": 4,
+          "value": 8.6333
+        },
+        {
+          "month": 5,
+          "value": 9.2232
+        },
+        {
+          "month": 6,
+          "value": 9.7243
+        },
+        {
+          "month": 7,
+          "value": 10.1613
+        },
+        {
+          "month": 8,
+          "value": 10.5495
+        },
+        {
+          "month": 9,
+          "value": 10.9022
+        },
+        {
+          "month": 10,
+          "value": 11.2292
+        },
+        {
+          "month": 11,
+          "value": 11.5375
+        },
+        {
+          "month": 12,
+          "value": 11.8327
+        },
+        {
+          "month": 13,
+          "value": 12.1186
+        },
+        {
+          "month": 14,
+          "value": 12.3973
+        },
+        {
+          "month": 15,
+          "value": 12.6712
+        },
+        {
+          "month": 16,
+          "value": 12.9419
+        },
+        {
+          "month": 17,
+          "value": 13.2103
+        },
+        {
+          "month": 18,
+          "value": 13.4766
+        },
+        {
+          "month": 19,
+          "value": 13.742
+        },
+        {
+          "month": 20,
+          "value": 14.0068
+        },
+        {
+          "month": 21,
+          "value": 14.2719
+        },
+        {
+          "month": 22,
+          "value": 14.5377
+        },
+        {
+          "month": 23,
+          "value": 14.8035
+        },
+        {
+          "month": 24,
+          "value": 15.0694
+        }
+      ]
+    }
+  },
+  "cht_hcfa_girls_p_0_2": {
+    "source_csv": "WHO-Girls-Head-Circumference-for-age-Percentiles.csv",
+    "sex": "female",
+    "metric": "head_circumference_for_age",
+    "unit": "cm",
+    "age_unit": "months",
+    "age_range_months": [
+      0,
+      24
+    ],
+    "percentiles": {
+      "3rd": [
+        {
+          "month": 0,
+          "value": 31.6511
+        },
+        {
+          "month": 1,
+          "value": 34.3399
+        },
+        {
+          "month": 2,
+          "value": 35.9729
+        },
+        {
+          "month": 3,
+          "value": 37.1981
+        },
+        {
+          "month": 4,
+          "value": 38.2011
+        },
+        {
+          "month": 5,
+          "value": 39.0402
+        },
+        {
+          "month": 6,
+          "value": 39.7494
+        },
+        {
+          "month": 7,
+          "value": 40.352
+        },
+        {
+          "month": 8,
+          "value": 40.8688
+        },
+        {
+          "month": 9,
+          "value": 41.3133
+        },
+        {
+          "month": 10,
+          "value": 41.6996
+        },
+        {
+          "month": 11,
+          "value": 42.0394
+        },
+        {
+          "month": 12,
+          "value": 42.3405
+        },
+        {
+          "month": 13,
+          "value": 42.6101
+        },
+        {
+          "month": 14,
+          "value": 42.8531
+        },
+        {
+          "month": 15,
+          "value": 43.0739
+        },
+        {
+          "month": 16,
+          "value": 43.278
+        },
+        {
+          "month": 17,
+          "value": 43.467
+        },
+        {
+          "month": 18,
+          "value": 43.6445
+        },
+        {
+          "month": 19,
+          "value": 43.812
+        },
+        {
+          "month": 20,
+          "value": 43.972
+        },
+        {
+          "month": 21,
+          "value": 44.1259
+        },
+        {
+          "month": 22,
+          "value": 44.2746
+        },
+        {
+          "month": 23,
+          "value": 44.4186
+        },
+        {
+          "month": 24,
+          "value": 44.5582
+        }
+      ],
+      "15th": [
+        {
+          "month": 0,
+          "value": 32.6511
+        },
+        {
+          "month": 1,
+          "value": 35.3304
+        },
+        {
+          "month": 2,
+          "value": 36.9961
+        },
+        {
+          "month": 3,
+          "value": 38.2462
+        },
+        {
+          "month": 4,
+          "value": 39.2698
+        },
+        {
+          "month": 5,
+          "value": 40.1261
+        },
+        {
+          "month": 6,
+          "value": 40.8493
+        },
+        {
+          "month": 7,
+          "value": 41.464
+        },
+        {
+          "month": 8,
+          "value": 41.9904
+        },
+        {
+          "month": 9,
+          "value": 42.4431
+        },
+        {
+          "month": 10,
+          "value": 42.8364
+        },
+        {
+          "month": 11,
+          "value": 43.182
+        },
+        {
+          "month": 12,
+          "value": 43.488
+        },
+        {
+          "month": 13,
+          "value": 43.7617
+        },
+        {
+          "month": 14,
+          "value": 44.0084
+        },
+        {
+          "month": 15,
+          "value": 44.2327
+        },
+        {
+          "month": 16,
+          "value": 44.4394
+        },
+        {
+          "month": 17,
+          "value": 44.631
+        },
+        {
+          "month": 18,
+          "value": 44.8108
+        },
+        {
+          "month": 19,
+          "value": 44.9807
+        },
+        {
+          "month": 20,
+          "value": 45.1429
+        },
+        {
+          "month": 21,
+          "value": 45.2987
+        },
+        {
+          "month": 22,
+          "value": 45.4493
+        },
+        {
+          "month": 23,
+          "value": 45.595
+        },
+        {
+          "month": 24,
+          "value": 45.7362
+        }
+      ],
+      "50th": [
+        {
+          "month": 0,
+          "value": 33.8787
+        },
+        {
+          "month": 1,
+          "value": 36.5463
+        },
+        {
+          "month": 2,
+          "value": 38.2521
+        },
+        {
+          "month": 3,
+          "value": 39.5328
+        },
+        {
+          "month": 4,
+          "value": 40.5817
+        },
+        {
+          "month": 5,
+          "value": 41.459
+        },
+        {
+          "month": 6,
+          "value": 42.1995
+        },
+        {
+          "month": 7,
+          "value": 42.829
+        },
+        {
+          "month": 8,
+          "value": 43.3671
+        },
+        {
+          "month": 9,
+          "value": 43.83
+        },
+        {
+          "month": 10,
+          "value": 44.2319
+        },
+        {
+          "month": 11,
+          "value": 44.5844
+        },
+        {
+          "month": 12,
+          "value": 44.8965
+        },
+        {
+          "month": 13,
+          "value": 45.1752
+        },
+        {
+          "month": 14,
+          "value": 45.4265
+        },
+        {
+          "month": 15,
+          "value": 45.6551
+        },
+        {
+          "month": 16,
+          "value": 45.865
+        },
+        {
+          "month": 17,
+          "value": 46.0598
+        },
+        {
+          "month": 18,
+          "value": 46.2424
+        },
+        {
+          "month": 19,
+          "value": 46.4152
+        },
+        {
+          "month": 20,
+          "value": 46.5801
+        },
+        {
+          "month": 21,
+          "value": 46.7384
+        },
+        {
+          "month": 22,
+          "value": 46.8913
+        },
+        {
+          "month": 23,
+          "value": 47.0391
+        },
+        {
+          "month": 24,
+          "value": 47.1822
+        }
+      ],
+      "85th": [
+        {
+          "month": 0,
+          "value": 35.1063
+        },
+        {
+          "month": 1,
+          "value": 37.7622
+        },
+        {
+          "month": 2,
+          "value": 39.5081
+        },
+        {
+          "month": 3,
+          "value": 40.8194
+        },
+        {
+          "month": 4,
+          "value": 41.8936
+        },
+        {
+          "month": 5,
+          "value": 42.7919
+        },
+        {
+          "month": 6,
+          "value": 43.5497
+        },
+        {
+          "month": 7,
+          "value": 44.194
+        },
+        {
+          "month": 8,
+          "value": 44.7438
+        },
+        {
+          "month": 9,
+          "value": 45.2169
+        },
+        {
+          "month": 10,
+          "value": 45.6274
+        },
+        {
+          "month": 11,
+          "value": 45.9868
+        },
+        {
+          "month": 12,
+          "value": 46.305
+        },
+        {
+          "month": 13,
+          "value": 46.5887
+        },
+        {
+          "month": 14,
+          "value": 46.8446
+        },
+        {
+          "month": 15,
+          "value": 47.0775
+        },
+        {
+          "month": 16,
+          "value": 47.2906
+        },
+        {
+          "month": 17,
+          "value": 47.4886
+        },
+        {
+          "month": 18,
+          "value": 47.674
+        },
+        {
+          "month": 19,
+          "value": 47.8497
+        },
+        {
+          "month": 20,
+          "value": 48.0173
+        },
+        {
+          "month": 21,
+          "value": 48.1781
+        },
+        {
+          "month": 22,
+          "value": 48.3333
+        },
+        {
+          "month": 23,
+          "value": 48.4832
+        },
+        {
+          "month": 24,
+          "value": 48.6282
+        }
+      ],
+      "97th": [
+        {
+          "month": 0,
+          "value": 36.1063
+        },
+        {
+          "month": 1,
+          "value": 38.7527
+        },
+        {
+          "month": 2,
+          "value": 40.5313
+        },
+        {
+          "month": 3,
+          "value": 41.8675
+        },
+        {
+          "month": 4,
+          "value": 42.9623
+        },
+        {
+          "month": 5,
+          "value": 43.8778
+        },
+        {
+          "month": 6,
+          "value": 44.6496
+        },
+        {
+          "month": 7,
+          "value": 45.306
+        },
+        {
+          "month": 8,
+          "value": 45.8654
+        },
+        {
+          "month": 9,
+          "value": 46.3467
+        },
+        {
+          "month": 10,
+          "value": 46.7642
+        },
+        {
+          "month": 11,
+          "value": 47.1294
+        },
+        {
+          "month": 12,
+          "value": 47.4525
+        },
+        {
+          "month": 13,
+          "value": 47.7403
+        },
+        {
+          "month": 14,
+          "value": 47.9999
+        },
+        {
+          "month": 15,
+          "value": 48.2363
+        },
+        {
+          "month": 16,
+          "value": 48.452
+        },
+        {
+          "month": 17,
+          "value": 48.6526
+        },
+        {
+          "month": 18,
+          "value": 48.8403
+        },
+        {
+          "month": 19,
+          "value": 49.0184
+        },
+        {
+          "month": 20,
+          "value": 49.1882
+        },
+        {
+          "month": 21,
+          "value": 49.3509
+        },
+        {
+          "month": 22,
+          "value": 49.508
+        },
+        {
+          "month": 23,
+          "value": 49.6596
+        },
+        {
+          "month": 24,
+          "value": 49.8062
+        }
+      ]
+    }
+  },
+  "cht_hcfa_boys_p_0_2": {
+    "source_csv": "WHO-Boys-Head-Circumference-for-age-Percentiles.csv",
+    "sex": "male",
+    "metric": "head_circumference_for_age",
+    "unit": "cm",
+    "age_unit": "months",
+    "age_range_months": [
+      0,
+      24
+    ],
+    "percentiles": {
+      "3rd": [
+        {
+          "month": 0,
+          "value": 32.0727
+        },
+        {
+          "month": 1,
+          "value": 35.0794
+        },
+        {
+          "month": 2,
+          "value": 36.9229
+        },
+        {
+          "month": 3,
+          "value": 38.2901
+        },
+        {
+          "month": 4,
+          "value": 39.386
+        },
+        {
+          "month": 5,
+          "value": 40.2868
+        },
+        {
+          "month": 6,
+          "value": 41.0349
+        },
+        {
+          "month": 7,
+          "value": 41.6609
+        },
+        {
+          "month": 8,
+          "value": 42.1883
+        },
+        {
+          "month": 9,
+          "value": 42.6368
+        },
+        {
+          "month": 10,
+          "value": 43.0225
+        },
+        {
+          "month": 11,
+          "value": 43.3571
+        },
+        {
+          "month": 12,
+          "value": 43.6497
+        },
+        {
+          "month": 13,
+          "value": 43.9087
+        },
+        {
+          "month": 14,
+          "value": 44.139
+        },
+        {
+          "month": 15,
+          "value": 44.3481
+        },
+        {
+          "month": 16,
+          "value": 44.5376
+        },
+        {
+          "month": 17,
+          "value": 44.7134
+        },
+        {
+          "month": 18,
+          "value": 44.8764
+        },
+        {
+          "month": 19,
+          "value": 45.0297
+        },
+        {
+          "month": 20,
+          "value": 45.175
+        },
+        {
+          "month": 21,
+          "value": 45.3124
+        },
+        {
+          "month": 22,
+          "value": 45.4447
+        },
+        {
+          "month": 23,
+          "value": 45.5706
+        },
+        {
+          "month": 24,
+          "value": 45.6914
+        }
+      ],
+      "15th": [
+        {
+          "month": 0,
+          "value": 33.1453
+        },
+        {
+          "month": 1,
+          "value": 36.0655
+        },
+        {
+          "month": 2,
+          "value": 37.9131
+        },
+        {
+          "month": 3,
+          "value": 39.2882
+        },
+        {
+          "month": 4,
+          "value": 40.3942
+        },
+        {
+          "month": 5,
+          "value": 41.3063
+        },
+        {
+          "month": 6,
+          "value": 42.0655
+        },
+        {
+          "month": 7,
+          "value": 42.7022
+        },
+        {
+          "month": 8,
+          "value": 43.2396
+        },
+        {
+          "month": 9,
+          "value": 43.6976
+        },
+        {
+          "month": 10,
+          "value": 44.0921
+        },
+        {
+          "month": 11,
+          "value": 44.4346
+        },
+        {
+          "month": 12,
+          "value": 44.7345
+        },
+        {
+          "month": 13,
+          "value": 45.0
+        },
+        {
+          "month": 14,
+          "value": 45.2369
+        },
+        {
+          "month": 15,
+          "value": 45.4516
+        },
+        {
+          "month": 16,
+          "value": 45.647
+        },
+        {
+          "month": 17,
+          "value": 45.828
+        },
+        {
+          "month": 18,
+          "value": 45.9964
+        },
+        {
+          "month": 19,
+          "value": 46.1547
+        },
+        {
+          "month": 20,
+          "value": 46.3049
+        },
+        {
+          "month": 21,
+          "value": 46.4475
+        },
+        {
+          "month": 22,
+          "value": 46.5844
+        },
+        {
+          "month": 23,
+          "value": 46.7152
+        },
+        {
+          "month": 24,
+          "value": 46.8407
+        }
+      ],
+      "50th": [
+        {
+          "month": 0,
+          "value": 34.4618
+        },
+        {
+          "month": 1,
+          "value": 37.2759
+        },
+        {
+          "month": 2,
+          "value": 39.1285
+        },
+        {
+          "month": 3,
+          "value": 40.5135
+        },
+        {
+          "month": 4,
+          "value": 41.6317
+        },
+        {
+          "month": 5,
+          "value": 42.5576
+        },
+        {
+          "month": 6,
+          "value": 43.3306
+        },
+        {
+          "month": 7,
+          "value": 43.9803
+        },
+        {
+          "month": 8,
+          "value": 44.53
+        },
+        {
+          "month": 9,
+          "value": 44.9998
+        },
+        {
+          "month": 10,
+          "value": 45.4051
+        },
+        {
+          "month": 11,
+          "value": 45.7573
+        },
+        {
+          "month": 12,
+          "value": 46.0661
+        },
+        {
+          "month": 13,
+          "value": 46.3395
+        },
+        {
+          "month": 14,
+          "value": 46.5844
+        },
+        {
+          "month": 15,
+          "value": 46.806
+        },
+        {
+          "month": 16,
+          "value": 47.0088
+        },
+        {
+          "month": 17,
+          "value": 47.1962
+        },
+        {
+          "month": 18,
+          "value": 47.3711
+        },
+        {
+          "month": 19,
+          "value": 47.5357
+        },
+        {
+          "month": 20,
+          "value": 47.6919
+        },
+        {
+          "month": 21,
+          "value": 47.8408
+        },
+        {
+          "month": 22,
+          "value": 47.9833
+        },
+        {
+          "month": 23,
+          "value": 48.1201
+        },
+        {
+          "month": 24,
+          "value": 48.2515
+        }
+      ],
+      "85th": [
+        {
+          "month": 0,
+          "value": 35.7783
+        },
+        {
+          "month": 1,
+          "value": 38.4863
+        },
+        {
+          "month": 2,
+          "value": 40.3439
+        },
+        {
+          "month": 3,
+          "value": 41.7388
+        },
+        {
+          "month": 4,
+          "value": 42.8692
+        },
+        {
+          "month": 5,
+          "value": 43.8089
+        },
+        {
+          "month": 6,
+          "value": 44.5957
+        },
+        {
+          "month": 7,
+          "value": 45.2584
+        },
+        {
+          "month": 8,
+          "value": 45.8204
+        },
+        {
+          "month": 9,
+          "value": 46.302
+        },
+        {
+          "month": 10,
+          "value": 46.7181
+        },
+        {
+          "month": 11,
+          "value": 47.08
+        },
+        {
+          "month": 12,
+          "value": 47.3977
+        },
+        {
+          "month": 13,
+          "value": 47.679
+        },
+        {
+          "month": 14,
+          "value": 47.9319
+        },
+        {
+          "month": 15,
+          "value": 48.1604
+        },
+        {
+          "month": 16,
+          "value": 48.3706
+        },
+        {
+          "month": 17,
+          "value": 48.5644
+        },
+        {
+          "month": 18,
+          "value": 48.7458
+        },
+        {
+          "month": 19,
+          "value": 48.9167
+        },
+        {
+          "month": 20,
+          "value": 49.0789
+        },
+        {
+          "month": 21,
+          "value": 49.2341
+        },
+        {
+          "month": 22,
+          "value": 49.3822
+        },
+        {
+          "month": 23,
+          "value": 49.525
+        },
+        {
+          "month": 24,
+          "value": 49.6623
+        }
+      ],
+      "97th": [
+        {
+          "month": 0,
+          "value": 36.8509
+        },
+        {
+          "month": 1,
+          "value": 39.4724
+        },
+        {
+          "month": 2,
+          "value": 41.3341
+        },
+        {
+          "month": 3,
+          "value": 42.7369
+        },
+        {
+          "month": 4,
+          "value": 43.8774
+        },
+        {
+          "month": 5,
+          "value": 44.8284
+        },
+        {
+          "month": 6,
+          "value": 45.6263
+        },
+        {
+          "month": 7,
+          "value": 46.2997
+        },
+        {
+          "month": 8,
+          "value": 46.8717
+        },
+        {
+          "month": 9,
+          "value": 47.3628
+        },
+        {
+          "month": 10,
+          "value": 47.7877
+        },
+        {
+          "month": 11,
+          "value": 48.1575
+        },
+        {
+          "month": 12,
+          "value": 48.4825
+        },
+        {
+          "month": 13,
+          "value": 48.7703
+        },
+        {
+          "month": 14,
+          "value": 49.0298
+        },
+        {
+          "month": 15,
+          "value": 49.2639
+        },
+        {
+          "month": 16,
+          "value": 49.48
+        },
+        {
+          "month": 17,
+          "value": 49.679
+        },
+        {
+          "month": 18,
+          "value": 49.8658
+        },
+        {
+          "month": 19,
+          "value": 50.0417
+        },
+        {
+          "month": 20,
+          "value": 50.2088
+        },
+        {
+          "month": 21,
+          "value": 50.3692
+        },
+        {
+          "month": 22,
+          "value": 50.5219
+        },
+        {
+          "month": 23,
+          "value": 50.6696
+        },
+        {
+          "month": 24,
+          "value": 50.8116
+        }
+      ]
+    }
+  }
+}
