@@ -70,6 +70,15 @@ export function generateTokenPrefix(token: string): string {
 }
 
 /**
+ * Generate a unique JWT ID (jti) for email invite tokens
+ *
+ * @returns UUID string to be used as jti
+ */
+export function generateJti(): string {
+  return crypto.randomUUID();
+}
+
+/**
  * Create a signed JWT for email invite links
  *
  * JWT expires in 24 hours. Contains invite metadata.
@@ -78,17 +87,16 @@ export function generateTokenPrefix(token: string): string {
  * @param payload - Invite metadata
  * @returns Signed JWT token
  */
-export function createEmailInviteJWT(payload: Omit<EmailInvitePayload, 'jti'>): string {
+export function createEmailInviteJWT(payload: Omit<EmailInvitePayload, 'jti'> & { jti?: string }): string {
   if (!JWT_SECRET) {
     throw new Error('INVITE_JWT_SECRET is not configured');
   }
 
-  // Generate unique JWT ID for this token
-  const jti = crypto.randomUUID();
-
   const fullPayload: EmailInvitePayload = {
-    ...payload,
-    jti,
+    inviteId: payload.inviteId,
+    babyId: payload.babyId,
+    email: payload.email,
+    jti: payload.jti ?? crypto.randomUUID(),
   };
 
   return jwt.sign(fullPayload, JWT_SECRET, {

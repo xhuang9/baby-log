@@ -13,6 +13,7 @@ import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import {
   createEmailInviteJWT,
+  generateJti,
   generatePasskey,
   generateTokenPrefix,
   getEmailInviteExpiryDate,
@@ -110,7 +111,6 @@ export async function regenerateInvite(
             accessLevel: existingInvite.accessLevel,
             status: 'pending',
             inviteType: 'passkey',
-            token: code,
             tokenHash,
             tokenPrefix,
             expiresAt,
@@ -134,7 +134,11 @@ export async function regenerateInvite(
         // Generate new email invite
         const expiresAt = getEmailInviteExpiryDate();
 
-        // Insert invite first to get inviteId
+        // Generate jti and hash upfront so we can insert with tokenHash
+        const jti = generateJti();
+        const tokenHash = hashToken(jti);
+
+        // Insert invite with tokenHash (satisfies NOT NULL constraint)
         const [newInvite] = await tx
           .insert(babyInvitesSchema)
           .values({
@@ -144,7 +148,7 @@ export async function regenerateInvite(
             accessLevel: existingInvite.accessLevel,
             status: 'pending',
             inviteType: 'email',
-            token: 'placeholder',
+            tokenHash,
             expiresAt,
             maxUses: 1,
             usesCount: 0,
@@ -155,23 +159,13 @@ export async function regenerateInvite(
           throw new Error('Failed to create new invite');
         }
 
-        // Generate JWT with new inviteId
+        // Generate JWT with the same jti used for the hash
         const jwt = createEmailInviteJWT({
           inviteId: newInvite.id,
           babyId: existingInvite.babyId,
           email: existingInvite.invitedEmail!,
+          jti,
         });
-
-        // Hash JWT and update invite
-        const tokenHash = hashToken(jwt);
-
-        await tx
-          .update(babyInvitesSchema)
-          .set({
-            token: jwt,
-            tokenHash,
-          })
-          .where(eq(babyInvitesSchema.id, newInvite.id));
 
         // Construct invite link
         const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';

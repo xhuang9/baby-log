@@ -13,6 +13,7 @@ import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import {
   createEmailInviteJWT,
+  generateJti,
   getEmailInviteExpiryDate,
   hashToken,
 } from '@/lib/invites/invite-helpers';
@@ -58,7 +59,11 @@ export async function createEmailInvite(
 
     const expiresAt = getEmailInviteExpiryDate();
 
-    // Insert invite first to get inviteId
+    // Generate jti and hash it upfront so we can insert with tokenHash
+    const jti = generateJti();
+    const tokenHash = hashToken(jti);
+
+    // Insert invite with tokenHash (satisfies NOT NULL constraint)
     const [invite] = await db
       .insert(babyInvitesSchema)
       .values({
@@ -68,7 +73,7 @@ export async function createEmailInvite(
         accessLevel: validated.accessLevel,
         status: 'pending',
         inviteType: 'email',
-        token: 'placeholder', // will be updated with JWT
+        tokenHash,
         expiresAt,
         maxUses: 1,
         usesCount: 0,
@@ -79,23 +84,13 @@ export async function createEmailInvite(
       return { success: false, error: 'Failed to create invite' };
     }
 
-    // Generate JWT with inviteId
+    // Generate JWT with the same jti used for the hash
     const jwt = createEmailInviteJWT({
       inviteId: invite.id,
       babyId: validated.babyId,
       email: validated.invitedEmail,
+      jti,
     });
-
-    // Hash JWT jti and update invite
-    const tokenHash = hashToken(jwt);
-
-    await db
-      .update(babyInvitesSchema)
-      .set({
-        token: jwt,
-        tokenHash,
-      })
-      .where(eq(babyInvitesSchema.id, invite.id));
 
     // Construct invite link
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';

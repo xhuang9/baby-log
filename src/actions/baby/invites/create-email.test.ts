@@ -16,6 +16,7 @@ vi.mock('@/lib/db', () => ({
 
 vi.mock('@/lib/invites/invite-helpers', () => ({
   createEmailInviteJWT: vi.fn(),
+  generateJti: vi.fn(),
   getEmailInviteExpiryDate: vi.fn(),
   hashToken: vi.fn(),
 }));
@@ -32,7 +33,7 @@ const loadSubject = async () => {
   const { createEmailInvite } = await import('./create-email');
   const { auth } = await import('@clerk/nextjs/server');
   const { db } = await import('@/lib/db');
-  const { createEmailInviteJWT, getEmailInviteExpiryDate, hashToken } = await import(
+  const { createEmailInviteJWT, generateJti, getEmailInviteExpiryDate, hashToken } = await import(
     '@/lib/invites/invite-helpers',
   );
   const { getLocalUserByClerkId } = await import('@/services/baby-access');
@@ -43,6 +44,7 @@ const loadSubject = async () => {
     auth,
     db,
     createEmailInviteJWT,
+    generateJti,
     getEmailInviteExpiryDate,
     hashToken,
     getLocalUserByClerkId,
@@ -125,13 +127,14 @@ describe('createEmailInvite', () => {
   });
 
   describe('invite creation', () => {
-    it('should create placeholder then update with JWT', async () => {
+    it('should generate jti, hash it, insert with tokenHash, then create JWT', async () => {
       const {
         createEmailInvite,
         auth,
         getLocalUserByClerkId,
         db,
         createEmailInviteJWT,
+        generateJti,
         getEmailInviteExpiryDate,
         hashToken,
       } = await loadSubject();
@@ -159,40 +162,36 @@ describe('createEmailInvite', () => {
 
       vi.mocked(db.select).mockReturnValueOnce({ from: accessSelectFrom } as any);
       vi.mocked(getEmailInviteExpiryDate).mockReturnValue(expiresAt);
+      vi.mocked(generateJti).mockReturnValue('test-jti-uuid');
+      vi.mocked(hashToken).mockReturnValue('hashed_jti');
 
       const insertValues = vi.fn().mockReturnValue({
         returning: vi.fn().mockResolvedValue([{ id: 100, babyId: 42, status: 'pending' }]),
       });
 
       vi.mocked(db.insert).mockReturnValue({ values: insertValues } as any);
-
       vi.mocked(createEmailInviteJWT).mockReturnValue('jwt_token_here');
-      vi.mocked(hashToken).mockReturnValue('hashed_jwt');
-
-      const updateSet = vi.fn().mockReturnValue({
-        where: vi.fn().mockResolvedValue(undefined),
-      });
-
-      vi.mocked(db.update).mockReturnValue({ set: updateSet } as any);
 
       const result = await createEmailInvite({ babyId: 42, invitedEmail: 'invited@example.com' });
 
       expect(result.success).toBe(true);
+      expect(generateJti).toHaveBeenCalled();
+      expect(hashToken).toHaveBeenCalledWith('test-jti-uuid');
       expect(db.insert).toHaveBeenCalledWith(babyInvitesSchema);
       expect(insertValues).toHaveBeenCalledWith(
         expect.objectContaining({
-          token: 'placeholder',
           inviteType: 'email',
           invitedEmail: 'invited@example.com',
+          tokenHash: 'hashed_jti',
         }),
       );
       expect(createEmailInviteJWT).toHaveBeenCalledWith({
         inviteId: 100,
         babyId: 42,
         email: 'invited@example.com',
+        jti: 'test-jti-uuid',
       });
-      expect(hashToken).toHaveBeenCalledWith('jwt_token_here');
-      expect(db.update).toHaveBeenCalled();
+      expect(db.update).not.toHaveBeenCalled();
     });
 
     it('should return invite URL with token', async () => {
@@ -202,6 +201,7 @@ describe('createEmailInvite', () => {
         getLocalUserByClerkId,
         db,
         createEmailInviteJWT,
+        generateJti,
         getEmailInviteExpiryDate,
         hashToken,
       } = await loadSubject();
@@ -229,6 +229,8 @@ describe('createEmailInvite', () => {
 
       vi.mocked(db.select).mockReturnValueOnce({ from: accessSelectFrom } as any);
       vi.mocked(getEmailInviteExpiryDate).mockReturnValue(expiresAt);
+      vi.mocked(generateJti).mockReturnValue('test-jti');
+      vi.mocked(hashToken).mockReturnValue('hashed');
 
       const insertValues = vi.fn().mockReturnValue({
         returning: vi.fn().mockResolvedValue([{ id: 100, babyId: 42, status: 'pending' }]),
@@ -236,13 +238,6 @@ describe('createEmailInvite', () => {
 
       vi.mocked(db.insert).mockReturnValue({ values: insertValues } as any);
       vi.mocked(createEmailInviteJWT).mockReturnValue('test_jwt_token');
-      vi.mocked(hashToken).mockReturnValue('hashed');
-
-      const updateSet = vi.fn().mockReturnValue({
-        where: vi.fn().mockResolvedValue(undefined),
-      });
-
-      vi.mocked(db.update).mockReturnValue({ set: updateSet } as any);
 
       const result = await createEmailInvite({ babyId: 42, invitedEmail: 'invited@example.com' });
 
@@ -262,7 +257,9 @@ describe('createEmailInvite', () => {
         auth,
         getLocalUserByClerkId,
         db,
+        generateJti,
         getEmailInviteExpiryDate,
+        hashToken,
       } = await loadSubject();
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_123' } as any);
@@ -286,6 +283,8 @@ describe('createEmailInvite', () => {
 
       vi.mocked(db.select).mockReturnValueOnce({ from: accessSelectFrom } as any);
       vi.mocked(getEmailInviteExpiryDate).mockReturnValue(new Date());
+      vi.mocked(generateJti).mockReturnValue('test-jti');
+      vi.mocked(hashToken).mockReturnValue('hashed');
 
       const insertValues = vi.fn().mockReturnValue({
         returning: vi.fn().mockResolvedValue([]),
@@ -311,6 +310,7 @@ describe('createEmailInvite', () => {
         getLocalUserByClerkId,
         db,
         createEmailInviteJWT,
+        generateJti,
         getEmailInviteExpiryDate,
         hashToken,
         revalidatePath,
@@ -337,6 +337,8 @@ describe('createEmailInvite', () => {
 
       vi.mocked(db.select).mockReturnValueOnce({ from: accessSelectFrom } as any);
       vi.mocked(getEmailInviteExpiryDate).mockReturnValue(new Date());
+      vi.mocked(generateJti).mockReturnValue('test-jti');
+      vi.mocked(hashToken).mockReturnValue('hashed');
 
       const insertValues = vi.fn().mockReturnValue({
         returning: vi.fn().mockResolvedValue([{ id: 100, babyId: 42, status: 'pending' }]),
@@ -344,13 +346,6 @@ describe('createEmailInvite', () => {
 
       vi.mocked(db.insert).mockReturnValue({ values: insertValues } as any);
       vi.mocked(createEmailInviteJWT).mockReturnValue('jwt');
-      vi.mocked(hashToken).mockReturnValue('hashed');
-
-      const updateSet = vi.fn().mockReturnValue({
-        where: vi.fn().mockResolvedValue(undefined),
-      });
-
-      vi.mocked(db.update).mockReturnValue({ set: updateSet } as any);
 
       await createEmailInvite({ babyId: 42, invitedEmail: 'invited@example.com' });
 
