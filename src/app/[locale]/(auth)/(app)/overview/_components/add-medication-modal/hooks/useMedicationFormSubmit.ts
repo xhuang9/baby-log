@@ -43,6 +43,8 @@ export function useMedicationFormSubmit({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isValid = (selectedMedicationId != null || medicationInput.trim().length > 0) && amount > 0;
+
   const handleSubmit = async () => {
     // Track medication ID to use (may be updated if we auto-create from input)
     let finalMedicationId = selectedMedicationId;
@@ -107,5 +109,5 @@ export function useMedicationFormSubmit({
     }
   };
 
-  return { handleSubmit, isSubmitting, error };
+  return { handleSubmit, isSubmitting, error, isValid };
 }

@@ -29,6 +29,8 @@ export function useGrowthFormSubmit({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isValid = weightG != null || heightMm != null || headCircumferenceMm != null;
+
   const handleSubmit = async () => {
     // Validate that at least one measurement is provided
     if (weightG == null && heightMm == null && headCircumferenceMm == null) {
@@ -65,5 +67,5 @@ export function useGrowthFormSubmit({
     }
   };
 
-  return { handleSubmit, isSubmitting, error };
+  return { handleSubmit, isSubmitting, error, isValid };
 }

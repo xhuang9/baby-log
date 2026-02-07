@@ -41,6 +41,8 @@ export function useSolidsFormSubmit({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isValid = selectedFoodIds.length > 0 || foodInput.trim().length > 0;
+
   const handleSubmit = async () => {
     // Track food IDs to use (may be updated if we auto-create from input)
     let finalFoodIds = [...selectedFoodIds];
@@ -98,5 +100,5 @@ export function useSolidsFormSubmit({
     }
   };
 
-  return { handleSubmit, isSubmitting, error };
+  return { handleSubmit, isSubmitting, error, isValid };
 }

@@ -3,7 +3,6 @@
 import type { AddPumpingModalProps } from './types';
 import type { PumpingAmountSettingsState } from '@/components/settings/PumpingAmountSettingsPanel';
 import { ChevronLeftIcon } from 'lucide-react';
-import { useCallback } from 'react';
 import { toast } from 'sonner';
 import { DualTimeSwiper } from '@/components/feed/time-swiper/DualTimeSwiper';
 import { FormFooter, NotesField, SectionDivider } from '@/components/input-controls';
@@ -42,7 +41,7 @@ export function AddPumpingModal({
     setPumpingSettings: actions.setPumpingSettings,
   });
 
-  const { handleSubmit, isSubmitting, error } = usePumpingFormSubmit({
+  const { handleSubmit, isSubmitting, error, isValid } = usePumpingFormSubmit({
     babyId,
     startTime: state.startTime,
     endTime: state.endTime,
@@ -63,7 +62,7 @@ export function AddPumpingModal({
     onOpenChange(newOpen);
   };
 
-  const handleSettingsChange = useCallback(async (newSettings: PumpingAmountSettingsState) => {
+  const handleSettingsChange = async (newSettings: PumpingAmountSettingsState) => {
     // Update local state immediately
     actions.setPumpingSettings(newSettings);
 
@@ -77,7 +76,7 @@ export function AddPumpingModal({
         toast.error('Failed to save settings');
       }
     }
-  }, [user?.localId, actions]);
+  };
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -161,6 +160,7 @@ export function AddPumpingModal({
             onSecondary={() => handleOpenChange(false)}
             secondaryLabel="Cancel"
             isLoading={isSubmitting}
+            disabled={!isValid}
             handMode={state.handMode}
           />
         </SheetFooter>

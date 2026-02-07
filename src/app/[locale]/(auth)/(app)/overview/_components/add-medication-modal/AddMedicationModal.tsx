@@ -40,7 +40,7 @@ export function AddMedicationModal({
   });
 
   // 3. Submit logic
-  const { handleSubmit, isSubmitting, error } = useMedicationFormSubmit({
+  const { handleSubmit, isSubmitting, error, isValid } = useMedicationFormSubmit({
     babyId,
     startTime: state.startTime,
     selectedMedicationId: state.selectedMedicationId,
@@ -211,6 +211,7 @@ export function AddMedicationModal({
               onSecondary={() => handleOpenChange(false)}
               secondaryLabel="Cancel"
               isLoading={isSubmitting}
+              disabled={!isValid}
               handMode={state.handMode}
             />
           </SheetFooter>
