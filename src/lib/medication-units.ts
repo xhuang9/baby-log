@@ -129,13 +129,9 @@ export function getConversionDisplay(amount: number, unit: MedicationUnit): stri
   const ml = convertMedicationUnit(amount, unit, 'ml');
   const drops = convertMedicationUnit(amount, unit, 'drops');
   const tsp = convertMedicationUnit(amount, unit, 'tsp');
-  const tbsp = convertMedicationUnit(amount, unit, 'tbsp');
 
   const parts: string[] = [];
 
-  if (unit !== 'tbsp' && tbsp >= 0.1) {
-    parts.push(`${tbsp.toFixed(2).replace(/\.?0+$/, '')} tbsp`);
-  }
   if (unit !== 'tsp') {
     parts.push(`${tsp.toFixed(2).replace(/\.?0+$/, '')} tsp`);
   }
@@ -155,8 +151,8 @@ export function getConversionDisplay(amount: number, unit: MedicationUnit): stri
 export function getHelperText(unit: MedicationUnit): { primary: string; secondary?: string } {
   if (isLiquidUnit(unit)) {
     return {
-      primary: '1 tbsp = 3 tsp = 15 ml = 60 drops',
-      secondary: 'tbsp = tablespoon, tsp = teaspoon, ml = milliliter',
+      primary: '1 tsp = 5 ml = 20 drops',
+      secondary: 'tsp = teaspoon, ml = milliliter',
     };
   }
 
@@ -179,9 +175,15 @@ export const MEDICATION_UNIT_LABELS: Record<MedicationUnit, string> = {
 };
 
 /**
- * All available medication units
+ * All available medication units (excludes tbsp from UI)
  */
-export const MEDICATION_UNITS: MedicationUnit[] = ['drops', 'ml', 'tsp', 'tbsp', 'tablet', 'capsule', 'sachet'];
+export const MEDICATION_UNITS: MedicationUnit[] = ['drops', 'ml', 'tsp', 'tablet', 'capsule', 'sachet'];
+
+/**
+ * Grouped units for the Amount UI selector
+ */
+export const LIQUID_MEDICATION_UNITS: MedicationUnit[] = ['drops', 'ml', 'tsp'];
+export const NON_LIQUID_MEDICATION_UNITS: MedicationUnit[] = ['tablet', 'capsule', 'sachet'];
 
 /**
  * Get the step value for +/- buttons based on unit

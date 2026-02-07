@@ -10,7 +10,8 @@ import {
   getHelperText,
   getMinForUnit,
   getStepForUnit,
-  MEDICATION_UNITS,
+  LIQUID_MEDICATION_UNITS,
+  NON_LIQUID_MEDICATION_UNITS,
 } from '@/lib/medication-units';
 import { cn } from '@/lib/utils';
 
@@ -107,21 +108,50 @@ export function AmountInput({
             <Plus className="h-4 w-4" />
           </Button>
         </div>
+      </div>
 
-        {/* Unit selector */}
-        <div className="flex flex-wrap gap-1">
-          {MEDICATION_UNITS.map(u => (
-            <Button
-              key={u}
-              type="button"
-              variant={unit === u ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleUnitChange(u)}
-              className="min-w-[50px]"
-            >
-              {u}
-            </Button>
-          ))}
+      {/* Unit selector - grouped by type */}
+      <div className="space-y-2.5">
+        {/* Liquid units */}
+        <div className="space-y-1.5">
+          <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            Liquid
+          </span>
+          <div className="flex flex-wrap gap-1.5">
+            {LIQUID_MEDICATION_UNITS.map(u => (
+              <Button
+                key={u}
+                type="button"
+                variant={unit === u ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => handleUnitChange(u)}
+                className="min-w-[50px]"
+              >
+                {u}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* Non-liquid units */}
+        <div className="space-y-1.5">
+          <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            Non-liquid
+          </span>
+          <div className="flex flex-wrap gap-1.5">
+            {NON_LIQUID_MEDICATION_UNITS.map(u => (
+              <Button
+                key={u}
+                type="button"
+                variant={unit === u ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => handleUnitChange(u)}
+                className="min-w-[50px]"
+              >
+                {u}
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
