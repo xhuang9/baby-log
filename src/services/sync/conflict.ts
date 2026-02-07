@@ -11,10 +11,15 @@ import type {
   LocalActivityLog,
   LocalBaby,
   LocalBabyAccess,
+  LocalBathLog,
   LocalFeedLog,
+  LocalGrowthLog,
+  LocalMedicationLog,
   LocalNappyLog,
+  LocalPumpingLog,
   LocalSleepLog,
   LocalSolidsLog,
+  MedicationUnit,
   NappyColour,
   NappyConsistency,
   NappyType,
@@ -24,8 +29,12 @@ import {
   saveActivityLogs,
   saveBabies,
   saveBabyAccess,
+  saveBathLogs,
   saveFeedLogs,
+  saveGrowthLogs,
+  saveMedicationLogs,
   saveNappyLogs,
+  savePumpingLogs,
   saveSleepLogs,
   saveSolidsLogs,
 } from '@/lib/local-db';
@@ -115,6 +124,53 @@ export async function applyServerData(
       updatedAt: new Date(serverData.updatedAt as string),
     };
     await saveSolidsLogs([solidsLog]);
+  } else if ('totalMl' in serverData) {
+    // Pumping log (has 'totalMl')
+    const pumpingLog: LocalPumpingLog = {
+      id: serverData.id as string,
+      babyId: serverData.babyId as number,
+      loggedByUserId: serverData.loggedByUserId as number,
+      startedAt: new Date(serverData.startedAt as string),
+      endedAt: serverData.endedAt ? new Date(serverData.endedAt as string) : null,
+      leftMl: (serverData.leftMl as number | null) ?? null,
+      rightMl: (serverData.rightMl as number | null) ?? null,
+      totalMl: serverData.totalMl as number,
+      notes: (serverData.notes as string) ?? null,
+      createdAt: new Date(serverData.createdAt as string),
+      updatedAt: new Date(serverData.updatedAt as string),
+    };
+    await savePumpingLogs([pumpingLog]);
+  } else if ('weightG' in serverData || 'heightMm' in serverData || 'headCircumferenceMm' in serverData) {
+    // Growth log (has 'weightG', 'heightMm', or 'headCircumferenceMm')
+    const growthLog: LocalGrowthLog = {
+      id: serverData.id as string,
+      babyId: serverData.babyId as number,
+      loggedByUserId: serverData.loggedByUserId as number,
+      startedAt: new Date(serverData.startedAt as string),
+      weightG: (serverData.weightG as number | null) ?? null,
+      heightMm: (serverData.heightMm as number | null) ?? null,
+      headCircumferenceMm: (serverData.headCircumferenceMm as number | null) ?? null,
+      notes: (serverData.notes as string) ?? null,
+      createdAt: new Date(serverData.createdAt as string),
+      updatedAt: new Date(serverData.updatedAt as string),
+    };
+    await saveGrowthLogs([growthLog]);
+  } else if ('medicationTypeId' in serverData) {
+    // Medication log (has 'medicationTypeId')
+    const medicationLog: LocalMedicationLog = {
+      id: serverData.id as string,
+      babyId: serverData.babyId as number,
+      loggedByUserId: serverData.loggedByUserId as number,
+      medicationType: serverData.medicationType as string,
+      medicationTypeId: serverData.medicationTypeId as string,
+      amount: serverData.amount as number,
+      unit: serverData.unit as MedicationUnit,
+      startedAt: new Date(serverData.startedAt as string),
+      notes: (serverData.notes as string) ?? null,
+      createdAt: new Date(serverData.createdAt as string),
+      updatedAt: new Date(serverData.updatedAt as string),
+    };
+    await saveMedicationLogs([medicationLog]);
   } else if ('activityType' in serverData) {
     // Activity log
     const activityLog: LocalActivityLog = {
@@ -130,7 +186,7 @@ export async function applyServerData(
     };
     await saveActivityLogs([activityLog]);
   } else if ('startedAt' in serverData && 'endedAt' in serverData) {
-    // Sleep log
+    // Sleep log (has 'startedAt' + 'endedAt' but no other distinguishing fields)
     const sleepLog: LocalSleepLog = {
       id: serverData.id as string,
       babyId: serverData.babyId as number,
@@ -143,5 +199,17 @@ export async function applyServerData(
       updatedAt: new Date(serverData.updatedAt as string),
     };
     await saveSleepLogs([sleepLog]);
+  } else if ('babyId' in serverData && 'startedAt' in serverData) {
+    // Bath log (has 'babyId' + 'startedAt' but no other distinguishing fields - fallback)
+    const bathLog: LocalBathLog = {
+      id: serverData.id as string,
+      babyId: serverData.babyId as number,
+      loggedByUserId: serverData.loggedByUserId as number,
+      startedAt: new Date(serverData.startedAt as string),
+      notes: (serverData.notes as string) ?? null,
+      createdAt: new Date(serverData.createdAt as string),
+      updatedAt: new Date(serverData.updatedAt as string),
+    };
+    await saveBathLogs([bathLog]);
   }
 }
