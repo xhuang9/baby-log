@@ -34,6 +34,8 @@ export function usePumpingFormSubmit({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isValid = mode === 'leftRight' ? (leftMl > 0 || rightMl > 0) : totalMl > 0;
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setError(null);
@@ -67,5 +69,5 @@ export function usePumpingFormSubmit({
     }
   };
 
-  return { handleSubmit, isSubmitting, error };
+  return { handleSubmit, isSubmitting, error, isValid };
 }

@@ -23,6 +23,7 @@ const activityPillClasses: Record<ActivityType, string> = {
   growth: 'activity-pill--growth',
   bath: 'activity-pill--bath',
   medication: 'activity-pill--medication',
+  activity: 'activity-pill--activity',
 };
 
 export type LogsFiltersProps = {

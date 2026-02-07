@@ -9,6 +9,18 @@
  * 4. Trigger non-blocking server sync
  */
 
+// Activity log operations
+export type {
+  CreateActivityLogInput,
+  UpdateActivityLogInput,
+} from './activity-log';
+
+export {
+  createActivityLog,
+  deleteActivityLog,
+  updateActivityLog,
+} from './activity-log';
+
 // Auth operations
 export {
   signOutCleanup,

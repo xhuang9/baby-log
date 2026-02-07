@@ -1,6 +1,6 @@
 'use client';
 
-import type { LocalBathLog, LocalFeedLog, LocalGrowthLog, LocalMedicationLog, LocalNappyLog, LocalPumpingLog, LocalSleepLog, LocalSolidsLog } from '@/lib/local-db';
+import type { ActivityLogCategory, LocalActivityLog, LocalBathLog, LocalFeedLog, LocalGrowthLog, LocalMedicationLog, LocalNappyLog, LocalPumpingLog, LocalSleepLog, LocalSolidsLog } from '@/lib/local-db';
 
 // Re-export from activity-modals for convenience
 export { formatDuration as formatDurationFromMinutes } from '@/components/activity-modals/utils';
@@ -96,11 +96,19 @@ export function formatTimeSwiperDate(date: Date, currentTime: Date): string {
  */
 export type UnifiedLog = {
   id: string;
-  type: 'feed' | 'sleep' | 'nappy' | 'solids' | 'pumping' | 'growth' | 'bath' | 'medication';
+  type: 'feed' | 'sleep' | 'nappy' | 'solids' | 'pumping' | 'growth' | 'bath' | 'medication' | 'activity';
   babyId: number;
   startedAt: Date;
   caregiverLabel: string | null;
-  data: LocalFeedLog | LocalSleepLog | LocalNappyLog | LocalSolidsLog | LocalPumpingLog | LocalGrowthLog | LocalBathLog | LocalMedicationLog;
+  data: LocalFeedLog | LocalSleepLog | LocalNappyLog | LocalSolidsLog | LocalPumpingLog | LocalGrowthLog | LocalBathLog | LocalMedicationLog | LocalActivityLog;
+};
+
+const ACTIVITY_TYPE_LABELS: Record<ActivityLogCategory, string> = {
+  tummy_time: 'Tummy Time',
+  indoor_play: 'Indoor Play',
+  outdoor_play: 'Outdoor Play',
+  screen_time: 'Screen Time',
+  other: 'Other',
 };
 
 /**
@@ -229,6 +237,13 @@ export function formatLogSubtitle(log: UnifiedLog): string {
     return JSON.stringify({ left: leftPart, right: rightPart });
   }
 
+  if (log.type === 'activity') {
+    const activity = log.data as LocalActivityLog;
+    const typeLabel = ACTIVITY_TYPE_LABELS[activity.activityType];
+    const leftPart = `Activity · ${typeLabel}`;
+    return JSON.stringify({ left: leftPart, right: rightPart });
+  }
+
   return '';
 }
 
@@ -305,6 +320,12 @@ export function formatLogSubtitleExpanded(log: UnifiedLog): string {
   if (log.type === 'medication') {
     const med = log.data as LocalMedicationLog;
     return `${timeAgo} - ${med.amount} ${med.unit} of ${med.medicationType}${caregiver}`;
+  }
+
+  if (log.type === 'activity') {
+    const activity = log.data as LocalActivityLog;
+    const typeLabel = ACTIVITY_TYPE_LABELS[activity.activityType];
+    return `${timeAgo} - ${typeLabel}${caregiver}`;
   }
 
   return timeAgo;

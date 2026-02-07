@@ -21,6 +21,7 @@ const activityClasses = {
   'outdoor-play': 'activity-tile--outdoor-play',
   'indoor-play': 'activity-tile--indoor-play',
   'brush-teeth': 'activity-tile--brush-teeth',
+  'activity': 'activity-tile--activity',
 } as const;
 
 export type ActivityType = keyof typeof activityClasses;

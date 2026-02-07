@@ -18,6 +18,7 @@ type UseFeedFormSubmitOptions = {
   endTime: Date;
   amountMl: number;
   endSide: 'left' | 'right';
+  timerElapsed: number;
   prepareTimerSave: () => Promise<TimerSaveResult | null>;
   completeTimerSave: () => Promise<void>;
   resetForm: () => void;
@@ -33,6 +34,7 @@ export function useFeedFormSubmit({
   endTime,
   amountMl,
   endSide,
+  timerElapsed,
   prepareTimerSave,
   completeTimerSave,
   resetForm,
@@ -41,6 +43,11 @@ export function useFeedFormSubmit({
 }: UseFeedFormSubmitOptions) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isTimerModeWithNoTime = method === 'breast' && inputMode === 'timer' && timerElapsed < 1;
+  const manualDurationMs = endTime.getTime() - startTime.getTime();
+  const isManualModeInvalidDuration = method === 'breast' && inputMode === 'manual' && Math.round(manualDurationMs / 60000) <= 0;
+  const isValid = !isTimerModeWithNoTime && !isManualModeInvalidDuration;
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -116,5 +123,5 @@ export function useFeedFormSubmit({
     }
   };
 
-  return { handleSubmit, isSubmitting, error };
+  return { handleSubmit, isSubmitting, error, isValid };
 }

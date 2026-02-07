@@ -42,7 +42,7 @@ export function AddGrowthModal({
   });
 
   // 3. Submit logic
-  const { handleSubmit, isSubmitting, error } = useGrowthFormSubmit({
+  const { handleSubmit, isSubmitting, error, isValid } = useGrowthFormSubmit({
     babyId,
     startTime: state.startTime,
     weightG: state.weightG,
@@ -305,6 +305,7 @@ export function AddGrowthModal({
             onSecondary={() => handleOpenChange(false)}
             secondaryLabel="Cancel"
             isLoading={isSubmitting}
+            disabled={!isValid}
             handMode={state.handMode}
           />
         </SheetFooter>

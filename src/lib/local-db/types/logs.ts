@@ -136,6 +136,24 @@ export type LocalBathLog = {
 };
 
 // ============================================================================
+// Activity Log Types
+// ============================================================================
+
+export type ActivityLogCategory = 'tummy_time' | 'indoor_play' | 'outdoor_play' | 'screen_time' | 'other';
+
+export type LocalActivityLog = {
+  id: string;
+  babyId: number;
+  loggedByUserId: number;
+  activityType: ActivityLogCategory;
+  startedAt: Date;
+  endedAt: Date | null;
+  notes: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+// ============================================================================
 // Medication Log Types
 // ============================================================================
 

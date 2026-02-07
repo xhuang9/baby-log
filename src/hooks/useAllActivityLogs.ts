@@ -4,6 +4,7 @@ import type { ActivityType } from './useLogsFilters';
 import type { UnifiedLog } from '@/lib/format-log';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { localDb } from '@/lib/local-db';
+import { useActivitiesByDateRange } from './useActivities';
 import { useBathLogsByDateRange } from './useBathLogs';
 import { useFeedLogsByDateRange } from './useFeedLogs';
 import { useGrowthLogsByDateRange } from './useGrowthLogs';
@@ -78,6 +79,12 @@ export function useAllActivityLogs(
     endDate,
   );
 
+  const activities = useActivitiesByDateRange(
+    activeTypes.includes('activity') ? babyId : null,
+    startDate,
+    endDate,
+  );
+
   // Merge and enrich with caregiver data
   const allLogs = useLiveQuery(
     async () => {
@@ -95,6 +102,7 @@ export function useAllActivityLogs(
         || (activeTypes.includes('growth') && growths === undefined)
         || (activeTypes.includes('bath') && baths === undefined)
         || (activeTypes.includes('medication') && medications === undefined)
+        || (activeTypes.includes('activity') && activities === undefined)
       ) {
         return undefined;
       }
@@ -139,6 +147,11 @@ export function useAllActivityLogs(
       if (medications) {
         for (const medication of medications) {
           userIds.add(medication.loggedByUserId);
+        }
+      }
+      if (activities) {
+        for (const activity of activities) {
+          userIds.add(activity.loggedByUserId);
         }
       }
 
@@ -270,10 +283,24 @@ export function useAllActivityLogs(
         }
       }
 
+      // Transform activity logs
+      if (activities) {
+        for (const activity of activities) {
+          unified.push({
+            id: activity.id,
+            type: 'activity',
+            babyId: activity.babyId,
+            startedAt: activity.startedAt,
+            caregiverLabel: accessMap.get(activity.loggedByUserId) ?? null,
+            data: activity,
+          });
+        }
+      }
+
       // Sort DESC by startedAt (newest first)
       return unified.sort((a, b) => b.startedAt.getTime() - a.startedAt.getTime());
     },
-    [babyId, feeds, sleeps, nappies, solids, pumps, growths, baths, medications, activeTypes.join(',')],
+    [babyId, feeds, sleeps, nappies, solids, pumps, growths, baths, medications, activities, activeTypes.join(',')],
     undefined,
   );
 

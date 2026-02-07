@@ -40,7 +40,7 @@ export function AddSolidsModal({
   });
 
   // 3. Submit logic
-  const { handleSubmit, isSubmitting, error } = useSolidsFormSubmit({
+  const { handleSubmit, isSubmitting, error, isValid } = useSolidsFormSubmit({
     babyId,
     startTime: state.startTime,
     selectedFoodIds: state.selectedFoodIds,
@@ -207,6 +207,7 @@ export function AddSolidsModal({
               onSecondary={() => handleOpenChange(false)}
               secondaryLabel="Cancel"
               isLoading={isSubmitting}
+              disabled={!isValid}
               handMode={state.handMode}
             />
           </SheetFooter>

@@ -5,6 +5,7 @@
  */
 
 import type { Mutation, MutationResult } from '../types';
+import { processActivityLogMutation } from './activity-log';
 import { processBabyMutation } from './baby';
 import { processBathLogMutation } from './bath-log';
 import { processFeedLogMutation } from './feed-log';
@@ -15,6 +16,7 @@ import { processPumpingLogMutation } from './pumping-log';
 import { processSleepLogMutation } from './sleep-log';
 import { processSolidsLogMutation } from './solids-log';
 
+export { processActivityLogMutation } from './activity-log';
 export { processBabyMutation } from './baby';
 export { processBathLogMutation } from './bath-log';
 export { processFeedLogMutation } from './feed-log';
@@ -89,6 +91,8 @@ export async function processMutation(
         return await processGrowthLogMutation(mutationId, entityId, op, payload, userId, babyId);
       case 'bath_log':
         return await processBathLogMutation(mutationId, entityId, op, payload, userId, babyId);
+      case 'activity_log':
+        return await processActivityLogMutation(mutationId, entityId, op, payload, userId, babyId);
       default:
         return {
           mutationId,

@@ -39,6 +39,15 @@ export async function clearAllLocalData(): Promise<void> {
     localDb.feedLogs,
     localDb.sleepLogs,
     localDb.nappyLogs,
+    localDb.solidsLogs,
+    localDb.pumpingLogs,
+    localDb.growthLogs,
+    localDb.bathLogs,
+    localDb.medicationLogs,
+    localDb.activityLogs,
+    localDb.babyInvites,
+    localDb.foodTypes,
+    localDb.medicationTypes,
     localDb.uiConfig,
     localDb.syncMeta,
     localDb.syncStatus,
@@ -52,6 +61,15 @@ export async function clearAllLocalData(): Promise<void> {
     await localDb.feedLogs.clear();
     await localDb.sleepLogs.clear();
     await localDb.nappyLogs.clear();
+    await localDb.solidsLogs.clear();
+    await localDb.pumpingLogs.clear();
+    await localDb.growthLogs.clear();
+    await localDb.bathLogs.clear();
+    await localDb.medicationLogs.clear();
+    await localDb.activityLogs.clear();
+    await localDb.babyInvites.clear();
+    await localDb.foodTypes.clear();
+    await localDb.medicationTypes.clear();
     await localDb.uiConfig.clear();
     await localDb.syncMeta.clear();
     await localDb.syncStatus.clear();

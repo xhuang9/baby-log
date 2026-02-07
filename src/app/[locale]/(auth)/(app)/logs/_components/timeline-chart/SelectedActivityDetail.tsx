@@ -25,7 +25,7 @@ function formatTime(date: Date): string {
 /**
  * Get icon for activity type
  */
-function ActivityIcon({ type }: { type: 'feed' | 'sleep' | 'nappy' | 'solids' | 'pumping' | 'growth' | 'bath' | 'medication' }) {
+function ActivityIcon({ type }: { type: 'feed' | 'sleep' | 'nappy' | 'solids' | 'pumping' | 'growth' | 'bath' | 'medication' | 'activity' }) {
   if (type === 'sleep') {
     return <Moon className="h-5 w-5" />;
   }

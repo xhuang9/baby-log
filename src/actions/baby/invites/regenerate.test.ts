@@ -14,6 +14,7 @@ vi.mock('@/lib/db', () => ({
 
 vi.mock('@/lib/invites/invite-helpers', () => ({
   createEmailInviteJWT: vi.fn(),
+  generateJti: vi.fn(),
   generatePasskey: vi.fn(),
   generateTokenPrefix: vi.fn(),
   getEmailInviteExpiryDate: vi.fn(),
@@ -35,6 +36,7 @@ const loadSubject = async () => {
   const { db } = await import('@/lib/db');
   const {
     createEmailInviteJWT,
+    generateJti,
     generatePasskey,
     generateTokenPrefix,
     getEmailInviteExpiryDate,
@@ -49,6 +51,7 @@ const loadSubject = async () => {
     auth,
     db,
     createEmailInviteJWT,
+    generateJti,
     generatePasskey,
     generateTokenPrefix,
     getEmailInviteExpiryDate,
@@ -312,6 +315,7 @@ describe('regenerateInvite', () => {
         getLocalUserByClerkId,
         db,
         createEmailInviteJWT,
+        generateJti,
         hashToken,
         getEmailInviteExpiryDate,
         revalidatePath,
@@ -351,8 +355,9 @@ describe('regenerateInvite', () => {
         .mockReturnValueOnce({ from: accessSelectFrom } as any);
 
       vi.mocked(getEmailInviteExpiryDate).mockReturnValue(expiresAt);
+      vi.mocked(generateJti).mockReturnValue('test-jti-uuid');
+      vi.mocked(hashToken).mockReturnValue('hashed_jti');
       vi.mocked(createEmailInviteJWT).mockReturnValue('new_jwt_token');
-      vi.mocked(hashToken).mockReturnValue('hashed_jwt');
 
       vi.mocked(db.transaction).mockImplementation(async (callback) => {
         const mockTx = {
@@ -380,6 +385,8 @@ describe('regenerateInvite', () => {
         expect(result.inviteId).toBe(200);
       }
 
+      expect(generateJti).toHaveBeenCalled();
+      expect(hashToken).toHaveBeenCalledWith('test-jti-uuid');
       expect(db.transaction).toHaveBeenCalled();
       expect(revalidatePath).toHaveBeenCalledWith('/settings/babies/42/share');
     });
