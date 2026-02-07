@@ -6,6 +6,7 @@
 
 export * from './entities';
 export * from './logs';
+export * from './medication-types';
 export * from './notifications';
 export * from './outbox';
 export * from './sync';

@@ -17,6 +17,7 @@ const activityClasses = {
   'pumping': 'activity-tile--pumping',
   'growth': 'activity-tile--growth',
   'bath': 'activity-tile--bath',
+  'medication': 'activity-tile--medication',
   'tummy-time': 'activity-tile--tummy-time',
   'story-time': 'activity-tile--story-time',
   'screen-time': 'activity-tile--screen-time',

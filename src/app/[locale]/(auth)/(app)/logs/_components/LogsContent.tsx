@@ -8,8 +8,10 @@ import { useAllActivityLogs } from '@/hooks/useAllActivityLogs';
 import { ACTIVITY_TYPES, useLogsFilters } from '@/hooks/useLogsFilters';
 import { localDb } from '@/lib/local-db';
 import { ActivityTypePills } from './ActivityTypePills';
+import { EditBathModal } from './edit-modals/EditBathModal';
 import { EditFeedModal } from './edit-modals/EditFeedModal';
 import { EditGrowthModal } from './edit-modals/EditGrowthModal';
+import { EditMedicationModal } from './edit-modals/EditMedicationModal';
 import { EditNappyModal } from './edit-modals/EditNappyModal';
 import { EditPumpingModal } from './edit-modals/EditPumpingModal';
 import { EditSleepModal } from './edit-modals/EditSleepModal';
@@ -244,6 +246,30 @@ export function LogsContent() {
       {editingLog?.type === 'growth' && (
         <EditGrowthModal
           growth={editingLog.data as import('@/lib/local-db').LocalGrowthLog}
+          open={Boolean(editingLog)}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleCloseEditModal();
+            }
+          }}
+        />
+      )}
+
+      {editingLog?.type === 'bath' && (
+        <EditBathModal
+          bath={editingLog.data as import('@/lib/local-db').LocalBathLog}
+          open={Boolean(editingLog)}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleCloseEditModal();
+            }
+          }}
+        />
+      )}
+
+      {editingLog?.type === 'medication' && (
+        <EditMedicationModal
+          medication={editingLog.data as import('@/lib/local-db').LocalMedicationLog}
           open={Boolean(editingLog)}
           onOpenChange={(open) => {
             if (!open) {

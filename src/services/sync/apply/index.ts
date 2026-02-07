@@ -6,6 +6,7 @@
 
 import type { SyncChange } from '../types';
 import { applyBabyChange } from './baby';
+import { applyBathLogChange } from './bath-log';
 import { applyFeedLogChange } from './feed-log';
 import { applyFoodTypeChange } from './food-types';
 import { applyGrowthLogChange } from './growth-log';
@@ -15,6 +16,7 @@ import { applySleepLogChange } from './sleep-log';
 import { applySolidsLogChange } from './solids-log';
 
 export { applyBabyChange } from './baby';
+export { applyBathLogChange } from './bath-log';
 export { applyFeedLogChange } from './feed-log';
 export { applyFoodTypeChange, applyFoodTypeSync } from './food-types';
 export { applyGrowthLogChange } from './growth-log';
@@ -53,6 +55,9 @@ export async function applyChange(change: SyncChange): Promise<void> {
       break;
     case 'growth_log':
       await applyGrowthLogChange(op, id, data);
+      break;
+    case 'bath_log':
+      await applyBathLogChange(op, id, data);
       break;
     default:
       console.warn(`Unknown entity type: ${type}`);

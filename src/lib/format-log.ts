@@ -1,6 +1,6 @@
 'use client';
 
-import type { LocalFeedLog, LocalGrowthLog, LocalNappyLog, LocalPumpingLog, LocalSleepLog, LocalSolidsLog } from '@/lib/local-db';
+import type { LocalBathLog, LocalFeedLog, LocalGrowthLog, LocalMedicationLog, LocalNappyLog, LocalPumpingLog, LocalSleepLog, LocalSolidsLog } from '@/lib/local-db';
 
 // Re-export from activity-modals for convenience
 export { formatDuration as formatDurationFromMinutes } from '@/components/activity-modals/utils';
@@ -96,11 +96,11 @@ export function formatTimeSwiperDate(date: Date, currentTime: Date): string {
  */
 export type UnifiedLog = {
   id: string;
-  type: 'feed' | 'sleep' | 'nappy' | 'solids' | 'pumping' | 'growth';
+  type: 'feed' | 'sleep' | 'nappy' | 'solids' | 'pumping' | 'growth' | 'bath' | 'medication';
   babyId: number;
   startedAt: Date;
   caregiverLabel: string | null;
-  data: LocalFeedLog | LocalSleepLog | LocalNappyLog | LocalSolidsLog | LocalPumpingLog | LocalGrowthLog;
+  data: LocalFeedLog | LocalSleepLog | LocalNappyLog | LocalSolidsLog | LocalPumpingLog | LocalGrowthLog | LocalBathLog | LocalMedicationLog;
 };
 
 /**
@@ -218,6 +218,17 @@ export function formatLogSubtitle(log: UnifiedLog): string {
     return JSON.stringify({ left: leftPart, right: rightPart });
   }
 
+  if (log.type === 'bath') {
+    const leftPart = 'Bath';
+    return JSON.stringify({ left: leftPart, right: rightPart });
+  }
+
+  if (log.type === 'medication') {
+    const med = log.data as LocalMedicationLog;
+    const leftPart = `Medication · ${med.amount} ${med.unit} ${med.medicationType}`;
+    return JSON.stringify({ left: leftPart, right: rightPart });
+  }
+
   return '';
 }
 
@@ -285,6 +296,15 @@ export function formatLogSubtitleExpanded(log: UnifiedLog): string {
       parts.push(`${headCm}cm head`);
     }
     return `${timeAgo} - ${parts.join(' - ') || 'Measured'}${caregiver}`;
+  }
+
+  if (log.type === 'bath') {
+    return `${timeAgo} - Bath time${caregiver}`;
+  }
+
+  if (log.type === 'medication') {
+    const med = log.data as LocalMedicationLog;
+    return `${timeAgo} - ${med.amount} ${med.unit} of ${med.medicationType}${caregiver}`;
   }
 
   return timeAgo;

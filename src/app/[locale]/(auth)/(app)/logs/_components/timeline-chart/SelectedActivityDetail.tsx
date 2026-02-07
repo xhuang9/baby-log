@@ -1,8 +1,8 @@
 'use client';
 
 import type { UnifiedLog } from '@/lib/format-log';
-import type { LocalFeedLog, LocalGrowthLog, LocalNappyLog, LocalSleepLog, LocalSolidsLog } from '@/lib/local-db';
-import { Apple, Baby, ChevronRight, Moon, MousePointerClick, Ruler } from 'lucide-react';
+import type { LocalFeedLog, LocalGrowthLog, LocalMedicationLog, LocalNappyLog, LocalSleepLog, LocalSolidsLog } from '@/lib/local-db';
+import { Apple, Baby, ChevronRight, Droplet, Moon, MousePointerClick, Pill, Ruler } from 'lucide-react';
 import { formatDuration } from '@/lib/format-log';
 import { cn } from '@/lib/utils';
 
@@ -25,7 +25,7 @@ function formatTime(date: Date): string {
 /**
  * Get icon for activity type
  */
-function ActivityIcon({ type }: { type: 'feed' | 'sleep' | 'nappy' | 'solids' | 'pumping' | 'growth' }) {
+function ActivityIcon({ type }: { type: 'feed' | 'sleep' | 'nappy' | 'solids' | 'pumping' | 'growth' | 'bath' | 'medication' }) {
   if (type === 'sleep') {
     return <Moon className="h-5 w-5" />;
   }
@@ -37,6 +37,12 @@ function ActivityIcon({ type }: { type: 'feed' | 'sleep' | 'nappy' | 'solids' | 
   }
   if (type === 'growth') {
     return <Ruler className="h-5 w-5" />;
+  }
+  if (type === 'bath') {
+    return <Droplet className="h-5 w-5" />;
+  }
+  if (type === 'medication') {
+    return <Pill className="h-5 w-5" />;
   }
   return <Baby className="h-5 w-5" />;
 }
@@ -87,6 +93,15 @@ function getActivityTitle(log: UnifiedLog): string {
     return parts.length > 0 ? parts.join(' - ') : 'Growth';
   }
 
+  if (log.type === 'bath') {
+    return 'Bath';
+  }
+
+  if (log.type === 'medication') {
+    const med = log.data as LocalMedicationLog;
+    return `${med.amount} ${med.unit} ${med.medicationType}`;
+  }
+
   return 'Sleep';
 }
 
@@ -112,6 +127,14 @@ function getDurationText(log: UnifiedLog): string {
     return ''; // Growth logs don't have duration
   }
 
+  if (log.type === 'bath') {
+    return ''; // Bath logs don't have duration
+  }
+
+  if (log.type === 'medication') {
+    return ''; // Medication logs don't have duration
+  }
+
   return '';
 }
 
@@ -121,8 +144,8 @@ function getDurationText(log: UnifiedLog): string {
 function getTimeRange(log: UnifiedLog): string {
   const start = formatTime(log.startedAt);
 
-  // Nappy and growth logs don't have end time
-  if (log.type === 'nappy' || log.type === 'growth') {
+  // Nappy, growth, bath, and medication logs don't have end time
+  if (log.type === 'nappy' || log.type === 'growth' || log.type === 'bath' || log.type === 'medication') {
     return start;
   }
 

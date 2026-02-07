@@ -5,6 +5,7 @@
  */
 
 export { serializeBaby } from './baby';
+export { serializeBathLog } from './bath-log';
 export { serializeFeedLog } from './feed-log';
 export { serializeGrowthLog } from './growth-log';
 export { serializeNappyLog } from './nappy-log';

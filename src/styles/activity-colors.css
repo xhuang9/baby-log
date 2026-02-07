@@ -45,6 +45,9 @@
 
   /* Growth - health/development, emerald (Tailwind emerald). */
   --color-activity-growth-background: var(--color-emerald-500);
+
+  /* Medication - health/clinical, red (Tailwind red). */
+  --color-activity-medication-background: var(--color-red-400);
 }
 
 @layer components {
@@ -159,6 +162,10 @@
     --activity-tile-accent: var(--color-activity-growth-background);
   }
 
+  .activity-tile--medication {
+    --activity-tile-accent: var(--color-activity-medication-background);
+  }
+
   /* Timeline chart activity blocks */
   .activity-block {
     @apply absolute left-0.5 right-0.5 cursor-pointer overflow-hidden rounded text-left transition-opacity;
@@ -222,5 +229,42 @@
 
   .activity-block--growth {
     background-color: var(--color-activity-growth-background);
+  }
+
+  .activity-block--medication {
+    background-color: var(--color-activity-medication-background);
+  }
+
+  /* Activity filter pill classes (for selected state) */
+  .activity-pill--feed {
+    background-color: var(--color-activity-feed-background);
+  }
+
+  .activity-pill--sleep {
+    background-color: var(--color-activity-sleep-background);
+  }
+
+  .activity-pill--nappy {
+    background-color: var(--color-activity-nappy-background);
+  }
+
+  .activity-pill--solids {
+    background-color: var(--color-activity-solids-background);
+  }
+
+  .activity-pill--pumping {
+    background-color: var(--color-activity-pumping-background);
+  }
+
+  .activity-pill--growth {
+    background-color: var(--color-activity-growth-background);
+  }
+
+  .activity-pill--bath {
+    background-color: var(--color-activity-bath-background);
+  }
+
+  .activity-pill--medication {
+    background-color: var(--color-activity-medication-background);
   }
 }
