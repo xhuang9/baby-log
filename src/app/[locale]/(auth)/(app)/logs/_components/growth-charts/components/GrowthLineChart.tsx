@@ -14,13 +14,13 @@ type GrowthLineChartProps = {
 
 export function GrowthLineChart({ data, config }: GrowthLineChartProps) {
   // Track responsive state for tick spacing
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(max-width: 767px)').matches;
+  });
 
   useEffect(() => {
-    // Set initial value
     const mediaQuery = window.matchMedia('(max-width: 767px)');
-    setIsMobile(mediaQuery.matches);
-
     // Listen for changes
     const handleChange = (e: MediaQueryListEvent) => {
       setIsMobile(e.matches);

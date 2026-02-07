@@ -1,7 +1,7 @@
 'use client';
 
 import type { SwipeResistance } from '@/components/settings';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FUTURE_DAYS_LIMIT_TODAY, HOUR_WIDTH, MAX_ANIMATION_DURATION, PAST_DAYS_LIMIT, TOTAL_WIDTH } from '../constants';
 
 /**
@@ -37,7 +37,16 @@ export function useTimeSwiperAnimation({
   const isDraggingRef = useRef(false);
   const lastXRef = useRef(0);
   const lastTimeRef = useRef(0);
-  const dayOffsetRef = useRef(0);
+  const initialDayOffset = useMemo(() => {
+    const m = new Date(value);
+    m.setHours(0, 0, 0, 0);
+    const base = new Date();
+    base.setHours(0, 0, 0, 0);
+    return Math.round((m.getTime() - base.getTime()) / 86_400_000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const dayOffsetRef = useRef(initialDayOffset);
 
   const [offset, setOffset] = useState(0);
 
@@ -48,13 +57,7 @@ export function useTimeSwiperAnimation({
     return base;
   });
 
-  const [dayOffset, setDayOffset] = useState(() => {
-    const m = new Date(value);
-    m.setHours(0, 0, 0, 0);
-    const computed = Math.round((m.getTime() - fixedBaseDate.getTime()) / 86_400_000);
-    dayOffsetRef.current = computed;
-    return computed;
-  });
+  const [dayOffset, setDayOffset] = useState(initialDayOffset);
   const [atBoundary, setAtBoundary] = useState<'past' | 'future' | null>(null);
 
   // Refs for latest values in animation loop
