@@ -126,8 +126,8 @@ export const babiesSchema = pgTable('babies', {
 });
 
 export const babyAccessSchema = pgTable('baby_access', {
-  babyId: integer('baby_id').references(() => babiesSchema.id),
-  userId: integer('user_id').references(() => userSchema.id),
+  babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
+  userId: integer('user_id').references(() => userSchema.id).notNull(),
   accessLevel: accessLevelEnum('access_level').notNull().default('viewer'),
   caregiverLabel: text('caregiver_label'),
   lastAccessedAt: timestamp('last_accessed_at', { withTimezone: true }),
@@ -289,8 +289,7 @@ export const babyInvitesSchema = pgTable('baby_invites', {
   accessLevel: accessLevelEnum('access_level').notNull().default('editor'),
   status: inviteStatusEnum('status').notNull().default('pending'),
   inviteType: inviteTypeEnum('invite_type').notNull().default('email'),
-  token: text('token').notNull().unique(), // kept for backwards compatibility
-  tokenHash: text('token_hash').unique(), // SHA-256 hash for secure storage
+  tokenHash: text('token_hash').notNull().unique(), // SHA-256 hash for secure storage
   tokenPrefix: text('token_prefix'), // display prefix (e.g., "123...")
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
   acceptedAt: timestamp('accepted_at', { withTimezone: true }),
@@ -299,7 +298,6 @@ export const babyInvitesSchema = pgTable('baby_invites', {
   usesCount: integer('uses_count').notNull().default(0),
   ...timestamps,
 }, t => [
-  index('baby_invites_token_idx').on(t.token),
   index('baby_invites_token_hash_idx').on(t.tokenHash),
   index('baby_invites_baby_id_status_idx').on(t.babyId, t.status),
   index('baby_invites_invited_email_idx').on(t.invitedEmail),

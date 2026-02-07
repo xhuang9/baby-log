@@ -73,7 +73,6 @@ export async function createPasskeyInvite(
         accessLevel: validated.accessLevel,
         status: 'pending',
         inviteType: 'passkey',
-        token: code, // kept for backwards compatibility, but will be removed later
         tokenHash,
         tokenPrefix,
         expiresAt,

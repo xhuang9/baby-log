@@ -417,13 +417,13 @@
           "name": "baby_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "access_level": {
           "name": "access_level",
@@ -576,17 +576,11 @@
           "notNull": true,
           "default": "'email'"
         },
-        "token": {
-          "name": "token",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "token_hash": {
           "name": "token_hash",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "token_prefix": {
           "name": "token_prefix",
@@ -641,21 +635,6 @@
         }
       },
       "indexes": {
-        "baby_invites_token_idx": {
-          "name": "baby_invites_token_idx",
-          "columns": [
-            {
-              "expression": "token",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
         "baby_invites_token_hash_idx": {
           "name": "baby_invites_token_hash_idx",
           "columns": [
@@ -766,13 +745,6 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "baby_invites_token_unique": {
-          "name": "baby_invites_token_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
-        },
         "baby_invites_token_hash_unique": {
           "name": "baby_invites_token_hash_unique",
           "nullsNotDistinct": false,

@@ -155,12 +155,11 @@ export const babyInvites = pgTable("baby_invites", {
 	invitedUserId: integer("invited_user_id"),
 	accessLevel: accessLevelEnum("access_level").default('editor').notNull(),
 	status: inviteStatusEnum().default('pending').notNull(),
-	token: text().notNull(),
 	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'string' }).notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }),
 	inviteType: inviteTypeEnum("invite_type").default('email').notNull(),
-	tokenHash: text("token_hash"),
+	tokenHash: text("token_hash").notNull(),
 	tokenPrefix: text("token_prefix"),
 	acceptedAt: timestamp("accepted_at", { withTimezone: true, mode: 'string' }),
 	revokedAt: timestamp("revoked_at", { withTimezone: true, mode: 'string' }),
@@ -171,7 +170,6 @@ export const babyInvites = pgTable("baby_invites", {
 	index("baby_invites_invited_email_idx").using("btree", table.invitedEmail.asc().nullsLast().op("text_ops")),
 	index("baby_invites_invited_user_id_idx").using("btree", table.invitedUserId.asc().nullsLast().op("int4_ops")),
 	index("baby_invites_token_hash_idx").using("btree", table.tokenHash.asc().nullsLast().op("text_ops")),
-	index("baby_invites_token_idx").using("btree", table.token.asc().nullsLast().op("text_ops")),
 	foreignKey({
 			columns: [table.babyId],
 			foreignColumns: [babies.id],
@@ -187,7 +185,6 @@ export const babyInvites = pgTable("baby_invites", {
 			foreignColumns: [user.id],
 			name: "baby_invites_invited_user_id_user_id_fk"
 		}),
-	unique("baby_invites_token_unique").on(table.token),
 	unique("baby_invites_token_hash_unique").on(table.tokenHash),
 ]);
 
