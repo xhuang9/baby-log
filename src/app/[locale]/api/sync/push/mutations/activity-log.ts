@@ -5,7 +5,7 @@
  */
 
 import type { MutationOp, MutationResult } from '../types';
-import { eq } from 'drizzle-orm';
+import { and, eq, lte, isNull, or } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { writeSyncEvent } from '@/lib/db/helpers/sync-events';
 import { activityLogSchema } from '@/models/Schema';
@@ -26,51 +26,38 @@ export async function processActivityLogMutation(
       return { mutationId, status: 'error', error: 'babyId is required for create' };
     }
 
-    const [inserted] = await db
-      .insert(activityLogSchema)
-      .values({
-        id: payload.id as string,
+    return await db.transaction(async (tx) => {
+      const [inserted] = await tx
+        .insert(activityLogSchema)
+        .values({
+          id: payload.id as string,
+          babyId,
+          loggedByUserId: userId,
+          activityType: payload.activityType as 'tummy_time' | 'indoor_play' | 'outdoor_play' | 'screen_time' | 'other',
+          startedAt: new Date(payload.startedAt as string),
+          endedAt: payload.endedAt ? new Date(payload.endedAt as string) : null,
+          notes: payload.notes as string | null,
+        })
+        .returning();
+
+      if (!inserted) {
+        return { mutationId, status: 'error' as const, error: 'Failed to insert activity log' };
+      }
+
+      await writeSyncEvent({
         babyId,
-        loggedByUserId: userId,
-        activityType: payload.activityType as 'tummy_time' | 'indoor_play' | 'outdoor_play' | 'screen_time' | 'other',
-        startedAt: new Date(payload.startedAt as string),
-        endedAt: payload.endedAt ? new Date(payload.endedAt as string) : null,
-        notes: payload.notes as string | null,
-      })
-      .returning();
+        entityType: 'activity_log',
+        entityId: inserted.id,
+        op: 'create',
+        payload: serializeActivityLog(inserted),
+      }, tx);
 
-    await writeSyncEvent({
-      babyId,
-      entityType: 'activity_log',
-      entityId: inserted!.id,
-      op: 'create',
-      payload: serializeActivityLog(inserted!),
+      return { mutationId, status: 'success' as const };
     });
-
-    return { mutationId, status: 'success' };
   }
 
   if (op === 'update') {
-    const [existing] = await db
-      .select()
-      .from(activityLogSchema)
-      .where(eq(activityLogSchema.id, logId))
-      .limit(1);
-
-    if (!existing) {
-      return { mutationId, status: 'error', error: 'Entity not found' };
-    }
-
     const clientUpdatedAt = payload.updatedAt ? new Date(payload.updatedAt as string) : null;
-    const serverUpdatedAt = existing.updatedAt;
-
-    if (serverUpdatedAt && clientUpdatedAt && serverUpdatedAt > clientUpdatedAt) {
-      return {
-        mutationId,
-        status: 'conflict',
-        serverData: serializeActivityLog(existing),
-      };
-    }
 
     const [updated] = await db
       .update(activityLogSchema)
@@ -80,15 +67,44 @@ export async function processActivityLogMutation(
         endedAt: payload.endedAt ? new Date(payload.endedAt as string) : null,
         notes: payload.notes as string | null,
       })
-      .where(eq(activityLogSchema.id, logId))
+      .where(
+        and(
+          eq(activityLogSchema.id, logId),
+          clientUpdatedAt
+            ? or(
+                lte(activityLogSchema.updatedAt, clientUpdatedAt),
+                isNull(activityLogSchema.updatedAt),
+              )
+            : isNull(activityLogSchema.updatedAt),
+        ),
+      )
       .returning();
 
+    if (!updated) {
+      // No rows updated — either entity missing or conflict
+      const [existing] = await db
+        .select()
+        .from(activityLogSchema)
+        .where(eq(activityLogSchema.id, logId))
+        .limit(1);
+
+      if (!existing) {
+        return { mutationId, status: 'error', error: 'Entity not found' };
+      }
+
+      return {
+        mutationId,
+        status: 'conflict',
+        serverData: serializeActivityLog(existing),
+      };
+    }
+
     await writeSyncEvent({
-      babyId: existing.babyId,
+      babyId: updated.babyId,
       entityType: 'activity_log',
       entityId: logId,
       op: 'update',
-      payload: serializeActivityLog(updated!),
+      payload: serializeActivityLog(updated),
     });
 
     return { mutationId, status: 'success' };

@@ -61,7 +61,7 @@ export async function createActivityLog(
 
   try {
     // Validate input
-    if (!input.babyId) {
+    if (input.babyId == null) {
       return failure('Baby ID is required');
     }
 
@@ -165,13 +165,19 @@ export async function updateActivityLog(
       return failure('Not authenticated');
     }
 
+    // Verify access against the existing record's baby
     const access = await localDb.babyAccess
       .where('[userId+babyId]')
-      .equals([user.localId, input.babyId])
+      .equals([user.localId, existing.babyId])
       .first();
 
     if (!access || (access.accessLevel !== 'owner' && access.accessLevel !== 'editor')) {
       return failure('Access denied to this baby');
+    }
+
+    // Reject if input.babyId doesn't match the existing record's babyId
+    if (input.babyId !== existing.babyId) {
+      return failure('Baby ID mismatch with existing activity log');
     }
 
     // Update fields
@@ -244,6 +250,15 @@ export async function deleteActivityLog(
 
     if (!access || (access.accessLevel !== 'owner' && access.accessLevel !== 'editor')) {
       return failure('Access denied to this baby');
+    }
+
+    // Verify activity log exists and belongs to the specified baby
+    const activityLog = await localDb.activityLogs.get(id);
+    if (!activityLog) {
+      return failure('Activity log not found');
+    }
+    if (activityLog.babyId !== babyId) {
+      return failure('Activity log does not belong to baby');
     }
 
     // Delete from IndexedDB

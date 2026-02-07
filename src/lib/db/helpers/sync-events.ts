@@ -9,6 +9,8 @@ import { desc, eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { syncEventsSchema } from '@/models/Schema';
 
+type DbOrTx = typeof db;
+
 type EntityType = 'baby' | 'feed_log' | 'sleep_log' | 'nappy_log' | 'solids_log' | 'pumping_log' | 'growth_log' | 'bath_log' | 'activity_log';
 type SyncOp = 'create' | 'update' | 'delete';
 
@@ -22,10 +24,13 @@ export type WriteSyncEventParams = {
 
 /**
  * Write a sync event to the database
+ * @param params - The sync event parameters
+ * @param tx - Optional transaction to use instead of the default db connection
  * @returns The ID of the created sync event
  */
-export async function writeSyncEvent(params: WriteSyncEventParams): Promise<number> {
-  const [result] = await db.insert(syncEventsSchema).values({
+export async function writeSyncEvent(params: WriteSyncEventParams, tx?: DbOrTx): Promise<number> {
+  const executor = tx ?? db;
+  const [result] = await executor.insert(syncEventsSchema).values({
     babyId: params.babyId,
     entityType: params.entityType,
     entityId: String(params.entityId), // Convert to string for database

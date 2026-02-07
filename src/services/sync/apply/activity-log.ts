@@ -27,7 +27,7 @@ export async function applyActivityLogChange(
   }
 
   const activityLog: LocalActivityLog = {
-    id: data.id as string,
+    id: stringId,
     babyId: data.babyId as number,
     loggedByUserId: data.loggedByUserId as number,
     activityType: data.activityType as ActivityLogCategory,
