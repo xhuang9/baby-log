@@ -37,6 +37,7 @@ export function AddMedicationModal({
   // 2. Initialization effects
   useInitializeMedicationForm({
     setHandMode: actions.setHandMode,
+    setUseMetric: actions.setUseMetric,
   });
 
   // 3. Submit logic
@@ -164,6 +165,7 @@ export function AddMedicationModal({
                 value={state.medicationInput}
                 onChange={actions.setMedicationInput}
                 onAdd={handleAddMedication}
+                handMode={state.handMode}
               />
               <MedicationPills
                 medicationTypes={medicationTypes}
@@ -183,6 +185,7 @@ export function AddMedicationModal({
               onAmountChange={actions.setAmount}
               onUnitChange={actions.setUnit}
               handMode={state.handMode}
+              useMetric={state.useMetric}
             />
 
             <SectionDivider />

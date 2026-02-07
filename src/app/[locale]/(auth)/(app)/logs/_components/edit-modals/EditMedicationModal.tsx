@@ -1,7 +1,7 @@
 'use client';
 
 import type { LocalMedicationLog, MedicationUnit } from '@/lib/local-db';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BaseActivityModal } from '@/components/activity-modals/BaseActivityModal';
 import { TimeSwiper } from '@/components/feed/TimeSwiper';
 import { NotesField, SectionDivider } from '@/components/input-controls';
@@ -17,8 +17,10 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Label } from '@/components/ui/label';
 import { useMedicationTypes } from '@/hooks/useMedicationTypes';
+import { getUIConfig } from '@/lib/local-db/helpers/ui-config';
 import { notifyToast } from '@/lib/notify';
 import { deleteMedicationLog, updateMedicationLog } from '@/services/operations/medication-log';
+import { useUserStore } from '@/stores/useUserStore';
 import { AmountInput, MedicationPills } from '../../../overview/_components/add-medication-modal/components';
 
 type EditMedicationModalProps = {
@@ -34,7 +36,8 @@ export function EditMedicationModal({
   onOpenChange,
   onSuccess,
 }: EditMedicationModalProps) {
-  const [handMode] = useState<'left' | 'right'>('right');
+  const [handMode, setHandMode] = useState<'left' | 'right'>('right');
+  const [useMetric, setUseMetric] = useState(true);
   const [startTime, setStartTime] = useState(medication.startedAt);
   const [selectedMedicationId, setSelectedMedicationId] = useState<string | null>(medication.medicationTypeId);
   const [amount, setAmount] = useState(medication.amount);
@@ -45,7 +48,23 @@ export function EditMedicationModal({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const user = useUserStore(s => s.user);
   const { medicationTypes } = useMedicationTypes();
+
+  // Load UI config (hand mode + metric setting)
+  useEffect(() => {
+    async function loadConfig() {
+      if (!user?.localId) return;
+      try {
+        const config = await getUIConfig(user.localId);
+        setHandMode(config.data.handMode ?? 'right');
+        setUseMetric(config.data.useMetric ?? true);
+      } catch {
+        // keep defaults
+      }
+    }
+    loadConfig();
+  }, [user?.localId]);
 
   const handleSubmit = async () => {
     if (!selectedMedicationId) {
@@ -177,6 +196,7 @@ export function EditMedicationModal({
           onAmountChange={setAmount}
           onUnitChange={setUnit}
           handMode={handMode}
+          useMetric={useMetric}
         />
 
         <SectionDivider />

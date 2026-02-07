@@ -12,6 +12,7 @@ export function useMedicationFormState() {
   const [notes, setNotes] = useState('');
   const [notesVisible, setNotesVisible] = useState(false);
   const [handMode, setHandMode] = useState<'left' | 'right'>('right');
+  const [useMetric, setUseMetric] = useState(true);
 
   const resetForm = () => {
     setStartTime(new Date());
@@ -33,6 +34,7 @@ export function useMedicationFormState() {
       notes,
       notesVisible,
       handMode,
+      useMetric,
     },
     actions: {
       setStartTime,
@@ -43,6 +45,7 @@ export function useMedicationFormState() {
       setNotes,
       setNotesVisible,
       setHandMode,
+      setUseMetric,
       resetForm,
     },
   };

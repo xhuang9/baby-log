@@ -10,9 +10,10 @@ type MedicationInputProps = {
   onChange: (value: string) => void;
   onAdd: () => void;
   disabled?: boolean;
+  handMode?: 'left' | 'right';
 };
 
-export function MedicationInput({ value, onChange, onAdd, disabled }: MedicationInputProps) {
+export function MedicationInput({ value, onChange, onAdd, disabled, handMode = 'right' }: MedicationInputProps) {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -23,7 +24,7 @@ export function MedicationInput({ value, onChange, onAdd, disabled }: Medication
   return (
     <div className="space-y-2">
       <Label htmlFor="medication-input">Medication</Label>
-      <div className="flex gap-2">
+      <div className={`flex gap-2 ${handMode === 'left' ? 'flex-row-reverse' : 'flex-row'}`}>
         <Input
           id="medication-input"
           type="text"

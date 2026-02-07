@@ -148,8 +148,14 @@ export function getConversionDisplay(amount: number, unit: MedicationUnit): stri
 /**
  * Get helper text for the amount input based on selected unit
  */
-export function getHelperText(unit: MedicationUnit): { primary: string; secondary?: string } {
+export function getHelperText(unit: MedicationUnit, useMetric = true): { primary: string; secondary?: string } {
   if (isLiquidUnit(unit)) {
+    if (!useMetric) {
+      return {
+        primary: '1 tsp = 5 ml ≈ 0.17 oz = 20 drops',
+        secondary: 'tsp = teaspoon, oz = fluid ounce',
+      };
+    }
     return {
       primary: '1 tsp = 5 ml = 20 drops',
       secondary: 'tsp = teaspoon, ml = milliliter',

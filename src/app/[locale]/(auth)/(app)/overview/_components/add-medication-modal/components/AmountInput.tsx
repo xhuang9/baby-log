@@ -23,8 +23,15 @@ type AmountInputProps = {
   onAmountChange: (amount: number) => void;
   onUnitChange: (unit: MedicationUnit) => void;
   handMode?: 'left' | 'right';
+  useMetric?: boolean;
   error?: string;
 };
+
+/** Get display label for a unit, swapping ml → oz when imperial */
+function getUnitLabel(u: MedicationUnit, useMetric: boolean): string {
+  if (u === 'ml' && !useMetric) return 'oz';
+  return u;
+}
 
 export function AmountInput({
   amount,
@@ -32,6 +39,7 @@ export function AmountInput({
   onAmountChange,
   onUnitChange,
   handMode = 'right',
+  useMetric = true,
   error,
 }: AmountInputProps) {
   const step = getStepForUnit(unit);
@@ -86,7 +94,7 @@ export function AmountInput({
   };
 
   // Get helper text based on unit type
-  const helperText = getHelperText(unit);
+  const helperText = getHelperText(unit, useMetric);
 
   // Show validation error if amount is invalid
   const showError = error || (amount <= 0 ? 'Please enter a valid dose amount.' : null);
@@ -150,7 +158,7 @@ export function AmountInput({
                 onClick={() => handleUnitChange(u)}
                 className="min-w-[50px]"
               >
-                {u}
+                {getUnitLabel(u, useMetric)}
               </Button>
             ))}
           </div>
