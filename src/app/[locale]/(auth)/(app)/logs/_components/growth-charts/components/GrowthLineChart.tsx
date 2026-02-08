@@ -53,7 +53,7 @@ export function GrowthLineChart({ data, config }: GrowthLineChartProps) {
     },
     baby: {
       label: 'Baby',
-      color: 'var(--chart-1)',
+      color: 'var(--color-activity-growth-background)',
     },
   };
 
@@ -132,7 +132,10 @@ export function GrowthLineChart({ data, config }: GrowthLineChartProps) {
                 const formattedValue = typeof value === 'number' ? value.toFixed(1) : value;
                 return (
                   <span className="flex items-center gap-2">
-                    <span className={isBaby ? 'font-medium text-chart-1' : 'text-muted-foreground'}>
+                    <span
+                      className={isBaby ? 'font-medium' : 'text-muted-foreground'}
+                      style={isBaby ? { color: 'var(--color-baby)' } : undefined}
+                    >
                       {label}
                       :
                     </span>

@@ -1,56 +1,83 @@
-/* Activity color tokens based on Tailwind defaults.
-   Light mode uses 100/950 for soft backgrounds and high-contrast text.
-   Dark mode uses 900/50 for the inverse to keep AA/AAA contrast. */
+/* Activity color tokens.
+   Strategy: saturated, emotionally distinct, and broad hue coverage.
+   Titles/borders/pills all consume these same accents, so each color keeps strong contrast on both themes. */
 @theme inline {
-  /* Feed - nourishment/milk, calming teal (Tailwind teal). */
-  /* --color-activity-feed-background: oklch(0.7 0.1937 15); */
-  --color-activity-feed-background: oklch(0.63 0.2 10); /* #e7436d */
+  /* Feed sentiment: deep raspberry, energetic + nurturing, and the primary red/pink family item. */
+  /* Old: --color-activity-feed-background: oklch(0.63 0.2 10); */
+  --color-activity-feed-background: oklch(0.64 0.24 12);
 
-  /* Sleep - night/quiet, deep indigo (Tailwind indigo). */
-  --color-activity-sleep-background: var(--color-indigo-500);
+  /* Sleep sentiment: vivid indigo for night + calm, clearly separate from feed. */
+  /* Old: --color-activity-sleep-background: var(--color-indigo-500); */
+  --color-activity-sleep-background: oklch(0.59 0.2 281);
 
-  /* Nappy - warm/utility, amber (Tailwind amber). */
-  --color-activity-nappy-background: var(--color-orange-500);
+  /* Nappy sentiment: cute-but-realistic warm amber/orange (pee/poo association). */
+  /* Old: --color-activity-nappy-background: var(--color-orange-500); */
+  --color-activity-nappy-background: oklch(0.68 0.2 58);
 
-  /* Solids - warmth/energy, yellow (Tailwind yellow). */
-  /* --color-activity-solids-background: oklch(0.7 0.1381 94);  #bb9c18 */
-  --color-activity-solids-background: var(--color-yellow-500);
+  /* Solids sentiment: mango-gold (food warmth, appetite, positive energy). */
+  /* Old: --color-activity-solids-background: var(--color-yellow-500); */
+  --color-activity-solids-background: oklch(0.67 0.18 93);
 
-  /* Bath - water/clean, sky (Tailwind sky). */
-  --color-activity-bath-background: var(--color-sky-500);
+  /* Bath sentiment: clean water blue, fresh and hygienic. */
+  /* Old: --color-activity-bath-background: var(--color-sky-500); */
+  --color-activity-bath-background: oklch(0.65 0.16 239);
 
-  /* Tummy time - strength/growth, lime (Tailwind lime). */
-  --color-activity-tummy-time-background: var(--color-teal-500);
+  /* Tummy time sentiment: active teal-green (movement + growth). */
+  /* Old: --color-activity-tummy-time-background: var(--color-teal-500); */
+  --color-activity-tummy-time-background: oklch(0.67 0.15 162);
 
-  /* Story time - imagination, violet (Tailwind violet). */
-  --color-activity-story-time-background: var(--color-violet-500);
+  /* Story time sentiment: imaginative purple. */
+  /* Old: --color-activity-story-time-background: var(--color-violet-500); */
+  --color-activity-story-time-background: oklch(0.64 0.19 304);
 
-  /* Screen time - tech/neutral, slate (Tailwind slate). */
-  --color-activity-screen-time-background: var(--color-slate-500);
+  /* Screen time sentiment: cool digital slate-blue (neutral tech feel). */
+  /* Old: --color-activity-screen-time-background: var(--color-slate-500); */
+  --color-activity-screen-time-background: oklch(0.58 0.08 258);
 
-  /* Pumping - breast pump, soft fuchsia/magenta. */
-  --color-activity-pumping-background: oklch(0.68 0.13 330);
+  /* Pumping sentiment: bright orchid to stay in feminine family but distinct from feed. */
+  /* Old: --color-activity-pumping-background: oklch(0.68 0.13 330); */
+  --color-activity-pumping-background: oklch(0.68 0.17 327);
 
-  /* Skin-to-skin - warmth/care, rose (Tailwind rose). */
-  --color-activity-skin-to-skin-background: var(--color-pink-500);
+  /* Skin-to-skin sentiment: warm peach-rose, intimate and gentle. */
+  /* Old: --color-activity-skin-to-skin-background: var(--color-pink-500); */
+  --color-activity-skin-to-skin-background: oklch(0.72 0.15 20);
 
-  /* Outdoor play - nature, green (Tailwind green). */
-  --color-activity-outdoor-play-background: var(--color-green-500);
+  /* Outdoor play sentiment: bright leaf green, lively and natural. */
+  /* Old: --color-activity-outdoor-play-background: var(--color-green-500); */
+  --color-activity-outdoor-play-background: oklch(0.68 0.19 146);
 
-  /* Indoor play - cozy/energy, orange (Tailwind orange). */
-  --color-activity-indoor-play-background: oklch(0.68 0.09 175); /* #55ab95 */
+  /* Indoor play sentiment: playful apricot-orange (warm and energetic). */
+  /* Old: --color-activity-indoor-play-background: oklch(0.68 0.09 175); */
+  --color-activity-indoor-play-background: oklch(0.71 0.16 53);
 
-  /* Brush teeth - fresh/minty, cyan (Tailwind cyan). */
-  --color-activity-brush-teeth-background: var(--color-cyan-500);
+  /* Brush teeth sentiment: cool mint-cyan freshness. */
+  /* Old: --color-activity-brush-teeth-background: var(--color-cyan-500); */
+  --color-activity-brush-teeth-background: oklch(0.69 0.13 206);
 
-  /* Growth - health/development, emerald (Tailwind emerald). */
-  --color-activity-growth-background: var(--color-emerald-500);
+  /* Growth sentiment: saturated emerald for health/development (major activity). */
+  /* Old: --color-activity-growth-background: var(--color-emerald-500); */
+  --color-activity-growth-background: oklch(0.64 0.2 154);
 
-  /* Medication - health/clinical, red (Tailwind red). */
-  --color-activity-medication-background: var(--color-red-400);
+  /* Medication sentiment: alert red-orange for caution/clinical actions. */
+  /* Old: --color-activity-medication-background: var(--color-red-400); */
+  --color-activity-medication-background: oklch(0.64 0.22 30);
 
-  /* Activity (general) - engagement/play, purple (Tailwind purple). */
-  --color-activity-activity-background: var(--color-purple-500);
+  /* Generic activity sentiment: bright violet for miscellaneous high-energy actions. */
+  /* Old: --color-activity-activity-background: var(--color-purple-500); */
+  --color-activity-activity-background: oklch(0.66 0.19 286);
+}
+
+/* Wide-gamut upgrade for modern displays (keeps fallback above for non-P3 screens). */
+@supports (color: color(display-p3 1 0 0)) {
+  :root {
+    --color-activity-feed-background: color(display-p3 0.92 0.18 0.4);
+    --color-activity-sleep-background: color(display-p3 0.3 0.34 0.96);
+    --color-activity-nappy-background: color(display-p3 0.95 0.52 0.1);
+    --color-activity-solids-background: color(display-p3 0.92 0.68 0.06);
+    --color-activity-growth-background: color(display-p3 0 0.72 0.4);
+    --color-activity-bath-background: color(display-p3 0.1 0.62 0.95);
+    --color-activity-pumping-background: color(display-p3 0.78 0.34 0.8);
+  }
 }
 
 @layer components {

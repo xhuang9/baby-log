@@ -11,7 +11,10 @@ export function PercentileLegend({ className }: PercentileLegendProps) {
     <div className={cn('flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs', className)}>
       {/* Baby measurement */}
       <div className="flex items-center gap-1.5">
-        <div className="size-2.5 rounded-full bg-[hsl(var(--chart-1))]" />
+        <div
+          className="size-2.5 rounded-full"
+          style={{ backgroundColor: 'var(--color-activity-growth-background)' }}
+        />
         <span className="text-muted-foreground">Baby</span>
       </div>
 

@@ -51,8 +51,8 @@ export function BabiesList(props: {
     return `${years}y ${remainingMonths}m old`;
   };
 
-  const getInitial = (name: string) => {
-    return name.charAt(0).toUpperCase();
+  const getInitials = (name: string) => {
+    return name.trim().slice(0, 2).toUpperCase();
   };
 
   return (
@@ -66,8 +66,8 @@ export function BabiesList(props: {
             className="flex w-full items-center gap-3 rounded-lg border bg-background p-4 transition-colors hover:bg-muted/50"
           >
             {/* Baby Avatar */}
-            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-cyan-400 text-lg font-semibold text-white">
-              {getInitial(baby.name)}
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+              {getInitials(baby.name)}
             </div>
 
             {/* Baby Info */}

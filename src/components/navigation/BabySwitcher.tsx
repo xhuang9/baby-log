@@ -72,6 +72,7 @@ export const BabySwitcher = ({ locale }: BabySwitcherProps) => {
   }, [babiesFromDb, setAllBabies]);
 
   const displayName = activeBaby?.name || 'Baby Log';
+  const displayInitials = displayName.trim().slice(0, 2).toUpperCase();
   const truncatedName = displayName.length > 10 ? `${displayName.slice(0, 10)}...` : displayName;
   const hasMultipleBabies = allBabies.length > 1;
 
@@ -105,9 +106,9 @@ export const BabySwitcher = ({ locale }: BabySwitcherProps) => {
           onClick={handleCycleBaby}
           disabled={isPending}
         >
-          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-teal-600 text-white">
+          <div className="flex aspect-square size-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <span className="text-sm font-semibold">
-              {displayName.slice(0, 1).toUpperCase()}
+              {displayInitials}
             </span>
           </div>
           <div className="flex flex-1 items-center gap-2 text-left text-sm leading-tight">
@@ -122,9 +123,9 @@ export const BabySwitcher = ({ locale }: BabySwitcherProps) => {
           className="p-0"
           render={buttonProps => (
             <Link href={getI18nPath('/overview', locale)} {...buttonProps}>
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-teal-600 text-white">
+              <div className="flex aspect-square size-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
                 <span className="text-sm font-semibold">
-                  {displayName.slice(0, 1).toUpperCase()}
+                  {displayInitials}
                 </span>
               </div>
               <div className="flex flex-1 items-center gap-2 text-left text-sm leading-tight">
