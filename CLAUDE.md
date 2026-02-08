@@ -48,6 +48,7 @@ This project has a **brand guideline** optimized for new parents - calming paste
 
 - Full brand research: `.readme/planning/brand-guideline.md`
 - Styling rules & color tokens: `.readme/sections/styling.index.md`
+- Locked app theming system for AI UI work: `.readme/marketing/2026-02-08-ui-branding-theme-system.agent.md`
 - CSS entry point: `src/styles/global.css`
 
 **Key rules:**
