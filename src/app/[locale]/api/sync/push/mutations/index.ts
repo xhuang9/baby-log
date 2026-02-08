@@ -11,6 +11,7 @@ import { processBathLogMutation } from './bath-log';
 import { processFeedLogMutation } from './feed-log';
 import { processFoodTypeMutation } from './food-types';
 import { processGrowthLogMutation } from './growth-log';
+import { processMedicationLogMutation } from './medication-log';
 import { processNappyLogMutation } from './nappy-log';
 import { processPumpingLogMutation } from './pumping-log';
 import { processSleepLogMutation } from './sleep-log';
@@ -22,6 +23,7 @@ export { processBathLogMutation } from './bath-log';
 export { processFeedLogMutation } from './feed-log';
 export { processFoodTypeMutation } from './food-types';
 export { processGrowthLogMutation } from './growth-log';
+export { processMedicationLogMutation } from './medication-log';
 export { processNappyLogMutation } from './nappy-log';
 export { processPumpingLogMutation } from './pumping-log';
 export { processSleepLogMutation } from './sleep-log';
@@ -93,6 +95,8 @@ export async function processMutation(
         return await processBathLogMutation(mutationId, entityId, op, payload, userId, babyId);
       case 'activity_log':
         return await processActivityLogMutation(mutationId, entityId, op, payload, userId, babyId);
+      case 'medication_log':
+        return await processMedicationLogMutation(mutationId, entityId, op, payload, userId, babyId);
       default:
         return {
           mutationId,

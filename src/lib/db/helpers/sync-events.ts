@@ -11,7 +11,7 @@ import { syncEventsSchema } from '@/models/Schema';
 
 type DbOrTx = typeof db;
 
-type EntityType = 'baby' | 'feed_log' | 'sleep_log' | 'nappy_log' | 'solids_log' | 'pumping_log' | 'growth_log' | 'bath_log' | 'activity_log';
+type EntityType = 'baby' | 'feed_log' | 'sleep_log' | 'nappy_log' | 'solids_log' | 'pumping_log' | 'growth_log' | 'bath_log' | 'activity_log' | 'medication_log';
 type SyncOp = 'create' | 'update' | 'delete';
 
 export type WriteSyncEventParams = {

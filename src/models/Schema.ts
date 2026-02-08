@@ -164,6 +164,7 @@ export const feedLogSchema = pgTable('feed_log', {
   isEstimated: boolean('is_estimated').notNull().default(false),
   estimatedSource: text('estimated_source'), // e.g. user_rate|default_model|manual_guess
   endSide: text('end_side'), // e.g. left, right (for breast feed)
+  notes: text('notes'),
   ...timestamps,
 }, t => [
   index('feed_log_baby_started_at_idx').on(t.babyId, t.startedAt),
@@ -257,6 +258,21 @@ export const bathLogSchema = pgTable('bath_log', {
   ...timestamps,
 }, t => [
   index('bath_log_baby_started_at_idx').on(t.babyId, t.startedAt),
+]);
+
+export const medicationLogSchema = pgTable('medication_log', {
+  id: uuid('id').primaryKey(),
+  babyId: integer('baby_id').references(() => babiesSchema.id).notNull(),
+  loggedByUserId: integer('logged_by_user_id').references(() => userSchema.id).notNull(),
+  medicationType: text('medication_type').notNull(),
+  medicationTypeId: text('medication_type_id').notNull(),
+  amount: integer('amount').notNull(),
+  unit: text('unit').notNull(),
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
+  notes: text('notes'),
+  ...timestamps,
+}, t => [
+  index('medication_log_baby_started_at_idx').on(t.babyId, t.startedAt),
 ]);
 
 export const activityLogTypeEnum = pgEnum('activity_log_type_enum', [

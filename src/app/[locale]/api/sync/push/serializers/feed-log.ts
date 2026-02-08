@@ -18,6 +18,7 @@ export function serializeFeedLog(log: typeof feedLogSchema.$inferSelect): Record
     amountMl: log.amountMl,
     isEstimated: log.isEstimated,
     endSide: log.endSide,
+    notes: log.notes,
     createdAt: log.createdAt.toISOString(),
     updatedAt: log.updatedAt?.toISOString() ?? log.createdAt.toISOString(),
   };

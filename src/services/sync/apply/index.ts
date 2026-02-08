@@ -11,6 +11,7 @@ import { applyBathLogChange } from './bath-log';
 import { applyFeedLogChange } from './feed-log';
 import { applyFoodTypeChange } from './food-types';
 import { applyGrowthLogChange } from './growth-log';
+import { applyMedicationLogChange } from './medication-log';
 import { applyNappyLogChange } from './nappy-log';
 import { applyPumpingLogChange } from './pumping-log';
 import { applySleepLogChange } from './sleep-log';
@@ -22,6 +23,7 @@ export { applyBathLogChange } from './bath-log';
 export { applyFeedLogChange } from './feed-log';
 export { applyFoodTypeChange, applyFoodTypeSync } from './food-types';
 export { applyGrowthLogChange } from './growth-log';
+export { applyMedicationLogChange } from './medication-log';
 export { applyNappyLogChange } from './nappy-log';
 export { applyPumpingLogChange } from './pumping-log';
 export { applySleepLogChange } from './sleep-log';
@@ -63,6 +65,9 @@ export async function applyChange(change: SyncChange): Promise<void> {
       break;
     case 'activity_log':
       await applyActivityLogChange(op, id, data);
+      break;
+    case 'medication_log':
+      await applyMedicationLogChange(op, id, data);
       break;
     default:
       console.warn(`Unknown entity type: ${type}`);
