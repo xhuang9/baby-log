@@ -10,6 +10,7 @@ import {
 import { useSleepFormState } from '@/app/[locale]/(auth)/(app)/overview/_components/add-sleep-modal/hooks/useSleepFormState';
 import { ModeSwitch } from '@/components/activity-modals';
 import { BaseActivityModal } from '@/components/activity-modals/BaseActivityModal';
+import { NotesField } from '@/components/input-controls';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,6 +39,8 @@ export function EditSleepModal({ log, open, onOpenChange }: EditSleepModalProps)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notes, setNotes] = useState(sleep.notes ?? '');
+  const [notesVisible, setNotesVisible] = useState(!!sleep.notes);
 
   // State management
   const { state, actions } = useSleepFormState();
@@ -46,6 +49,8 @@ export function EditSleepModal({ log, open, onOpenChange }: EditSleepModalProps)
   useEffect(() => {
     if (open) {
       actions.setStartTime(sleep.startedAt);
+      setNotes(sleep.notes ?? '');
+      setNotesVisible(!!sleep.notes);
 
       if (sleep.durationMinutes && sleep.durationMinutes > 0) {
         const endTime = new Date(
@@ -76,6 +81,7 @@ export function EditSleepModal({ log, open, onOpenChange }: EditSleepModalProps)
         id: log.id,
         startedAt: state.startTime,
         durationMinutes,
+        notes: notes.trim() || null,
       });
 
       if (!result.success) {
@@ -154,6 +160,14 @@ export function EditSleepModal({ log, open, onOpenChange }: EditSleepModalProps)
         <ModeSwitch
           inputMode={state.inputMode}
           onModeChange={actions.setInputMode}
+        />
+
+        <NotesField
+          value={notes}
+          onChange={setNotes}
+          visible={notesVisible}
+          onToggleVisible={() => setNotesVisible(!notesVisible)}
+          handMode={state.handMode}
         />
       </BaseActivityModal>
 

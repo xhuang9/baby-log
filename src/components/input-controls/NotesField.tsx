@@ -45,7 +45,7 @@ export function NotesField({
         </button>
 
         {visible && (
-          <div className="max-w-fit">
+          <div>
             <Textarea
               ref={textareaRef}
               value={value}

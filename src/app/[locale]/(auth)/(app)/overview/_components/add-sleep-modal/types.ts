@@ -14,4 +14,6 @@ export type SleepFormState = {
   startTime: Date;
   endTime: Date;
   handMode: 'left' | 'right';
+  notes: string;
+  notesVisible: boolean;
 };

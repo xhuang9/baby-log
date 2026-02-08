@@ -56,6 +56,7 @@ export function ActivityLogTile({ babyId, latestActivity }: ActivityLogTileProps
         statusText={statusText}
         timeAgo={latestActivity ? formatTimeAgo(latestActivity.startedAt) : undefined}
         caregiver={latestActivity?.caregiverLabel}
+        notes={latestActivity?.notes}
         activity="activity"
         onClick={() => setIsModalOpen(true)}
       />

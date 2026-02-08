@@ -74,6 +74,7 @@ export function GrowthTile({ babyId, latestGrowth }: GrowthTileProps) {
         statusText={latestGrowth ? getGrowthStatusText(latestGrowth) : 'Tap to log measurements'}
         timeAgo={latestGrowth ? formatTimeAgo(latestGrowth.startedAt) : undefined}
         caregiver={latestGrowth?.caregiverLabel}
+        notes={latestGrowth?.notes}
         activity="growth"
         onClick={() => setIsModalOpen(true)}
       />

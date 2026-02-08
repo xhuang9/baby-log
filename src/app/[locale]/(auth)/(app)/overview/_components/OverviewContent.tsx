@@ -77,7 +77,7 @@ export function OverviewContent({ locale }: OverviewContentProps) {
       .first();
 
     // Transform to FeedLogWithCaregiver type expected by FeedTile
-    const transformedFeed: FeedLogWithCaregiver = {
+    const transformedFeed: FeedLogWithCaregiver & { notes?: string | null } = {
       id: latestFeed.id, // UUID string
       babyId: latestFeed.babyId,
       method: latestFeed.method,
@@ -89,6 +89,7 @@ export function OverviewContent({ locale }: OverviewContentProps) {
       endSide: latestFeed.endSide,
       caregiverLabel: access?.caregiverLabel ?? null,
       createdAt: latestFeed.createdAt,
+      notes: latestFeed.notes,
     };
 
     return transformedFeed;

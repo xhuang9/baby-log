@@ -11,6 +11,7 @@ import {
 } from '@/app/[locale]/(auth)/(app)/overview/_components/add-feed-modal/components';
 import { useFeedFormState } from '@/app/[locale]/(auth)/(app)/overview/_components/add-feed-modal/hooks/useFeedFormState';
 import { BaseActivityModal } from '@/components/activity-modals/BaseActivityModal';
+import { NotesField } from '@/components/input-controls';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,6 +40,8 @@ export function EditFeedModal({ log, open, onOpenChange }: EditFeedModalProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notes, setNotes] = useState(feed.notes ?? '');
+  const [notesVisible, setNotesVisible] = useState(!!feed.notes);
 
   // State management
   const { state, actions } = useFeedFormState();
@@ -49,6 +52,9 @@ export function EditFeedModal({ log, open, onOpenChange }: EditFeedModalProps) {
       actions.setMethod(feed.method);
       actions.setStartTime(feed.startedAt);
       actions.setAmountMl(feed.amountMl ?? 120);
+
+      setNotes(feed.notes ?? '');
+      setNotesVisible(!!feed.notes);
 
       if (feed.method === 'breast') {
         if (feed.durationMinutes) {
@@ -82,6 +88,7 @@ export function EditFeedModal({ log, open, onOpenChange }: EditFeedModalProps) {
               )
             : null,
         endSide: state.method === 'breast' ? state.endSide : null,
+        notes: notes.trim() || null,
       });
 
       if (!result.success) {
@@ -179,6 +186,14 @@ export function EditFeedModal({ log, open, onOpenChange }: EditFeedModalProps) {
             onModeChange={actions.setInputMode}
           />
         )}
+
+        <NotesField
+          value={notes}
+          onChange={setNotes}
+          visible={notesVisible}
+          onToggleVisible={() => setNotesVisible(!notesVisible)}
+          handMode={state.handMode}
+        />
       </BaseActivityModal>
 
       {/* Delete confirmation dialog */}

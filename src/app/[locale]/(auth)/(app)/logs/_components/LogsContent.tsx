@@ -8,6 +8,7 @@ import { useAllActivityLogs } from '@/hooks/useAllActivityLogs';
 import { ACTIVITY_TYPES, useLogsFilters } from '@/hooks/useLogsFilters';
 import { localDb } from '@/lib/local-db';
 import { ActivityTypePills } from './ActivityTypePills';
+import { EditActivityModal } from './edit-modals/EditActivityModal';
 import { EditBathModal } from './edit-modals/EditBathModal';
 import { EditFeedModal } from './edit-modals/EditFeedModal';
 import { EditGrowthModal } from './edit-modals/EditGrowthModal';
@@ -267,6 +268,18 @@ export function LogsContent() {
       {editingLog?.type === 'bath' && (
         <EditBathModal
           bath={editingLog.data as import('@/lib/local-db').LocalBathLog}
+          open={Boolean(editingLog)}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleCloseEditModal();
+            }
+          }}
+        />
+      )}
+
+      {editingLog?.type === 'activity' && (
+        <EditActivityModal
+          activity={editingLog.data as import('@/lib/local-db').LocalActivityLog}
           open={Boolean(editingLog)}
           onOpenChange={(open) => {
             if (!open) {

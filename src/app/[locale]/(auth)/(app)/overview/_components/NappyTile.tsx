@@ -74,6 +74,7 @@ export function NappyTile({ babyId, latestNappy }: NappyTileProps) {
         statusText={latestNappy ? getNappyStatusText(latestNappy) : 'Tap to log a nappy change'}
         timeAgo={latestNappy ? formatTimeAgo(latestNappy.startedAt) : undefined}
         caregiver={latestNappy?.caregiverLabel}
+        notes={latestNappy?.notes}
         activity="nappy"
         onClick={() => setIsModalOpen(true)}
       />

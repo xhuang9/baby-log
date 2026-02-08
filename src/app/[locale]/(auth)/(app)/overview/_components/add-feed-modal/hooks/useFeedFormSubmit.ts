@@ -18,6 +18,7 @@ type UseFeedFormSubmitOptions = {
   endTime: Date;
   amountMl: number;
   endSide: 'left' | 'right';
+  notes: string;
   timerElapsed: number;
   prepareTimerSave: () => Promise<TimerSaveResult | null>;
   completeTimerSave: () => Promise<void>;
@@ -34,6 +35,7 @@ export function useFeedFormSubmit({
   endTime,
   amountMl,
   endSide,
+  notes,
   timerElapsed,
   prepareTimerSave,
   completeTimerSave,
@@ -96,6 +98,7 @@ export function useFeedFormSubmit({
         method,
         startedAt: feedStartTime,
         ...(method === 'bottle' ? { amountMl } : { durationMinutes, endSide }),
+        notes: notes.trim() || null,
       });
 
       if (!result.success) {

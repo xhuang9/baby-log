@@ -51,6 +51,8 @@ export type ActivityTileProps = {
   onClick?: () => void;
   /** Override the default action pill content (defaults to + icon) */
   actionContent?: ReactNode;
+  /** Optional notes to display below the description */
+  notes?: string | null;
   /** Base elapsed seconds from timer (accumulated when paused) */
   timerElapsedBase?: number;
   /** ISO timestamp of when timer started (null if not running) */
@@ -63,6 +65,7 @@ export function ActivityTile({
   statusText,
   timeAgo,
   caregiver,
+  notes,
   activity,
   disabled,
   onClick,
@@ -135,6 +138,9 @@ export function ActivityTile({
             </>
           )}
         </div>
+        {notes && (
+          <p className="activity-tile-notes">Notes: {notes}</p>
+        )}
       </div>
 
       {/* Right action pill - either timer or custom action or + icon */}

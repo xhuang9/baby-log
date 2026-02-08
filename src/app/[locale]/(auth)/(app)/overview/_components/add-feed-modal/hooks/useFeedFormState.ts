@@ -18,6 +18,8 @@ export function useFeedFormState({ initialMethod = 'bottle' }: UseFeedFormStateO
   const [endTime, setEndTime] = useState(() => getDefaultEndTime());
   const [endSide, setEndSide] = useState<'left' | 'right'>('left');
   const [handMode, setHandMode] = useState<'left' | 'right'>('right');
+  const [notes, setNotes] = useState('');
+  const [notesVisible, setNotesVisible] = useState(false);
 
   const resetForm = () => {
     setMethod(initialMethod);
@@ -26,6 +28,8 @@ export function useFeedFormState({ initialMethod = 'bottle' }: UseFeedFormStateO
     setAmountMl(120);
     setEndTime(getDefaultEndTime());
     setEndSide('left');
+    setNotes('');
+    setNotesVisible(false);
   };
 
   return {
@@ -37,6 +41,8 @@ export function useFeedFormState({ initialMethod = 'bottle' }: UseFeedFormStateO
       endTime,
       endSide,
       handMode,
+      notes,
+      notesVisible,
     },
     actions: {
       setMethod,
@@ -46,6 +52,8 @@ export function useFeedFormState({ initialMethod = 'bottle' }: UseFeedFormStateO
       setEndTime,
       setEndSide,
       setHandMode,
+      setNotes,
+      setNotesVisible,
       resetForm,
     },
   };

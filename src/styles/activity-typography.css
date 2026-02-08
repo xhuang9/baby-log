@@ -20,4 +20,9 @@
   .activity-tile-caregiver {
     @apply max-w-[10rem] truncate;
   }
+
+  .activity-tile-notes {
+    @apply mt-1 truncate font-sans text-xs font-normal leading-relaxed;
+    color: var(--muted-foreground);
+  }
 }

@@ -81,6 +81,7 @@ export function SleepTile({ babyId, latestSleep }: SleepTileProps) {
         statusText={getSleepStatusText(latestSleep)}
         timeAgo={referenceTime ? formatTimeAgo(referenceTime) : undefined}
         caregiver={latestSleep?.caregiverLabel}
+        notes={latestSleep?.notes}
         activity="sleep"
         onClick={() => setSheetOpen(true)}
         timerElapsedBase={timerElapsedBase}

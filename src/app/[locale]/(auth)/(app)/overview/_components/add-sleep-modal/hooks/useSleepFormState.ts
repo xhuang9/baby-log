@@ -7,6 +7,8 @@ type SleepFormActions = {
   setStartTime: (time: Date) => void;
   setEndTime: (time: Date) => void;
   setHandMode: (mode: 'left' | 'right') => void;
+  setNotes: (notes: string) => void;
+  setNotesVisible: (visible: boolean) => void;
   resetForm: () => void;
 };
 
@@ -19,6 +21,8 @@ export function useSleepFormState() {
     return end;
   });
   const [handMode, setHandMode] = useState<'left' | 'right'>('right');
+  const [notes, setNotes] = useState('');
+  const [notesVisible, setNotesVisible] = useState(false);
 
   const resetForm = () => {
     setInputMode('timer');
@@ -26,6 +30,8 @@ export function useSleepFormState() {
     const end = new Date();
     end.setMinutes(end.getMinutes() + 60);
     setEndTime(end);
+    setNotes('');
+    setNotesVisible(false);
   };
 
   const state: SleepFormState = {
@@ -33,6 +39,8 @@ export function useSleepFormState() {
     startTime,
     endTime,
     handMode,
+    notes,
+    notesVisible,
   };
 
   const actions: SleepFormActions = {
@@ -40,6 +48,8 @@ export function useSleepFormState() {
     setStartTime,
     setEndTime,
     setHandMode,
+    setNotes,
+    setNotesVisible,
     resetForm,
   };
 

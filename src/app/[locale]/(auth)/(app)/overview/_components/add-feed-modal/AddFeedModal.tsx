@@ -3,6 +3,7 @@
 import type { AddFeedModalProps } from './types';
 import { ChevronLeftIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { NotesField } from '@/components/input-controls';
 import { FormFooter } from '@/components/input-controls/FormFooter';
 import { Button } from '@/components/ui/button';
 import {
@@ -83,6 +84,7 @@ export function AddFeedModal({
     endTime: state.endTime,
     amountMl: state.amountMl,
     endSide: state.endSide,
+    notes: state.notes,
     timerElapsed,
     prepareTimerSave,
     completeTimerSave,
@@ -169,6 +171,14 @@ export function AddFeedModal({
               onModeChange={actions.setInputMode}
             />
           )}
+
+          <NotesField
+            value={state.notes}
+            onChange={actions.setNotes}
+            visible={state.notesVisible}
+            onToggleVisible={() => actions.setNotesVisible(!state.notesVisible)}
+            handMode={state.handMode}
+          />
 
           {error && (
             <p className="text-center text-sm text-destructive">{error}</p>

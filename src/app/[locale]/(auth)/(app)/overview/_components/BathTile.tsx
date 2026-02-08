@@ -44,6 +44,7 @@ export function BathTile({ babyId, latestBath }: BathTileProps) {
         statusText={latestBath ? 'Bath time' : 'Tap to log a bath'}
         timeAgo={latestBath ? formatTimeAgo(latestBath.startedAt) : undefined}
         caregiver={latestBath?.caregiverLabel}
+        notes={latestBath?.notes}
         activity="bath"
         onClick={() => setIsModalOpen(true)}
       />

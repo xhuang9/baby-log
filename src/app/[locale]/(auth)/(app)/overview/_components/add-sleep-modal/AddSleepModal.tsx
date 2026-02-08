@@ -3,6 +3,7 @@
 import type { AddSleepModalProps } from './types';
 import { ChevronLeftIcon } from 'lucide-react';
 import { ModeSwitch } from '@/components/activity-modals';
+import { NotesField } from '@/components/input-controls';
 import { FormFooter } from '@/components/input-controls/FormFooter';
 import { Button } from '@/components/ui/button';
 import {
@@ -50,6 +51,7 @@ export function AddSleepModal({
     inputMode: state.inputMode,
     startTime: state.startTime,
     endTime: state.endTime,
+    notes: state.notes,
     prepareTimerSave,
     completeTimerSave,
     resetForm: actions.resetForm,
@@ -111,6 +113,14 @@ export function AddSleepModal({
           <ModeSwitch
             inputMode={state.inputMode}
             onModeChange={actions.setInputMode}
+          />
+
+          <NotesField
+            value={state.notes}
+            onChange={actions.setNotes}
+            visible={state.notesVisible}
+            onToggleVisible={() => actions.setNotesVisible(!state.notesVisible)}
+            handMode={state.handMode}
           />
 
           {error && (

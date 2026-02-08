@@ -8,7 +8,7 @@ import { AddFeedModal } from './add-feed-modal';
 
 type FeedTileProps = {
   babyId: number;
-  latestFeed: FeedLogWithCaregiver | null;
+  latestFeed: (FeedLogWithCaregiver & { notes?: string | null }) | null;
 };
 
 function formatTimeAgo(date: Date): string {
@@ -66,6 +66,7 @@ export function FeedTile({ babyId, latestFeed }: FeedTileProps) {
         statusText={getFeedStatusText(latestFeed)}
         timeAgo={latestFeed ? formatTimeAgo(latestFeed.startedAt) : undefined}
         caregiver={latestFeed?.caregiverLabel}
+        notes={latestFeed?.notes}
         activity="feed"
         onClick={() => setSheetOpen(true)}
         timerElapsedBase={timerElapsedBase}

@@ -53,6 +53,7 @@ export function PumpingTile({ babyId, latestPumping }: PumpingTileProps) {
         statusText={latestPumping ? getPumpingStatusText(latestPumping) : 'Tap to log pumping'}
         timeAgo={latestPumping ? formatTimeAgo(latestPumping.startedAt) : undefined}
         caregiver={latestPumping?.caregiverLabel}
+        notes={latestPumping?.notes}
         activity="pumping"
         onClick={() => setIsModalOpen(true)}
       />

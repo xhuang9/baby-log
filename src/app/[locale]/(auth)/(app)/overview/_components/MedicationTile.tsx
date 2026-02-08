@@ -50,6 +50,7 @@ export function MedicationTile({ babyId, latestMedication }: MedicationTileProps
         statusText={latestMedication ? getMedicationStatusText(latestMedication) : 'Tap to log medication'}
         timeAgo={latestMedication ? formatTimeAgo(latestMedication.startedAt) : undefined}
         caregiver={latestMedication?.caregiverLabel}
+        notes={latestMedication?.notes}
         activity="medication"
         onClick={() => setIsModalOpen(true)}
       />

@@ -51,6 +51,7 @@ export function SolidsTile({ babyId, latestSolids }: SolidsTileProps) {
         statusText={latestSolids ? getSolidsStatusText(latestSolids) : 'Tap to log solid food'}
         timeAgo={latestSolids ? formatTimeAgo(latestSolids.startedAt) : undefined}
         caregiver={latestSolids?.caregiverLabel}
+        notes={latestSolids?.notes}
         activity="solids"
         onClick={() => setIsModalOpen(true)}
       />

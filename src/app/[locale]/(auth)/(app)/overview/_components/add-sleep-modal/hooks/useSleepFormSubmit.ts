@@ -10,6 +10,7 @@ type UseSleepFormSubmitOptions = {
   inputMode: InputMode;
   startTime: Date;
   endTime: Date;
+  notes: string;
   prepareTimerSave: () => Promise<TimerSaveResult | null>;
   completeTimerSave: () => Promise<void>;
   resetForm: () => void;
@@ -65,6 +66,7 @@ export function useSleepFormSubmit(options: UseSleepFormSubmitOptions) {
         babyId: options.babyId,
         startedAt: sleepStartTime,
         durationMinutes,
+        notes: options.notes.trim() || null,
       });
 
       if (!result.success) {
